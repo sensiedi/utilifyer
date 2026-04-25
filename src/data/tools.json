@@ -1,0 +1,202 @@
+[
+  {
+    "slug": "percentage-calculator",
+    "title": "Percentage Calculator",
+    "description": "Calculate percentages instantly. What is X% of Y? X is what percent of Y? And more.",
+    "category": "Math",
+    "tags": ["percentage", "percent", "math", "calculator"],
+    "priority": 1,
+    "status": "live",
+    "icon": "📊"
+  },
+  {
+    "slug": "age-calculator",
+    "title": "Age Calculator",
+    "description": "Calculate your exact age in years, months, days, and hours from your date of birth.",
+    "category": "Date & Time",
+    "tags": ["age", "birthday", "date", "years"],
+    "priority": 2,
+    "status": "live",
+    "icon": "🎂"
+  },
+  {
+    "slug": "bmi-calculator",
+    "title": "BMI Calculator",
+    "description": "Calculate your Body Mass Index and find out if you are underweight, normal, overweight, or obese.",
+    "category": "Health",
+    "tags": ["bmi", "body mass index", "weight", "health"],
+    "priority": 3,
+    "status": "live",
+    "icon": "⚖️"
+  },
+  {
+    "slug": "temperature-converter",
+    "title": "Temperature Converter",
+    "description": "Convert between Celsius, Fahrenheit, Kelvin, and Rankine instantly.",
+    "category": "Unit Converters",
+    "tags": ["temperature", "celsius", "fahrenheit", "kelvin", "convert"],
+    "priority": 4,
+    "status": "live",
+    "icon": "🌡️"
+  },
+  {
+    "slug": "tip-calculator",
+    "title": "Tip Calculator",
+    "description": "Calculate tip amount and split the bill between any number of people.",
+    "category": "Finance",
+    "tags": ["tip", "bill", "split", "restaurant"],
+    "priority": 5,
+    "status": "live",
+    "icon": "🍽️"
+  },
+  {
+    "slug": "days-between-dates",
+    "title": "Days Between Dates",
+    "description": "Count the exact number of days, weeks, and months between any two dates.",
+    "category": "Date & Time",
+    "tags": ["days", "date", "difference", "calendar"],
+    "priority": 6,
+    "status": "live",
+    "icon": "📅"
+  },
+  {
+    "slug": "word-counter",
+    "title": "Word Counter",
+    "description": "Count words, characters, sentences, and paragraphs. Get reading time estimates.",
+    "category": "Text",
+    "tags": ["word count", "characters", "text", "writing"],
+    "priority": 7,
+    "status": "live",
+    "icon": "📝"
+  },
+  {
+    "slug": "random-number-generator",
+    "title": "Random Number Generator",
+    "description": "Generate random numbers within any range. Single or multiple numbers, no repeats option.",
+    "category": "Random",
+    "tags": ["random", "number", "generator", "lottery"],
+    "priority": 8,
+    "status": "live",
+    "icon": "🎲"
+  },
+  {
+    "slug": "mortgage-calculator",
+    "title": "Mortgage Calculator",
+    "description": "Calculate your monthly mortgage payment, total interest paid, and full amortization schedule.",
+    "category": "Finance",
+    "tags": ["mortgage", "loan", "payment", "interest", "amortization"],
+    "priority": 9,
+    "status": "live",
+    "icon": "🏠"
+  },
+  {
+    "slug": "discount-calculator",
+    "title": "Discount Calculator",
+    "description": "Calculate the sale price after a discount. Find out how much you save.",
+    "category": "Finance",
+    "tags": ["discount", "sale", "price", "savings", "percent off"],
+    "priority": 10,
+    "status": "live",
+    "icon": "🏷️"
+  },
+  {
+    "slug": "compound-interest-calculator",
+    "title": "Compound Interest Calculator",
+    "description": "Visualize how your money grows with compound interest over time.",
+    "category": "Finance",
+    "tags": ["compound interest", "investment", "savings", "growth"],
+    "priority": 11,
+    "status": "live",
+    "icon": "📈"
+  },
+  {
+    "slug": "case-converter",
+    "title": "Case Converter",
+    "description": "Convert text to UPPERCASE, lowercase, Title Case, camelCase, snake_case and more.",
+    "category": "Text",
+    "tags": ["case", "uppercase", "lowercase", "title case", "camelcase"],
+    "priority": 12,
+    "status": "live",
+    "icon": "🔤"
+  },
+  {
+    "slug": "coin-flip",
+    "title": "Coin Flip",
+    "description": "Flip a virtual coin. Get heads or tails instantly. Flip multiple times and track statistics.",
+    "category": "Random",
+    "tags": ["coin flip", "heads", "tails", "random", "decision"],
+    "priority": 13,
+    "status": "live",
+    "icon": "🪙"
+  },
+  {
+    "slug": "password-generator",
+    "title": "Password Generator",
+    "description": "Generate strong, random passwords. Customize length, symbols, numbers, and more.",
+    "category": "Developer",
+    "tags": ["password", "generator", "security", "random"],
+    "priority": 14,
+    "status": "live",
+    "icon": "🔐"
+  },
+  {
+    "slug": "countdown-timer",
+    "title": "Countdown Timer",
+    "description": "Count down to any future date or event. Share your countdown with a link.",
+    "category": "Date & Time",
+    "tags": ["countdown", "timer", "event", "date"],
+    "priority": 15,
+    "status": "live",
+    "icon": "⏳"
+  },
+  {
+    "slug": "salary-to-hourly",
+    "title": "Salary to Hourly Calculator",
+    "description": "Convert annual salary to hourly, daily, weekly, and monthly rates.",
+    "category": "Finance",
+    "tags": ["salary", "hourly", "wage", "income", "pay"],
+    "priority": 16,
+    "status": "live",
+    "icon": "💰"
+  },
+  {
+    "slug": "qr-code-generator",
+    "title": "QR Code Generator",
+    "description": "Generate QR codes for URLs, text, WiFi, email, and more. Download as PNG.",
+    "category": "Developer",
+    "tags": ["qr code", "generator", "barcode", "url"],
+    "priority": 17,
+    "status": "live",
+    "icon": "📱"
+  },
+  {
+    "slug": "color-picker",
+    "title": "Color Picker & Converter",
+    "description": "Pick any color and get HEX, RGB, HSL, and HSB values instantly.",
+    "category": "Design",
+    "tags": ["color", "hex", "rgb", "hsl", "picker", "converter"],
+    "priority": 18,
+    "status": "live",
+    "icon": "🎨"
+  },
+  {
+    "slug": "character-count",
+    "title": "Character Count",
+    "description": "Count characters for Twitter/X, LinkedIn, Instagram and other social media platforms.",
+    "category": "Text",
+    "tags": ["character count", "twitter", "social media", "text length"],
+    "priority": 19,
+    "status": "live",
+    "icon": "✏️"
+  },
+  {
+    "slug": "weight-converter",
+    "title": "Weight Converter",
+    "description": "Convert between pounds, kilograms, ounces, grams, stones, and more.",
+    "category": "Unit Converters",
+    "tags": ["weight", "pounds", "kilograms", "convert", "lbs", "kg"],
+    "priority": 20,
+    "status": "live",
+    "icon": "⚖️"
+  }
+]

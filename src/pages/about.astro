@@ -1,0 +1,77 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="About Utilifyer — Free Online Tools"
+  description="Utilifyer is a free collection of online tools for everyday tasks — calculators, converters, generators, and more. No sign-up, no installs."
+>
+  <div class="max-w-3xl mx-auto px-4 py-12">
+
+    <!-- Hero -->
+    <div class="text-center mb-12">
+      <div class="text-6xl mb-4">🛠️</div>
+      <h1 class="text-3xl font-bold text-gray-900 mb-3">About Utilifyer</h1>
+      <p class="text-gray-500 text-lg max-w-xl mx-auto">Free, fast, and private online tools for everyday tasks. No sign-up, no installs, no data collection.</p>
+    </div>
+
+    <!-- Mission -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-7 mb-6">
+      <h2 class="text-xl font-bold text-gray-900 mb-3">Our Mission</h2>
+      <p class="text-gray-600 leading-relaxed">
+        We built Utilifyer because we were tired of opening five different tabs to do simple tasks — converting units, calculating percentages, generating passwords, or checking color contrast. Every tool we needed was buried behind sign-up walls, ad-heavy interfaces, or paywalls.
+      </p>
+      <p class="text-gray-600 leading-relaxed mt-3">
+        Utilifyer puts everything in one clean, fast place. Every tool is free, works instantly, and runs entirely in your browser — your data never leaves your device.
+      </p>
+    </div>
+
+    <!-- Values grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+      {[
+        { icon: '⚡', title: 'Fast', desc: 'Tools load instantly. No accounts, no loading spinners, no waiting.' },
+        { icon: '🔒', title: 'Private', desc: 'All processing happens in your browser. We never see your data.' },
+        { icon: '🆓', title: 'Free', desc: 'Every tool is free forever. We keep the lights on with non-intrusive ads.' },
+      ].map(({ icon, title, desc }) => (
+        <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5 text-center">
+          <div class="text-3xl mb-2">{icon}</div>
+          <h3 class="font-semibold text-gray-800 mb-1">{title}</h3>
+          <p class="text-sm text-gray-500">{desc}</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- What we offer -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-7 mb-6">
+      <h2 class="text-xl font-bold text-gray-900 mb-3">What We Offer</h2>
+      <p class="text-gray-600 leading-relaxed mb-4">
+        Utilifyer is home to a growing collection of tools across many categories:
+      </p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        {[
+          '🧮 Calculators', '🔄 Converters', '📝 Writing Tools',
+          '💰 Finance', '📅 Date & Time', '🎨 Design',
+          '💻 Developer Tools', '❤️ Health & Fitness', '🔢 Math',
+        ].map(item => (
+          <div class="flex items-center gap-2 text-sm text-gray-700 bg-gray-50 rounded-lg px-3 py-2">
+            {item}
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Tech note -->
+    <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-6 mb-8">
+      <h2 class="text-lg font-bold text-indigo-900 mb-2">Built to be Trustworthy</h2>
+      <p class="text-indigo-800 text-sm leading-relaxed">
+        All tools are built using standard web technologies and run 100% in your browser using the Web Crypto API, Canvas API, and other native browser capabilities. Sensitive operations like password generation use <code class="bg-indigo-100 px-1 rounded font-mono text-xs">crypto.getRandomValues()</code> — the same cryptographically secure source your browser uses for HTTPS. We do not use any server-side processing for tool computations.
+      </p>
+    </div>
+
+    <div class="text-center">
+      <a href="/" class="btn-primary inline-block">Browse All Tools</a>
+      <p class="text-sm text-gray-400 mt-4">Have feedback or a tool request? <a href="/contact" class="text-indigo-600 hover:underline">Get in touch</a>.</p>
+    </div>
+
+  </div>
+</BaseLayout>

@@ -1,0 +1,218 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="QR Code Generator"
+  description="Generate QR codes for URLs, text, email, phone numbers, and WiFi. Download as PNG for free."
+  slug="qr-code-generator"
+  category="Developer"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">QR Code Generator</h1>
+  <p class="text-gray-500 mb-8">Generate a QR code for any URL, text, or contact info. Download as PNG.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <!-- Type selector -->
+    <div>
+      <label class="label">QR Code Type</label>
+      <div class="flex flex-wrap gap-2">
+        {[
+          { id: 'url', label: '🔗 URL' },
+          { id: 'text', label: '📝 Text' },
+          { id: 'email', label: '📧 Email' },
+          { id: 'phone', label: '📞 Phone' },
+          { id: 'wifi', label: '📶 WiFi' },
+        ].map(({ id, label }) => (
+          <button
+            data-type={id}
+            class="type-btn px-4 py-2 rounded-lg border text-sm font-medium transition-colors border-gray-200 text-gray-600 hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-600"
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <!-- Dynamic input areas -->
+    <div id="input-url" class="qr-input space-y-3">
+      <label class="label">URL</label>
+      <input type="text" id="val-url" placeholder="https://example.com" class="input-field" />
+    </div>
+
+    <div id="input-text" class="qr-input hidden space-y-3">
+      <label class="label">Text</label>
+      <textarea id="val-text" rows={3} placeholder="Enter any text…" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y text-sm"></textarea>
+    </div>
+
+    <div id="input-email" class="qr-input hidden space-y-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div><label class="label">Email Address</label><input id="val-email" type="email" placeholder="name@example.com" class="input-field" /></div>
+        <div><label class="label">Subject (optional)</label><input id="val-email-subject" type="text" placeholder="Subject line" class="input-field" /></div>
+      </div>
+      <div><label class="label">Body (optional)</label><textarea id="val-email-body" rows={2} placeholder="Message body…" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y text-sm"></textarea></div>
+    </div>
+
+    <div id="input-phone" class="qr-input hidden space-y-3">
+      <label class="label">Phone Number</label>
+      <input id="val-phone" type="tel" placeholder="+1 555 123 4567" class="input-field" />
+    </div>
+
+    <div id="input-wifi" class="qr-input hidden space-y-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div><label class="label">Network Name (SSID)</label><input id="val-ssid" type="text" placeholder="MyWiFiNetwork" class="input-field" /></div>
+        <div><label class="label">Password</label><input id="val-wifi-pass" type="text" placeholder="WiFi password" class="input-field" /></div>
+      </div>
+      <div>
+        <label class="label">Security</label>
+        <select id="val-wifi-sec" class="input-field">
+          <option value="WPA">WPA/WPA2</option>
+          <option value="WEP">WEP</option>
+          <option value="">None (open)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Options -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+      <div>
+        <label class="label">Foreground Color</label>
+        <input id="fg-color" type="color" value="#000000" class="w-full h-10 rounded-lg border border-gray-300 cursor-pointer" />
+      </div>
+      <div>
+        <label class="label">Background Color</label>
+        <input id="bg-color" type="color" value="#ffffff" class="w-full h-10 rounded-lg border border-gray-300 cursor-pointer" />
+      </div>
+      <div>
+        <label class="label">Size (px)</label>
+        <select id="qr-size" class="input-field">
+          <option value="200">200 × 200</option>
+          <option value="300" selected>300 × 300</option>
+          <option value="400">400 × 400</option>
+          <option value="512">512 × 512</option>
+        </select>
+      </div>
+    </div>
+
+    <button id="generate-btn" class="btn-primary w-full">Generate QR Code</button>
+
+    <!-- QR output -->
+    <div id="qr-output" class="hidden flex flex-col items-center gap-4 py-4">
+      <div id="qr-container" class="p-4 rounded-2xl border border-gray-200 bg-white inline-block shadow-sm"></div>
+      <div class="flex gap-3">
+        <button id="download-btn" class="btn-primary">Download PNG</button>
+        <button id="copy-img-btn" class="btn-secondary">Copy Image</button>
+      </div>
+      <p class="text-xs text-gray-400">Scan with any smartphone camera</p>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "Are the QR codes generated here free to use?", a: "Yes, completely free for personal and commercial use. They are generated in your browser and never stored on any server." },
+        { q: "What can a QR code contain?", a: "QR codes can store URLs, plain text, email addresses, phone numbers, WiFi credentials, calendar events, contact cards (vCard), and more." },
+        { q: "What is the best QR code size for printing?", a: "For business cards, 300×300px is sufficient. For posters or large prints, use 512×512px or higher. As a rule, the QR code should be at least 2cm × 2cm when printed." },
+        { q: "Can I use a colored QR code?", a: "Yes — use the color options to customize foreground and background colors. Ensure there is strong contrast between them for reliable scanning." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}
+            <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  let currentType = 'url';
+
+  // Type switcher
+  document.querySelectorAll<HTMLButtonElement>('.type-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentType = btn.dataset.type!;
+      document.querySelectorAll('.type-btn').forEach(b => {
+        b.classList.toggle('border-indigo-500', b === btn);
+        b.classList.toggle('bg-indigo-50', b === btn);
+        b.classList.toggle('text-indigo-600', b === btn);
+        b.classList.toggle('border-gray-200', b !== btn);
+        b.classList.toggle('text-gray-600', b !== btn);
+      });
+      document.querySelectorAll('.qr-input').forEach(el => (el as HTMLElement).classList.add('hidden'));
+      document.getElementById(`input-${currentType}`)?.classList.remove('hidden');
+    });
+  });
+
+  // Set URL type active by default
+  document.querySelector<HTMLButtonElement>('[data-type="url"]')?.click();
+
+  function getContent(): string {
+    switch (currentType) {
+      case 'url': return (document.getElementById('val-url') as HTMLInputElement).value;
+      case 'text': return (document.getElementById('val-text') as HTMLTextAreaElement).value;
+      case 'email': {
+        const to = (document.getElementById('val-email') as HTMLInputElement).value;
+        const sub = (document.getElementById('val-email-subject') as HTMLInputElement).value;
+        const body = (document.getElementById('val-email-body') as HTMLTextAreaElement).value;
+        let mailto = `mailto:${to}`;
+        const params = [];
+        if (sub) params.push(`subject=${encodeURIComponent(sub)}`);
+        if (body) params.push(`body=${encodeURIComponent(body)}`);
+        if (params.length) mailto += '?' + params.join('&');
+        return mailto;
+      }
+      case 'phone': return `tel:${(document.getElementById('val-phone') as HTMLInputElement).value}`;
+      case 'wifi': {
+        const ssid = (document.getElementById('val-ssid') as HTMLInputElement).value;
+        const pass = (document.getElementById('val-wifi-pass') as HTMLInputElement).value;
+        const sec = (document.getElementById('val-wifi-sec') as HTMLSelectElement).value;
+        return `WIFI:T:${sec};S:${ssid};P:${pass};;`;
+      }
+      default: return '';
+    }
+  }
+
+  document.getElementById('generate-btn')?.addEventListener('click', async () => {
+    const content = getContent();
+    if (!content.trim()) return;
+
+    const { default: QRCode } = await import('https://esm.sh/qrcode@1.5.4');
+    const size = parseInt((document.getElementById('qr-size') as HTMLSelectElement).value);
+    const fg = (document.getElementById('fg-color') as HTMLInputElement).value;
+    const bg = (document.getElementById('bg-color') as HTMLInputElement).value;
+
+    const container = document.getElementById('qr-container')!;
+    container.innerHTML = '';
+    const canvas = document.createElement('canvas');
+    container.appendChild(canvas);
+
+    await QRCode.toCanvas(canvas, content, {
+      width: size,
+      color: { dark: fg, light: bg },
+      errorCorrectionLevel: 'M',
+    });
+
+    document.getElementById('qr-output')!.classList.remove('hidden');
+
+    document.getElementById('download-btn')!.onclick = () => {
+      const link = document.createElement('a');
+      link.download = 'qr-code.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    };
+
+    document.getElementById('copy-img-btn')!.onclick = async () => {
+      canvas.toBlob(async blob => {
+        if (!blob) return;
+        await navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]);
+        const btn = document.getElementById('copy-img-btn')!;
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy Image', 1500);
+      });
+    };
+  });
+</script>

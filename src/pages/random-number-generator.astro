@@ -1,0 +1,218 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Random Number Generator"
+  description="Generate random numbers within any range. Generate multiple numbers, enable no-repeat mode, or roll dice."
+  slug="random-number-generator"
+  category="Random"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Random Number Generator</h1>
+  <p class="text-gray-500 mb-8">Generate truly random numbers within any range you choose.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-2 gap-4">
+      <div>
+        <label class="label">Min</label>
+        <input id="min-val" type="number" value="1" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Max</label>
+        <input id="max-val" type="number" value="100" class="input-field" />
+      </div>
+    </div>
+
+    <div>
+      <label class="label">How many numbers?</label>
+      <input id="count-val" type="number" min="1" max="500" value="1" class="input-field" />
+    </div>
+
+    <label class="flex items-center gap-3 cursor-pointer select-none">
+      <div class="relative">
+        <input id="no-repeat" type="checkbox" class="sr-only peer" />
+        <div class="w-10 h-6 bg-gray-200 rounded-full peer-checked:bg-indigo-600 transition-colors"></div>
+        <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-4"></div>
+      </div>
+      <span class="text-sm font-medium text-gray-700">No repeat numbers</span>
+    </label>
+
+    <button id="generate-btn" class="btn-primary w-full text-lg py-3">
+      Generate
+    </button>
+
+    <div id="result" class="hidden">
+      <div class="result-box">
+        <div class="flex items-center justify-between mb-3">
+          <p class="text-sm text-indigo-700 font-medium">Generated Numbers</p>
+          <button id="copy-btn" class="text-xs text-indigo-600 hover:text-indigo-800 border border-indigo-200 rounded-md px-2 py-1 transition-colors">
+            Copy
+          </button>
+        </div>
+        <div id="numbers-display" class="flex flex-wrap gap-2"></div>
+        <p id="result-note" class="text-xs text-indigo-500 mt-3"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Presets -->
+  <div class="mt-6 bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
+    <h2 class="font-semibold text-gray-800 text-sm mb-3">Quick Presets</h2>
+    <div class="flex flex-wrap gap-2">
+      {[
+        { label: '🎲 Roll a die (1–6)', min: 1, max: 6, count: 1 },
+        { label: '🎲 Roll 2 dice', min: 1, max: 6, count: 2 },
+        { label: '🍀 Lottery (1–49, pick 6)', min: 1, max: 49, count: 6, noRepeat: true },
+        { label: '🔢 1–10', min: 1, max: 10, count: 1 },
+        { label: '💯 1–100', min: 1, max: 100, count: 1 },
+        { label: '🃏 Shuffle 1–52', min: 1, max: 52, count: 52, noRepeat: true },
+      ].map(({ label, min, max, count, noRepeat }) => (
+        <button
+          class="preset-btn px-3 py-1.5 rounded-lg border border-gray-200 text-sm text-gray-600 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+          data-min={min}
+          data-max={max}
+          data-count={count}
+          data-no-repeat={noRepeat ? 'true' : 'false'}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <!-- History -->
+  <div id="history-section" class="mt-6 bg-white rounded-2xl border border-gray-200 shadow-sm p-5 hidden">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="font-semibold text-gray-800 text-sm">History</h2>
+      <button id="clear-history" class="text-xs text-gray-400 hover:text-red-500 transition-colors">Clear</button>
+    </div>
+    <div id="history-list" class="space-y-2 text-sm text-gray-600 max-h-48 overflow-y-auto"></div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "Is this random number generator truly random?", a: "This tool uses the browser's built-in crypto.getRandomValues() API, which produces cryptographically secure random numbers — far more random than Math.random()." },
+        { q: "What is the maximum number of numbers I can generate?", a: "You can generate up to 500 numbers at once. With no-repeat mode, the count cannot exceed the size of the range (max − min + 1)." },
+        { q: "Can I generate random numbers without repeats?", a: "Yes. Toggle the 'No repeat numbers' switch before generating. The tool will produce unique numbers within your range using a shuffle algorithm." },
+        { q: "How do I pick lottery numbers?", a: "Use the 'Lottery (1–49, pick 6)' preset. It generates 6 unique random numbers between 1 and 49 — just like a standard lottery draw." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}
+            <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const minInput = document.getElementById('min-val') as HTMLInputElement;
+  const maxInput = document.getElementById('max-val') as HTMLInputElement;
+  const countInput = document.getElementById('count-val') as HTMLInputElement;
+  const noRepeatToggle = document.getElementById('no-repeat') as HTMLInputElement;
+  const history: string[] = [];
+
+  function cryptoRandom(min: number, max: number): number {
+    const range = max - min + 1;
+    const bytes = new Uint32Array(1);
+    crypto.getRandomValues(bytes);
+    return min + (bytes[0] % range);
+  }
+
+  function generate() {
+    const min = parseInt(minInput.value);
+    const max = parseInt(maxInput.value);
+    const count = Math.min(parseInt(countInput.value) || 1, 500);
+
+    if (isNaN(min) || isNaN(max) || min > max) {
+      alert('Please enter a valid range (min must be less than or equal to max).');
+      return;
+    }
+
+    let numbers: number[] = [];
+
+    if (noRepeatToggle.checked) {
+      const range = max - min + 1;
+      if (count > range) {
+        alert(`Cannot generate ${count} unique numbers in range ${min}–${max} (only ${range} possible values).`);
+        return;
+      }
+      const pool = Array.from({ length: range }, (_, i) => min + i);
+      for (let i = pool.length - 1; i > 0; i--) {
+        const j = cryptoRandom(0, i);
+        [pool[i], pool[j]] = [pool[j], pool[i]];
+      }
+      numbers = pool.slice(0, count).sort((a, b) => a - b);
+    } else {
+      numbers = Array.from({ length: count }, () => cryptoRandom(min, max));
+    }
+
+    const display = document.getElementById('numbers-display')!;
+    if (count === 1) {
+      display.innerHTML = `<span class="text-5xl font-bold text-indigo-800 w-full text-center block py-4">${numbers[0]}</span>`;
+    } else {
+      display.innerHTML = numbers.map(n =>
+        `<span class="px-3 py-1.5 bg-white border border-indigo-200 rounded-lg text-indigo-800 font-semibold text-sm">${n}</span>`
+      ).join('');
+    }
+
+    document.getElementById('result-note')!.textContent =
+      `${count} number${count !== 1 ? 's' : ''} between ${min} and ${max}${noRepeatToggle.checked ? ' (no repeats)' : ''}`;
+    document.getElementById('result')!.classList.remove('hidden');
+
+    // History
+    const entry = `${numbers.join(', ')} (${min}–${max})`;
+    history.unshift(entry);
+    if (history.length > 10) history.pop();
+    renderHistory();
+
+    // Copy button
+    document.getElementById('copy-btn')!.addEventListener('click', () => {
+      navigator.clipboard.writeText(numbers.join(', ')).then(() => {
+        const btn = document.getElementById('copy-btn')!;
+        btn.textContent = 'Copied!';
+        setTimeout(() => btn.textContent = 'Copy', 1500);
+      });
+    });
+  }
+
+  function renderHistory() {
+    const section = document.getElementById('history-section')!;
+    const list = document.getElementById('history-list')!;
+    section.classList.remove('hidden');
+    list.innerHTML = history.map((h, i) =>
+      `<div class="flex items-start gap-2 py-1 border-b border-gray-100 last:border-0">
+        <span class="text-gray-400 text-xs w-4 flex-shrink-0 mt-0.5">${i + 1}</span>
+        <span class="font-mono text-xs text-gray-700 break-all">${h}</span>
+      </div>`
+    ).join('');
+  }
+
+  document.getElementById('generate-btn')?.addEventListener('click', generate);
+
+  document.querySelectorAll<HTMLButtonElement>('.preset-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      minInput.value = btn.dataset.min!;
+      maxInput.value = btn.dataset.max!;
+      countInput.value = btn.dataset.count!;
+      noRepeatToggle.checked = btn.dataset.noRepeat === 'true';
+      generate();
+    });
+  });
+
+  document.getElementById('clear-history')?.addEventListener('click', () => {
+    history.length = 0;
+    document.getElementById('history-section')!.classList.add('hidden');
+  });
+
+  // Generate on Enter
+  [minInput, maxInput, countInput].forEach(el =>
+    el.addEventListener('keydown', (e) => { if (e.key === 'Enter') generate(); })
+  );
+</script>

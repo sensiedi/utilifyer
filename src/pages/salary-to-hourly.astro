@@ -1,0 +1,211 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Salary to Hourly Calculator"
+  description="Convert annual salary to hourly, daily, weekly, and monthly pay rates. Adjust for hours worked per week and weeks per year."
+  slug="salary-to-hourly"
+  category="Finance"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Salary to Hourly Calculator</h1>
+  <p class="text-gray-500 mb-8">Convert any salary to an hourly rate — or hourly to annual.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="flex border-b border-gray-200">
+      <button data-tab="0" class="tab-btn flex-1 py-3 text-sm font-medium text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50">Salary → Hourly</button>
+      <button data-tab="1" class="tab-btn flex-1 py-3 text-sm font-medium text-gray-500 hover:bg-gray-50 border-b-2 border-transparent">Hourly → Salary</button>
+    </div>
+
+    <div class="p-6 space-y-5">
+      <!-- Panel 0 -->
+      <div data-panel="0" class="tab-panel space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="label">Annual Salary ($)</label>
+            <input id="annual-salary" type="number" placeholder="e.g. 75000" class="input-field" />
+          </div>
+          <div>
+            <label class="label">Hours per Week</label>
+            <input id="hours-week" type="number" value="40" min="1" max="168" class="input-field" />
+          </div>
+          <div>
+            <label class="label">Weeks per Year</label>
+            <input id="weeks-year" type="number" value="52" min="1" max="52" class="input-field" />
+          </div>
+        </div>
+        <button id="p0-calc" class="btn-primary w-full">Convert</button>
+        <div id="p0-result" class="hidden space-y-3">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+            {[
+              { id: 'r-hourly', label: 'Per Hour' },
+              { id: 'r-daily', label: 'Per Day (8hr)' },
+              { id: 'r-weekly', label: 'Per Week' },
+              { id: 'r-monthly', label: 'Per Month' },
+            ].map(({ id, label }) => (
+              <div class="result-box">
+                <p id={id} class="text-2xl font-bold text-indigo-900"></p>
+                <p class="text-xs text-indigo-600 mt-1">{label}</p>
+              </div>
+            ))}
+          </div>
+          <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden text-sm">
+            <table class="w-full">
+              <thead class="bg-gray-100 text-xs text-gray-500 uppercase">
+                <tr>
+                  <th class="px-4 py-2 text-left">Period</th>
+                  <th class="px-4 py-2 text-right">Gross Pay</th>
+                  <th class="px-4 py-2 text-right">Est. After 25% Tax</th>
+                </tr>
+              </thead>
+              <tbody id="salary-table" class="divide-y divide-gray-100"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 1 -->
+      <div data-panel="1" class="tab-panel hidden space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="label">Hourly Rate ($)</label>
+            <input id="hourly-rate" type="number" placeholder="e.g. 35" class="input-field" />
+          </div>
+          <div>
+            <label class="label">Hours per Week</label>
+            <input id="h-hours-week" type="number" value="40" min="1" max="168" class="input-field" />
+          </div>
+          <div>
+            <label class="label">Weeks per Year</label>
+            <input id="h-weeks-year" type="number" value="52" min="1" max="52" class="input-field" />
+          </div>
+        </div>
+        <button id="p1-calc" class="btn-primary w-full">Convert</button>
+        <div id="p1-result" class="hidden">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+            {[
+              { id: 'h-annual', label: 'Annual' },
+              { id: 'h-monthly', label: 'Monthly' },
+              { id: 'h-weekly', label: 'Weekly' },
+              { id: 'h-daily', label: 'Daily (8hr)' },
+            ].map(({ id, label }) => (
+              <div class="result-box">
+                <p id={id} class="text-2xl font-bold text-indigo-900"></p>
+                <p class="text-xs text-indigo-600 mt-1">{label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Salary comparison -->
+  <div class="mt-6 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="px-5 py-3 border-b border-gray-100 bg-gray-50">
+      <h2 class="font-semibold text-gray-800 text-sm">Common Salary Reference</h2>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+          <tr>
+            <th class="px-4 py-2 text-left">Annual Salary</th>
+            <th class="px-4 py-2 text-right">Monthly</th>
+            <th class="px-4 py-2 text-right">Hourly (40hr wk)</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          {[30000,40000,50000,60000,75000,100000,125000,150000].map(s => (
+            <tr class="bg-white hover:bg-gray-50">
+              <td class="px-4 py-2.5 font-medium text-gray-800">${s.toLocaleString()}</td>
+              <td class="px-4 py-2.5 text-right text-gray-600">${(s/12).toLocaleString('en-US',{maximumFractionDigits:0})}</td>
+              <td class="px-4 py-2.5 text-right text-gray-600">${(s/2080).toFixed(2)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How many hours are in a work year?", a: "A standard full-time work year is 2,080 hours (40 hours/week × 52 weeks). This is the most common basis for salary-to-hourly conversions." },
+        { q: "How do I convert $75,000 salary to hourly?", a: "$75,000 ÷ 2,080 hours = $36.06 per hour. Use the calculator above for any salary with custom hours per week." },
+        { q: "Does this account for paid time off?", a: "The calculator uses 52 weeks by default. If you take 2 weeks unpaid leave, set weeks per year to 50 for a more accurate hourly rate." },
+        { q: "Is the hourly rate before or after taxes?", a: "All rates shown are gross (before tax). The table shows an estimated after-tax amount using a 25% flat tax rate as a rough guide. Your actual take-home pay depends on your tax bracket, deductions, and location." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}
+            <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const fmt = (n: number) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  document.querySelectorAll<HTMLButtonElement>('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = Number(btn.dataset.tab);
+      document.querySelectorAll('.tab-btn').forEach((b, i) => {
+        b.classList.toggle('text-indigo-600', i === idx);
+        b.classList.toggle('border-indigo-600', i === idx);
+        b.classList.toggle('bg-indigo-50', i === idx);
+        b.classList.toggle('text-gray-500', i !== idx);
+        b.classList.toggle('border-transparent', i !== idx);
+      });
+      document.querySelectorAll('.tab-panel').forEach((p, i) => (p as HTMLElement).classList.toggle('hidden', i !== idx));
+    });
+  });
+
+  document.getElementById('p0-calc')?.addEventListener('click', () => {
+    const annual = parseFloat((document.getElementById('annual-salary') as HTMLInputElement).value);
+    const hours = parseFloat((document.getElementById('hours-week') as HTMLInputElement).value) || 40;
+    const weeks = parseFloat((document.getElementById('weeks-year') as HTMLInputElement).value) || 52;
+    if (isNaN(annual)) return;
+    const totalHours = hours * weeks;
+    const hourly = annual / totalHours;
+    const daily = hourly * 8;
+    const weekly = hourly * hours;
+    const monthly = annual / 12;
+
+    document.getElementById('r-hourly')!.textContent = fmt(hourly);
+    document.getElementById('r-daily')!.textContent = fmt(daily);
+    document.getElementById('r-weekly')!.textContent = fmt(weekly);
+    document.getElementById('r-monthly')!.textContent = fmt(monthly);
+
+    const tax = 0.25;
+    const rows = [
+      ['Hourly', hourly], ['Daily (8hr)', daily], ['Weekly', weekly],
+      ['Bi-weekly', weekly * 2], ['Semi-monthly', annual / 24], ['Monthly', monthly], ['Annual', annual],
+    ];
+    document.getElementById('salary-table')!.innerHTML = rows.map(([label, val]) =>
+      `<tr class="bg-white hover:bg-gray-50">
+        <td class="px-4 py-2.5 text-gray-700">${label}</td>
+        <td class="px-4 py-2.5 text-right font-medium text-gray-800">${fmt(val as number)}</td>
+        <td class="px-4 py-2.5 text-right text-gray-500">${fmt((val as number) * (1 - tax))}</td>
+      </tr>`
+    ).join('');
+    document.getElementById('p0-result')!.classList.remove('hidden');
+  });
+
+  document.getElementById('p1-calc')?.addEventListener('click', () => {
+    const hourly = parseFloat((document.getElementById('hourly-rate') as HTMLInputElement).value);
+    const hours = parseFloat((document.getElementById('h-hours-week') as HTMLInputElement).value) || 40;
+    const weeks = parseFloat((document.getElementById('h-weeks-year') as HTMLInputElement).value) || 52;
+    if (isNaN(hourly)) return;
+    const annual = hourly * hours * weeks;
+    document.getElementById('h-annual')!.textContent = fmt(annual);
+    document.getElementById('h-monthly')!.textContent = fmt(annual / 12);
+    document.getElementById('h-weekly')!.textContent = fmt(hourly * hours);
+    document.getElementById('h-daily')!.textContent = fmt(hourly * 8);
+    document.getElementById('p1-result')!.classList.remove('hidden');
+  });
+</script>

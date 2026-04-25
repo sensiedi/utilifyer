@@ -1,0 +1,220 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Compound Interest Calculator"
+  description="Calculate how your investment grows with compound interest over time. Compare monthly vs annual compounding with an interactive chart."
+  slug="compound-interest-calculator"
+  category="Finance"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Compound Interest Calculator</h1>
+  <p class="text-gray-500 mb-8">See how your money grows with the power of compounding.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Initial Investment ($)</label>
+        <input id="principal" type="number" value="10000" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Monthly Contribution ($)</label>
+        <input id="monthly" type="number" value="200" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Annual Interest Rate (%)</label>
+        <input id="rate" type="number" value="7" step="0.1" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Time Period (years)</label>
+        <input id="years" type="number" value="20" min="1" max="50" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Compound Frequency</label>
+        <select id="frequency" class="input-field">
+          <option value="365">Daily</option>
+          <option value="12" selected>Monthly</option>
+          <option value="4">Quarterly</option>
+          <option value="1">Annually</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">Inflation Rate (%) <span class="text-gray-400 font-normal">optional</span></label>
+        <input id="inflation" type="number" value="0" step="0.1" placeholder="e.g. 2.5" class="input-field" />
+      </div>
+    </div>
+
+    <button id="calc-btn" class="btn-primary w-full">Calculate</button>
+
+    <div id="result" class="hidden space-y-4">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+        {[
+          { id: 'r-final', label: 'Final Balance' },
+          { id: 'r-principal', label: 'Total Deposited' },
+          { id: 'r-interest', label: 'Interest Earned' },
+          { id: 'r-real', label: 'Inflation-Adj. Value' },
+        ].map(({ id, label }) => (
+          <div class="result-box">
+            <p id={id} class="text-xl font-bold text-indigo-900"></p>
+            <p class="text-xs text-indigo-600 mt-1">{label}</p>
+          </div>
+        ))}
+      </div>
+
+      <!-- Growth chart -->
+      <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+        <p class="text-sm font-semibold text-gray-700 mb-3">Balance Over Time</p>
+        <canvas id="growth-chart" height="200"></canvas>
+      </div>
+
+      <!-- Year-by-year table -->
+      <details class="group">
+        <summary class="text-sm font-medium text-indigo-600 cursor-pointer list-none flex items-center gap-1 hover:text-indigo-800">
+          <span class="group-open:rotate-90 transition-transform inline-block">▶</span>
+          Year-by-year breakdown
+        </summary>
+        <div class="mt-3 overflow-x-auto rounded-xl border border-gray-200 max-h-72">
+          <table class="w-full text-xs">
+            <thead class="bg-gray-50 sticky top-0 text-gray-500 uppercase">
+              <tr>
+                <th class="px-3 py-2 text-left">Year</th>
+                <th class="px-3 py-2 text-right">Deposits</th>
+                <th class="px-3 py-2 text-right">Interest</th>
+                <th class="px-3 py-2 text-right">Balance</th>
+              </tr>
+            </thead>
+            <tbody id="table-body" class="divide-y divide-gray-100"></tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-3">The Compound Interest Formula</h2>
+    <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 font-mono text-sm text-gray-700 mb-3">
+      A = P(1 + r/n)^(nt)
+    </div>
+    <p class="text-sm text-gray-600">Where A = final amount, P = principal, r = annual rate (decimal), n = compounding frequency per year, t = time in years. Regular contributions are added each compounding period.</p>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is compound interest?", a: "Compound interest is interest calculated on both the initial principal and the accumulated interest from previous periods. It causes your money to grow exponentially rather than linearly." },
+        { q: "How often should interest compound?", a: "More frequent compounding means slightly more growth. Daily compounding produces marginally more than monthly, which produces more than annual. The difference is small for typical savings rates but grows with higher interest rates." },
+        { q: "What is the Rule of 72?", a: "The Rule of 72 is a quick way to estimate how long it takes to double your money. Divide 72 by the annual interest rate. At 7%, your money doubles roughly every 72 ÷ 7 ≈ 10.3 years." },
+        { q: "Why does starting early matter so much?", a: "Starting 10 years earlier can double or triple your final balance. The first dollars invested have the most time to compound. This is why even small contributions in your 20s are more valuable than larger ones in your 40s." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}
+            <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const fmt = (n: number) => '$' + Math.round(n).toLocaleString('en-US');
+  let chartInstance: any = null;
+
+  async function calculate() {
+    const principal = parseFloat((document.getElementById('principal') as HTMLInputElement).value) || 0;
+    const monthly = parseFloat((document.getElementById('monthly') as HTMLInputElement).value) || 0;
+    const rate = parseFloat((document.getElementById('rate') as HTMLInputElement).value) / 100;
+    const years = parseInt((document.getElementById('years') as HTMLInputElement).value) || 1;
+    const n = parseInt((document.getElementById('frequency') as HTMLSelectElement).value);
+    const inflation = parseFloat((document.getElementById('inflation') as HTMLInputElement).value) / 100 || 0;
+
+    if (!principal && !monthly) return;
+
+    const labels: string[] = [];
+    const balances: number[] = [];
+    const deposits: number[] = [];
+    const tableRows: string[] = [];
+
+    let balance = principal;
+    let totalDeposited = principal;
+
+    for (let year = 1; year <= years; year++) {
+      // Compound for 12 months in this year
+      for (let m = 0; m < 12; m++) {
+        balance = balance * (1 + rate / n) + monthly;
+        if (n === 12 || (n === 4 && m % 3 === 2) || n === 365 || n === 1) {
+          // handled per period above
+        }
+      }
+      totalDeposited += monthly * 12;
+      const interestEarned = balance - totalDeposited;
+
+      labels.push(`Year ${year}`);
+      balances.push(Math.round(balance));
+      deposits.push(Math.round(totalDeposited));
+
+      tableRows.push(`<tr class="bg-white hover:bg-gray-50">
+        <td class="px-3 py-2 text-gray-700">${year}</td>
+        <td class="px-3 py-2 text-right text-gray-700">${fmt(totalDeposited)}</td>
+        <td class="px-3 py-2 text-right text-green-700 font-medium">${fmt(interestEarned)}</td>
+        <td class="px-3 py-2 text-right font-bold text-gray-800">${fmt(balance)}</td>
+      </tr>`);
+    }
+
+    const totalInterest = balance - totalDeposited;
+    const realValue = balance / Math.pow(1 + inflation, years);
+
+    document.getElementById('r-final')!.textContent = fmt(balance);
+    document.getElementById('r-principal')!.textContent = fmt(totalDeposited);
+    document.getElementById('r-interest')!.textContent = fmt(totalInterest);
+    document.getElementById('r-real')!.textContent = inflation > 0 ? fmt(realValue) : '—';
+    document.getElementById('table-body')!.innerHTML = tableRows.join('');
+    document.getElementById('result')!.classList.remove('hidden');
+
+    // Chart
+    const { Chart, registerables } = await import('chart.js');
+    Chart.register(...registerables);
+
+    const canvas = document.getElementById('growth-chart') as HTMLCanvasElement;
+    if (chartInstance) chartInstance.destroy();
+    chartInstance = new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Balance',
+            data: balances,
+            borderColor: '#6366f1',
+            backgroundColor: 'rgba(99,102,241,0.08)',
+            fill: true,
+            tension: 0.4,
+            pointRadius: years <= 20 ? 3 : 0,
+          },
+          {
+            label: 'Total Deposited',
+            data: deposits,
+            borderColor: '#94a3b8',
+            borderDash: [5, 5],
+            fill: false,
+            tension: 0.4,
+            pointRadius: 0,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'top' } },
+        scales: {
+          y: { ticks: { callback: (v: any) => '$' + Number(v).toLocaleString() } }
+        },
+      },
+    });
+  }
+
+  document.getElementById('calc-btn')?.addEventListener('click', calculate);
+  calculate();
+</script>

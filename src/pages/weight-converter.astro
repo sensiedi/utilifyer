@@ -1,0 +1,166 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Weight Converter"
+  description="Convert between kilograms, pounds, ounces, grams, stones, and more. Instant weight unit conversion."
+  slug="weight-converter"
+  category="Converters"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Weight Converter</h1>
+  <p class="text-gray-500 mb-8">Convert between kg, lbs, oz, grams, stones, and more — all at once.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <!-- All-at-once inputs -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {[
+        { id: 'u-kg', label: 'Kilograms (kg)' },
+        { id: 'u-g', label: 'Grams (g)' },
+        { id: 'u-mg', label: 'Milligrams (mg)' },
+        { id: 'u-t', label: 'Metric Tons (t)' },
+        { id: 'u-lb', label: 'Pounds (lb)' },
+        { id: 'u-oz', label: 'Ounces (oz)' },
+        { id: 'u-st', label: 'Stones (st)' },
+        { id: 'u-st-lb', label: 'Stones & Pounds' },
+      ].map(({ id, label }) => (
+        <div>
+          <label class="label">{label}</label>
+          <input
+            id={id}
+            type="number"
+            step="any"
+            placeholder="0"
+            class={`input-field font-mono ${id === 'u-st-lb' ? 'bg-gray-50' : ''}`}
+            readonly={id === 'u-st-lb'}
+          />
+        </div>
+      ))}
+    </div>
+
+    <button id="clear-btn" class="btn-secondary w-full">Clear All</button>
+  </div>
+
+  <!-- Body weight reference -->
+  <div class="mt-6 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="px-5 py-3 border-b border-gray-100 bg-gray-50">
+      <h2 class="font-semibold text-gray-800 text-sm">Common Weight Reference</h2>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+          <tr>
+            <th class="px-4 py-2 text-left">Object</th>
+            <th class="px-4 py-2 text-right">kg</th>
+            <th class="px-4 py-2 text-right">lbs</th>
+            <th class="px-4 py-2 text-right">oz</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          {[
+            { name: 'Paperclip', kg: 0.001 },
+            { name: 'AAA Battery', kg: 0.0115 },
+            { name: 'Slice of bread', kg: 0.028 },
+            { name: 'Can of soda', kg: 0.384 },
+            { name: 'Loaf of bread', kg: 0.45 },
+            { name: '1 litre of water', kg: 1 },
+            { name: 'Average cat', kg: 4.5 },
+            { name: 'Average newborn', kg: 3.4 },
+            { name: 'Average adult (male)', kg: 80 },
+            { name: 'Average adult (female)', kg: 65 },
+          ].map(({ name, kg }) => (
+            <tr class="bg-white hover:bg-indigo-50 cursor-pointer ref-row" data-kg={kg}>
+              <td class="px-4 py-2.5 text-gray-700">{name}</td>
+              <td class="px-4 py-2.5 text-right text-gray-600">{kg >= 1 ? kg.toLocaleString() : kg}</td>
+              <td class="px-4 py-2.5 text-right text-gray-600">{(kg * 2.20462).toFixed(3)}</td>
+              <td class="px-4 py-2.5 text-right text-gray-600">{(kg * 35.274).toFixed(2)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="text-xs text-gray-400 px-4 py-2">Click any row to load its value into the converter</p>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How many pounds are in a kilogram?", a: "1 kilogram = 2.20462 pounds. To convert kg to lbs, multiply by 2.20462. To convert lbs to kg, divide by 2.20462 (or multiply by 0.453592)." },
+        { q: "How many ounces are in a pound?", a: "There are 16 ounces in one pound (avoirdupois). 1 pound = 453.592 grams = 16 ounces." },
+        { q: "What is a stone in pounds?", a: "A stone is a unit of weight used primarily in the UK and Ireland. 1 stone = 14 pounds = 6.35029 kilograms. Body weight in the UK is commonly expressed in stones and pounds." },
+        { q: "What is the difference between mass and weight?", a: "Mass is the amount of matter in an object (measured in kg or g) and does not change with location. Weight is the force of gravity acting on that mass (measured in Newtons). In everyday usage, 'weight' typically refers to mass." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}
+            <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const TO_KG: Record<string, number> = {
+    'u-kg': 1,
+    'u-g': 0.001,
+    'u-mg': 0.000001,
+    'u-t': 1000,
+    'u-lb': 0.453592,
+    'u-oz': 0.0283495,
+    'u-st': 6.35029,
+  };
+
+  const UNITS = Object.keys(TO_KG);
+  let updating = false;
+
+  function fmt(n: number): string {
+    if (n === 0) return '0';
+    if (Math.abs(n) < 0.0001) return n.toExponential(4);
+    if (Math.abs(n) >= 1000000) return n.toLocaleString('en-US', { maximumFractionDigits: 2 });
+    return parseFloat(n.toPrecision(10)).toString();
+  }
+
+  function setFromKg(kg: number, sourceId: string) {
+    if (updating) return;
+    updating = true;
+    UNITS.forEach(id => {
+      if (id === sourceId) return;
+      const val = kg / TO_KG[id];
+      (document.getElementById(id) as HTMLInputElement).value = fmt(val);
+    });
+    // Stones & pounds
+    const totalLb = kg / TO_KG['u-lb'];
+    const st = Math.floor(totalLb / 14);
+    const lb = parseFloat((totalLb % 14).toFixed(2));
+    (document.getElementById('u-st-lb') as HTMLInputElement).value = `${st} st ${lb} lb`;
+    updating = false;
+  }
+
+  function clearAll() {
+    [...UNITS, 'u-st-lb'].forEach(id => { (document.getElementById(id) as HTMLInputElement).value = ''; });
+  }
+
+  UNITS.forEach(id => {
+    document.getElementById(id)?.addEventListener('input', (e) => {
+      const val = parseFloat((e.target as HTMLInputElement).value);
+      if (isNaN(val)) { clearAll(); return; }
+      const kg = val * TO_KG[id];
+      setFromKg(kg, id);
+    });
+  });
+
+  document.getElementById('clear-btn')?.addEventListener('click', clearAll);
+
+  document.querySelectorAll<HTMLTableRowElement>('.ref-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const kg = parseFloat(row.dataset.kg!);
+      (document.getElementById('u-kg') as HTMLInputElement).value = fmt(kg);
+      setFromKg(kg, 'u-kg');
+    });
+  });
+</script>

@@ -1,0 +1,200 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Character Counter"
+  description="Count characters, words, sentences, and paragraphs in real time. See character limits for Twitter, Instagram, LinkedIn, and more."
+  slug="character-count"
+  category="Writing"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Character Counter</h1>
+  <p class="text-gray-500 mb-8">Count characters and words in real time. Check platform limits instantly.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <!-- Textarea -->
+    <div>
+      <div class="flex justify-between items-center mb-1">
+        <label class="label">Your Text</label>
+        <button id="clear-btn" class="text-xs text-gray-400 hover:text-red-500 transition-colors">Clear</button>
+      </div>
+      <textarea
+        id="text-input"
+        rows={8}
+        placeholder="Start typing or paste your text here…"
+        class="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y text-sm"
+      ></textarea>
+    </div>
+
+    <!-- Stats grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+      {[
+        { id: 's-chars', label: 'Characters' },
+        { id: 's-chars-no-space', label: 'No Spaces' },
+        { id: 's-words', label: 'Words' },
+        { id: 's-sentences', label: 'Sentences' },
+      ].map(({ id, label }) => (
+        <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-4">
+          <p id={id} class="text-3xl font-bold text-indigo-700">0</p>
+          <p class="text-xs text-indigo-500 mt-1">{label}</p>
+        </div>
+      ))}
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+      {[
+        { id: 's-paragraphs', label: 'Paragraphs' },
+        { id: 's-lines', label: 'Lines' },
+        { id: 's-read-time', label: 'Read Time' },
+        { id: 's-speak-time', label: 'Speak Time' },
+      ].map(({ id, label }) => (
+        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+          <p id={id} class="text-2xl font-bold text-gray-700">0</p>
+          <p class="text-xs text-gray-500 mt-1">{label}</p>
+        </div>
+      ))}
+    </div>
+
+    <!-- Platform limits -->
+    <div>
+      <p class="text-sm font-semibold text-gray-700 mb-3">Platform Character Limits</p>
+      <div class="space-y-2" id="platform-bars"></div>
+    </div>
+
+    <!-- Options -->
+    <div class="flex flex-wrap gap-3 pt-1">
+      <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+        <input type="checkbox" id="opt-ignore-spaces" class="accent-indigo-600" />
+        Ignore spaces in char count
+      </label>
+      <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+        <input type="checkbox" id="opt-ignore-newlines" class="accent-indigo-600" />
+        Ignore newlines
+      </label>
+    </div>
+  </div>
+
+  <!-- Keyword density -->
+  <div class="mt-6 bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+    <h2 class="font-semibold text-gray-800 text-sm mb-3">Top Keywords</h2>
+    <div id="keyword-list" class="text-sm text-gray-500 italic">Start typing to see keyword frequency…</div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "Does Twitter count characters differently?", a: "Yes. Twitter counts every character including spaces and punctuation, but URLs are always wrapped and count as 23 characters regardless of actual length. Emojis count as 2 characters each." },
+        { q: "What counts as a word?", a: "A word is any sequence of non-whitespace characters separated by spaces or punctuation. Numbers and hyphenated words each count as one word." },
+        { q: "How is reading time calculated?", a: "Reading time uses an average of 200 words per minute (typical silent reading speed). Speaking time uses 130 words per minute (average speech rate)." },
+        { q: "What is the Instagram caption limit?", a: "Instagram allows up to 2,200 characters for captions, but only the first 125 characters show without tapping 'more'. Keep your key message within the first 125 characters." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}
+            <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const PLATFORMS = [
+    { name: 'Twitter / X', limit: 280, color: 'bg-sky-500' },
+    { name: 'Instagram Caption', limit: 2200, color: 'bg-pink-500' },
+    { name: 'Instagram Bio', limit: 150, color: 'bg-purple-500' },
+    { name: 'LinkedIn Post', limit: 3000, color: 'bg-blue-600' },
+    { name: 'Facebook Post', limit: 63206, color: 'bg-blue-500' },
+    { name: 'YouTube Description', limit: 5000, color: 'bg-red-500' },
+    { name: 'TikTok Caption', limit: 2200, color: 'bg-gray-800' },
+    { name: 'SMS (1 message)', limit: 160, color: 'bg-green-500' },
+    { name: 'Meta Title (SEO)', limit: 60, color: 'bg-amber-500' },
+    { name: 'Meta Description (SEO)', limit: 160, color: 'bg-orange-500' },
+  ];
+
+  const STOP_WORDS = new Set(['the','a','an','and','or','but','in','on','at','to','for','of','with','by','from','is','it','its','be','as','was','are','were','been','has','have','had','do','does','did','will','would','could','should','may','might','that','this','these','those','i','you','he','she','we','they','me','him','her','us','them','my','your','his','our','their']);
+
+  const textarea = document.getElementById('text-input') as HTMLTextAreaElement;
+
+  function buildBars(charCount: number) {
+    const container = document.getElementById('platform-bars')!;
+    container.innerHTML = PLATFORMS.map(({ name, limit, color }) => {
+      const pct = Math.min((charCount / limit) * 100, 100);
+      const over = charCount > limit;
+      const remaining = limit - charCount;
+      return `<div>
+        <div class="flex justify-between text-xs mb-1">
+          <span class="text-gray-600 font-medium">${name}</span>
+          <span class="${over ? 'text-red-500 font-semibold' : 'text-gray-400'}">${over ? `${Math.abs(remaining)} over` : `${remaining} left`} / ${limit}</span>
+        </div>
+        <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+          <div class="h-full rounded-full transition-all duration-200 ${over ? 'bg-red-500' : color}" style="width:${pct}%"></div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function update() {
+    let text = textarea.value;
+    const ignoreSpaces = (document.getElementById('opt-ignore-spaces') as HTMLInputElement).checked;
+    const ignoreNewlines = (document.getElementById('opt-ignore-newlines') as HTMLInputElement).checked;
+
+    let countText = text;
+    if (ignoreSpaces) countText = countText.replace(/ /g, '');
+    if (ignoreNewlines) countText = countText.replace(/\n/g, '');
+
+    const chars = countText.length;
+    const charsNoSpace = text.replace(/\s/g, '').length;
+    const words = text.trim() === '' ? 0 : text.trim().split(/\s+/).length;
+    const sentences = text.trim() === '' ? 0 : (text.match(/[^.!?]*[.!?]+/g) || []).length;
+    const paragraphs = text.trim() === '' ? 0 : text.trim().split(/\n\s*\n/).filter(p => p.trim()).length || (text.trim() ? 1 : 0);
+    const lines = text === '' ? 0 : text.split('\n').length;
+    const readMin = Math.ceil(words / 200);
+    const speakMin = Math.ceil(words / 130);
+
+    document.getElementById('s-chars')!.textContent = chars.toLocaleString();
+    document.getElementById('s-chars-no-space')!.textContent = charsNoSpace.toLocaleString();
+    document.getElementById('s-words')!.textContent = words.toLocaleString();
+    document.getElementById('s-sentences')!.textContent = sentences.toLocaleString();
+    document.getElementById('s-paragraphs')!.textContent = paragraphs.toLocaleString();
+    document.getElementById('s-lines')!.textContent = lines.toLocaleString();
+    document.getElementById('s-read-time')!.textContent = words < 200 ? `<1 min` : `${readMin} min`;
+    document.getElementById('s-speak-time')!.textContent = words < 130 ? `<1 min` : `${speakMin} min`;
+
+    buildBars(text.length);
+    updateKeywords(text);
+  }
+
+  function updateKeywords(text: string) {
+    const container = document.getElementById('keyword-list')!;
+    if (!text.trim()) { container.innerHTML = '<span class="text-gray-500 italic">Start typing to see keyword frequency…</span>'; return; }
+    const freq: Record<string, number> = {};
+    text.toLowerCase().match(/[a-z']{3,}/g)?.forEach(w => {
+      if (!STOP_WORDS.has(w)) freq[w] = (freq[w] || 0) + 1;
+    });
+    const sorted = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 10);
+    if (!sorted.length) { container.innerHTML = '<span class="text-gray-500 italic">No significant keywords found.</span>'; return; }
+    const max = sorted[0][1];
+    container.innerHTML = sorted.map(([word, count]) => {
+      const pct = Math.round((count / max) * 100);
+      return `<div class="flex items-center gap-3 mb-1.5">
+        <span class="w-28 text-gray-700 font-medium truncate">${word}</span>
+        <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+          <div class="h-full bg-indigo-400 rounded-full" style="width:${pct}%"></div>
+        </div>
+        <span class="w-8 text-right text-xs text-gray-500">${count}</span>
+      </div>`;
+    }).join('');
+  }
+
+  textarea.addEventListener('input', update);
+  document.getElementById('opt-ignore-spaces')?.addEventListener('change', update);
+  document.getElementById('opt-ignore-newlines')?.addEventListener('change', update);
+  document.getElementById('clear-btn')?.addEventListener('click', () => { textarea.value = ''; update(); textarea.focus(); });
+
+  update();
+</script>

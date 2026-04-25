@@ -1,0 +1,207 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Temperature Converter"
+  description="Convert temperature between Celsius, Fahrenheit, Kelvin, and Rankine instantly. See the formula for each conversion."
+  slug="temperature-converter"
+  category="Unit Converters"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Temperature Converter</h1>
+  <p class="text-gray-500 mb-8">Type in any temperature field and all others update instantly.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      {[
+        { id: 'celsius', label: 'Celsius', unit: '°C' },
+        { id: 'fahrenheit', label: 'Fahrenheit', unit: '°F' },
+        { id: 'kelvin', label: 'Kelvin', unit: 'K' },
+        { id: 'rankine', label: 'Rankine', unit: '°R' },
+      ].map(({ id, label, unit }) => (
+        <div>
+          <label class="label">{label} ({unit})</label>
+          <div class="relative">
+            <input
+              id={id}
+              type="number"
+              placeholder={`Enter ${label}`}
+              class="input-field pr-12"
+            />
+            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium text-sm pointer-events-none">{unit}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <button id="clear-btn" class="btn-secondary w-full mt-5">Clear All</button>
+
+    <!-- Formula display -->
+    <div id="formula-box" class="hidden mt-5 bg-gray-50 border border-gray-200 rounded-xl p-4">
+      <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Conversion Formulas Used</p>
+      <div id="formulas" class="space-y-1 text-sm text-gray-600 font-mono"></div>
+    </div>
+  </div>
+
+  <!-- Common Reference -->
+  <div class="mt-8 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="px-5 py-3 border-b border-gray-100 bg-gray-50">
+      <h2 class="font-semibold text-gray-800 text-sm">Common Temperature References</h2>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+          <tr>
+            <th class="px-4 py-2 text-left">Description</th>
+            <th class="px-4 py-2 text-right">°C</th>
+            <th class="px-4 py-2 text-right">°F</th>
+            <th class="px-4 py-2 text-right">K</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          {[
+            { label: 'Water freezes', c: 0, f: 32, k: 273.15 },
+            { label: 'Room temperature', c: 22, f: 71.6, k: 295.15 },
+            { label: 'Human body', c: 37, f: 98.6, k: 310.15 },
+            { label: 'Water boils', c: 100, f: 212, k: 373.15 },
+            { label: 'Absolute zero', c: -273.15, f: -459.67, k: 0 },
+          ].map(row => (
+            <tr class="hover:bg-gray-50 cursor-pointer ref-row" data-celsius={row.c}>
+              <td class="px-4 py-2.5 text-gray-700">{row.label}</td>
+              <td class="px-4 py-2.5 text-right text-gray-700">{row.c}</td>
+              <td class="px-4 py-2.5 text-right text-gray-700">{row.f}</td>
+              <td class="px-4 py-2.5 text-right text-gray-700">{row.k}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-3">Temperature Conversion Formulas</h2>
+    <div class="grid sm:grid-cols-2 gap-3 text-sm">
+      {[
+        { from: 'Celsius', to: 'Fahrenheit', formula: '°F = (°C × 9/5) + 32' },
+        { from: 'Fahrenheit', to: 'Celsius', formula: '°C = (°F − 32) × 5/9' },
+        { from: 'Celsius', to: 'Kelvin', formula: 'K = °C + 273.15' },
+        { from: 'Kelvin', to: 'Celsius', formula: '°C = K − 273.15' },
+        { from: 'Fahrenheit', to: 'Kelvin', formula: 'K = (°F + 459.67) × 5/9' },
+        { from: 'Celsius', to: 'Rankine', formula: '°R = (°C + 273.15) × 9/5' },
+      ].map(({ from, to, formula }) => (
+        <div class="bg-gray-50 border border-gray-200 rounded-lg p-3">
+          <p class="text-xs text-gray-500 mb-1">{from} → {to}</p>
+          <p class="font-mono text-gray-800">{formula}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How do I convert Celsius to Fahrenheit?", a: "Multiply the Celsius temperature by 9/5 (or 1.8), then add 32. For example: 100°C × 1.8 + 32 = 212°F." },
+        { q: "What is 37°C in Fahrenheit?", a: "37°C equals 98.6°F. This is normal human body temperature." },
+        { q: "What is absolute zero in Celsius and Fahrenheit?", a: "Absolute zero is −273.15°C or −459.67°F. It is the lowest theoretically possible temperature — 0 Kelvin." },
+        { q: "What is the difference between Kelvin and Celsius?", a: "Kelvin and Celsius use the same scale size (1 degree difference is the same), but Kelvin starts at absolute zero. To convert: K = °C + 273.15." },
+        { q: "What is room temperature in Fahrenheit?", a: "Room temperature is typically considered 68–72°F (20–22°C) in most standards." }
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}
+            <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const inputs = {
+    celsius: document.getElementById('celsius') as HTMLInputElement,
+    fahrenheit: document.getElementById('fahrenheit') as HTMLInputElement,
+    kelvin: document.getElementById('kelvin') as HTMLInputElement,
+    rankine: document.getElementById('rankine') as HTMLInputElement,
+  };
+
+  const fmt = (n: number) => parseFloat(n.toFixed(4)).toString();
+
+  function fromCelsius(c: number) {
+    inputs.fahrenheit.value = fmt(c * 9 / 5 + 32);
+    inputs.kelvin.value = fmt(c + 273.15);
+    inputs.rankine.value = fmt((c + 273.15) * 9 / 5);
+    showFormulas('celsius', c);
+  }
+  function fromFahrenheit(f: number) {
+    const c = (f - 32) * 5 / 9;
+    inputs.celsius.value = fmt(c);
+    inputs.kelvin.value = fmt(c + 273.15);
+    inputs.rankine.value = fmt((c + 273.15) * 9 / 5);
+    showFormulas('fahrenheit', f);
+  }
+  function fromKelvin(k: number) {
+    const c = k - 273.15;
+    inputs.celsius.value = fmt(c);
+    inputs.fahrenheit.value = fmt(c * 9 / 5 + 32);
+    inputs.rankine.value = fmt(k * 9 / 5);
+    showFormulas('kelvin', k);
+  }
+  function fromRankine(r: number) {
+    const k = r * 5 / 9;
+    const c = k - 273.15;
+    inputs.celsius.value = fmt(c);
+    inputs.fahrenheit.value = fmt(c * 9 / 5 + 32);
+    inputs.kelvin.value = fmt(k);
+    showFormulas('rankine', r);
+  }
+
+  function showFormulas(from: string, val: number) {
+    const box = document.getElementById('formula-box')!;
+    const el = document.getElementById('formulas')!;
+    const c = parseFloat(inputs.celsius.value);
+    el.innerHTML = [
+      `°F = (${val}°C × 9/5) + 32 = ${inputs.fahrenheit.value}°F`,
+      `K = ${val}°C + 273.15 = ${inputs.kelvin.value} K`,
+      `°R = (${val}°C + 273.15) × 9/5 = ${inputs.rankine.value}°R`,
+    ].map(f => `<p>${f}</p>`).join('');
+    box.classList.remove('hidden');
+  }
+
+  let isUpdating = false;
+
+  function handleInput(source: string) {
+    return () => {
+      if (isUpdating) return;
+      isUpdating = true;
+      const val = parseFloat((inputs as any)[source].value);
+      if (!isNaN(val)) {
+        if (source === 'celsius') fromCelsius(val);
+        else if (source === 'fahrenheit') fromFahrenheit(val);
+        else if (source === 'kelvin') fromKelvin(val);
+        else if (source === 'rankine') fromRankine(val);
+      }
+      isUpdating = false;
+    };
+  }
+
+  Object.keys(inputs).forEach(key => {
+    inputs[key as keyof typeof inputs].addEventListener('input', handleInput(key));
+  });
+
+  document.getElementById('clear-btn')?.addEventListener('click', () => {
+    Object.values(inputs).forEach(i => i.value = '');
+    document.getElementById('formula-box')!.classList.add('hidden');
+  });
+
+  // Reference row click
+  document.querySelectorAll<HTMLTableRowElement>('.ref-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const c = parseFloat(row.dataset.celsius!);
+      inputs.celsius.value = c.toString();
+      fromCelsius(c);
+    });
+  });
+</script>

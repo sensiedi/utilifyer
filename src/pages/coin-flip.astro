@@ -1,0 +1,160 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Coin Flip"
+  description="Flip a virtual coin online. Get heads or tails instantly. Flip multiple times and track your statistics."
+  slug="coin-flip"
+  category="Random"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Coin Flip</h1>
+  <p class="text-gray-500 mb-8">Flip a fair virtual coin. Heads or tails?</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-6">
+
+    <!-- Coin display -->
+    <div class="flex flex-col items-center gap-6">
+      <div id="coin" class="w-36 h-36 rounded-full flex items-center justify-center text-6xl shadow-lg border-4 border-yellow-300 bg-gradient-to-br from-yellow-200 to-yellow-400 cursor-pointer select-none transition-all duration-300 hover:scale-105">
+        🪙
+      </div>
+      <p id="coin-label" class="text-2xl font-bold text-gray-700">Click to flip</p>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+      <button id="flip-btn" class="btn-primary py-3 text-base">Flip Coin</button>
+      <div>
+        <label class="label text-center">Flip multiple times</label>
+        <div class="flex gap-2">
+          <input id="bulk-count" type="number" value="10" min="1" max="10000" class="input-field" />
+          <button id="bulk-btn" class="btn-secondary flex-shrink-0 px-4">Go</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div id="stats" class="hidden space-y-3">
+      <div class="grid grid-cols-3 gap-3 text-center">
+        <div class="result-box">
+          <p id="stat-heads" class="text-3xl font-bold text-indigo-900">0</p>
+          <p class="text-xs text-indigo-600 mt-1">Heads</p>
+        </div>
+        <div class="result-box">
+          <p id="stat-tails" class="text-3xl font-bold text-indigo-900">0</p>
+          <p class="text-xs text-indigo-600 mt-1">Tails</p>
+        </div>
+        <div class="result-box">
+          <p id="stat-total" class="text-3xl font-bold text-indigo-900">0</p>
+          <p class="text-xs text-indigo-600 mt-1">Total Flips</p>
+        </div>
+      </div>
+
+      <!-- Bar -->
+      <div class="flex h-4 rounded-full overflow-hidden gap-0.5">
+        <div id="heads-bar" class="bg-indigo-500 transition-all duration-500 rounded-l-full" style="width:50%"></div>
+        <div id="tails-bar" class="bg-rose-400 transition-all duration-500 rounded-r-full" style="width:50%"></div>
+      </div>
+      <div class="flex justify-between text-xs text-gray-500">
+        <span>Heads: <span id="heads-pct" class="font-semibold text-indigo-600">50%</span></span>
+        <span>Tails: <span id="tails-pct" class="font-semibold text-rose-500">50%</span></span>
+      </div>
+
+      <div class="flex justify-between items-center">
+        <p class="text-xs text-gray-400" id="streak-label"></p>
+        <button id="reset-btn" class="text-xs text-gray-400 hover:text-red-500 transition-colors">Reset stats</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "Is this coin flip truly random?", a: "Yes. This tool uses the browser's crypto.getRandomValues() API which produces cryptographically secure random results — far more reliable than a regular Math.random() call." },
+        { q: "Why doesn't it land on heads exactly 50% of the time?", a: "Each flip is an independent event with a 50/50 probability, but over a small number of flips, streaks and imbalances are completely normal. With thousands of flips, results will converge toward 50/50." },
+        { q: "Can I flip 1000 coins at once?", a: "Yes. Enter any number up to 10,000 in the 'Flip multiple times' field and click Go. The stats will update instantly." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}
+            <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  let heads = 0, tails = 0, streak = 0, lastSide = '';
+
+  function flip(): 'heads' | 'tails' {
+    const arr = new Uint8Array(1);
+    crypto.getRandomValues(arr);
+    return arr[0] % 2 === 0 ? 'heads' : 'tails';
+  }
+
+  function updateStats() {
+    const total = heads + tails;
+    if (total === 0) return;
+    const hPct = Math.round((heads / total) * 100);
+    const tPct = 100 - hPct;
+    document.getElementById('stat-heads')!.textContent = heads.toLocaleString();
+    document.getElementById('stat-tails')!.textContent = tails.toLocaleString();
+    document.getElementById('stat-total')!.textContent = total.toLocaleString();
+    document.getElementById('heads-bar')!.style.width = hPct + '%';
+    document.getElementById('tails-bar')!.style.width = tPct + '%';
+    document.getElementById('heads-pct')!.textContent = hPct + '%';
+    document.getElementById('tails-pct')!.textContent = tPct + '%';
+    document.getElementById('streak-label')!.textContent = streak > 1 ? `🔥 ${streak}× ${lastSide} streak` : '';
+    document.getElementById('stats')!.classList.remove('hidden');
+  }
+
+  function doFlip() {
+    const coin = document.getElementById('coin')!;
+    const label = document.getElementById('coin-label')!;
+    coin.classList.add('scale-90', 'opacity-50');
+    setTimeout(() => {
+      const result = flip();
+      if (result === 'heads') { heads++; coin.textContent = '⭕'; coin.className = coin.className.replace('from-yellow-200 to-yellow-400', '').trim() + ' from-yellow-200 to-yellow-400'; }
+      else { tails++; coin.textContent = '❌'; }
+      if (result === lastSide) streak++; else streak = 1;
+      lastSide = result;
+      label.textContent = result === 'heads' ? '⭕ Heads!' : '❌ Tails!';
+      label.className = `text-2xl font-bold ${result === 'heads' ? 'text-indigo-700' : 'text-rose-600'}`;
+      coin.classList.remove('scale-90', 'opacity-50');
+      updateStats();
+    }, 150);
+  }
+
+  document.getElementById('flip-btn')?.addEventListener('click', doFlip);
+  document.getElementById('coin')?.addEventListener('click', doFlip);
+
+  document.getElementById('bulk-btn')?.addEventListener('click', () => {
+    const count = Math.min(parseInt((document.getElementById('bulk-count') as HTMLInputElement).value) || 10, 10000);
+    const arr = new Uint8Array(count);
+    crypto.getRandomValues(arr);
+    let lastResult = '';
+    arr.forEach(byte => {
+      const result = byte % 2 === 0 ? 'heads' : 'tails';
+      if (result === 'heads') heads++; else tails++;
+      if (result === lastResult) streak++; else { streak = 1; lastResult = result; }
+      lastSide = result;
+    });
+    const coin = document.getElementById('coin')!;
+    const label = document.getElementById('coin-label')!;
+    coin.textContent = lastSide === 'heads' ? '⭕' : '❌';
+    label.textContent = `Last: ${lastSide === 'heads' ? '⭕ Heads' : '❌ Tails'} (${count} flips)`;
+    label.className = `text-2xl font-bold ${lastSide === 'heads' ? 'text-indigo-700' : 'text-rose-600'}`;
+    updateStats();
+  });
+
+  document.getElementById('reset-btn')?.addEventListener('click', () => {
+    heads = tails = streak = 0; lastSide = '';
+    document.getElementById('coin')!.textContent = '🪙';
+    document.getElementById('coin-label')!.textContent = 'Click to flip';
+    document.getElementById('coin-label')!.className = 'text-2xl font-bold text-gray-700';
+    document.getElementById('stats')!.classList.add('hidden');
+  });
+</script>

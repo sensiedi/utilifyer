@@ -1,0 +1,186 @@
+---
+import '../styles/global.css';
+import tools from '../data/tools.json';
+
+const categories = [...new Set(tools.map(t => t.category))].sort();
+const liveTools = tools.filter(t => t.status === 'live').sort((a, b) => a.priority - b.priority);
+const toolsByCategory = categories.map(cat => ({
+  name: cat,
+  tools: liveTools.filter(t => t.category === cat)
+})).filter(c => c.tools.length > 0);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Utilifyer — Free Online Tools & Calculators</title>
+    <meta name="description" content="Free online tools and calculators for everyday tasks. Percentage calculators, unit converters, text tools, health calculators, finance tools and more." />
+    <link rel="canonical" href="https://utilifyer.com" />
+    <meta property="og:title" content="Utilifyer — Free Online Tools & Calculators" />
+    <meta property="og:description" content="Free online tools and calculators for everyday tasks." />
+    <meta property="og:url" content="https://utilifyer.com" />
+    <meta property="og:type" content="website" />
+    <link rel="icon" href="/favicon.ico" />
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Utilifyer",
+      "url": "https://utilifyer.com",
+      "description": "Free online tools and calculators for everyday tasks.",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://utilifyer.com/?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    })} />
+  </head>
+
+  <body class="min-h-screen flex flex-col bg-gray-50">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200">
+      <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-2">
+          <span class="text-2xl">🛠️</span>
+          <span class="font-bold text-xl text-indigo-600">Utilifyer</span>
+        </div>
+        <nav class="hidden md:flex items-center gap-1 text-sm">
+          {categories.map(cat => (
+            <a
+              href={`/category/${cat.toLowerCase().replace(/ /g, '-')}`}
+              class="px-3 py-1.5 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
+            >
+              {cat}
+            </a>
+          ))}
+        </nav>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="bg-gradient-to-br from-indigo-600 to-indigo-800 text-white py-16 px-4 text-center">
+      <h1 class="text-4xl sm:text-5xl font-bold mb-4">Free Online Tools & Calculators</h1>
+      <p class="text-indigo-200 text-lg max-w-xl mx-auto mb-8">
+        {liveTools.length} free tools for everyday tasks — no sign up, no downloads, works instantly.
+      </p>
+      <!-- Search -->
+      <div class="max-w-lg mx-auto relative">
+        <input
+          id="search"
+          type="text"
+          placeholder="Search tools… e.g. mortgage, BMI, convert"
+          class="w-full px-5 pr-12 py-3.5 rounded-xl bg-white text-gray-800 text-base shadow-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-white/60"
+        />
+        <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+      </div>
+    </section>
+
+    <main class="flex-1 max-w-6xl mx-auto w-full px-4 py-10">
+
+      <!-- Search Results (hidden by default) -->
+      <div id="search-results" class="hidden mb-10">
+        <h2 class="section-heading">Search Results</h2>
+        <div id="search-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </div>
+
+      <!-- Category Sections -->
+      <div id="categories-section">
+        {toolsByCategory.map(({ name, tools: catTools }) => (
+          <section class="mb-12">
+            <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <span class="w-1 h-6 bg-indigo-500 rounded-full inline-block"></span>
+              {name}
+            </h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {catTools.map(tool => (
+                <a href={`/${tool.slug}`} class="tool-card flex items-start gap-4 no-underline group">
+                  <span class="text-3xl">{tool.icon}</span>
+                  <div class="flex-1 min-w-0">
+                    <div class="font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">{tool.title}</div>
+                    <div class="text-sm text-gray-500 mt-1 line-clamp-2">{tool.description}</div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </section>
+        ))}
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-6">
+      <div class="max-w-6xl mx-auto px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+        <div class="font-semibold text-gray-700 flex items-center gap-2">
+          <span>🛠️</span> Utilifyer
+        </div>
+        <nav class="flex items-center gap-4">
+          <a href="/about" class="hover:text-indigo-600 transition-colors">About</a>
+          <a href="/privacy-policy" class="hover:text-indigo-600 transition-colors">Privacy</a>
+          <a href="/terms-of-service" class="hover:text-indigo-600 transition-colors">Terms</a>
+          <a href="/contact" class="hover:text-indigo-600 transition-colors">Contact</a>
+        </nav>
+        <p class="text-xs text-gray-400">© {new Date().getFullYear()} Utilifyer</p>
+      </div>
+    </footer>
+
+  </body>
+</html>
+
+<script>
+  const searchInput = document.getElementById('search') as HTMLInputElement;
+  const searchResults = document.getElementById('search-results') as HTMLElement;
+  const searchGrid = document.getElementById('search-grid') as HTMLElement;
+  const categoriesSection = document.getElementById('categories-section') as HTMLElement;
+
+  const tools = await fetch('/api/tools.json').then(r => r.json()).catch(() => []);
+
+  // Inline tool data for search (avoids extra fetch)
+  const toolData: {slug: string; title: string; description: string; category: string; icon: string}[] = JSON.parse(
+    document.getElementById('tool-data')?.textContent || '[]'
+  );
+
+  searchInput?.addEventListener('input', () => {
+    const q = searchInput.value.trim().toLowerCase();
+    if (!q) {
+      searchResults.classList.add('hidden');
+      categoriesSection.classList.remove('hidden');
+      return;
+    }
+
+    const matches = toolData.filter(t =>
+      t.title.toLowerCase().includes(q) ||
+      t.description.toLowerCase().includes(q) ||
+      t.category.toLowerCase().includes(q)
+    );
+
+    searchResults.classList.remove('hidden');
+    categoriesSection.classList.add('hidden');
+
+    if (matches.length === 0) {
+      searchGrid.innerHTML = '<p class="text-gray-500 col-span-3">No tools found. Try a different search.</p>';
+      return;
+    }
+
+    searchGrid.innerHTML = matches.map(tool => `
+      <a href="/${tool.slug}" class="tool-card flex items-start gap-4 no-underline group">
+        <span class="text-3xl">${tool.icon}</span>
+        <div>
+          <div class="font-semibold text-gray-900 group-hover:text-indigo-600">${tool.title}</div>
+          <div class="text-sm text-gray-500 mt-1">${tool.description}</div>
+        </div>
+      </a>
+    `).join('');
+  });
+</script>
+
+<!-- Inline tool data for client-side search -->
+<script id="tool-data" type="application/json" set:html={JSON.stringify(liveTools.map(t => ({
+  slug: t.slug,
+  title: t.title,
+  description: t.description,
+  category: t.category,
+  icon: t.icon
+})))} />

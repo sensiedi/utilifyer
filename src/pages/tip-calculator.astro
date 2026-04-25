@@ -1,0 +1,169 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Tip Calculator"
+  description="Calculate tip amount and total bill. Split the bill between any number of people easily."
+  slug="tip-calculator"
+  category="Finance"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Tip Calculator</h1>
+  <p class="text-gray-500 mb-8">Calculate tip and split the bill between any number of people.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div>
+      <label class="label">Bill Amount ($)</label>
+      <input id="bill" type="number" min="0" step="0.01" placeholder="e.g. 85.50" class="input-field" />
+    </div>
+
+    <!-- Tip % Quick Select -->
+    <div>
+      <label class="label">Tip Percentage</label>
+      <div class="flex gap-2 flex-wrap mb-3">
+        {[10, 15, 18, 20, 25].map(pct => (
+          <button data-pct={pct} class="tip-preset px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
+            {pct}%
+          </button>
+        ))}
+        <button data-pct="custom" class="tip-preset px-4 py-2 rounded-lg border border-gray-200 text-sm font-medium text-gray-600 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors">
+          Custom
+        </button>
+      </div>
+      <input id="tip-pct" type="number" min="0" max="100" placeholder="Or enter custom %" class="input-field" />
+    </div>
+
+    <div>
+      <label class="label">Split Between</label>
+      <div class="flex items-center gap-3">
+        <button id="split-minus" class="w-10 h-10 rounded-lg border border-gray-300 text-xl font-bold text-gray-600 hover:bg-gray-100 transition-colors flex items-center justify-center">−</button>
+        <span id="split-count" class="text-2xl font-bold text-gray-800 w-8 text-center">1</span>
+        <button id="split-plus" class="w-10 h-10 rounded-lg border border-gray-300 text-xl font-bold text-gray-600 hover:bg-gray-100 transition-colors flex items-center justify-center">+</button>
+        <span class="text-sm text-gray-500">person(s)</span>
+      </div>
+    </div>
+
+    <div id="result" class="hidden">
+      <div class="grid grid-cols-3 gap-3">
+        <div class="result-box text-center">
+          <p class="text-xs text-indigo-600 font-medium mb-1">Tip Amount</p>
+          <p id="tip-amount" class="text-2xl font-bold text-indigo-900"></p>
+        </div>
+        <div class="result-box text-center">
+          <p class="text-xs text-indigo-600 font-medium mb-1">Total Bill</p>
+          <p id="total-bill" class="text-2xl font-bold text-indigo-900"></p>
+        </div>
+        <div class="result-box text-center">
+          <p class="text-xs text-indigo-600 font-medium mb-1">Per Person</p>
+          <p id="per-person" class="text-2xl font-bold text-indigo-900"></p>
+        </div>
+      </div>
+      <div class="mt-3 text-center text-sm text-gray-500">
+        Tip per person: <span id="tip-per-person" class="font-semibold text-gray-700"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Tip Guide by Service</h2>
+    <div class="border border-gray-200 rounded-xl overflow-hidden text-sm">
+      <table class="w-full">
+        <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+          <tr>
+            <th class="px-4 py-2 text-left">Service</th>
+            <th class="px-4 py-2 text-left">Suggested Tip</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          {[
+            { service: 'Restaurant (sit-down)', tip: '15% – 20%' },
+            { service: 'Food delivery', tip: '10% – 15%' },
+            { service: 'Taxi / rideshare', tip: '10% – 20%' },
+            { service: 'Hair salon / barbershop', tip: '15% – 20%' },
+            { service: 'Hotel housekeeping', tip: '$2–5 per night' },
+            { service: 'Coffee / counter service', tip: '10% – 15%' },
+            { service: 'Exceptional service', tip: '25% or more' },
+          ].map(r => (
+            <tr class="bg-white hover:bg-gray-50">
+              <td class="px-4 py-2.5 text-gray-700">{r.service}</td>
+              <td class="px-4 py-2.5 text-gray-700 font-medium">{r.tip}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How much should I tip at a restaurant?", a: "Standard restaurant tipping etiquette in the US is 15–20% for sit-down service. 20% is easy to calculate — just move the decimal one place left and double it." },
+        { q: "How do I calculate 20% tip quickly?", a: "To calculate 20% mentally: take 10% of the bill (move the decimal left one place), then double that number. For a $65 bill: 10% = $6.50, doubled = $13.00 tip." },
+        { q: "Should I tip on the pre-tax or post-tax amount?", a: "Both are acceptable. Tipping on the pre-tax amount is technically more traditional, but the difference is small and tipping on the total is simpler." },
+        { q: "How do I split a bill unevenly?", a: "This calculator splits the total equally. For uneven splits, calculate each person's share of the bill separately and apply the same tip percentage to each." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}
+            <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  let splitCount = 1;
+
+  const billInput = document.getElementById('bill') as HTMLInputElement;
+  const tipInput = document.getElementById('tip-pct') as HTMLInputElement;
+
+  function calculate() {
+    const bill = parseFloat(billInput.value);
+    const tipPct = parseFloat(tipInput.value);
+    if (isNaN(bill) || isNaN(tipPct) || bill <= 0) {
+      document.getElementById('result')!.classList.add('hidden');
+      return;
+    }
+    const tip = bill * (tipPct / 100);
+    const total = bill + tip;
+    document.getElementById('tip-amount')!.textContent = `$${tip.toFixed(2)}`;
+    document.getElementById('total-bill')!.textContent = `$${total.toFixed(2)}`;
+    document.getElementById('per-person')!.textContent = `$${(total / splitCount).toFixed(2)}`;
+    document.getElementById('tip-per-person')!.textContent = `$${(tip / splitCount).toFixed(2)}`;
+    document.getElementById('result')!.classList.remove('hidden');
+  }
+
+  // Preset buttons
+  document.querySelectorAll<HTMLButtonElement>('.tip-preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.tip-preset').forEach(b => {
+        b.classList.remove('border-indigo-500', 'bg-indigo-50', 'text-indigo-600');
+        b.classList.add('border-gray-200', 'text-gray-600');
+      });
+      btn.classList.add('border-indigo-500', 'bg-indigo-50', 'text-indigo-600');
+      if (btn.dataset.pct !== 'custom') {
+        tipInput.value = btn.dataset.pct!;
+        calculate();
+      } else {
+        tipInput.value = '';
+        tipInput.focus();
+      }
+    });
+  });
+
+  // Split controls
+  document.getElementById('split-minus')?.addEventListener('click', () => {
+    if (splitCount > 1) { splitCount--; document.getElementById('split-count')!.textContent = splitCount.toString(); calculate(); }
+  });
+  document.getElementById('split-plus')?.addEventListener('click', () => {
+    splitCount++; document.getElementById('split-count')!.textContent = splitCount.toString(); calculate();
+  });
+
+  billInput.addEventListener('input', calculate);
+  tipInput.addEventListener('input', calculate);
+</script>

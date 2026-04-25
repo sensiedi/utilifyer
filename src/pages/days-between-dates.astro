@@ -1,0 +1,192 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Days Between Dates"
+  description="Calculate the exact number of days, weeks, months, and years between any two dates. Toggle business days only."
+  slug="days-between-dates"
+  category="Date & Time"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Days Between Dates</h1>
+  <p class="text-gray-500 mb-8">Count the exact number of days between any two dates.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Start Date</label>
+        <input id="start-date" type="date" class="input-field" />
+      </div>
+      <div>
+        <label class="label">End Date</label>
+        <input id="end-date" type="date" class="input-field" />
+      </div>
+    </div>
+
+    <label class="flex items-center gap-3 cursor-pointer select-none">
+      <div class="relative">
+        <input id="business-days" type="checkbox" class="sr-only peer" />
+        <div class="w-10 h-6 bg-gray-200 rounded-full peer-checked:bg-indigo-600 transition-colors"></div>
+        <div class="absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow transition-transform peer-checked:translate-x-4"></div>
+      </div>
+      <span class="text-sm font-medium text-gray-700">Business days only (Mon–Fri)</span>
+    </label>
+
+    <button id="calc-btn" class="btn-primary w-full">Calculate</button>
+
+    <div id="result" class="hidden space-y-4">
+      <div class="result-box">
+        <p class="text-sm text-indigo-700 font-medium mb-3">Difference</p>
+        <p id="main-result" class="text-3xl font-bold text-indigo-900"></p>
+        <p id="direction-note" class="text-xs text-indigo-600 mt-1"></p>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {[
+          { id: 'res-days', label: 'Total Days' },
+          { id: 'res-weeks', label: 'Total Weeks' },
+          { id: 'res-months', label: 'Approx. Months' },
+          { id: 'res-years', label: 'Approx. Years' },
+        ].map(({ id, label }) => (
+          <div class="bg-white border border-indigo-100 rounded-xl p-3 text-center">
+            <p id={id} class="text-xl font-bold text-indigo-700"></p>
+            <p class="text-xs text-gray-500 mt-1">{label}</p>
+          </div>
+        ))}
+      </div>
+
+      <div id="business-result" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
+        <span class="font-semibold">Business days: </span>
+        <span id="biz-count"></span>
+        <span> (excludes weekends)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick date shortcuts -->
+  <div class="mt-8 bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
+    <h2 class="font-semibold text-gray-800 text-sm mb-3">Quick Calculations</h2>
+    <div class="flex flex-wrap gap-2">
+      {[
+        { label: 'Today → End of Year', startOffset: 0, endLabel: 'end-of-year' },
+        { label: 'Last 30 days', startOffset: -30, endLabel: 'today' },
+        { label: 'Last 90 days', startOffset: -90, endLabel: 'today' },
+        { label: 'Last 365 days', startOffset: -365, endLabel: 'today' },
+      ].map(({ label, startOffset, endLabel }) => (
+        <button
+          class="quick-btn px-3 py-1.5 rounded-lg border border-gray-200 text-sm text-gray-600 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+          data-start-offset={startOffset}
+          data-end-label={endLabel}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "Does the calculator include the start and end date?", a: "The result shows the number of days between the two dates, not including the start date but including the end date. To include both, add 1 to the result." },
+        { q: "What counts as a business day?", a: "Business days are Monday through Friday, excluding weekends. This calculator does not account for public holidays — it only excludes Saturdays and Sundays." },
+        { q: "How many days are between January 1 and December 31?", a: "There are 364 days between January 1 and December 31 (not including Jan 1, including Dec 31). In a leap year the count is still 364 for those specific dates." },
+        { q: "Can I calculate days in the future?", a: "Yes. Simply set the start date to today and the end date to a future date to count down how many days remain." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}
+            <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const startInput = document.getElementById('start-date') as HTMLInputElement;
+  const endInput = document.getElementById('end-date') as HTMLInputElement;
+  const businessToggle = document.getElementById('business-days') as HTMLInputElement;
+
+  // Default to today → 30 days from now
+  const today = new Date();
+  const future = new Date(today);
+  future.setDate(future.getDate() + 30);
+  startInput.value = today.toISOString().split('T')[0];
+  endInput.value = future.toISOString().split('T')[0];
+
+  function countBusinessDays(start: Date, end: Date): number {
+    let count = 0;
+    const cur = new Date(start);
+    while (cur <= end) {
+      const day = cur.getDay();
+      if (day !== 0 && day !== 6) count++;
+      cur.setDate(cur.getDate() + 1);
+    }
+    return count;
+  }
+
+  function calculate() {
+    if (!startInput.value || !endInput.value) return;
+
+    const start = new Date(startInput.value);
+    const end = new Date(endInput.value);
+    const diffMs = end.getTime() - start.getTime();
+    const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+    const absDays = Math.abs(diffDays);
+    const past = diffDays < 0;
+
+    document.getElementById('main-result')!.textContent =
+      `${absDays.toLocaleString()} day${absDays !== 1 ? 's' : ''}`;
+    document.getElementById('direction-note')!.textContent =
+      diffDays === 0 ? 'Same date' : past ? 'The end date is before the start date' : '';
+
+    document.getElementById('res-days')!.textContent = absDays.toLocaleString();
+    document.getElementById('res-weeks')!.textContent = (absDays / 7).toFixed(1);
+    document.getElementById('res-months')!.textContent = (absDays / 30.44).toFixed(1);
+    document.getElementById('res-years')!.textContent = (absDays / 365.25).toFixed(2);
+
+    const bizEl = document.getElementById('business-result')!;
+    if (businessToggle.checked) {
+      const s = past ? end : start;
+      const e = past ? start : end;
+      const biz = countBusinessDays(s, e);
+      document.getElementById('biz-count')!.textContent = biz.toLocaleString();
+      bizEl.classList.remove('hidden');
+    } else {
+      bizEl.classList.add('hidden');
+    }
+
+    document.getElementById('result')!.classList.remove('hidden');
+  }
+
+  startInput.addEventListener('change', calculate);
+  endInput.addEventListener('change', calculate);
+  businessToggle.addEventListener('change', calculate);
+  document.getElementById('calc-btn')?.addEventListener('click', calculate);
+
+  // Quick buttons
+  document.querySelectorAll<HTMLButtonElement>('.quick-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const now = new Date();
+      const offset = parseInt(btn.dataset.startOffset!);
+      const endLabel = btn.dataset.endLabel!;
+
+      const s = new Date(now);
+      s.setDate(s.getDate() + offset);
+      startInput.value = (offset <= 0 ? s : now).toISOString().split('T')[0];
+
+      if (endLabel === 'today') {
+        endInput.value = now.toISOString().split('T')[0];
+      } else if (endLabel === 'end-of-year') {
+        endInput.value = `${now.getFullYear()}-12-31`;
+        startInput.value = now.toISOString().split('T')[0];
+      }
+      calculate();
+    });
+  });
+
+  calculate();
+</script>

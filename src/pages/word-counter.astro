@@ -1,0 +1,183 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Word Counter"
+  description="Count words, characters, sentences, and paragraphs in any text. Get estimated reading and speaking time."
+  slug="word-counter"
+  category="Text"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Word Counter</h1>
+  <p class="text-gray-500 mb-8">Paste or type your text to get an instant word and character count.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-4">
+    <div class="relative">
+      <textarea
+        id="text-input"
+        rows={10}
+        placeholder="Type or paste your text here…"
+        class="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-y text-sm leading-relaxed"
+      ></textarea>
+      <button
+        id="clear-btn"
+        class="absolute top-3 right-3 text-xs text-gray-400 hover:text-gray-600 bg-white border border-gray-200 rounded-md px-2 py-1 transition-colors"
+      >
+        Clear
+      </button>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      {[
+        { id: 'stat-words', label: 'Words', icon: '📝' },
+        { id: 'stat-chars', label: 'Characters', icon: '🔤' },
+        { id: 'stat-chars-no-space', label: 'Chars (no spaces)', icon: '✏️' },
+        { id: 'stat-sentences', label: 'Sentences', icon: '💬' },
+        { id: 'stat-paragraphs', label: 'Paragraphs', icon: '📄' },
+        { id: 'stat-lines', label: 'Lines', icon: '↵' },
+        { id: 'stat-read-time', label: 'Read Time', icon: '👁️' },
+        { id: 'stat-speak-time', label: 'Speak Time', icon: '🎤' },
+      ].map(({ id, label, icon }) => (
+        <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 text-center">
+          <div class="text-lg mb-1">{icon}</div>
+          <p id={id} class="text-xl font-bold text-indigo-700">0</p>
+          <p class="text-xs text-gray-500 mt-0.5">{label}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- Keyword Density -->
+  <div class="mt-6 bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+    <h2 class="font-semibold text-gray-800 mb-3">Top Keywords</h2>
+    <div id="keywords" class="flex flex-wrap gap-2">
+      <p class="text-sm text-gray-400">Type some text to see top keywords…</p>
+    </div>
+  </div>
+
+  <!-- Social media limits -->
+  <div class="mt-6 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+    <div class="px-5 py-3 border-b border-gray-100 bg-gray-50">
+      <h2 class="font-semibold text-gray-800 text-sm">Character Limit Checker</h2>
+    </div>
+    <div class="divide-y divide-gray-100">
+      {[
+        { platform: 'Twitter / X post', limit: 280, icon: '𝕏' },
+        { platform: 'LinkedIn post', limit: 3000, icon: 'in' },
+        { platform: 'Instagram caption', limit: 2200, icon: '📷' },
+        { platform: 'Facebook post', limit: 63206, icon: 'f' },
+        { platform: 'YouTube description', limit: 5000, icon: '▶' },
+        { platform: 'Meta description (SEO)', limit: 160, icon: '🔍' },
+        { platform: 'Page title (SEO)', limit: 60, icon: '📑' },
+      ].map(({ platform, limit, icon }) => (
+        <div class="flex items-center gap-4 px-5 py-3">
+          <span class="w-7 h-7 rounded-md bg-gray-100 flex items-center justify-center text-xs font-bold text-gray-600 flex-shrink-0">{icon}</span>
+          <span class="text-sm text-gray-700 flex-1">{platform}</span>
+          <div class="flex items-center gap-3 flex-shrink-0">
+            <div class="w-24 h-2 bg-gray-100 rounded-full overflow-hidden">
+              <div
+                class="limit-bar h-full bg-indigo-500 rounded-full transition-all duration-300"
+                data-limit={limit}
+                style="width: 0%"
+              ></div>
+            </div>
+            <span class="text-xs text-gray-500 w-20 text-right">
+              <span class="limit-remaining font-medium text-gray-700" data-limit={limit}>
+                {limit} left
+              </span>
+            </span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How many words per minute is average reading speed?", a: "The average adult reads at about 200–250 words per minute. The read time shown uses 200 WPM as the baseline, which gives a conservative estimate." },
+        { q: "How many characters is a standard page?", a: "A standard double-spaced page in 12pt font contains roughly 250–300 words or about 1,500 characters." },
+        { q: "Does the character count include spaces?", a: "Both counts are shown — characters with spaces and characters without spaces. Use the 'no spaces' count for SEO meta descriptions and similar contexts." },
+        { q: "What counts as a sentence?", a: "This counter treats any text ending in a period, exclamation mark, or question mark as a sentence. Very short text fragments may not be counted as complete sentences." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}
+            <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const textarea = document.getElementById('text-input') as HTMLTextAreaElement;
+
+  const STOP_WORDS = new Set(['the','a','an','and','or','but','in','on','at','to','for','of','with','is','it','this','that','was','are','be','as','by','from','have','has','had','not','do','did','he','she','they','we','you','i','its','their','our','your','my','his','her','will','would','could','should','been','were','am','so','if','up','out','about','into','then','there','when','also','can','just','more','than','what','which','who','all','some','no','one','two','new']);
+
+  function analyze() {
+    const text = textarea.value;
+    const words = text.trim() === '' ? [] : text.trim().split(/\s+/);
+    const wordCount = words.length;
+    const charCount = text.length;
+    const charNoSpace = text.replace(/\s/g, '').length;
+    const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 0).length;
+    const paragraphs = text.split(/\n{2,}/).filter(p => p.trim().length > 0).length || (text.trim() ? 1 : 0);
+    const lines = text.split(/\n/).length;
+    const readTime = Math.ceil(wordCount / 200);
+    const speakTime = Math.ceil(wordCount / 130);
+
+    document.getElementById('stat-words')!.textContent = wordCount.toLocaleString();
+    document.getElementById('stat-chars')!.textContent = charCount.toLocaleString();
+    document.getElementById('stat-chars-no-space')!.textContent = charNoSpace.toLocaleString();
+    document.getElementById('stat-sentences')!.textContent = sentences.toLocaleString();
+    document.getElementById('stat-paragraphs')!.textContent = paragraphs.toLocaleString();
+    document.getElementById('stat-lines')!.textContent = lines.toLocaleString();
+    document.getElementById('stat-read-time')!.textContent = readTime < 1 ? '< 1 min' : `${readTime} min`;
+    document.getElementById('stat-speak-time')!.textContent = speakTime < 1 ? '< 1 min' : `${speakTime} min`;
+
+    // Keyword density
+    const freq: Record<string, number> = {};
+    words.forEach(w => {
+      const clean = w.toLowerCase().replace(/[^a-z0-9]/g, '');
+      if (clean.length > 2 && !STOP_WORDS.has(clean)) {
+        freq[clean] = (freq[clean] || 0) + 1;
+      }
+    });
+    const top = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 10);
+    const kwEl = document.getElementById('keywords')!;
+    if (top.length === 0) {
+      kwEl.innerHTML = '<p class="text-sm text-gray-400">Type some text to see top keywords…</p>';
+    } else {
+      kwEl.innerHTML = top.map(([word, count]) =>
+        `<span class="px-3 py-1 bg-indigo-50 border border-indigo-200 rounded-full text-sm text-indigo-700 font-medium">${word} <span class="text-indigo-400 font-normal">${count}×</span></span>`
+      ).join('');
+    }
+
+    // Social limits
+    document.querySelectorAll<HTMLElement>('.limit-bar').forEach(bar => {
+      const limit = parseInt(bar.dataset.limit!);
+      const pct = Math.min((charCount / limit) * 100, 100);
+      bar.style.width = `${pct}%`;
+      bar.className = `limit-bar h-full rounded-full transition-all duration-300 ${pct >= 100 ? 'bg-red-500' : pct >= 80 ? 'bg-amber-500' : 'bg-indigo-500'}`;
+    });
+    document.querySelectorAll<HTMLElement>('.limit-remaining').forEach(span => {
+      const limit = parseInt(span.dataset.limit!);
+      const remaining = limit - charCount;
+      span.textContent = remaining >= 0 ? `${remaining.toLocaleString()} left` : `${Math.abs(remaining).toLocaleString()} over`;
+      span.className = `limit-remaining font-medium ${remaining < 0 ? 'text-red-600' : remaining < limit * 0.1 ? 'text-amber-600' : 'text-gray-700'}`;
+    });
+  }
+
+  textarea.addEventListener('input', analyze);
+  document.getElementById('clear-btn')?.addEventListener('click', () => {
+    textarea.value = '';
+    analyze();
+  });
+
+  analyze();
+</script>

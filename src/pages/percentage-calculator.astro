@@ -1,0 +1,210 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Percentage Calculator"
+  description="Calculate percentages instantly. What is X% of Y? X is what percent of Y? And find the percentage change between two numbers."
+  slug="percentage-calculator"
+  category="Math"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Percentage Calculator</h1>
+  <p class="text-gray-500 mb-8">Three ways to calculate percentages — pick the one that fits your question.</p>
+
+  <!-- Calculator Tabs -->
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+
+    <!-- Tab Headers -->
+    <div class="flex border-b border-gray-200">
+      <button data-tab="0" class="tab-btn flex-1 py-3 text-sm font-medium text-indigo-600 border-b-2 border-indigo-600 bg-indigo-50 transition-colors">
+        X% of Y
+      </button>
+      <button data-tab="1" class="tab-btn flex-1 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 border-b-2 border-transparent transition-colors">
+        X is what % of Y
+      </button>
+      <button data-tab="2" class="tab-btn flex-1 py-3 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50 border-b-2 border-transparent transition-colors">
+        % Change
+      </button>
+    </div>
+
+    <!-- Tab Panels -->
+    <div class="p-6">
+
+      <!-- Panel 0: What is X% of Y -->
+      <div data-panel="0" class="tab-panel space-y-4">
+        <p class="text-sm text-gray-600">What is <strong>X%</strong> of <strong>Y</strong>?</p>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="label">Percentage (%)</label>
+            <input id="p0-x" type="number" placeholder="e.g. 15" class="input-field" />
+          </div>
+          <div>
+            <label class="label">Number (Y)</label>
+            <input id="p0-y" type="number" placeholder="e.g. 200" class="input-field" />
+          </div>
+        </div>
+        <button id="p0-calc" class="btn-primary w-full">Calculate</button>
+        <div id="p0-result" class="result-box hidden">
+          <p class="text-sm text-indigo-700 font-medium">Result</p>
+          <p id="p0-answer" class="text-3xl font-bold text-indigo-900 mt-1"></p>
+          <p id="p0-formula" class="text-xs text-indigo-600 mt-2"></p>
+        </div>
+      </div>
+
+      <!-- Panel 1: X is what % of Y -->
+      <div data-panel="1" class="tab-panel hidden space-y-4">
+        <p class="text-sm text-gray-600"><strong>X</strong> is what percent of <strong>Y</strong>?</p>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="label">Number (X)</label>
+            <input id="p1-x" type="number" placeholder="e.g. 30" class="input-field" />
+          </div>
+          <div>
+            <label class="label">Number (Y)</label>
+            <input id="p1-y" type="number" placeholder="e.g. 200" class="input-field" />
+          </div>
+        </div>
+        <button id="p1-calc" class="btn-primary w-full">Calculate</button>
+        <div id="p1-result" class="result-box hidden">
+          <p class="text-sm text-indigo-700 font-medium">Result</p>
+          <p id="p1-answer" class="text-3xl font-bold text-indigo-900 mt-1"></p>
+          <p id="p1-formula" class="text-xs text-indigo-600 mt-2"></p>
+        </div>
+      </div>
+
+      <!-- Panel 2: Percentage Change -->
+      <div data-panel="2" class="tab-panel hidden space-y-4">
+        <p class="text-sm text-gray-600">Percentage change from <strong>X</strong> to <strong>Y</strong></p>
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="label">From (original)</label>
+            <input id="p2-x" type="number" placeholder="e.g. 80" class="input-field" />
+          </div>
+          <div>
+            <label class="label">To (new value)</label>
+            <input id="p2-y" type="number" placeholder="e.g. 100" class="input-field" />
+          </div>
+        </div>
+        <button id="p2-calc" class="btn-primary w-full">Calculate</button>
+        <div id="p2-result" class="result-box hidden">
+          <p class="text-sm text-indigo-700 font-medium">Result</p>
+          <p id="p2-answer" class="text-3xl font-bold text-indigo-900 mt-1"></p>
+          <p id="p2-formula" class="text-xs text-indigo-600 mt-2"></p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- How to Use -->
+  <div class="mt-10 prose prose-gray max-w-none">
+    <h2 class="text-xl font-bold text-gray-900 mb-3">How to Use</h2>
+    <ol class="list-decimal list-inside space-y-2 text-gray-600 text-sm">
+      <li>Select the type of percentage calculation you need using the tabs above.</li>
+      <li>Enter your numbers in the fields provided.</li>
+      <li>Click <strong>Calculate</strong> to see the result instantly.</li>
+    </ol>
+
+    <h2 class="text-xl font-bold text-gray-900 mt-8 mb-3">Percentage Formulas</h2>
+    <ul class="space-y-2 text-sm text-gray-600">
+      <li><strong>What is X% of Y?</strong> — Result = (X ÷ 100) × Y</li>
+      <li><strong>X is what % of Y?</strong> — Result = (X ÷ Y) × 100</li>
+      <li><strong>Percentage change:</strong> — Result = ((Y − X) ÷ X) × 100</li>
+    </ul>
+  </div>
+
+  <!-- FAQ -->
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="space-y-0 divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        {
+          q: "What is 20% of 150?",
+          a: "20% of 150 is 30. You calculate this as (20 ÷ 100) × 150 = 30."
+        },
+        {
+          q: "How do I calculate a percentage increase?",
+          a: "Use the percentage change tab. Enter the original number and the new number. The formula is ((New − Original) ÷ Original) × 100. A positive result is an increase, a negative result is a decrease."
+        },
+        {
+          q: "What is 15% tip on $85?",
+          a: "15% of $85 is $12.75. Enter 15 in the percentage field and 85 in the number field using the first tab."
+        },
+        {
+          q: "How do I find what percentage one number is of another?",
+          a: "Use the second tab 'X is what % of Y'. For example, 45 is 22.5% of 200. The formula is (45 ÷ 200) × 100 = 22.5%."
+        },
+        {
+          q: "Is this percentage calculator free?",
+          a: "Yes, completely free. No sign up, no download, works in any browser on any device."
+        }
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}
+            <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+
+</ToolLayout>
+
+<script>
+  // Tab switching
+  const tabBtns = document.querySelectorAll<HTMLButtonElement>('.tab-btn');
+  const tabPanels = document.querySelectorAll<HTMLElement>('.tab-panel');
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const idx = Number(btn.dataset.tab);
+      tabBtns.forEach((b, i) => {
+        b.classList.toggle('text-indigo-600', i === idx);
+        b.classList.toggle('border-indigo-600', i === idx);
+        b.classList.toggle('bg-indigo-50', i === idx);
+        b.classList.toggle('text-gray-500', i !== idx);
+        b.classList.toggle('border-transparent', i !== idx);
+      });
+      tabPanels.forEach((p, i) => p.classList.toggle('hidden', i !== idx));
+    });
+  });
+
+  // Panel 0: What is X% of Y
+  document.getElementById('p0-calc')?.addEventListener('click', () => {
+    const x = parseFloat((document.getElementById('p0-x') as HTMLInputElement).value);
+    const y = parseFloat((document.getElementById('p0-y') as HTMLInputElement).value);
+    if (isNaN(x) || isNaN(y)) return;
+    const result = (x / 100) * y;
+    const el = document.getElementById('p0-result')!;
+    el.classList.remove('hidden');
+    document.getElementById('p0-answer')!.textContent = result.toLocaleString(undefined, { maximumFractionDigits: 6 });
+    document.getElementById('p0-formula')!.textContent = `Formula: (${x} ÷ 100) × ${y} = ${result}`;
+  });
+
+  // Panel 1: X is what % of Y
+  document.getElementById('p1-calc')?.addEventListener('click', () => {
+    const x = parseFloat((document.getElementById('p1-x') as HTMLInputElement).value);
+    const y = parseFloat((document.getElementById('p1-y') as HTMLInputElement).value);
+    if (isNaN(x) || isNaN(y) || y === 0) return;
+    const result = (x / y) * 100;
+    const el = document.getElementById('p1-result')!;
+    el.classList.remove('hidden');
+    document.getElementById('p1-answer')!.textContent = result.toLocaleString(undefined, { maximumFractionDigits: 4 }) + '%';
+    document.getElementById('p1-formula')!.textContent = `Formula: (${x} ÷ ${y}) × 100 = ${result.toFixed(4)}%`;
+  });
+
+  // Panel 2: Percentage change
+  document.getElementById('p2-calc')?.addEventListener('click', () => {
+    const x = parseFloat((document.getElementById('p2-x') as HTMLInputElement).value);
+    const y = parseFloat((document.getElementById('p2-y') as HTMLInputElement).value);
+    if (isNaN(x) || isNaN(y) || x === 0) return;
+    const result = ((y - x) / Math.abs(x)) * 100;
+    const el = document.getElementById('p2-result')!;
+    el.classList.remove('hidden');
+    const sign = result >= 0 ? '+' : '';
+    document.getElementById('p2-answer')!.textContent = sign + result.toLocaleString(undefined, { maximumFractionDigits: 4 }) + '%';
+    document.getElementById('p2-formula')!.textContent = `Formula: ((${y} − ${x}) ÷ ${Math.abs(x)}) × 100 = ${sign}${result.toFixed(4)}%`;
+  });
+</script>

@@ -1,0 +1,185 @@
+---
+import '../styles/global.css';
+import tools from '../data/tools.json';
+
+interface Props {
+  title: string;
+  description: string;
+  slug: string;
+  category: string;
+  relatedSlugs?: string[];
+}
+
+const { title, description, slug, category, relatedSlugs = [] } = Astro.props;
+
+const canonicalUrl = `https://utilifyer.com/${slug}`;
+const ogImage = `https://utilifyer.com/og-default.png`;
+
+const categories = [...new Set(tools.map(t => t.category))].sort();
+
+const relatedTools = relatedSlugs.length > 0
+  ? tools.filter(t => relatedSlugs.includes(t.slug))
+  : tools.filter(t => t.category === category && t.slug !== slug).slice(0, 6);
+
+const jsonLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": title,
+  "url": canonicalUrl,
+  "description": description,
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Web Browser",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+});
+
+const breadcrumbLd = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://utilifyer.com" },
+    { "@type": "ListItem", "position": 2, "name": category, "item": `https://utilifyer.com/category/${category.toLowerCase().replace(/ /g, '-')}` },
+    { "@type": "ListItem", "position": 3, "name": title, "item": canonicalUrl }
+  ]
+});
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title} — Free Online Tool | Utilifyer</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content={`${title} — Utilifyer`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Utilifyer" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={`${title} — Utilifyer`} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Structured Data -->
+    <script type="application/ld+json" set:html={jsonLd} />
+    <script type="application/ld+json" set:html={breadcrumbLd} />
+
+    <link rel="icon" href="/favicon.ico" />
+  </head>
+
+  <body class="min-h-screen flex flex-col">
+
+    <!-- Navigation -->
+    <header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+      <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+        <a href="/" class="flex items-center gap-2 font-bold text-xl text-indigo-600 hover:text-indigo-700 transition-colors">
+          <span class="text-2xl">🛠️</span>
+          Utilifyer
+        </a>
+        <nav class="hidden md:flex items-center gap-1 text-sm">
+          {categories.map(cat => (
+            <a
+              href={`/category/${cat.toLowerCase().replace(/ /g, '-')}`}
+              class={`px-3 py-1.5 rounded-lg transition-colors ${category === cat ? 'bg-indigo-100 text-indigo-700 font-medium' : 'text-gray-600 hover:bg-gray-100'}`}
+            >
+              {cat}
+            </a>
+          ))}
+        </nav>
+        <a href="/" class="text-sm text-gray-500 hover:text-indigo-600 transition-colors md:hidden">
+          ← All Tools
+        </a>
+      </div>
+    </header>
+
+    <!-- Breadcrumb -->
+    <div class="bg-white border-b border-gray-100">
+      <div class="max-w-6xl mx-auto px-4 py-2 text-sm text-gray-500 flex items-center gap-2">
+        <a href="/" class="hover:text-indigo-600 transition-colors">Home</a>
+        <span>›</span>
+        <a href={`/category/${category.toLowerCase().replace(/ /g, '-')}`} class="hover:text-indigo-600 transition-colors">{category}</a>
+        <span>›</span>
+        <span class="text-gray-800 font-medium">{title}</span>
+      </div>
+    </div>
+
+    <main class="flex-1 max-w-6xl mx-auto w-full px-4 py-8">
+
+      <!-- AdSense Top Slot -->
+      <div class="mb-6 flex justify-center">
+        <!-- ADSENSE UNIT: leaderboard (728x90 / responsive) -->
+        <!-- Replace with your AdSense code after approval -->
+        <div class="bg-gray-100 border border-dashed border-gray-300 rounded-lg h-24 w-full max-w-3xl flex items-center justify-center text-gray-400 text-sm">
+          Ad Unit — Top
+        </div>
+      </div>
+
+      <!-- Tool Content -->
+      <div class="max-w-3xl mx-auto">
+        <slot />
+      </div>
+
+      <!-- AdSense Middle Slot (injected between tool and related tools) -->
+      <div class="mt-10 mb-6 flex justify-center">
+        <!-- ADSENSE UNIT: rectangle (300x250) -->
+        <div class="bg-gray-100 border border-dashed border-gray-300 rounded-lg h-32 w-full max-w-3xl flex items-center justify-center text-gray-400 text-sm">
+          Ad Unit — Middle
+        </div>
+      </div>
+
+      <!-- Related Tools -->
+      {relatedTools.length > 0 && (
+        <div class="max-w-3xl mx-auto mt-10">
+          <h2 class="text-lg font-semibold text-gray-900 mb-4">Related Tools</h2>
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {relatedTools.map(tool => (
+              <a href={`/${tool.slug}`} class="tool-card flex items-start gap-3 no-underline">
+                <span class="text-xl">{tool.icon}</span>
+                <div>
+                  <div class="text-sm font-medium text-gray-800">{tool.title}</div>
+                  <div class="text-xs text-gray-500 mt-0.5 line-clamp-2">{tool.description}</div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-gray-200 mt-12">
+      <div class="max-w-6xl mx-auto px-4 py-8">
+        <!-- AdSense Footer Slot -->
+        <div class="mb-6 flex justify-center">
+          <div class="bg-gray-100 border border-dashed border-gray-300 rounded-lg h-24 w-full max-w-3xl flex items-center justify-center text-gray-400 text-sm">
+            Ad Unit — Footer
+          </div>
+        </div>
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500">
+          <div class="flex items-center gap-2 font-semibold text-gray-700">
+            <span>🛠️</span> Utilifyer
+          </div>
+          <nav class="flex items-center gap-4">
+            <a href="/" class="hover:text-indigo-600 transition-colors">All Tools</a>
+            <a href="/about" class="hover:text-indigo-600 transition-colors">About</a>
+            <a href="/privacy-policy" class="hover:text-indigo-600 transition-colors">Privacy</a>
+            <a href="/terms-of-service" class="hover:text-indigo-600 transition-colors">Terms</a>
+            <a href="/contact" class="hover:text-indigo-600 transition-colors">Contact</a>
+          </nav>
+          <p class="text-xs text-gray-400">© {new Date().getFullYear()} Utilifyer. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+  </body>
+</html>

@@ -1,0 +1,191 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Case Converter"
+  description="Convert text to UPPERCASE, lowercase, Title Case, Sentence case, camelCase, PascalCase, snake_case, kebab-case and more."
+  slug="case-converter"
+  category="Text"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Case Converter</h1>
+  <p class="text-gray-500 mb-8">Instantly convert text to any case format.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+    <div>
+      <label class="label">Your Text</label>
+      <div class="relative">
+        <textarea
+          id="input-text"
+          rows={5}
+          placeholder="Type or paste your text here…"
+          class="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-800 bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-y text-sm leading-relaxed"
+        ></textarea>
+        <button id="clear-btn" class="absolute top-3 right-3 text-xs text-gray-400 hover:text-gray-600 bg-white border border-gray-200 rounded-md px-2 py-1">Clear</button>
+      </div>
+    </div>
+
+    <!-- Case buttons grid -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+      {[
+        { id: 'upper', label: 'UPPER CASE', example: 'HELLO WORLD' },
+        { id: 'lower', label: 'lower case', example: 'hello world' },
+        { id: 'title', label: 'Title Case', example: 'Hello World' },
+        { id: 'sentence', label: 'Sentence case', example: 'Hello world' },
+        { id: 'camel', label: 'camelCase', example: 'helloWorld' },
+        { id: 'pascal', label: 'PascalCase', example: 'HelloWorld' },
+        { id: 'snake', label: 'snake_case', example: 'hello_world' },
+        { id: 'kebab', label: 'kebab-case', example: 'hello-world' },
+        { id: 'constant', label: 'CONSTANT_CASE', example: 'HELLO_WORLD' },
+        { id: 'dot', label: 'dot.case', example: 'hello.world' },
+        { id: 'alternating', label: 'aLtErNaTiNg', example: 'hElLo WoRlD' },
+        { id: 'inverse', label: 'iNVERSE cASE', example: 'hELLO wORLD' },
+      ].map(({ id, label, example }) => (
+        <button
+          data-case={id}
+          class="case-btn text-left px-4 py-3 rounded-xl border border-gray-200 hover:border-indigo-400 hover:bg-indigo-50 transition-all group"
+        >
+          <div class="text-sm font-semibold text-gray-700 group-hover:text-indigo-700">{label}</div>
+          <div class="text-xs text-gray-400 mt-0.5 font-mono">{example}</div>
+        </button>
+      ))}
+    </div>
+  </div>
+
+  <!-- Output -->
+  <div id="output-section" class="hidden mt-5">
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
+      <div class="flex items-center justify-between mb-3">
+        <p class="text-sm font-semibold text-gray-700">
+          Result — <span id="output-label" class="text-indigo-600"></span>
+        </p>
+        <button id="copy-btn" class="text-xs text-indigo-600 hover:text-indigo-800 border border-indigo-200 rounded-md px-3 py-1.5 transition-colors font-medium">
+          Copy
+        </button>
+      </div>
+      <div
+        id="output-text"
+        class="w-full min-h-[80px] bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-800 text-sm leading-relaxed font-mono whitespace-pre-wrap break-words"
+      ></div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Case Format Reference</h2>
+    <div class="border border-gray-200 rounded-xl overflow-hidden text-sm">
+      <table class="w-full">
+        <thead class="bg-gray-50 text-xs text-gray-500 uppercase">
+          <tr>
+            <th class="px-4 py-2 text-left">Format</th>
+            <th class="px-4 py-2 text-left">Example</th>
+            <th class="px-4 py-2 text-left">Common Use</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          {[
+            { format: 'UPPER CASE', example: 'HELLO WORLD', use: 'Headings, acronyms, emphasis' },
+            { format: 'lower case', example: 'hello world', use: 'General text, URLs' },
+            { format: 'Title Case', example: 'Hello World', use: 'Titles, headings, names' },
+            { format: 'Sentence case', example: 'Hello world', use: 'Standard sentences' },
+            { format: 'camelCase', example: 'helloWorld', use: 'JavaScript variables, JSON keys' },
+            { format: 'PascalCase', example: 'HelloWorld', use: 'Class names, React components' },
+            { format: 'snake_case', example: 'hello_world', use: 'Python variables, database columns' },
+            { format: 'kebab-case', example: 'hello-world', use: 'CSS classes, URLs, HTML attributes' },
+            { format: 'CONSTANT_CASE', example: 'HELLO_WORLD', use: 'Constants, environment variables' },
+          ].map(({ format, example, use }) => (
+            <tr class="bg-white hover:bg-gray-50">
+              <td class="px-4 py-2.5 font-medium text-gray-700">{format}</td>
+              <td class="px-4 py-2.5 font-mono text-indigo-600 text-xs">{example}</td>
+              <td class="px-4 py-2.5 text-gray-500 text-xs">{use}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is camelCase?", a: "camelCase writes compound words with no spaces, starting with a lowercase letter, and capitalizing the first letter of each subsequent word. Example: myVariableName. It's widely used in JavaScript and JSON." },
+        { q: "What is the difference between camelCase and PascalCase?", a: "Both join words without spaces. camelCase starts with a lowercase letter (myVariable), while PascalCase starts every word with uppercase (MyVariable). PascalCase is used for class names and React components." },
+        { q: "What is snake_case used for?", a: "snake_case uses underscores to separate words and is commonly used in Python variable names, database column names, and file names." },
+        { q: "What is kebab-case?", a: "kebab-case uses hyphens to join words (like a kebab skewer). It's standard for CSS class names, HTML data attributes, and URL slugs." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}
+            <span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const input = document.getElementById('input-text') as HTMLTextAreaElement;
+  const outputSection = document.getElementById('output-section')!;
+  const outputText = document.getElementById('output-text')!;
+  const outputLabel = document.getElementById('output-label')!;
+
+  const TITLE_MINORS = new Set(['a','an','the','and','but','or','for','nor','on','at','to','by','in','of','up','as']);
+
+  const converters: Record<string, (t: string) => string> = {
+    upper: t => t.toUpperCase(),
+    lower: t => t.toLowerCase(),
+    title: t => t.toLowerCase().replace(/\b\w+/g, (w, i, s) => {
+      const prev = s.slice(0, i).trimEnd();
+      return (i === 0 || prev.endsWith('.') || !TITLE_MINORS.has(w)) ? w[0].toUpperCase() + w.slice(1) : w;
+    }),
+    sentence: t => t.toLowerCase().replace(/(^\s*\w|[.!?]\s*\w)/g, c => c.toUpperCase()),
+    camel: t => t.replace(/[^a-zA-Z0-9]+(.)/g, (_, c) => c.toUpperCase()).replace(/^./, c => c.toLowerCase()),
+    pascal: t => t.replace(/[^a-zA-Z0-9]+(.)/g, (_, c) => c.toUpperCase()).replace(/^./, c => c.toUpperCase()),
+    snake: t => t.trim().replace(/[^a-zA-Z0-9]+/g, '_').replace(/([a-z])([A-Z])/g, '$1_$2').toLowerCase().replace(/^_|_$/g, ''),
+    kebab: t => t.trim().replace(/[^a-zA-Z0-9]+/g, '-').replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase().replace(/^-|-$/g, ''),
+    constant: t => t.trim().replace(/[^a-zA-Z0-9]+/g, '_').replace(/([a-z])([A-Z])/g, '$1_$2').toUpperCase().replace(/^_|_$/g, ''),
+    dot: t => t.trim().replace(/[^a-zA-Z0-9]+/g, '.').replace(/([a-z])([A-Z])/g, '$1.$2').toLowerCase().replace(/^\.|\.$/g, ''),
+    alternating: t => t.split('').map((c, i) => i % 2 === 0 ? c.toLowerCase() : c.toUpperCase()).join(''),
+    inverse: t => t.split('').map(c => c === c.toUpperCase() ? c.toLowerCase() : c.toUpperCase()).join(''),
+  };
+
+  const labels: Record<string, string> = {
+    upper: 'UPPER CASE', lower: 'lower case', title: 'Title Case',
+    sentence: 'Sentence case', camel: 'camelCase', pascal: 'PascalCase',
+    snake: 'snake_case', kebab: 'kebab-case', constant: 'CONSTANT_CASE',
+    dot: 'dot.case', alternating: 'aLtErNaTiNg', inverse: 'iNVERSE cASE',
+  };
+
+  document.querySelectorAll<HTMLButtonElement>('.case-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const text = input.value;
+      if (!text.trim()) { input.focus(); return; }
+      const caseId = btn.dataset.case!;
+      const converted = converters[caseId](text);
+      outputText.textContent = converted;
+      outputLabel.textContent = labels[caseId];
+      outputSection.classList.remove('hidden');
+
+      document.querySelectorAll('.case-btn').forEach(b => {
+        b.classList.remove('border-indigo-500', 'bg-indigo-50');
+      });
+      btn.classList.add('border-indigo-500', 'bg-indigo-50');
+    });
+  });
+
+  document.getElementById('clear-btn')?.addEventListener('click', () => {
+    input.value = '';
+    outputSection.classList.add('hidden');
+    document.querySelectorAll('.case-btn').forEach(b => b.classList.remove('border-indigo-500', 'bg-indigo-50'));
+  });
+
+  document.getElementById('copy-btn')?.addEventListener('click', () => {
+    navigator.clipboard.writeText(outputText.textContent || '').then(() => {
+      const btn = document.getElementById('copy-btn')!;
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 1500);
+    });
+  });
+</script>
