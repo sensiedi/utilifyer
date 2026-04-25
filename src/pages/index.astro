@@ -23,6 +23,15 @@ const toolsByCategory = categories.map(cat => ({
     <meta property="og:url" content="https://utilifyer.com" />
     <meta property="og:type" content="website" />
     <link rel="icon" href="/favicon.ico" />
+
+    <!-- Google Analytics -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-T0KTKQ4MGQ"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-T0KTKQ4MGQ');
+    </script>
     <script type="application/ld+json" set:html={JSON.stringify({
       "@context": "https://schema.org",
       "@type": "WebSite",
