@@ -26,6 +26,15 @@ const canonicalUrl = `https://utilifyer.com${Astro.url.pathname}`;
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Utilifyer" />
     <link rel="icon" href="/favicon.ico" />
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-T0KTKQ4MGQ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-T0KTKQ4MGQ');
+    </script>
   </head>
 
   <body class="min-h-screen flex flex-col bg-gray-50">
