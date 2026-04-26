@@ -1,0 +1,180 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Savings Goal Calculator"
+  description="Find out how much you need to save each month to reach any financial goal. See the impact of interest rate and timeline."
+  slug="savings-goal-calculator"
+  category="Finance"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Savings Goal Calculator</h1>
+  <p class="text-gray-500 mb-8">Find out how much to save each month to reach your financial goal.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Savings Goal ($)</label>
+        <input id="goal" type="number" placeholder="e.g. 20000" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Current Savings ($)</label>
+        <input id="current" type="number" value="0" placeholder="e.g. 2000" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Timeframe</label>
+        <div class="flex gap-2">
+          <input id="timeframe" type="number" placeholder="e.g. 24" class="input-field" />
+          <select id="time-unit" class="input-field w-auto flex-shrink-0">
+            <option value="months">Months</option>
+            <option value="years">Years</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="label">Annual Interest Rate (%)</label>
+        <input id="interest" type="number" step="0.1" value="4" placeholder="e.g. 4" class="input-field" />
+        <p class="text-xs text-gray-400 mt-1">Use 0 for a basic savings account or no interest.</p>
+      </div>
+    </div>
+
+    <button id="calc-btn" class="btn-primary w-full">Calculate</button>
+
+    <div id="result" class="hidden space-y-4">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+        <div class="result-box"><p id="r-monthly" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Monthly Savings</p></div>
+        <div class="result-box"><p id="r-total-contrib" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Total Contributed</p></div>
+        <div class="result-box"><p id="r-interest-earned" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Interest Earned</p></div>
+        <div class="result-box"><p id="r-final" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Final Balance</p></div>
+      </div>
+
+      <!-- Timeline breakdown -->
+      <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden text-sm">
+        <div class="px-4 py-2 bg-gray-100 text-xs font-semibold text-gray-500 uppercase">Year-by-Year Progress</div>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="text-xs text-gray-500 uppercase bg-gray-100">
+              <tr>
+                <th class="px-4 py-2 text-left">Year</th>
+                <th class="px-4 py-2 text-right">Contributions</th>
+                <th class="px-4 py-2 text-right">Interest</th>
+                <th class="px-4 py-2 text-right">Balance</th>
+                <th class="px-4 py-2 text-right">Progress</th>
+              </tr>
+            </thead>
+            <tbody id="progress-table" class="divide-y divide-gray-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Common goals -->
+  <div class="mt-6 bg-white rounded-2xl border border-gray-200 shadow-sm p-5">
+    <h2 class="font-semibold text-gray-800 text-sm mb-3">Common Savings Goals</h2>
+    <div class="flex flex-wrap gap-2">
+      {[
+        { label: '🚗 Car ($15,000)', goal: 15000, months: 36 },
+        { label: '💍 Wedding ($25,000)', goal: 25000, months: 24 },
+        { label: '🏠 Down Payment ($60,000)', goal: 60000, months: 60 },
+        { label: '✈️ Vacation ($5,000)', goal: 5000, months: 12 },
+        { label: '🎓 Education ($20,000)', goal: 20000, months: 48 },
+      ].map(({ label, goal, months }) => (
+        <button class="quick-goal px-3 py-1.5 rounded-lg border border-gray-200 text-sm text-gray-600 hover:border-indigo-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+          data-goal={goal} data-months={months}>{label}</button>
+      ))}
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How is the monthly savings amount calculated?", a: "The calculator uses the future value of an annuity formula to find the monthly contribution needed to reach your goal, accounting for compound interest on both your initial savings and new contributions." },
+        { q: "What interest rate should I use?", a: "For a high-yield savings account, use 4–5%. For a conservative investment portfolio, 6–7%. For a stock market index fund over the long term, historical average is around 7–10% (before inflation). Use 0% for cash under the mattress." },
+        { q: "What if I already have some savings?", a: "Enter your current savings amount in the 'Current Savings' field. The calculator factors in the growth of your existing savings when determining how much you still need to contribute monthly." },
+        { q: "How can I reach my goal faster?", a: "Increase your monthly contribution, extend your timeline, find a higher-yield account, or increase your starting amount. Even a small interest rate improvement makes a big difference over many years." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const fmt = (n: number) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  document.getElementById('calc-btn')?.addEventListener('click', () => {
+    const goal = parseFloat((document.getElementById('goal') as HTMLInputElement).value);
+    const current = parseFloat((document.getElementById('current') as HTMLInputElement).value) || 0;
+    let timeframe = parseFloat((document.getElementById('timeframe') as HTMLInputElement).value);
+    const unit = (document.getElementById('time-unit') as HTMLSelectElement).value;
+    const annualRate = parseFloat((document.getElementById('interest') as HTMLInputElement).value) || 0;
+    if (isNaN(goal) || isNaN(timeframe)) return;
+
+    const months = unit === 'years' ? timeframe * 12 : timeframe;
+    const monthlyRate = annualRate / 100 / 12;
+    const remaining = goal - current * Math.pow(1 + monthlyRate, months);
+
+    let monthly: number;
+    if (monthlyRate === 0) {
+      monthly = remaining / months;
+    } else {
+      monthly = remaining * monthlyRate / (Math.pow(1 + monthlyRate, months) - 1);
+    }
+    if (monthly < 0) monthly = 0;
+
+    const totalContrib = monthly * months + current;
+    const interestEarned = goal - totalContrib;
+
+    document.getElementById('r-monthly')!.textContent = fmt(monthly);
+    document.getElementById('r-total-contrib')!.textContent = fmt(totalContrib);
+    document.getElementById('r-interest-earned')!.textContent = fmt(Math.max(interestEarned, 0));
+    document.getElementById('r-final')!.textContent = fmt(goal);
+
+    const years = Math.ceil(months / 12);
+    let balance = current;
+    document.getElementById('progress-table')!.innerHTML = Array.from({ length: years }, (_, i) => {
+      const yr = i + 1;
+      const mStart = i * 12, mEnd = Math.min(yr * 12, months);
+      let yearContrib = 0, yearInterest = 0;
+      for (let m = mStart; m < mEnd; m++) {
+        const int = balance * monthlyRate;
+        yearInterest += int;
+        yearContrib += monthly;
+        balance += int + monthly;
+      }
+      const pct = Math.min(Math.round((balance / goal) * 100), 100);
+      return `<tr class="bg-white hover:bg-gray-50">
+        <td class="px-4 py-2.5 text-gray-700">Year ${yr}</td>
+        <td class="px-4 py-2.5 text-right text-gray-600">${fmt(yearContrib)}</td>
+        <td class="px-4 py-2.5 text-right text-gray-600">${fmt(yearInterest)}</td>
+        <td class="px-4 py-2.5 text-right font-medium text-gray-800">${fmt(balance)}</td>
+        <td class="px-4 py-2.5 text-right">
+          <div class="flex items-center justify-end gap-2">
+            <div class="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+              <div class="h-full bg-indigo-500 rounded-full" style="width:${pct}%"></div>
+            </div>
+            <span class="text-xs text-gray-500">${pct}%</span>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+
+    document.getElementById('result')!.classList.remove('hidden');
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('.quick-goal').forEach(btn => {
+    btn.addEventListener('click', () => {
+      (document.getElementById('goal') as HTMLInputElement).value = btn.dataset.goal!;
+      (document.getElementById('timeframe') as HTMLInputElement).value = btn.dataset.months!;
+      (document.getElementById('time-unit') as HTMLSelectElement).value = 'months';
+      document.getElementById('calc-btn')!.click();
+    });
+  });
+</script>

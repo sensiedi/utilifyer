@@ -198,5 +198,345 @@
     "priority": 20,
     "status": "live",
     "icon": "⚖️"
+  },
+  {
+    "slug": "loan-payoff-calculator",
+    "title": "Loan Payoff Calculator",
+    "description": "Calculate how long to pay off any loan and how much interest you will pay in total.",
+    "category": "Finance",
+    "tags": ["loan", "payoff", "debt", "interest", "calculator"],
+    "priority": 21,
+    "status": "live",
+    "icon": "🏦"
+  },
+  {
+    "slug": "credit-card-payoff-calculator",
+    "title": "Credit Card Payoff Calculator",
+    "description": "See how long it takes to pay off your credit card and how to save on interest.",
+    "category": "Finance",
+    "tags": ["credit card", "payoff", "debt", "interest", "minimum payment"],
+    "priority": 22,
+    "status": "live",
+    "icon": "💳"
+  },
+  {
+    "slug": "vat-calculator",
+    "title": "VAT & Sales Tax Calculator",
+    "description": "Add or remove VAT and sales tax from any price. Supports any tax rate.",
+    "category": "Finance",
+    "tags": ["vat", "sales tax", "tax", "price", "calculator"],
+    "priority": 23,
+    "status": "live",
+    "icon": "🧾"
+  },
+  {
+    "slug": "savings-goal-calculator",
+    "title": "Savings Goal Calculator",
+    "description": "Find out how much to save each month to reach your financial goal.",
+    "category": "Finance",
+    "tags": ["savings", "goal", "monthly", "finance", "calculator"],
+    "priority": 24,
+    "status": "live",
+    "icon": "🎯"
+  },
+  {
+    "slug": "car-loan-calculator",
+    "title": "Car Loan Calculator",
+    "description": "Calculate your monthly car payment, total interest, and true cost of a vehicle loan.",
+    "category": "Finance",
+    "tags": ["car loan", "auto loan", "payment", "interest", "vehicle"],
+    "priority": 25,
+    "status": "live",
+    "icon": "🚗"
+  },
+  {
+    "slug": "retirement-savings-calculator",
+    "title": "Retirement Savings Calculator",
+    "description": "Project your retirement savings based on contributions, returns, and years to retirement.",
+    "category": "Finance",
+    "tags": ["retirement", "savings", "401k", "investment", "calculator"],
+    "priority": 26,
+    "status": "live",
+    "icon": "🏖️"
+  },
+  {
+    "slug": "take-home-pay-calculator",
+    "title": "Take-Home Pay Calculator",
+    "description": "Estimate your net salary after federal tax, state tax, Social Security, and Medicare.",
+    "category": "Finance",
+    "tags": ["take home pay", "net salary", "tax", "paycheck", "income"],
+    "priority": 27,
+    "status": "live",
+    "icon": "💵"
+  },
+  {
+    "slug": "freelance-rate-calculator",
+    "title": "Freelance Rate Calculator",
+    "description": "Calculate the hourly rate you need to charge as a freelancer to hit your income goal.",
+    "category": "Finance",
+    "tags": ["freelance", "rate", "hourly", "self-employed", "income"],
+    "priority": 28,
+    "status": "live",
+    "icon": "💼"
+  },
+  {
+    "slug": "break-even-calculator",
+    "title": "Break-Even Calculator",
+    "description": "Find your break-even point in units and revenue. Essential for pricing and business planning.",
+    "category": "Finance",
+    "tags": ["break-even", "business", "profit", "pricing", "calculator"],
+    "priority": 29,
+    "status": "live",
+    "icon": "📉"
+  },
+  {
+    "slug": "tdee-calculator",
+    "title": "TDEE Calculator",
+    "description": "Calculate your Total Daily Energy Expenditure based on activity level and body stats.",
+    "category": "Health",
+    "tags": ["tdee", "calories", "energy", "metabolism", "fitness"],
+    "priority": 30,
+    "status": "live",
+    "icon": "🔥"
+  },
+  {
+    "slug": "calorie-deficit-calculator",
+    "title": "Calorie Deficit Calculator",
+    "description": "Find the daily calorie deficit you need to lose weight at your target pace.",
+    "category": "Health",
+    "tags": ["calorie deficit", "weight loss", "calories", "diet", "calculator"],
+    "priority": 31,
+    "status": "live",
+    "icon": "🥗"
+  },
+  {
+    "slug": "macro-calculator",
+    "title": "Macro Calculator",
+    "description": "Calculate your daily protein, carbs, and fat targets based on your goals.",
+    "category": "Health",
+    "tags": ["macros", "protein", "carbs", "fat", "diet", "nutrition"],
+    "priority": 32,
+    "status": "live",
+    "icon": "🍗"
+  },
+  {
+    "slug": "running-pace-calculator",
+    "title": "Running Pace Calculator",
+    "description": "Calculate pace, speed, and finish time for any running distance.",
+    "category": "Health",
+    "tags": ["running", "pace", "speed", "marathon", "5k", "fitness"],
+    "priority": 33,
+    "status": "live",
+    "icon": "🏃"
+  },
+  {
+    "slug": "sleep-cycle-calculator",
+    "title": "Sleep Cycle Calculator",
+    "description": "Find the best times to wake up or go to sleep based on 90-minute sleep cycles.",
+    "category": "Health",
+    "tags": ["sleep", "sleep cycle", "wake up", "bedtime", "health"],
+    "priority": 34,
+    "status": "live",
+    "icon": "😴"
+  },
+  {
+    "slug": "one-rep-max-calculator",
+    "title": "One Rep Max Calculator",
+    "description": "Estimate your 1RM for any lift using weight and reps. Includes percentage table.",
+    "category": "Health",
+    "tags": ["one rep max", "1rm", "strength", "weightlifting", "fitness"],
+    "priority": 35,
+    "status": "live",
+    "icon": "🏋️"
+  },
+  {
+    "slug": "water-intake-calculator",
+    "title": "Water Intake Calculator",
+    "description": "Calculate your recommended daily water intake based on weight and activity level.",
+    "category": "Health",
+    "tags": ["water intake", "hydration", "health", "daily water"],
+    "priority": 36,
+    "status": "live",
+    "icon": "💧"
+  },
+  {
+    "slug": "heart-rate-zone-calculator",
+    "title": "Heart Rate Zone Calculator",
+    "description": "Find your 5 heart rate training zones based on your age and resting heart rate.",
+    "category": "Health",
+    "tags": ["heart rate", "training zones", "cardio", "fitness", "bpm"],
+    "priority": 37,
+    "status": "live",
+    "icon": "❤️"
+  },
+  {
+    "slug": "json-formatter",
+    "title": "JSON Formatter & Validator",
+    "description": "Format, validate, and minify JSON. Instantly spot syntax errors.",
+    "category": "Developer",
+    "tags": ["json", "formatter", "validator", "minify", "developer"],
+    "priority": 38,
+    "status": "live",
+    "icon": "📋"
+  },
+  {
+    "slug": "base64-encoder-decoder",
+    "title": "Base64 Encoder / Decoder",
+    "description": "Encode any text to Base64 or decode Base64 strings back to plain text.",
+    "category": "Developer",
+    "tags": ["base64", "encode", "decode", "developer", "converter"],
+    "priority": 39,
+    "status": "live",
+    "icon": "🔁"
+  },
+  {
+    "slug": "url-encoder-decoder",
+    "title": "URL Encoder / Decoder",
+    "description": "Encode special characters in URLs or decode percent-encoded URLs.",
+    "category": "Developer",
+    "tags": ["url", "encode", "decode", "percent encoding", "developer"],
+    "priority": 40,
+    "status": "live",
+    "icon": "🔗"
+  },
+  {
+    "slug": "uuid-generator",
+    "title": "UUID Generator",
+    "description": "Generate random UUIDs (v4). Bulk generate up to 100 at once. One-click copy.",
+    "category": "Developer",
+    "tags": ["uuid", "guid", "generator", "random", "developer"],
+    "priority": 41,
+    "status": "live",
+    "icon": "🆔"
+  },
+  {
+    "slug": "hash-generator",
+    "title": "Hash Generator",
+    "description": "Generate MD5, SHA-1, SHA-256, and SHA-512 hashes from any text.",
+    "category": "Developer",
+    "tags": ["hash", "md5", "sha256", "sha512", "developer", "security"],
+    "priority": 42,
+    "status": "live",
+    "icon": "#️⃣"
+  },
+  {
+    "slug": "lorem-ipsum-generator",
+    "title": "Lorem Ipsum Generator",
+    "description": "Generate placeholder Lorem Ipsum text by paragraphs, sentences, or words.",
+    "category": "Developer",
+    "tags": ["lorem ipsum", "placeholder", "dummy text", "developer"],
+    "priority": 43,
+    "status": "live",
+    "icon": "📄"
+  },
+  {
+    "slug": "slug-generator",
+    "title": "URL Slug Generator",
+    "description": "Convert any title or phrase into a clean, SEO-friendly URL slug.",
+    "category": "Developer",
+    "tags": ["slug", "url", "seo", "permalink", "developer"],
+    "priority": 44,
+    "status": "live",
+    "icon": "🐌"
+  },
+  {
+    "slug": "length-converter",
+    "title": "Length Converter",
+    "description": "Convert between meters, feet, inches, miles, kilometers, and more length units.",
+    "category": "Unit Converters",
+    "tags": ["length", "meters", "feet", "inches", "miles", "convert"],
+    "priority": 45,
+    "status": "live",
+    "icon": "📏"
+  },
+  {
+    "slug": "volume-converter",
+    "title": "Volume Converter",
+    "description": "Convert between liters, gallons, cups, fluid ounces, milliliters, and more.",
+    "category": "Unit Converters",
+    "tags": ["volume", "liters", "gallons", "cups", "convert"],
+    "priority": 46,
+    "status": "live",
+    "icon": "🧪"
+  },
+  {
+    "slug": "speed-converter",
+    "title": "Speed Converter",
+    "description": "Convert between mph, km/h, m/s, knots, and more speed units.",
+    "category": "Unit Converters",
+    "tags": ["speed", "mph", "kmh", "knots", "convert"],
+    "priority": 47,
+    "status": "live",
+    "icon": "💨"
+  },
+  {
+    "slug": "data-storage-converter",
+    "title": "Data Storage Converter",
+    "description": "Convert between bits, bytes, KB, MB, GB, TB, and beyond.",
+    "category": "Unit Converters",
+    "tags": ["data", "bytes", "megabytes", "gigabytes", "storage", "convert"],
+    "priority": 48,
+    "status": "live",
+    "icon": "💾"
+  },
+  {
+    "slug": "unix-timestamp-converter",
+    "title": "Unix Timestamp Converter",
+    "description": "Convert Unix timestamps to readable dates and vice versa. Supports seconds and milliseconds.",
+    "category": "Date & Time",
+    "tags": ["unix timestamp", "epoch", "timestamp", "date", "developer"],
+    "priority": 49,
+    "status": "live",
+    "icon": "🕐"
+  },
+  {
+    "slug": "fraction-calculator",
+    "title": "Fraction Calculator",
+    "description": "Add, subtract, multiply, and divide fractions. Automatically simplifies results.",
+    "category": "Math",
+    "tags": ["fraction", "calculator", "math", "numerator", "denominator"],
+    "priority": 50,
+    "status": "live",
+    "icon": "½"
+  },
+  {
+    "slug": "statistics-calculator",
+    "title": "Statistics Calculator",
+    "description": "Calculate mean, median, mode, range, variance, and standard deviation from a data set.",
+    "category": "Math",
+    "tags": ["statistics", "mean", "median", "mode", "standard deviation", "math"],
+    "priority": 51,
+    "status": "live",
+    "icon": "📉"
+  },
+  {
+    "slug": "number-base-converter",
+    "title": "Number Base Converter",
+    "description": "Convert numbers between binary, octal, decimal, and hexadecimal.",
+    "category": "Developer",
+    "tags": ["binary", "hexadecimal", "octal", "decimal", "base converter"],
+    "priority": 52,
+    "status": "live",
+    "icon": "🔢"
+  },
+  {
+    "slug": "roman-numeral-converter",
+    "title": "Roman Numeral Converter",
+    "description": "Convert numbers to Roman numerals and Roman numerals back to numbers.",
+    "category": "Math",
+    "tags": ["roman numerals", "convert", "numbers", "math"],
+    "priority": 53,
+    "status": "live",
+    "icon": "🏛️"
+  },
+  {
+    "slug": "area-converter",
+    "title": "Area Converter",
+    "description": "Convert between square meters, square feet, acres, hectares, and more area units.",
+    "category": "Unit Converters",
+    "tags": ["area", "square meters", "acres", "hectares", "convert"],
+    "priority": 54,
+    "status": "live",
+    "icon": "🗺️"
   }
 ]

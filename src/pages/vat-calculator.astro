@@ -1,0 +1,160 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="VAT & Sales Tax Calculator"
+  description="Add or remove VAT and sales tax from any price. Supports any tax rate. Instantly calculate tax-inclusive and tax-exclusive prices."
+  slug="vat-calculator"
+  category="Finance"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">VAT & Sales Tax Calculator</h1>
+  <p class="text-gray-500 mb-8">Add or remove VAT / sales tax from any price instantly.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <!-- Mode tabs -->
+    <div class="flex border border-gray-200 rounded-xl overflow-hidden">
+      <button data-mode="add" class="mode-btn flex-1 py-2.5 text-sm font-medium transition-colors bg-indigo-600 text-white">Add Tax</button>
+      <button data-mode="remove" class="mode-btn flex-1 py-2.5 text-sm font-medium transition-colors text-gray-600 hover:bg-gray-50">Remove Tax</button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label" id="price-label">Price (before tax) ($)</label>
+        <input id="price" type="number" step="0.01" placeholder="e.g. 100.00" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Tax Rate (%)</label>
+        <div class="flex gap-2">
+          <input id="tax-rate" type="number" step="0.1" value="20" class="input-field" />
+          <select id="rate-preset" class="input-field w-auto flex-shrink-0">
+            <option value="">Custom</option>
+            <option value="5">5%</option>
+            <option value="7">7%</option>
+            <option value="8.875">8.875% (NYC)</option>
+            <option value="10">10%</option>
+            <option value="13">13% (ON, CA)</option>
+            <option value="15">15%</option>
+            <option value="20" selected>20% (UK VAT)</option>
+            <option value="21">21%</option>
+            <option value="25">25%</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results (live) -->
+    <div class="grid grid-cols-3 gap-3 text-center">
+      <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+        <p id="r-net" class="text-2xl font-bold text-gray-800">—</p>
+        <p class="text-xs text-gray-500 mt-1">Net (ex. tax)</p>
+      </div>
+      <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
+        <p id="r-tax" class="text-2xl font-bold text-indigo-700">—</p>
+        <p class="text-xs text-indigo-500 mt-1">Tax Amount</p>
+      </div>
+      <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+        <p id="r-gross" class="text-2xl font-bold text-gray-800">—</p>
+        <p class="text-xs text-gray-500 mt-1">Gross (inc. tax)</p>
+      </div>
+    </div>
+
+    <!-- Common rates reference -->
+    <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden text-sm">
+      <div class="px-4 py-2 bg-gray-100 text-xs font-semibold text-gray-500 uppercase">Common VAT / Sales Tax Rates</div>
+      <table class="w-full">
+        <tbody class="divide-y divide-gray-100" id="rate-table"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is the difference between VAT and sales tax?", a: "Sales tax is added at the point of sale (common in the US). VAT (Value Added Tax) is collected at each stage of production and sale (common in Europe, UK, Canada). For consumers, the end effect is similar — you pay extra on top of the base price." },
+        { q: "How do I remove VAT from a price?", a: "To remove VAT from a VAT-inclusive price, divide by (1 + tax rate). For example, to remove 20% VAT from £120: £120 ÷ 1.20 = £100 net price. The VAT amount is £20." },
+        { q: "What is the VAT rate in the UK?", a: "The standard UK VAT rate is 20%. A reduced rate of 5% applies to some goods (e.g., children's car seats, home energy). Zero-rated items (0% VAT) include most food and children's clothing." },
+        { q: "What is the sales tax rate in Canada?", a: "Canada has both federal GST (5%) and provincial taxes. Most provinces use HST (combined tax): Ontario 13%, Nova Scotia 15%, New Brunswick 15%. Alberta has no provincial sales tax (only 5% GST)." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const fmt = (n: number) => '$' + n.toFixed(2);
+  let mode = 'add';
+
+  const RATES = [
+    { country: 'United States (avg)', rate: 8.5 },
+    { country: 'Canada (GST only)', rate: 5 },
+    { country: 'Ontario, Canada (HST)', rate: 13 },
+    { country: 'United Kingdom', rate: 20 },
+    { country: 'Germany', rate: 19 },
+    { country: 'France', rate: 20 },
+    { country: 'Australia (GST)', rate: 10 },
+    { country: 'New Zealand (GST)', rate: 15 },
+  ];
+
+  document.getElementById('rate-table')!.innerHTML = RATES.map(r =>
+    `<tr class="bg-white hover:bg-indigo-50 cursor-pointer rate-row" data-rate="${r.rate}">
+      <td class="px-4 py-2.5 text-gray-700">${r.country}</td>
+      <td class="px-4 py-2.5 text-right font-medium text-gray-800">${r.rate}%</td>
+    </tr>`
+  ).join('');
+
+  document.querySelectorAll<HTMLTableRowElement>('.rate-row').forEach(row => {
+    row.addEventListener('click', () => {
+      (document.getElementById('tax-rate') as HTMLInputElement).value = row.dataset.rate!;
+      (document.getElementById('rate-preset') as HTMLSelectElement).value = '';
+      calculate();
+    });
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('.mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      mode = btn.dataset.mode!;
+      document.querySelectorAll('.mode-btn').forEach(b => {
+        b.classList.toggle('bg-indigo-600', b === btn);
+        b.classList.toggle('text-white', b === btn);
+        b.classList.toggle('text-gray-600', b !== btn);
+        b.classList.toggle('bg-white', b !== btn);
+      });
+      document.getElementById('price-label')!.textContent = mode === 'add' ? 'Price (before tax) ($)' : 'Price (including tax) ($)';
+      calculate();
+    });
+  });
+
+  document.getElementById('rate-preset')?.addEventListener('change', (e) => {
+    const val = (e.target as HTMLSelectElement).value;
+    if (val) (document.getElementById('tax-rate') as HTMLInputElement).value = val;
+    calculate();
+  });
+
+  function calculate() {
+    const price = parseFloat((document.getElementById('price') as HTMLInputElement).value);
+    const rate = parseFloat((document.getElementById('tax-rate') as HTMLInputElement).value);
+    if (isNaN(price) || isNaN(rate)) { ['r-net','r-tax','r-gross'].forEach(id => document.getElementById(id)!.textContent = '—'); return; }
+    const r = rate / 100;
+    let net: number, taxAmt: number, gross: number;
+    if (mode === 'add') {
+      net = price; taxAmt = price * r; gross = price + taxAmt;
+    } else {
+      gross = price; net = price / (1 + r); taxAmt = gross - net;
+    }
+    document.getElementById('r-net')!.textContent = fmt(net);
+    document.getElementById('r-tax')!.textContent = fmt(taxAmt);
+    document.getElementById('r-gross')!.textContent = fmt(gross);
+  }
+
+  document.getElementById('price')?.addEventListener('input', calculate);
+  document.getElementById('tax-rate')?.addEventListener('input', calculate);
+</script>

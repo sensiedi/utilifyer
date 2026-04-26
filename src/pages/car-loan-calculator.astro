@@ -1,0 +1,162 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Car Loan Calculator"
+  description="Calculate your monthly car payment, total interest paid, and the true cost of any vehicle loan. Includes trade-in and down payment."
+  slug="car-loan-calculator"
+  category="Finance"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Car Loan Calculator</h1>
+  <p class="text-gray-500 mb-8">Calculate your monthly payment and total cost for any auto loan.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Vehicle Price ($)</label>
+        <input id="price" type="number" placeholder="e.g. 35000" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Down Payment ($)</label>
+        <input id="down" type="number" value="0" placeholder="e.g. 5000" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Trade-In Value ($)</label>
+        <input id="tradein" type="number" value="0" placeholder="e.g. 3000" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Sales Tax Rate (%)</label>
+        <input id="tax" type="number" step="0.1" value="0" placeholder="e.g. 8.5" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Annual Interest Rate (%)</label>
+        <input id="rate" type="number" step="0.01" placeholder="e.g. 7.5" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Loan Term</label>
+        <select id="term" class="input-field">
+          <option value="24">24 months (2 years)</option>
+          <option value="36">36 months (3 years)</option>
+          <option value="48">48 months (4 years)</option>
+          <option value="60" selected>60 months (5 years)</option>
+          <option value="72">72 months (6 years)</option>
+          <option value="84">84 months (7 years)</option>
+        </select>
+      </div>
+    </div>
+
+    <button id="calc-btn" class="btn-primary w-full">Calculate</button>
+
+    <div id="result" class="hidden space-y-4">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+        <div class="result-box"><p id="r-monthly" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Monthly Payment</p></div>
+        <div class="result-box"><p id="r-loan" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Loan Amount</p></div>
+        <div class="result-box"><p id="r-interest" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Total Interest</p></div>
+        <div class="result-box"><p id="r-total" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Total Cost</p></div>
+      </div>
+
+      <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm space-y-2">
+        <p class="font-semibold text-gray-700">Cost Breakdown</p>
+        <div id="breakdown" class="space-y-1.5"></div>
+      </div>
+
+      <!-- Term comparison -->
+      <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden text-sm">
+        <div class="px-4 py-2 bg-gray-100 text-xs font-semibold text-gray-500 uppercase">Term Comparison</div>
+        <table class="w-full">
+          <thead class="text-xs text-gray-500 uppercase bg-gray-100">
+            <tr>
+              <th class="px-4 py-2 text-left">Term</th>
+              <th class="px-4 py-2 text-right">Monthly</th>
+              <th class="px-4 py-2 text-right">Total Interest</th>
+              <th class="px-4 py-2 text-right">Total Cost</th>
+            </tr>
+          </thead>
+          <tbody id="comparison-table" class="divide-y divide-gray-100"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is a good interest rate for a car loan?", a: "As of 2025, average new car loan rates are 6–8% for borrowers with good credit (700+). Used car loans average 9–12%. Borrowers with excellent credit (750+) can often get rates below 6%. Credit unions typically offer lower rates than dealerships." },
+        { q: "Should I put a larger down payment on a car?", a: "Yes, when possible. A larger down payment reduces your loan amount, monthly payment, and total interest paid. It also reduces the risk of being 'underwater' on the loan (owing more than the car is worth as it depreciates)." },
+        { q: "Is a 72 or 84 month car loan a good idea?", a: "Longer terms lower your monthly payment but significantly increase total interest paid. They also risk you becoming underwater on the loan as the car depreciates faster than you're paying it off. 48–60 months is generally the sweet spot." },
+        { q: "What is the 20/4/10 rule for car buying?", a: "Put 20% down, finance for no longer than 4 years, and keep total vehicle expenses (payment + insurance) under 10% of gross monthly income. This is a conservative rule of thumb to avoid being car-poor." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const fmt = (n: number) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  function calcLoan(loanAmt: number, annualRate: number, months: number) {
+    const r = annualRate / 100 / 12;
+    if (r === 0) return { monthly: loanAmt / months, totalInterest: 0 };
+    const monthly = loanAmt * r * Math.pow(1 + r, months) / (Math.pow(1 + r, months) - 1);
+    return { monthly, totalInterest: monthly * months - loanAmt };
+  }
+
+  document.getElementById('calc-btn')?.addEventListener('click', () => {
+    const price = parseFloat((document.getElementById('price') as HTMLInputElement).value);
+    const down = parseFloat((document.getElementById('down') as HTMLInputElement).value) || 0;
+    const tradein = parseFloat((document.getElementById('tradein') as HTMLInputElement).value) || 0;
+    const taxRate = parseFloat((document.getElementById('tax') as HTMLInputElement).value) || 0;
+    const rate = parseFloat((document.getElementById('rate') as HTMLInputElement).value);
+    const term = parseInt((document.getElementById('term') as HTMLSelectElement).value);
+    if (isNaN(price) || isNaN(rate)) return;
+
+    const taxAmt = price * (taxRate / 100);
+    const loanAmt = price + taxAmt - down - tradein;
+    if (loanAmt <= 0) { alert('Down payment and trade-in exceed vehicle price.'); return; }
+    const { monthly, totalInterest } = calcLoan(loanAmt, rate, term);
+    const totalCost = monthly * term + down + tradein;
+
+    document.getElementById('r-monthly')!.textContent = fmt(monthly);
+    document.getElementById('r-loan')!.textContent = fmt(loanAmt);
+    document.getElementById('r-interest')!.textContent = fmt(totalInterest);
+    document.getElementById('r-total')!.textContent = fmt(totalCost);
+
+    const rows = [
+      ['Vehicle price', price],
+      ['Sales tax', taxAmt],
+      ['Down payment', -down],
+      ['Trade-in', -tradein],
+      ['Loan amount', loanAmt],
+      ['Total interest', totalInterest],
+      ['Total cost of vehicle', totalCost],
+    ];
+    document.getElementById('breakdown')!.innerHTML = rows.map(([label, val]) =>
+      `<div class="flex justify-between text-sm ${label === 'Total cost of vehicle' ? 'font-semibold border-t border-gray-200 pt-2 mt-1' : ''}">
+        <span class="text-gray-600">${label}</span>
+        <span class="text-gray-800">${(val as number) < 0 ? '-$' + Math.abs(val as number).toFixed(2) : fmt(val as number)}</span>
+      </div>`
+    ).join('');
+
+    const terms = [24, 36, 48, 60, 72, 84];
+    document.getElementById('comparison-table')!.innerHTML = terms.map(t => {
+      const { monthly: m, totalInterest: ti } = calcLoan(loanAmt, rate, t);
+      const highlight = t === term;
+      return `<tr class="${highlight ? 'bg-indigo-50' : 'bg-white hover:bg-gray-50'}">
+        <td class="px-4 py-2.5 text-gray-700 ${highlight ? 'font-semibold' : ''}">${t} months</td>
+        <td class="px-4 py-2.5 text-right text-gray-600">${fmt(m)}</td>
+        <td class="px-4 py-2.5 text-right text-gray-600">${fmt(ti)}</td>
+        <td class="px-4 py-2.5 text-right font-medium text-gray-800">${fmt(m * t + down)}</td>
+      </tr>`;
+    }).join('');
+
+    document.getElementById('result')!.classList.remove('hidden');
+  });
+</script>

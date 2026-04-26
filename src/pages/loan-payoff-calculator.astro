@@ -1,0 +1,156 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Loan Payoff Calculator"
+  description="Calculate how long it takes to pay off any loan and how much total interest you will pay. See how extra payments save you money."
+  slug="loan-payoff-calculator"
+  category="Finance"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Loan Payoff Calculator</h1>
+  <p class="text-gray-500 mb-8">See how long to pay off any loan and how much interest you'll pay in total.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Loan Balance ($)</label>
+        <input id="balance" type="number" placeholder="e.g. 15000" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Annual Interest Rate (%)</label>
+        <input id="rate" type="number" step="0.01" placeholder="e.g. 6.5" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Monthly Payment ($)</label>
+        <input id="payment" type="number" placeholder="e.g. 300" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Extra Monthly Payment ($)</label>
+        <input id="extra" type="number" placeholder="e.g. 50 (optional)" class="input-field" />
+      </div>
+    </div>
+    <button id="calc-btn" class="btn-primary w-full">Calculate</button>
+
+    <div id="result" class="hidden space-y-4">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+        <div class="result-box"><p id="r-months" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Months to Payoff</p></div>
+        <div class="result-box"><p id="r-years" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Years & Months</p></div>
+        <div class="result-box"><p id="r-interest" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Total Interest</p></div>
+        <div class="result-box"><p id="r-total" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Total Paid</p></div>
+      </div>
+
+      <div id="savings-box" class="hidden bg-green-50 border border-green-200 rounded-xl p-4 text-sm text-green-800">
+        <p class="font-semibold mb-1">💸 Extra Payment Savings</p>
+        <p id="savings-text"></p>
+      </div>
+
+      <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden text-sm">
+        <div class="px-4 py-2 bg-gray-100 text-xs font-semibold text-gray-500 uppercase">Yearly Summary</div>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="text-xs text-gray-500 uppercase bg-gray-100">
+              <tr>
+                <th class="px-4 py-2 text-left">Year</th>
+                <th class="px-4 py-2 text-right">Principal Paid</th>
+                <th class="px-4 py-2 text-right">Interest Paid</th>
+                <th class="px-4 py-2 text-right">Balance</th>
+              </tr>
+            </thead>
+            <tbody id="amort-table" class="divide-y divide-gray-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How is the payoff time calculated?", a: "The calculator uses the standard amortization formula to determine how many monthly payments are needed to reduce the balance to zero, given the interest rate and payment amount." },
+        { q: "What happens if my payment is too low?", a: "If your monthly payment doesn't cover the monthly interest, the loan balance will never decrease. The calculator will warn you if your payment is too low." },
+        { q: "How much does an extra payment save?", a: "Extra payments reduce your principal faster, which reduces the interest that accumulates each month. Even $50–$100 extra per month can save thousands in interest over the life of a loan." },
+        { q: "Does this work for student loans and personal loans?", a: "Yes — this calculator works for any fixed-rate installment loan: student loans, personal loans, auto loans, or any debt with a fixed interest rate and regular monthly payment." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const fmt = (n: number) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  function amortize(balance: number, monthlyRate: number, payment: number) {
+    const rows: { year: number; principal: number; interest: number; balance: number }[] = [];
+    let bal = balance, yearPrincipal = 0, yearInterest = 0, months = 0;
+    let year = 1;
+    while (bal > 0 && months < 600) {
+      const interest = bal * monthlyRate;
+      const principal = Math.min(payment - interest, bal);
+      if (principal <= 0) return null;
+      bal -= principal;
+      yearPrincipal += principal;
+      yearInterest += interest;
+      months++;
+      if (months % 12 === 0 || bal <= 0) {
+        rows.push({ year, principal: yearPrincipal, interest: yearInterest, balance: Math.max(bal, 0) });
+        year++; yearPrincipal = 0; yearInterest = 0;
+      }
+    }
+    return { rows, months };
+  }
+
+  document.getElementById('calc-btn')?.addEventListener('click', () => {
+    const balance = parseFloat((document.getElementById('balance') as HTMLInputElement).value);
+    const annualRate = parseFloat((document.getElementById('rate') as HTMLInputElement).value);
+    const payment = parseFloat((document.getElementById('payment') as HTMLInputElement).value);
+    const extra = parseFloat((document.getElementById('extra') as HTMLInputElement).value) || 0;
+    if (isNaN(balance) || isNaN(annualRate) || isNaN(payment)) return;
+
+    const monthlyRate = annualRate / 100 / 12;
+    const base = amortize(balance, monthlyRate, payment);
+    if (!base) { alert('Monthly payment is too low to pay off this loan.'); return; }
+
+    const totalInterest = base.rows.reduce((s, r) => s + r.interest, 0);
+    const totalPaid = balance + totalInterest;
+    const years = Math.floor(base.months / 12);
+    const mos = base.months % 12;
+
+    document.getElementById('r-months')!.textContent = base.months.toString();
+    document.getElementById('r-years')!.textContent = years > 0 ? `${years}y ${mos}m` : `${mos}m`;
+    document.getElementById('r-interest')!.textContent = fmt(totalInterest);
+    document.getElementById('r-total')!.textContent = fmt(totalPaid);
+
+    if (extra > 0) {
+      const withExtra = amortize(balance, monthlyRate, payment + extra);
+      if (withExtra) {
+        const savedMonths = base.months - withExtra.months;
+        const savedInterest = totalInterest - withExtra.rows.reduce((s, r) => s + r.interest, 0);
+        const savEl = document.getElementById('savings-box')!;
+        savEl.classList.remove('hidden');
+        document.getElementById('savings-text')!.textContent =
+          `With $${extra}/mo extra: pay off ${savedMonths} months sooner and save ${fmt(savedInterest)} in interest.`;
+      }
+    } else {
+      document.getElementById('savings-box')!.classList.add('hidden');
+    }
+
+    document.getElementById('amort-table')!.innerHTML = base.rows.map(r =>
+      `<tr class="bg-white hover:bg-gray-50">
+        <td class="px-4 py-2.5 text-gray-700">Year ${r.year}</td>
+        <td class="px-4 py-2.5 text-right text-gray-600">${fmt(r.principal)}</td>
+        <td class="px-4 py-2.5 text-right text-gray-600">${fmt(r.interest)}</td>
+        <td class="px-4 py-2.5 text-right font-medium text-gray-800">${fmt(r.balance)}</td>
+      </tr>`
+    ).join('');
+
+    document.getElementById('result')!.classList.remove('hidden');
+  });
+</script>

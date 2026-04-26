@@ -1,0 +1,191 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Credit Card Payoff Calculator"
+  description="See exactly how long it takes to pay off your credit card balance and how much interest you'll pay. Compare minimum payments vs. fixed payments."
+  slug="credit-card-payoff-calculator"
+  category="Finance"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Credit Card Payoff Calculator</h1>
+  <p class="text-gray-500 mb-8">Find out how long to pay off your credit card and how to minimize interest.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Current Balance ($)</label>
+        <input id="cc-balance" type="number" placeholder="e.g. 5000" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Annual Interest Rate / APR (%)</label>
+        <input id="cc-apr" type="number" step="0.01" placeholder="e.g. 22.99" class="input-field" />
+      </div>
+    </div>
+
+    <div>
+      <label class="label">Payment Strategy</label>
+      <div class="flex flex-wrap gap-2">
+        {[
+          { id: 'strategy-min', label: 'Minimum Payment', val: 'min' },
+          { id: 'strategy-fixed', label: 'Fixed Monthly Amount', val: 'fixed' },
+          { id: 'strategy-payoff', label: 'Target Payoff Date', val: 'date' },
+        ].map(({ id, label, val }) => (
+          <button data-strategy={val} class="strategy-btn px-4 py-2 rounded-lg border text-sm font-medium transition-colors border-gray-200 text-gray-600 hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-600">{label}</button>
+        ))}
+      </div>
+    </div>
+
+    <div id="opt-min" class="strategy-opt hidden space-y-2">
+      <label class="label">Minimum Payment %</label>
+      <input id="min-pct" type="number" value="2" step="0.1" placeholder="e.g. 2" class="input-field" />
+      <p class="text-xs text-gray-400">Most cards charge 1–2% of balance or $25, whichever is greater.</p>
+    </div>
+
+    <div id="opt-fixed" class="strategy-opt hidden">
+      <label class="label">Monthly Payment ($)</label>
+      <input id="fixed-payment" type="number" placeholder="e.g. 200" class="input-field" />
+    </div>
+
+    <div id="opt-date" class="strategy-opt hidden">
+      <label class="label">Target Payoff (months)</label>
+      <input id="target-months" type="number" placeholder="e.g. 24" class="input-field" />
+    </div>
+
+    <button id="cc-calc-btn" class="btn-primary w-full">Calculate</button>
+
+    <div id="cc-result" class="hidden space-y-4">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+        <div class="result-box"><p id="cc-months" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Months</p></div>
+        <div class="result-box"><p id="cc-monthly" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Monthly Payment</p></div>
+        <div class="result-box"><p id="cc-interest" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Total Interest</p></div>
+        <div class="result-box"><p id="cc-total" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Total Paid</p></div>
+      </div>
+
+      <!-- Comparison table -->
+      <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden text-sm">
+        <div class="px-4 py-2 bg-gray-100 text-xs font-semibold text-gray-500 uppercase">Payment Comparison</div>
+        <table class="w-full">
+          <thead class="text-xs text-gray-500 uppercase bg-gray-100">
+            <tr>
+              <th class="px-4 py-2 text-left">Strategy</th>
+              <th class="px-4 py-2 text-right">Payment</th>
+              <th class="px-4 py-2 text-right">Months</th>
+              <th class="px-4 py-2 text-right">Total Interest</th>
+            </tr>
+          </thead>
+          <tbody id="cc-comparison" class="divide-y divide-gray-100"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "Why does paying only the minimum take so long?", a: "Minimum payments are typically 1–2% of your balance. Since the minimum shrinks as your balance decreases, most of each payment goes to interest rather than principal. This can result in decades of payments on a $5,000 balance." },
+        { q: "What is a good APR for a credit card?", a: "The average credit card APR is around 21–24%. Anything below 15% is considered good. If your rate is above 25%, consider balance transfer cards with 0% introductory APR to reduce interest while paying down debt." },
+        { q: "What is the avalanche vs. snowball method?", a: "Avalanche: pay minimums on all cards, put extra toward the highest-APR card. Saves the most interest. Snowball: pay the smallest balance first for psychological wins. Both work — choose what keeps you motivated." },
+        { q: "How can I pay off credit card debt faster?", a: "Pay more than the minimum every month. Even doubling your minimum payment can cut payoff time by 50%+. Consider a balance transfer to a 0% APR card, negotiate a lower rate, or consolidate into a personal loan at a lower rate." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const fmt = (n: number) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  let currentStrategy = 'fixed';
+
+  document.querySelectorAll<HTMLButtonElement>('.strategy-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentStrategy = btn.dataset.strategy!;
+      document.querySelectorAll('.strategy-btn').forEach(b => {
+        b.classList.toggle('border-indigo-500', b === btn);
+        b.classList.toggle('bg-indigo-50', b === btn);
+        b.classList.toggle('text-indigo-600', b === btn);
+        b.classList.toggle('border-gray-200', b !== btn);
+        b.classList.toggle('text-gray-600', b !== btn);
+      });
+      document.querySelectorAll('.strategy-opt').forEach(el => (el as HTMLElement).classList.add('hidden'));
+      document.getElementById(`opt-${currentStrategy}`)?.classList.remove('hidden');
+    });
+  });
+  document.querySelector<HTMLButtonElement>('[data-strategy="fixed"]')?.click();
+
+  function calcFixed(balance: number, monthlyRate: number, payment: number) {
+    if (payment <= balance * monthlyRate) return null;
+    let bal = balance, months = 0, totalInterest = 0;
+    while (bal > 0 && months < 1200) {
+      const interest = bal * monthlyRate;
+      totalInterest += interest;
+      bal = bal + interest - payment;
+      if (bal < 0) bal = 0;
+      months++;
+    }
+    return { months, totalInterest, payment };
+  }
+
+  function calcMinimum(balance: number, monthlyRate: number, minPct: number) {
+    let bal = balance, months = 0, totalInterest = 0;
+    while (bal > 0.01 && months < 1200) {
+      const interest = bal * monthlyRate;
+      totalInterest += interest;
+      const payment = Math.max(bal * minPct, 25, bal + interest);
+      bal = bal + interest - payment;
+      if (bal < 0) bal = 0;
+      months++;
+    }
+    return { months, totalInterest, payment: balance * minPct };
+  }
+
+  document.getElementById('cc-calc-btn')?.addEventListener('click', () => {
+    const balance = parseFloat((document.getElementById('cc-balance') as HTMLInputElement).value);
+    const apr = parseFloat((document.getElementById('cc-apr') as HTMLInputElement).value);
+    if (isNaN(balance) || isNaN(apr)) return;
+    const monthlyRate = apr / 100 / 12;
+
+    let result: { months: number; totalInterest: number; payment: number } | null = null;
+
+    if (currentStrategy === 'min') {
+      const minPct = (parseFloat((document.getElementById('min-pct') as HTMLInputElement).value) || 2) / 100;
+      result = calcMinimum(balance, monthlyRate, minPct);
+    } else if (currentStrategy === 'fixed') {
+      const payment = parseFloat((document.getElementById('fixed-payment') as HTMLInputElement).value);
+      if (isNaN(payment)) return;
+      result = calcFixed(balance, monthlyRate, payment);
+      if (!result) { alert('Payment is too low to cover monthly interest.'); return; }
+    } else {
+      const months = parseInt((document.getElementById('target-months') as HTMLInputElement).value);
+      if (isNaN(months)) return;
+      const payment = (balance * monthlyRate) / (1 - Math.pow(1 + monthlyRate, -months));
+      result = { months, totalInterest: payment * months - balance, payment };
+    }
+
+    if (!result) return;
+    document.getElementById('cc-months')!.textContent = result.months.toString();
+    document.getElementById('cc-monthly')!.textContent = fmt(result.payment);
+    document.getElementById('cc-interest')!.textContent = fmt(result.totalInterest);
+    document.getElementById('cc-total')!.textContent = fmt(balance + result.totalInterest);
+
+    // comparison rows
+    const comparisons = [
+      { label: 'Minimum (2%)', ...calcMinimum(balance, monthlyRate, 0.02) },
+      { label: '$100/mo', ...calcFixed(balance, monthlyRate, 100) || { months: 0, totalInterest: 0, payment: 100 } },
+      { label: '$200/mo', ...calcFixed(balance, monthlyRate, 200) || { months: 0, totalInterest: 0, payment: 200 } },
+      { label: '$500/mo', ...calcFixed(balance, monthlyRate, 500) || { months: 0, totalInterest: 0, payment: 500 } },
+    ];
+    document.getElementById('cc-comparison')!.innerHTML = comparisons.map(c =>
+      `<tr class="bg-white hover:bg-gray-50"><td class="px-4 py-2.5 text-gray-700">${c.label}</td><td class="px-4 py-2.5 text-right text-gray-600">${fmt(c.payment)}</td><td class="px-4 py-2.5 text-right text-gray-600">${c.months}</td><td class="px-4 py-2.5 text-right font-medium text-gray-800">${fmt(c.totalInterest)}</td></tr>`
+    ).join('');
+
+    document.getElementById('cc-result')!.classList.remove('hidden');
+  });
+</script>
