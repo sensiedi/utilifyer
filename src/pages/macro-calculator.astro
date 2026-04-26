@@ -1,0 +1,168 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Macro Calculator"
+  description="Calculate your daily protein, carbs, and fat macros based on your calorie goal and fitness objective. Supports cutting, bulking, and maintenance."
+  slug="macro-calculator"
+  category="Health"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Macro Calculator</h1>
+  <p class="text-gray-500 mb-8">Get your daily protein, carb, and fat targets based on your goal and calorie budget.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Daily Calorie Goal</label>
+        <input id="calories" type="number" placeholder="e.g. 2200" class="input-field" />
+        <p class="text-xs text-gray-400 mt-1">Use the TDEE calculator to find your calories first.</p>
+      </div>
+      <div>
+        <label class="label">Body Weight</label>
+        <div class="flex gap-2">
+          <input id="bodyweight" type="number" placeholder="e.g. 175" class="input-field" />
+          <select id="bw-unit" class="input-field w-auto flex-shrink-0">
+            <option value="lbs">lbs</option>
+            <option value="kg">kg</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <label class="label">Goal</label>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+        {[
+          { val: 'cut', label: '🔥 Lose Fat', desc: 'High protein, lower carbs' },
+          { val: 'maintain', label: '⚖️ Maintain', desc: 'Balanced macros' },
+          { val: 'bulk', label: '💪 Build Muscle', desc: 'High protein + carbs' },
+        ].map(({ val, label, desc }) => (
+          <button data-goal={val} class="goal-btn text-left p-3 rounded-xl border text-sm transition-colors border-gray-200 hover:border-indigo-400 hover:bg-indigo-50">
+            <p class="font-medium text-gray-700">{label}</p>
+            <p class="text-xs text-gray-500 mt-0.5">{desc}</p>
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <button id="calc-btn" class="btn-primary w-full">Calculate Macros</button>
+
+    <div id="result" class="hidden space-y-4">
+      <div class="grid grid-cols-3 gap-3 text-center">
+        <div class="bg-red-50 border border-red-200 rounded-xl p-4">
+          <p id="r-protein-g" class="text-3xl font-bold text-red-700"></p>
+          <p class="text-xs text-red-500 mt-1">Protein (g)</p>
+          <p id="r-protein-cal" class="text-xs text-red-400 mt-0.5"></p>
+        </div>
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+          <p id="r-carbs-g" class="text-3xl font-bold text-amber-700"></p>
+          <p class="text-xs text-amber-500 mt-1">Carbs (g)</p>
+          <p id="r-carbs-cal" class="text-xs text-amber-400 mt-0.5"></p>
+        </div>
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-4">
+          <p id="r-fat-g" class="text-3xl font-bold text-blue-700"></p>
+          <p class="text-xs text-blue-500 mt-1">Fat (g)</p>
+          <p id="r-fat-cal" class="text-xs text-blue-400 mt-0.5"></p>
+        </div>
+      </div>
+
+      <!-- Visual breakdown bar -->
+      <div>
+        <div class="flex h-4 rounded-full overflow-hidden">
+          <div id="bar-protein" class="bg-red-400 transition-all duration-300"></div>
+          <div id="bar-carbs" class="bg-amber-400 transition-all duration-300"></div>
+          <div id="bar-fat" class="bg-blue-400 transition-all duration-300"></div>
+        </div>
+        <div class="flex justify-between text-xs text-gray-500 mt-1">
+          <span id="pct-protein"></span>
+          <span id="pct-carbs"></span>
+          <span id="pct-fat"></span>
+        </div>
+      </div>
+
+      <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm">
+        <p class="font-semibold text-gray-700 mb-2">Per Meal (based on 3 meals)</p>
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div><p id="meal-protein" class="font-bold text-gray-800"></p><p class="text-xs text-gray-500">Protein (g)</p></div>
+          <div><p id="meal-carbs" class="font-bold text-gray-800"></p><p class="text-xs text-gray-500">Carbs (g)</p></div>
+          <div><p id="meal-fat" class="font-bold text-gray-800"></p><p class="text-xs text-gray-500">Fat (g)</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How many grams of protein do I need per day?", a: "For most active people, 0.7–1g of protein per pound of body weight (1.6–2.2g/kg) is optimal for muscle building and retention. Sedentary adults can get by with 0.36g/lb. Prioritize protein — it's the hardest macro to hit." },
+        { q: "How many calories per gram of each macro?", a: "Protein = 4 calories/gram. Carbohydrates = 4 calories/gram. Fat = 9 calories/gram. Alcohol = 7 calories/gram (no nutritional value). This is why fat is more calorie-dense than protein or carbs." },
+        { q: "What is the best macro split for fat loss?", a: "High-protein (40%+) preserves muscle while in a caloric deficit. A common fat-loss split is 40% protein / 30% carbs / 30% fat. The most important factor is total calories — macros determine body composition within that calorie budget." },
+        { q: "Do I need to track macros every day?", a: "Tracking macros precisely is most useful for specific performance or body composition goals. For general health, focusing on hitting your protein target and eating whole foods is sufficient. Use this as a guide, not a strict rule." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  let goal = 'maintain';
+
+  const SPLITS: Record<string, [number, number, number]> = {
+    cut:      [0.40, 0.30, 0.30],
+    maintain: [0.30, 0.40, 0.30],
+    bulk:     [0.30, 0.45, 0.25],
+  };
+
+  document.querySelectorAll<HTMLButtonElement>('.goal-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      goal = btn.dataset.goal!;
+      document.querySelectorAll('.goal-btn').forEach(b => {
+        b.classList.toggle('border-indigo-500', b === btn);
+        b.classList.toggle('bg-indigo-50', b === btn);
+      });
+    });
+  });
+  document.querySelector<HTMLButtonElement>('[data-goal="maintain"]')?.click();
+
+  document.getElementById('calc-btn')?.addEventListener('click', () => {
+    const calories = parseFloat((document.getElementById('calories') as HTMLInputElement).value);
+    let bw = parseFloat((document.getElementById('bodyweight') as HTMLInputElement).value);
+    const bwUnit = (document.getElementById('bw-unit') as HTMLSelectElement).value;
+    if (isNaN(calories)) return;
+    if (bwUnit === 'lbs' && !isNaN(bw)) bw = bw * 0.453592;
+
+    const [pPct, cPct, fPct] = SPLITS[goal];
+    const proteinG = Math.round((calories * pPct) / 4);
+    const carbsG = Math.round((calories * cPct) / 4);
+    const fatG = Math.round((calories * fPct) / 9);
+    const proteinCal = proteinG * 4, carbsCal = carbsG * 4, fatCal = fatG * 9;
+
+    document.getElementById('r-protein-g')!.textContent = proteinG + 'g';
+    document.getElementById('r-carbs-g')!.textContent = carbsG + 'g';
+    document.getElementById('r-fat-g')!.textContent = fatG + 'g';
+    document.getElementById('r-protein-cal')!.textContent = proteinCal + ' cal (' + Math.round(pPct * 100) + '%)';
+    document.getElementById('r-carbs-cal')!.textContent = carbsCal + ' cal (' + Math.round(cPct * 100) + '%)';
+    document.getElementById('r-fat-cal')!.textContent = fatCal + ' cal (' + Math.round(fPct * 100) + '%)';
+
+    document.getElementById('bar-protein')!.style.width = Math.round(pPct * 100) + '%';
+    document.getElementById('bar-carbs')!.style.width = Math.round(cPct * 100) + '%';
+    document.getElementById('bar-fat')!.style.width = Math.round(fPct * 100) + '%';
+    document.getElementById('pct-protein')!.textContent = '🥩 Protein ' + Math.round(pPct * 100) + '%';
+    document.getElementById('pct-carbs')!.textContent = '🌾 Carbs ' + Math.round(cPct * 100) + '%';
+    document.getElementById('pct-fat')!.textContent = '🥑 Fat ' + Math.round(fPct * 100) + '%';
+
+    document.getElementById('meal-protein')!.textContent = Math.round(proteinG / 3) + 'g';
+    document.getElementById('meal-carbs')!.textContent = Math.round(carbsG / 3) + 'g';
+    document.getElementById('meal-fat')!.textContent = Math.round(fatG / 3) + 'g';
+
+    document.getElementById('result')!.classList.remove('hidden');
+  });
+</script>

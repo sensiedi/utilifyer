@@ -1,0 +1,217 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Running Pace Calculator"
+  description="Calculate running pace, speed, and finish time for any distance. Supports 5K, 10K, half marathon, marathon, and custom distances."
+  slug="running-pace-calculator"
+  category="Health"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Running Pace Calculator</h1>
+  <p class="text-gray-500 mb-8">Calculate pace, finish time, or distance — enter any two values to find the third.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <!-- Mode -->
+    <div>
+      <label class="label">Calculate</label>
+      <div class="flex flex-wrap gap-2">
+        {[
+          { val: 'pace', label: '⏱ Pace (min/mi or km)' },
+          { val: 'time', label: '🕐 Finish Time' },
+          { val: 'distance', label: '📏 Distance' },
+        ].map(({ val, label }) => (
+          <button data-mode={val} class="mode-btn px-4 py-2 rounded-lg border text-sm font-medium transition-colors border-gray-200 text-gray-600 hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-600">{label}</button>
+        ))}
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <!-- Distance -->
+      <div id="field-distance">
+        <label class="label">Distance</label>
+        <div class="flex gap-2">
+          <input id="distance-val" type="number" step="0.01" placeholder="e.g. 10" class="input-field" />
+          <select id="dist-unit" class="input-field w-auto flex-shrink-0">
+            <option value="km">km</option>
+            <option value="mi">mi</option>
+          </select>
+        </div>
+        <div class="flex flex-wrap gap-1 mt-2">
+          {[
+            { label: '5K', km: 5 },
+            { label: '10K', km: 10 },
+            { label: 'Half', km: 21.0975 },
+            { label: 'Full', km: 42.195 },
+          ].map(({ label, km }) => (
+            <button class="dist-preset text-xs px-2 py-1 rounded border border-gray-200 hover:bg-indigo-50 hover:border-indigo-300 text-gray-600" data-km={km}>{label}</button>
+          ))}
+        </div>
+      </div>
+
+      <!-- Pace -->
+      <div id="field-pace">
+        <label class="label">Pace</label>
+        <div class="flex gap-2 items-center">
+          <input id="pace-min" type="number" placeholder="min" class="input-field" />
+          <span class="text-gray-500">:</span>
+          <input id="pace-sec" type="number" placeholder="sec" min="0" max="59" class="input-field" />
+          <select id="pace-unit" class="input-field w-auto flex-shrink-0">
+            <option value="km">/ km</option>
+            <option value="mi">/ mi</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Time -->
+      <div id="field-time">
+        <label class="label">Finish Time</label>
+        <div class="flex gap-2 items-center">
+          <input id="time-h" type="number" placeholder="h" class="input-field" />
+          <span class="text-gray-500">:</span>
+          <input id="time-m" type="number" placeholder="min" min="0" max="59" class="input-field" />
+          <span class="text-gray-500">:</span>
+          <input id="time-s" type="number" placeholder="sec" min="0" max="59" class="input-field" />
+        </div>
+      </div>
+    </div>
+
+    <button id="calc-btn" class="btn-primary w-full">Calculate</button>
+
+    <div id="result" class="hidden space-y-4">
+      <div class="grid grid-cols-3 gap-3 text-center">
+        <div class="result-box"><p id="r-pace" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Pace</p></div>
+        <div class="result-box"><p id="r-time" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Finish Time</p></div>
+        <div class="result-box"><p id="r-speed" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Speed</p></div>
+      </div>
+
+      <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden text-sm">
+        <div class="px-4 py-2 bg-gray-100 text-xs font-semibold text-gray-500 uppercase">Race Projections</div>
+        <table class="w-full">
+          <thead class="text-xs text-gray-500 uppercase bg-gray-100">
+            <tr>
+              <th class="px-4 py-2 text-left">Race</th>
+              <th class="px-4 py-2 text-right">Finish Time</th>
+              <th class="px-4 py-2 text-right">Pace</th>
+            </tr>
+          </thead>
+          <tbody id="race-table" class="divide-y divide-gray-100"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is a good running pace?", a: "Average recreational runner pace is 9–12 min/mile (5:35–7:27 min/km). A 5K in under 30 minutes (9:39 min/mile) is a common beginner goal. Sub-8 min/mile is considered solid for a recreational runner." },
+        { q: "How do I convert pace to speed?", a: "Speed (mph) = 60 ÷ pace (min/mile). For example, a 10 min/mile pace = 6 mph. Speed (km/h) = 60 ÷ pace (min/km). A 6 min/km pace = 10 km/h." },
+        { q: "What pace do I need to qualify for Boston?", a: "Boston Marathon qualifying times vary by age and gender. For example, men aged 18–34 need 3:00:00 (6:52 min/mile), women aged 18–34 need 3:30:00 (8:01 min/mile). Each age group has different cutoffs." },
+        { q: "What is negative splits?", a: "Negative splits means running the second half of a race faster than the first. It's generally the most efficient pacing strategy for distance events — start conservatively and accelerate in the second half." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  let mode = 'pace';
+
+  const RACES = [
+    { label: '5K', km: 5 },
+    { label: '10K', km: 10 },
+    { label: 'Half Marathon', km: 21.0975 },
+    { label: 'Marathon', km: 42.195 },
+  ];
+
+  function fmtTime(totalSec: number): string {
+    const h = Math.floor(totalSec / 3600);
+    const m = Math.floor((totalSec % 3600) / 60);
+    const s = Math.floor(totalSec % 60);
+    return h > 0 ? `${h}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}` : `${m}:${String(s).padStart(2,'0')}`;
+  }
+  function fmtPace(secPerKm: number, unit: string): string {
+    const spUnit = unit === 'mi' ? secPerKm * 1.60934 : secPerKm;
+    return fmtTime(spUnit) + ' /' + unit;
+  }
+
+  document.querySelectorAll<HTMLButtonElement>('.mode-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      mode = btn.dataset.mode!;
+      document.querySelectorAll('.mode-btn').forEach(b => { b.classList.toggle('bg-indigo-100', b === btn); b.classList.toggle('border-indigo-400', b === btn); b.classList.toggle('text-indigo-600', b === btn); });
+      ['field-distance','field-pace','field-time'].forEach(id => {
+        const el = document.getElementById(id)!;
+        const field = id.replace('field-', '');
+        el.style.opacity = field === mode ? '0.5' : '1';
+      });
+    });
+  });
+  document.querySelector<HTMLButtonElement>('[data-mode="pace"]')?.click();
+
+  document.querySelectorAll<HTMLButtonElement>('.dist-preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const km = parseFloat(btn.dataset.km!);
+      const unit = (document.getElementById('dist-unit') as HTMLSelectElement).value;
+      (document.getElementById('distance-val') as HTMLInputElement).value = (unit === 'mi' ? km / 1.60934 : km).toFixed(2);
+    });
+  });
+
+  document.getElementById('calc-btn')?.addEventListener('click', () => {
+    const distVal = parseFloat((document.getElementById('distance-val') as HTMLInputElement).value);
+    const distUnit = (document.getElementById('dist-unit') as HTMLSelectElement).value;
+    const paceMin = parseFloat((document.getElementById('pace-min') as HTMLInputElement).value) || 0;
+    const paceSec = parseFloat((document.getElementById('pace-sec') as HTMLInputElement).value) || 0;
+    const paceUnit = (document.getElementById('pace-unit') as HTMLSelectElement).value;
+    const timeH = parseFloat((document.getElementById('time-h') as HTMLInputElement).value) || 0;
+    const timeM = parseFloat((document.getElementById('time-m') as HTMLInputElement).value) || 0;
+    const timeS = parseFloat((document.getElementById('time-s') as HTMLInputElement).value) || 0;
+
+    const distKm = distUnit === 'mi' ? distVal * 1.60934 : distVal;
+    const paceTotalSec = paceMin * 60 + paceSec; // sec per unit
+    const paceSecPerKm = paceUnit === 'mi' ? paceTotalSec / 1.60934 : paceTotalSec;
+    const timeTotalSec = timeH * 3600 + timeM * 60 + timeS;
+
+    let calcSecPerKm: number, calcTimeTotal: number, calcDistKm: number;
+
+    if (mode === 'pace') {
+      calcDistKm = distKm;
+      calcTimeTotal = timeTotalSec;
+      calcSecPerKm = timeTotalSec / distKm;
+    } else if (mode === 'time') {
+      calcDistKm = distKm;
+      calcSecPerKm = paceSecPerKm;
+      calcTimeTotal = paceSecPerKm * distKm;
+    } else {
+      calcSecPerKm = paceSecPerKm;
+      calcTimeTotal = timeTotalSec;
+      calcDistKm = timeTotalSec / paceSecPerKm;
+    }
+
+    if (!calcSecPerKm || !calcTimeTotal || !calcDistKm) return;
+
+    const speedKmh = 3600 / calcSecPerKm;
+    const pUnitDisplay = (document.getElementById('pace-unit') as HTMLSelectElement).value;
+    document.getElementById('r-pace')!.textContent = fmtPace(calcSecPerKm, pUnitDisplay);
+    document.getElementById('r-time')!.textContent = fmtTime(calcTimeTotal);
+    document.getElementById('r-speed')!.textContent = speedKmh.toFixed(1) + ' km/h';
+
+    document.getElementById('race-table')!.innerHTML = RACES.map(r => {
+      const t = calcSecPerKm * r.km;
+      return `<tr class="bg-white hover:bg-gray-50">
+        <td class="px-4 py-2.5 text-gray-700">${r.label}</td>
+        <td class="px-4 py-2.5 text-right font-medium text-gray-800">${fmtTime(t)}</td>
+        <td class="px-4 py-2.5 text-right text-gray-600">${fmtPace(calcSecPerKm, pUnitDisplay)}</td>
+      </tr>`;
+    }).join('');
+
+    document.getElementById('result')!.classList.remove('hidden');
+  });
+</script>

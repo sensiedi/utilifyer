@@ -1,0 +1,132 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Heart Rate Zone Calculator"
+  description="Calculate your 5 heart rate training zones based on your age and resting heart rate. Optimize your cardio workouts for fat burn, endurance, and performance."
+  slug="heart-rate-zone-calculator"
+  category="Health"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Heart Rate Zone Calculator</h1>
+  <p class="text-gray-500 mb-8">Find your 5 heart rate training zones to optimize every workout.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div>
+        <label class="label">Age</label>
+        <input id="age" type="number" placeholder="e.g. 35" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Resting Heart Rate (bpm)</label>
+        <input id="rhr" type="number" value="60" placeholder="e.g. 60" class="input-field" />
+        <p class="text-xs text-gray-400 mt-1">Measure first thing in the morning.</p>
+      </div>
+      <div>
+        <label class="label">Formula</label>
+        <select id="formula" class="input-field">
+          <option value="karvonen">Karvonen (Heart Rate Reserve)</option>
+          <option value="maxhr">% of Max HR only</option>
+        </select>
+      </div>
+    </div>
+
+    <button id="calc-btn" class="btn-primary w-full">Calculate Zones</button>
+
+    <div id="result" class="hidden space-y-3">
+      <div class="grid grid-cols-2 gap-3 text-center mb-2">
+        <div class="bg-gray-50 border border-gray-200 rounded-xl p-3">
+          <p id="r-maxhr" class="text-2xl font-bold text-gray-800"></p>
+          <p class="text-xs text-gray-500 mt-1">Max Heart Rate (bpm)</p>
+        </div>
+        <div class="bg-gray-50 border border-gray-200 rounded-xl p-3">
+          <p id="r-hrr" class="text-2xl font-bold text-gray-800"></p>
+          <p class="text-xs text-gray-500 mt-1">Heart Rate Reserve (bpm)</p>
+        </div>
+      </div>
+
+      <div id="zones-list" class="space-y-2"></div>
+
+      <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 text-xs text-gray-600">
+        <p class="font-semibold text-gray-700 mb-2">Zone Guide</p>
+        <div class="space-y-1">
+          <p><strong>Zone 1 (Recovery)</strong> — Very light activity. Recovery walks, warmups.</p>
+          <p><strong>Zone 2 (Fat Burn)</strong> — Conversational pace. Best for base fitness, fat metabolism, long runs.</p>
+          <p><strong>Zone 3 (Aerobic)</strong> — Moderate effort. Improves cardiovascular efficiency.</p>
+          <p><strong>Zone 4 (Threshold)</strong> — Hard effort. Improves lactate threshold and race pace.</p>
+          <p><strong>Zone 5 (Max)</strong> — All-out sprints. Short intervals only. Improves speed and power.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is the Karvonen formula?", a: "The Karvonen method uses Heart Rate Reserve (HRR = Max HR − Resting HR) to calculate training zones. It's more personalized than using Max HR alone because it accounts for your fitness level via resting heart rate." },
+        { q: "How do I measure my resting heart rate?", a: "Measure it first thing in the morning before getting out of bed. Sit or lie still for 1 minute, then count your pulse for 60 seconds. Athletes typically have lower resting heart rates (40–60 bpm) than sedentary adults (60–80 bpm)." },
+        { q: "What is max heart rate?", a: "Max HR is the highest number of beats your heart can produce per minute. The formula 220 − age is a common estimate. Actual max HR can vary by ±10–20 bpm from the formula. You can test it with an all-out effort on a bike or treadmill." },
+        { q: "Why should I train in Zone 2?", a: "Zone 2 training builds your aerobic base, improves fat oxidation, and develops mitochondrial density — without the recovery cost of high-intensity training. Elite endurance athletes spend 70–80% of their training time in Zone 2." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const ZONE_DEFS = [
+    { name: 'Zone 1', label: 'Recovery', range: [0.50, 0.60], color: 'bg-blue-100 border-blue-300 text-blue-800', bar: 'bg-blue-400' },
+    { name: 'Zone 2', label: 'Fat Burn / Base', range: [0.60, 0.70], color: 'bg-green-100 border-green-300 text-green-800', bar: 'bg-green-400' },
+    { name: 'Zone 3', label: 'Aerobic', range: [0.70, 0.80], color: 'bg-yellow-100 border-yellow-300 text-yellow-800', bar: 'bg-yellow-400' },
+    { name: 'Zone 4', label: 'Threshold', range: [0.80, 0.90], color: 'bg-orange-100 border-orange-300 text-orange-800', bar: 'bg-orange-400' },
+    { name: 'Zone 5', label: 'Max / VO2 Max', range: [0.90, 1.00], color: 'bg-red-100 border-red-300 text-red-800', bar: 'bg-red-400' },
+  ];
+
+  document.getElementById('calc-btn')?.addEventListener('click', () => {
+    const age = parseInt((document.getElementById('age') as HTMLInputElement).value);
+    const rhr = parseInt((document.getElementById('rhr') as HTMLInputElement).value) || 60;
+    const formula = (document.getElementById('formula') as HTMLSelectElement).value;
+    if (isNaN(age)) return;
+
+    const maxHR = 220 - age;
+    const hrr = maxHR - rhr;
+
+    document.getElementById('r-maxhr')!.textContent = maxHR + ' bpm';
+    document.getElementById('r-hrr')!.textContent = hrr + ' bpm';
+
+    document.getElementById('zones-list')!.innerHTML = ZONE_DEFS.map(z => {
+      let low: number, high: number;
+      if (formula === 'karvonen') {
+        low = Math.round(z.range[0] * hrr + rhr);
+        high = Math.round(z.range[1] * hrr + rhr);
+      } else {
+        low = Math.round(z.range[0] * maxHR);
+        high = Math.round(z.range[1] * maxHR);
+      }
+      const pctLow = Math.round(z.range[0] * 100);
+      const pctHigh = Math.round(z.range[1] * 100);
+      return `<div class="border ${z.color} rounded-xl p-4">
+        <div class="flex items-center justify-between mb-2">
+          <div>
+            <span class="font-semibold text-sm">${z.name}</span>
+            <span class="text-xs ml-2 opacity-70">${z.label}</span>
+          </div>
+          <span class="font-bold">${low}–${high} bpm</span>
+        </div>
+        <div class="h-2 bg-white/60 rounded-full overflow-hidden">
+          <div class="${z.bar} h-full rounded-full" style="width:${pctHigh}%; margin-left:${pctLow - 50}%"></div>
+        </div>
+        <p class="text-xs mt-1 opacity-70">${pctLow}–${pctHigh}% of max heart rate</p>
+      </div>`;
+    }).join('');
+
+    document.getElementById('result')!.classList.remove('hidden');
+  });
+</script>

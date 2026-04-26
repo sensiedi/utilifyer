@@ -1,0 +1,175 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Calorie Deficit Calculator"
+  description="Calculate the calorie deficit needed to reach your weight loss goal. See how long it will take and what daily calories you need."
+  slug="calorie-deficit-calculator"
+  category="Health"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Calorie Deficit Calculator</h1>
+  <p class="text-gray-500 mb-8">Find out how many calories to eat daily to hit your weight loss goal on time.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+    <div class="flex border border-gray-200 rounded-xl overflow-hidden w-fit">
+      <button data-unit="imperial" class="unit-btn px-5 py-2 text-sm font-medium bg-indigo-600 text-white">Imperial (lbs)</button>
+      <button data-unit="metric" class="unit-btn px-5 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50">Metric (kg)</button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label" id="cw-label">Current Weight (lbs)</label>
+        <input id="current-weight" type="number" placeholder="e.g. 195" class="input-field" />
+      </div>
+      <div>
+        <label class="label" id="gw-label">Goal Weight (lbs)</label>
+        <input id="goal-weight" type="number" placeholder="e.g. 175" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Your TDEE / Maintenance Calories</label>
+        <input id="tdee" type="number" placeholder="e.g. 2400" class="input-field" />
+        <p class="text-xs text-gray-400 mt-1">Use the TDEE Calculator to find this number.</p>
+      </div>
+      <div>
+        <label class="label">Target Timeline</label>
+        <div class="flex gap-2">
+          <input id="timeline" type="number" placeholder="e.g. 12" class="input-field" />
+          <select id="time-unit" class="input-field w-auto flex-shrink-0">
+            <option value="weeks">Weeks</option>
+            <option value="months">Months</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <button id="calc-btn" class="btn-primary w-full">Calculate</button>
+
+    <div id="result" class="hidden space-y-4">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+        <div class="result-box"><p id="r-daily" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Daily Calories</p></div>
+        <div class="result-box"><p id="r-deficit" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Daily Deficit</p></div>
+        <div class="result-box"><p id="r-weekly-loss" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Weekly Loss</p></div>
+        <div class="result-box"><p id="r-time" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Time to Goal</p></div>
+      </div>
+
+      <div id="warning-box" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
+        <p class="font-semibold">⚠️ Aggressive Deficit Warning</p>
+        <p id="warning-text" class="mt-1"></p>
+      </div>
+
+      <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden text-sm">
+        <div class="px-4 py-2 bg-gray-100 text-xs font-semibold text-gray-500 uppercase">Deficit Scenarios</div>
+        <table class="w-full">
+          <thead class="text-xs text-gray-500 uppercase bg-gray-100">
+            <tr>
+              <th class="px-4 py-2 text-left">Rate</th>
+              <th class="px-4 py-2 text-right">Daily Calories</th>
+              <th class="px-4 py-2 text-right">Deficit</th>
+              <th class="px-4 py-2 text-right">Time to Goal</th>
+            </tr>
+          </thead>
+          <tbody id="scenarios-table" class="divide-y divide-gray-100"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How many calories equals one pound of fat?", a: "One pound of body fat contains approximately 3,500 calories. A 500 calorie/day deficit creates a ~1 lb/week loss. This is the scientific basis for calorie deficit calculations, though individual results vary." },
+        { q: "What is the maximum safe calorie deficit?", a: "Most health organizations recommend a maximum deficit of 500–1,000 calories/day (1–2 lbs/week). Larger deficits risk muscle loss, nutritional deficiencies, metabolic adaptation, and fatigue. Never go below 1,200 cal/day (women) or 1,500 cal/day (men) without medical supervision." },
+        { q: "Why am I not losing weight despite a calorie deficit?", a: "Common reasons include: underestimating calorie intake (most people undercount by 20–50%), overestimating exercise calories burned, water retention masking fat loss, metabolic adaptation, or inaccurate TDEE estimates. Track accurately for 2–4 weeks before adjusting." },
+        { q: "What is metabolic adaptation?", a: "As you lose weight, your body burns fewer calories (smaller body = less energy needed) and may reduce non-exercise activity. This is why weight loss often slows after a few months. Periodic diet breaks and refeed days can help manage adaptation." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  let unit = 'imperial';
+  const LBS_PER_KG = 2.20462;
+  const CAL_PER_LB = 3500;
+
+  document.querySelectorAll<HTMLButtonElement>('.unit-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      unit = btn.dataset.unit!;
+      document.querySelectorAll('.unit-btn').forEach(b => { b.classList.toggle('bg-indigo-600', b === btn); b.classList.toggle('text-white', b === btn); b.classList.toggle('text-gray-600', b !== btn); });
+      const u = unit === 'imperial' ? 'lbs' : 'kg';
+      document.getElementById('cw-label')!.textContent = `Current Weight (${u})`;
+      document.getElementById('gw-label')!.textContent = `Goal Weight (${u})`;
+    });
+  });
+
+  document.getElementById('calc-btn')?.addEventListener('click', () => {
+    let cw = parseFloat((document.getElementById('current-weight') as HTMLInputElement).value);
+    let gw = parseFloat((document.getElementById('goal-weight') as HTMLInputElement).value);
+    const tdee = parseFloat((document.getElementById('tdee') as HTMLInputElement).value);
+    const timeline = parseFloat((document.getElementById('timeline') as HTMLInputElement).value);
+    const timeUnit = (document.getElementById('time-unit') as HTMLSelectElement).value;
+    if (isNaN(cw) || isNaN(gw) || isNaN(tdee)) return;
+
+    if (unit === 'metric') { cw *= LBS_PER_KG; gw *= LBS_PER_KG; }
+    const totalLbs = cw - gw;
+    if (totalLbs <= 0) { alert('Goal weight must be less than current weight.'); return; }
+
+    const totalCal = totalLbs * CAL_PER_LB;
+    let weeks: number, dailyDeficit: number;
+
+    if (!isNaN(timeline)) {
+      weeks = timeUnit === 'months' ? timeline * 4.33 : timeline;
+      dailyDeficit = totalCal / (weeks * 7);
+    } else {
+      dailyDeficit = 500;
+      weeks = totalCal / (dailyDeficit * 7);
+    }
+
+    const dailyCal = tdee - dailyDeficit;
+    const weeklyLoss = (dailyDeficit * 7 / CAL_PER_LB).toFixed(2);
+    const timeStr = weeks >= 52 ? `${(weeks / 52).toFixed(1)} yrs` : `${Math.ceil(weeks)} wks`;
+
+    document.getElementById('r-daily')!.textContent = Math.round(dailyCal) + ' cal';
+    document.getElementById('r-deficit')!.textContent = Math.round(dailyDeficit) + ' cal';
+    document.getElementById('r-weekly-loss')!.textContent = weeklyLoss + (unit === 'metric' ? ' kg' : ' lbs');
+    document.getElementById('r-time')!.textContent = timeStr;
+
+    const warnBox = document.getElementById('warning-box')!;
+    if (dailyCal < 1200) {
+      warnBox.classList.remove('hidden');
+      document.getElementById('warning-text')!.textContent = `Your target of ${Math.round(dailyCal)} calories/day is below the recommended minimum of 1,200 calories. Consider extending your timeline or adjusting your goal.`;
+    } else if (dailyDeficit > 1000) {
+      warnBox.classList.remove('hidden');
+      document.getElementById('warning-text')!.textContent = `A ${Math.round(dailyDeficit)} calorie/day deficit is aggressive. Consider a 500–750 cal deficit for sustainable, muscle-preserving fat loss.`;
+    } else {
+      warnBox.classList.add('hidden');
+    }
+
+    const scenarios = [
+      { label: '0.5 lbs/week', deficit: 250 },
+      { label: '1 lb/week', deficit: 500 },
+      { label: '1.5 lbs/week', deficit: 750 },
+      { label: '2 lbs/week', deficit: 1000 },
+    ];
+    document.getElementById('scenarios-table')!.innerHTML = scenarios.map(s => {
+      const w = totalCal / (s.deficit * 7);
+      const t = w >= 52 ? `${(w / 52).toFixed(1)} yrs` : `${Math.ceil(w)} wks`;
+      return `<tr class="${Math.abs(s.deficit - dailyDeficit) < 100 ? 'bg-indigo-50 font-semibold' : 'bg-white hover:bg-gray-50'}">
+        <td class="px-4 py-2.5 text-gray-700">${s.label}</td>
+        <td class="px-4 py-2.5 text-right text-gray-800">${Math.round(tdee - s.deficit)} cal/day</td>
+        <td class="px-4 py-2.5 text-right text-gray-600">−${s.deficit} cal</td>
+        <td class="px-4 py-2.5 text-right text-gray-600">${t}</td>
+      </tr>`;
+    }).join('');
+
+    document.getElementById('result')!.classList.remove('hidden');
+  });
+</script>

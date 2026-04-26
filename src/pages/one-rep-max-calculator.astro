@@ -1,0 +1,141 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="One Rep Max Calculator"
+  description="Estimate your one rep max (1RM) for any lift using weight and reps. Includes a full percentage table for programming your training."
+  slug="one-rep-max-calculator"
+  category="Health"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">One Rep Max Calculator</h1>
+  <p class="text-gray-500 mb-8">Estimate your 1RM and get a full training percentage table for any lift.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div>
+        <label class="label">Weight Lifted</label>
+        <div class="flex gap-2">
+          <input id="weight" type="number" placeholder="e.g. 225" class="input-field" />
+          <select id="unit" class="input-field w-auto flex-shrink-0">
+            <option value="lbs">lbs</option>
+            <option value="kg">kg</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="label">Reps Performed</label>
+        <input id="reps" type="number" min="1" max="30" placeholder="e.g. 5" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Formula</label>
+        <select id="formula" class="input-field">
+          <option value="epley">Epley (most common)</option>
+          <option value="brzycki">Brzycki</option>
+          <option value="lombardi">Lombardi</option>
+          <option value="mayhew">Mayhew</option>
+        </select>
+      </div>
+    </div>
+
+    <button id="calc-btn" class="btn-primary w-full">Calculate 1RM</button>
+
+    <div id="result" class="hidden space-y-4">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+        <div class="result-box"><p id="r-1rm" class="text-3xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Estimated 1RM</p></div>
+        <div class="result-box"><p id="r-90" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">90% (3–4 reps)</p></div>
+        <div class="result-box"><p id="r-80" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">80% (6–8 reps)</p></div>
+        <div class="result-box"><p id="r-70" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">70% (10–12 reps)</p></div>
+      </div>
+
+      <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden text-sm">
+        <div class="px-4 py-2 bg-gray-100 text-xs font-semibold text-gray-500 uppercase">Full Percentage Table</div>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="text-xs text-gray-500 uppercase bg-gray-100">
+              <tr>
+                <th class="px-4 py-2 text-left">% of 1RM</th>
+                <th class="px-4 py-2 text-right">Weight</th>
+                <th class="px-4 py-2 text-right">Rep Range</th>
+                <th class="px-4 py-2 text-left">Training Zone</th>
+              </tr>
+            </thead>
+            <tbody id="pct-table" class="divide-y divide-gray-100"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is a one rep max (1RM)?", a: "Your 1RM is the maximum weight you can lift for exactly one full repetition with good form. It's used to structure training percentages for strength, hypertrophy, and power programs." },
+        { q: "Which formula is most accurate?", a: "Epley is the most widely used. Brzycki is considered more accurate for lower rep sets (1–6). Mayhew performs better for higher rep sets (10+). No formula is perfectly accurate — treat your 1RM as an estimate." },
+        { q: "How accurate are 1RM estimates?", a: "Estimates are most accurate between 2–6 reps. Beyond 10 reps, accuracy drops significantly. The best way to know your 1RM is to test it with a spotter in a controlled environment." },
+        { q: "How do I use 1RM percentages in training?", a: "Use 90–95% for maximal strength (1–3 reps), 75–85% for hypertrophy (6–12 reps), 60–75% for muscular endurance (12–20 reps), and 30–60% for speed and power work. Most strength programs are written as percentages of 1RM." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const ZONES: [number, string, string][] = [
+    [100, '1', 'Max Strength'],
+    [95, '2–3', 'Near-Max Strength'],
+    [90, '3–4', 'Heavy Strength'],
+    [85, '4–6', 'Strength'],
+    [80, '6–8', 'Strength / Hypertrophy'],
+    [75, '8–10', 'Hypertrophy'],
+    [70, '10–12', 'Hypertrophy'],
+    [65, '12–15', 'Muscular Endurance'],
+    [60, '15–20', 'Endurance'],
+    [50, '20+', 'Metabolic / Conditioning'],
+  ];
+
+  function calc1RM(weight: number, reps: number, formula: string): number {
+    if (reps === 1) return weight;
+    switch (formula) {
+      case 'epley': return weight * (1 + reps / 30);
+      case 'brzycki': return weight * (36 / (37 - reps));
+      case 'lombardi': return weight * Math.pow(reps, 0.1);
+      case 'mayhew': return (100 * weight) / (52.2 + 41.9 * Math.exp(-0.055 * reps));
+      default: return weight * (1 + reps / 30);
+    }
+  }
+
+  document.getElementById('calc-btn')?.addEventListener('click', () => {
+    const weight = parseFloat((document.getElementById('weight') as HTMLInputElement).value);
+    const reps = parseInt((document.getElementById('reps') as HTMLInputElement).value);
+    const unitVal = (document.getElementById('unit') as HTMLSelectElement).value;
+    const formula = (document.getElementById('formula') as HTMLSelectElement).value;
+    if (isNaN(weight) || isNaN(reps)) return;
+
+    const orm = Math.round(calc1RM(weight, reps, formula));
+    const fmt = (n: number) => Math.round(n) + ' ' + unitVal;
+
+    document.getElementById('r-1rm')!.textContent = fmt(orm);
+    document.getElementById('r-90')!.textContent = fmt(orm * 0.9);
+    document.getElementById('r-80')!.textContent = fmt(orm * 0.8);
+    document.getElementById('r-70')!.textContent = fmt(orm * 0.7);
+
+    document.getElementById('pct-table')!.innerHTML = ZONES.map(([pct, repsRange, zone]) =>
+      `<tr class="${pct === 100 ? 'bg-indigo-50 font-semibold' : 'bg-white hover:bg-gray-50'}">
+        <td class="px-4 py-2.5 text-gray-700">${pct}%</td>
+        <td class="px-4 py-2.5 text-right font-medium text-gray-800">${fmt(orm * pct / 100)}</td>
+        <td class="px-4 py-2.5 text-right text-gray-600">${repsRange}</td>
+        <td class="px-4 py-2.5 text-gray-500 text-xs">${zone}</td>
+      </tr>`
+    ).join('');
+
+    document.getElementById('result')!.classList.remove('hidden');
+  });
+</script>

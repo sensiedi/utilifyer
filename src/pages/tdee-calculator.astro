@@ -1,0 +1,177 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="TDEE Calculator"
+  description="Calculate your Total Daily Energy Expenditure (TDEE) based on your height, weight, age, and activity level. Find your maintenance calories."
+  slug="tdee-calculator"
+  category="Health"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">TDEE Calculator</h1>
+  <p class="text-gray-500 mb-8">Calculate how many calories you burn per day based on your stats and activity level.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+    <!-- Unit toggle -->
+    <div class="flex border border-gray-200 rounded-xl overflow-hidden w-fit">
+      <button data-unit="imperial" class="unit-btn px-5 py-2 text-sm font-medium bg-indigo-600 text-white transition-colors">Imperial</button>
+      <button data-unit="metric" class="unit-btn px-5 py-2 text-sm font-medium text-gray-600 hover:bg-gray-50 transition-colors">Metric</button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Gender</label>
+        <div class="flex gap-2">
+          <button data-gender="male" class="gender-btn flex-1 py-2 rounded-lg border text-sm font-medium bg-indigo-600 text-white border-indigo-600">Male</button>
+          <button data-gender="female" class="gender-btn flex-1 py-2 rounded-lg border text-sm font-medium border-gray-200 text-gray-600">Female</button>
+        </div>
+      </div>
+      <div>
+        <label class="label">Age</label>
+        <input id="age" type="number" placeholder="e.g. 30" class="input-field" />
+      </div>
+
+      <!-- Imperial -->
+      <div id="imperial-height">
+        <label class="label">Height</label>
+        <div class="flex gap-2">
+          <input id="height-ft" type="number" placeholder="ft" class="input-field" />
+          <input id="height-in" type="number" placeholder="in" class="input-field" />
+        </div>
+      </div>
+      <div id="imperial-weight">
+        <label class="label">Weight (lbs)</label>
+        <input id="weight-lbs" type="number" placeholder="e.g. 175" class="input-field" />
+      </div>
+
+      <!-- Metric -->
+      <div id="metric-height" class="hidden">
+        <label class="label">Height (cm)</label>
+        <input id="height-cm" type="number" placeholder="e.g. 178" class="input-field" />
+      </div>
+      <div id="metric-weight" class="hidden">
+        <label class="label">Weight (kg)</label>
+        <input id="weight-kg" type="number" placeholder="e.g. 80" class="input-field" />
+      </div>
+    </div>
+
+    <div>
+      <label class="label">Activity Level</label>
+      <select id="activity" class="input-field">
+        <option value="1.2">Sedentary (desk job, little/no exercise)</option>
+        <option value="1.375">Lightly Active (light exercise 1–3 days/week)</option>
+        <option value="1.55" selected>Moderately Active (moderate exercise 3–5 days/week)</option>
+        <option value="1.725">Very Active (hard exercise 6–7 days/week)</option>
+        <option value="1.9">Extra Active (physical job + daily exercise)</option>
+      </select>
+    </div>
+
+    <button id="calc-btn" class="btn-primary w-full">Calculate TDEE</button>
+
+    <div id="result" class="hidden space-y-4">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+        <div class="result-box"><p id="r-tdee" class="text-3xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">TDEE (Maintenance)</p></div>
+        <div class="result-box"><p id="r-bmr" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">BMR</p></div>
+        <div class="result-box"><p id="r-cut" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Cut (−500 cal)</p></div>
+        <div class="result-box"><p id="r-bulk" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Bulk (+300 cal)</p></div>
+      </div>
+
+      <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden text-sm">
+        <div class="px-4 py-2 bg-gray-100 text-xs font-semibold text-gray-500 uppercase">Calorie Targets by Goal</div>
+        <table class="w-full">
+          <tbody id="goals-table" class="divide-y divide-gray-100"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is TDEE?", a: "TDEE (Total Daily Energy Expenditure) is the total number of calories your body burns in a day, including your basal metabolic rate (BMR) plus all physical activity. Eating at your TDEE maintains your current weight." },
+        { q: "What is BMR vs TDEE?", a: "BMR (Basal Metabolic Rate) is the calories your body needs just to stay alive at complete rest — breathing, circulation, and organ function. TDEE multiplies BMR by an activity factor to account for your daily movement." },
+        { q: "How accurate is this calculator?", a: "This uses the Mifflin-St Jeor equation, which is considered the most accurate TDEE formula for most people, with a margin of error of ±200 calories. Actual needs vary based on genetics, muscle mass, and metabolic health." },
+        { q: "How many calories should I eat to lose weight?", a: "A 500 calorie/day deficit below your TDEE creates approximately 1 lb of fat loss per week. A 250 calorie/day deficit creates ~0.5 lb/week. Avoid dropping below 1,200 calories (women) or 1,500 calories (men) without medical supervision." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  let unit = 'imperial', gender = 'male';
+
+  document.querySelectorAll<HTMLButtonElement>('.unit-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      unit = btn.dataset.unit!;
+      document.querySelectorAll('.unit-btn').forEach(b => { b.classList.toggle('bg-indigo-600', b === btn); b.classList.toggle('text-white', b === btn); b.classList.toggle('text-gray-600', b !== btn); });
+      document.getElementById('imperial-height')!.classList.toggle('hidden', unit !== 'imperial');
+      document.getElementById('imperial-weight')!.classList.toggle('hidden', unit !== 'imperial');
+      document.getElementById('metric-height')!.classList.toggle('hidden', unit !== 'metric');
+      document.getElementById('metric-weight')!.classList.toggle('hidden', unit !== 'metric');
+    });
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('.gender-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      gender = btn.dataset.gender!;
+      document.querySelectorAll('.gender-btn').forEach(b => { b.classList.toggle('bg-indigo-600', b === btn); b.classList.toggle('text-white', b === btn); b.classList.toggle('border-indigo-600', b === btn); b.classList.toggle('border-gray-200', b !== btn); b.classList.toggle('text-gray-600', b !== btn); });
+    });
+  });
+
+  document.getElementById('calc-btn')?.addEventListener('click', () => {
+    const age = parseFloat((document.getElementById('age') as HTMLInputElement).value);
+    const activity = parseFloat((document.getElementById('activity') as HTMLSelectElement).value);
+    let weightKg: number, heightCm: number;
+
+    if (unit === 'imperial') {
+      const ft = parseFloat((document.getElementById('height-ft') as HTMLInputElement).value) || 0;
+      const inches = parseFloat((document.getElementById('height-in') as HTMLInputElement).value) || 0;
+      const lbs = parseFloat((document.getElementById('weight-lbs') as HTMLInputElement).value);
+      if (isNaN(lbs)) return;
+      heightCm = (ft * 12 + inches) * 2.54;
+      weightKg = lbs * 0.453592;
+    } else {
+      heightCm = parseFloat((document.getElementById('height-cm') as HTMLInputElement).value);
+      weightKg = parseFloat((document.getElementById('weight-kg') as HTMLInputElement).value);
+      if (isNaN(heightCm) || isNaN(weightKg)) return;
+    }
+    if (isNaN(age)) return;
+
+    // Mifflin-St Jeor
+    const bmr = gender === 'male'
+      ? 10 * weightKg + 6.25 * heightCm - 5 * age + 5
+      : 10 * weightKg + 6.25 * heightCm - 5 * age - 161;
+    const tdee = Math.round(bmr * activity);
+
+    document.getElementById('r-tdee')!.textContent = tdee.toLocaleString() + ' cal';
+    document.getElementById('r-bmr')!.textContent = Math.round(bmr).toLocaleString() + ' cal';
+    document.getElementById('r-cut')!.textContent = (tdee - 500).toLocaleString() + ' cal';
+    document.getElementById('r-bulk')!.textContent = (tdee + 300).toLocaleString() + ' cal';
+
+    const goals = [
+      ['Extreme cut (−1000)', tdee - 1000, '~2 lbs/week loss'],
+      ['Cut (−500)', tdee - 500, '~1 lb/week loss'],
+      ['Mild cut (−250)', tdee - 250, '~0.5 lb/week loss'],
+      ['Maintenance', tdee, 'Hold current weight'],
+      ['Mild bulk (+250)', tdee + 250, '~0.5 lb/week gain'],
+      ['Bulk (+500)', tdee + 500, '~1 lb/week gain'],
+    ];
+    document.getElementById('goals-table')!.innerHTML = goals.map(([label, cal, note]) =>
+      `<tr class="${label === 'Maintenance' ? 'bg-indigo-50 font-semibold' : 'bg-white hover:bg-gray-50'}">
+        <td class="px-4 py-2.5 text-gray-700">${label}</td>
+        <td class="px-4 py-2.5 text-right font-medium text-gray-800">${(cal as number).toLocaleString()} cal/day</td>
+        <td class="px-4 py-2.5 text-right text-gray-500 text-xs">${note}</td>
+      </tr>`
+    ).join('');
+
+    document.getElementById('result')!.classList.remove('hidden');
+  });
+</script>
