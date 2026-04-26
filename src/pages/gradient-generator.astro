@@ -1,0 +1,217 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="CSS Gradient Generator"
+  description="Generate beautiful CSS gradients visually. Create linear, radial, and conic gradients with multiple color stops and copy the CSS code instantly."
+  slug="gradient-generator"
+  category="Color & Design"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">CSS Gradient Generator</h1>
+  <p class="text-gray-500 mb-8">Create CSS linear, radial, and conic gradients visually and copy the code.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <!-- Controls -->
+    <div class="flex flex-wrap gap-4">
+      <div>
+        <label class="label">Type</label>
+        <select id="gg-type" class="input-field w-auto">
+          <option value="linear" selected>Linear</option>
+          <option value="radial">Radial</option>
+          <option value="conic">Conic</option>
+        </select>
+      </div>
+      <div id="gg-angle-group">
+        <label class="label">Angle</label>
+        <div class="flex items-center gap-2">
+          <input id="gg-angle" type="range" min="0" max="360" value="135" class="w-28" />
+          <span id="gg-angle-val" class="text-sm font-mono text-gray-600 w-10">135°</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Color stops -->
+    <div>
+      <div class="flex justify-between items-center mb-2">
+        <p class="label">Color Stops</p>
+        <button id="gg-add-stop" class="text-sm text-indigo-600 hover:text-indigo-800">+ Add stop</button>
+      </div>
+      <div id="gg-stops" class="space-y-2"></div>
+    </div>
+
+    <!-- Preview -->
+    <div id="gg-preview" class="h-40 rounded-2xl border border-gray-200 shadow-inner transition-all"></div>
+
+    <!-- CSS Output -->
+    <div>
+      <div class="flex justify-between items-center mb-2">
+        <p class="label">CSS Code</p>
+        <button id="gg-copy" class="text-xs text-indigo-600 hover:text-indigo-800">Copy</button>
+      </div>
+      <pre id="gg-output" class="bg-gray-900 text-green-300 rounded-xl p-4 text-sm font-mono overflow-x-auto whitespace-pre"></pre>
+    </div>
+
+    <!-- Presets -->
+    <div>
+      <p class="label mb-2">Preset Gradients</p>
+      <div class="grid grid-cols-4 sm:grid-cols-8 gap-2" id="gg-presets"></div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is a CSS linear gradient?", a: "linear-gradient() creates a smooth transition between colors along a straight line. The angle (0deg = bottom to top, 90deg = left to right, 135deg = diagonal) determines the direction. You can add multiple color stops with optional percentage positions: linear-gradient(135deg, #667eea 0%, #764ba2 100%)." },
+        { q: "What is a radial gradient?", a: "radial-gradient() creates a gradient that radiates outward from a center point in an ellipse or circle shape. You can control the shape (circle/ellipse), size (closest-side, farthest-corner), and position. Useful for spotlight effects, glows, and rounded backgrounds." },
+        { q: "What is a conic gradient?", a: "conic-gradient() creates a gradient that rotates around a center point — like a pie chart or color wheel. The colors transition by angle rather than distance. It's useful for pie chart effects, loading spinners, and color pickers. Well-supported in modern browsers." },
+        { q: "How do I use gradients as backgrounds?", a: "Apply to any CSS property that accepts images: background: linear-gradient(135deg, #667eea, #764ba2); or background-image: linear-gradient(...). For full coverage: set background-size: cover or use a fixed height. Gradients are not indexed by search engines and don't require HTTP requests." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  interface Stop { color: string; position: number; }
+
+  let stops: Stop[] = [
+    { color: '#6366f1', position: 0 },
+    { color: '#8b5cf6', position: 100 },
+  ];
+
+  const PRESETS = [
+    { name: 'Indigo', stops: [{color:'#6366f1',position:0},{color:'#8b5cf6',position:100}], angle: 135 },
+    { name: 'Sunset', stops: [{color:'#f97316',position:0},{color:'#ec4899',position:100}], angle: 135 },
+    { name: 'Ocean', stops: [{color:'#06b6d4',position:0},{color:'#3b82f6',position:100}], angle: 135 },
+    { name: 'Forest', stops: [{color:'#22c55e',position:0},{color:'#16a34a',position:100}], angle: 135 },
+    { name: 'Rose', stops: [{color:'#fda4af',position:0},{color:'#f43f5e',position:100}], angle: 135 },
+    { name: 'Gold', stops: [{color:'#fde68a',position:0},{color:'#f59e0b',position:100}], angle: 135 },
+    { name: 'Night', stops: [{color:'#1e1b4b',position:0},{color:'#312e81',position:50},{color:'#4c1d95',position:100}], angle: 135 },
+    { name: 'Dawn', stops: [{color:'#fef3c7',position:0},{color:'#fde68a',position:35},{color:'#fb923c',position:100}], angle: 45 },
+  ];
+
+  function renderStops() {
+    const container = document.getElementById('gg-stops')!;
+    container.innerHTML = stops.map((s, i) => `
+      <div class="flex items-center gap-3">
+        <input type="color" class="stop-color w-10 h-9 rounded-lg cursor-pointer border border-gray-200 p-0.5" data-i="${i}" value="${s.color}" />
+        <input type="text" class="stop-hex input-field font-mono w-28 text-sm" data-i="${i}" value="${s.color}" />
+        <div class="flex items-center gap-1 flex-1">
+          <input type="range" class="stop-pos flex-1" data-i="${i}" min="0" max="100" value="${s.position}" />
+          <span class="stop-pos-val text-sm font-mono text-gray-600 w-10 text-right">${s.position}%</span>
+        </div>
+        ${stops.length > 2 ? `<button class="stop-remove text-gray-400 hover:text-red-500 text-xs" data-i="${i}">✕</button>` : '<span class="w-4"></span>'}
+      </div>
+    `).join('');
+
+    container.querySelectorAll('.stop-color').forEach(el => {
+      el.addEventListener('input', (e) => {
+        const i = parseInt((e.target as HTMLElement).dataset.i!);
+        stops[i].color = (e.target as HTMLInputElement).value;
+        (container.querySelectorAll('.stop-hex')[i] as HTMLInputElement).value = stops[i].color;
+        generate();
+      });
+    });
+    container.querySelectorAll('.stop-hex').forEach(el => {
+      el.addEventListener('input', (e) => {
+        const i = parseInt((e.target as HTMLElement).dataset.i!);
+        const val = (e.target as HTMLInputElement).value.trim();
+        const hex = val.startsWith('#') ? val : '#' + val;
+        if (/^#[0-9a-f]{6}$/i.test(hex)) {
+          stops[i].color = hex;
+          (container.querySelectorAll('.stop-color')[i] as HTMLInputElement).value = hex;
+          generate();
+        }
+      });
+    });
+    container.querySelectorAll('.stop-pos').forEach(el => {
+      el.addEventListener('input', (e) => {
+        const i = parseInt((e.target as HTMLElement).dataset.i!);
+        stops[i].position = parseInt((e.target as HTMLInputElement).value);
+        (el.nextElementSibling as HTMLElement).textContent = stops[i].position + '%';
+        generate();
+      });
+    });
+    container.querySelectorAll('.stop-remove').forEach(el => {
+      el.addEventListener('click', (e) => {
+        const i = parseInt((e.target as HTMLElement).dataset.i!);
+        stops.splice(i, 1);
+        renderStops();
+        generate();
+      });
+    });
+  }
+
+  function generate() {
+    const type = (document.getElementById('gg-type') as HTMLSelectElement).value;
+    const angle = parseInt((document.getElementById('gg-angle') as HTMLInputElement).value);
+    const sorted = [...stops].sort((a,b) => a.position - b.position);
+    const stopStr = sorted.map(s => `${s.color} ${s.position}%`).join(', ');
+
+    let css = '';
+    if (type === 'linear') css = `linear-gradient(${angle}deg, ${stopStr})`;
+    else if (type === 'radial') css = `radial-gradient(circle, ${stopStr})`;
+    else css = `conic-gradient(from ${angle}deg, ${stopStr})`;
+
+    document.getElementById('gg-preview')!.style.background = css;
+    const output = `background: ${css};\nbackground-size: cover;`;
+    document.getElementById('gg-output')!.textContent = output;
+  }
+
+  document.getElementById('gg-add-stop')?.addEventListener('click', () => {
+    const mid = stops.length > 1 ? Math.round((stops[stops.length-2].position + stops[stops.length-1].position) / 2) : 50;
+    stops.push({ color: '#a855f7', position: mid });
+    renderStops();
+    generate();
+  });
+
+  document.getElementById('gg-type')?.addEventListener('change', (e) => {
+    const isLinearOrConic = (e.target as HTMLSelectElement).value !== 'radial';
+    document.getElementById('gg-angle-group')!.style.display = isLinearOrConic ? '' : 'none';
+    generate();
+  });
+
+  document.getElementById('gg-angle')?.addEventListener('input', (e) => {
+    document.getElementById('gg-angle-val')!.textContent = (e.target as HTMLInputElement).value + '°';
+    generate();
+  });
+
+  document.getElementById('gg-copy')?.addEventListener('click', () => {
+    navigator.clipboard.writeText(document.getElementById('gg-output')!.textContent || '').then(() => {
+      const btn = document.getElementById('gg-copy')!;
+      btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 1500);
+    });
+  });
+
+  // Render presets
+  const presetsEl = document.getElementById('gg-presets')!;
+  presetsEl.innerHTML = PRESETS.map((p, i) => {
+    const stopStr = p.stops.map(s => `${s.color} ${s.position}%`).join(', ');
+    const css = `linear-gradient(${p.angle}deg, ${stopStr})`;
+    return `<div class="preset-btn h-10 rounded-xl cursor-pointer hover:scale-105 transition-transform border border-gray-100" style="background:${css}" data-i="${i}" title="${p.name}"></div>`;
+  }).join('');
+
+  presetsEl.querySelectorAll('.preset-btn').forEach(el => {
+    el.addEventListener('click', () => {
+      const i = parseInt((el as HTMLElement).dataset.i!);
+      const p = PRESETS[i];
+      stops = p.stops.map(s => ({ ...s }));
+      (document.getElementById('gg-angle') as HTMLInputElement).value = String(p.angle);
+      document.getElementById('gg-angle-val')!.textContent = p.angle + '°';
+      renderStops();
+      generate();
+    });
+  });
+
+  renderStops();
+  generate();
+</script>

@@ -1,0 +1,197 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="CSS Triangle Generator"
+  description="Generate CSS triangles using the border trick. Create arrows and triangle shapes in any direction, size, and color without images or SVG."
+  slug="css-triangle-generator"
+  category="Color & Design"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">CSS Triangle Generator</h1>
+  <p class="text-gray-500 mb-8">Generate CSS-only triangles and arrows using the border trick.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Controls -->
+      <div class="space-y-4">
+        <div>
+          <label class="label">Direction</label>
+          <div class="grid grid-cols-4 gap-2">
+            {['up','down','left','right','up-left','up-right','down-left','down-right'].map(d => (
+              <button class="dir-btn text-xs border border-gray-200 rounded-lg px-2 py-2 hover:border-indigo-300 hover:bg-indigo-50 transition-colors capitalize" data-dir={d}>{d.replace('-',' ')}</button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <div class="flex justify-between mb-1">
+            <label class="label">Width</label>
+            <span id="tr-w-val" class="text-sm font-mono text-gray-600">60px</span>
+          </div>
+          <input type="range" id="tr-w" min="4" max="200" value="60" class="w-full" />
+        </div>
+
+        <div>
+          <div class="flex justify-between mb-1">
+            <label class="label">Height</label>
+            <span id="tr-h-val" class="text-sm font-mono text-gray-600">60px</span>
+          </div>
+          <input type="range" id="tr-h" min="4" max="200" value="60" class="w-full" />
+        </div>
+
+        <div>
+          <label class="label">Color</label>
+          <div class="flex gap-2">
+            <input type="color" id="tr-color" value="#6366f1" class="w-12 h-10 rounded-lg cursor-pointer border border-gray-200 p-0.5" />
+            <input type="text" id="tr-color-hex" value="#6366f1" class="input-field font-mono w-32" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview -->
+      <div>
+        <p class="label mb-3">Preview</p>
+        <div class="bg-gray-50 rounded-2xl border border-gray-100 p-8 flex items-center justify-center" style="min-height:200px">
+          <div id="tr-preview"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CSS Output -->
+    <div>
+      <div class="flex justify-between items-center mb-2">
+        <p class="label">CSS Code</p>
+        <button id="tr-copy" class="text-xs text-indigo-600 hover:text-indigo-800">Copy</button>
+      </div>
+      <pre id="tr-output" class="bg-gray-900 text-green-300 rounded-xl p-4 text-sm font-mono overflow-x-auto whitespace-pre"></pre>
+    </div>
+
+    <!-- How it works -->
+    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-800">
+      <p class="font-semibold mb-1">How CSS triangles work</p>
+      <p>Elements with zero width and height render only their borders. Borders meet at angles at the corners. Making 3 borders transparent and 1 colored creates a triangle. The colored border determines the direction the triangle points.</p>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "Why use CSS triangles instead of SVG?", a: "CSS triangles work everywhere, add no HTTP requests, and are pure CSS — great for small decorative arrows in tooltips, dropdown indicators, and callout pointers. For complex or larger shapes, SVG is better. CSS triangles have a slight disadvantage: they don't scale perfectly with rem/em and can look pixelated at unusual sizes." },
+        { q: "How do I position a tooltip arrow?", a: "Position the triangle with ::before or ::after pseudo-elements: .tooltip::after { content: ''; position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); border: 8px solid transparent; border-bottom-color: #333; } This creates an upward-pointing arrow centered below the tooltip." },
+        { q: "Can CSS triangles be responsive?", a: "CSS triangles using the border trick use fixed pixel values, so they don't inherently scale. For responsive arrows, use CSS clip-path: polygon() — it creates triangles that scale with the element. Example: clip-path: polygon(50% 0%, 0% 100%, 100% 100%) creates an upward triangle." },
+        { q: "What is clip-path vs border triangles?", a: "Both create triangles but work differently. Border trick: uses a zero-size element with colored borders — supported everywhere, no clipping, doesn't work on elements with content. clip-path polygon: crops a rectangular element into a triangle shape — works on elements with content, scalable, but clips children." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  let direction = 'up';
+  let width = 60;
+  let height = 60;
+  let color = '#6366f1';
+
+  function generate() {
+    const t = 'transparent';
+    let style = 'width:0;height:0;';
+    let code = '.triangle {\n  width: 0;\n  height: 0;\n';
+
+    const w = width, h = height;
+    const hw = Math.round(w / 2);
+    const hh = Math.round(h / 2);
+
+    switch (direction) {
+      case 'up':
+        style += `border-left:${hw}px solid ${t};border-right:${hw}px solid ${t};border-bottom:${h}px solid ${color};`;
+        code += `  border-left: ${hw}px solid transparent;\n  border-right: ${hw}px solid transparent;\n  border-bottom: ${h}px solid ${color};\n`;
+        break;
+      case 'down':
+        style += `border-left:${hw}px solid ${t};border-right:${hw}px solid ${t};border-top:${h}px solid ${color};`;
+        code += `  border-left: ${hw}px solid transparent;\n  border-right: ${hw}px solid transparent;\n  border-top: ${h}px solid ${color};\n`;
+        break;
+      case 'left':
+        style += `border-top:${hh}px solid ${t};border-bottom:${hh}px solid ${t};border-right:${w}px solid ${color};`;
+        code += `  border-top: ${hh}px solid transparent;\n  border-bottom: ${hh}px solid transparent;\n  border-right: ${w}px solid ${color};\n`;
+        break;
+      case 'right':
+        style += `border-top:${hh}px solid ${t};border-bottom:${hh}px solid ${t};border-left:${w}px solid ${color};`;
+        code += `  border-top: ${hh}px solid transparent;\n  border-bottom: ${hh}px solid transparent;\n  border-left: ${w}px solid ${color};\n`;
+        break;
+      case 'up-left':
+        style += `border-top:${h}px solid ${color};border-right:${w}px solid ${t};`;
+        code += `  border-top: ${h}px solid ${color};\n  border-right: ${w}px solid transparent;\n`;
+        break;
+      case 'up-right':
+        style += `border-top:${h}px solid ${color};border-left:${w}px solid ${t};`;
+        code += `  border-top: ${h}px solid ${color};\n  border-left: ${w}px solid transparent;\n`;
+        break;
+      case 'down-left':
+        style += `border-bottom:${h}px solid ${color};border-right:${w}px solid ${t};`;
+        code += `  border-bottom: ${h}px solid ${color};\n  border-right: ${w}px solid transparent;\n`;
+        break;
+      case 'down-right':
+        style += `border-bottom:${h}px solid ${color};border-left:${w}px solid ${t};`;
+        code += `  border-bottom: ${h}px solid ${color};\n  border-left: ${w}px solid transparent;\n`;
+        break;
+    }
+
+    code += '}';
+    document.getElementById('tr-preview')!.setAttribute('style', style);
+    document.getElementById('tr-output')!.textContent = code;
+  }
+
+  document.querySelectorAll('.dir-btn').forEach(el => {
+    el.addEventListener('click', () => {
+      direction = (el as HTMLElement).dataset.dir!;
+      document.querySelectorAll('.dir-btn').forEach(b => b.classList.remove('border-indigo-400','bg-indigo-50'));
+      el.classList.add('border-indigo-400','bg-indigo-50');
+      generate();
+    });
+  });
+
+  document.getElementById('tr-w')?.addEventListener('input', (e) => {
+    width = parseInt((e.target as HTMLInputElement).value);
+    document.getElementById('tr-w-val')!.textContent = width + 'px';
+    generate();
+  });
+  document.getElementById('tr-h')?.addEventListener('input', (e) => {
+    height = parseInt((e.target as HTMLInputElement).value);
+    document.getElementById('tr-h-val')!.textContent = height + 'px';
+    generate();
+  });
+
+  document.getElementById('tr-color')?.addEventListener('input', (e) => {
+    color = (e.target as HTMLInputElement).value;
+    (document.getElementById('tr-color-hex') as HTMLInputElement).value = color;
+    generate();
+  });
+  document.getElementById('tr-color-hex')?.addEventListener('input', (e) => {
+    const v = (e.target as HTMLInputElement).value.trim();
+    const hex = v.startsWith('#') ? v : '#' + v;
+    if (/^#[0-9a-f]{6}$/i.test(hex)) {
+      color = hex;
+      (document.getElementById('tr-color') as HTMLInputElement).value = hex;
+      generate();
+    }
+  });
+
+  document.getElementById('tr-copy')?.addEventListener('click', () => {
+    navigator.clipboard.writeText(document.getElementById('tr-output')!.textContent || '').then(() => {
+      const btn = document.getElementById('tr-copy')!;
+      btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 1500);
+    });
+  });
+
+  document.querySelector('.dir-btn')?.classList.add('border-indigo-400','bg-indigo-50');
+  generate();
+</script>

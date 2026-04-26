@@ -1,0 +1,247 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Aspect Ratio Calculator"
+  description="Calculate and maintain aspect ratios for images, videos, and screen sizes. Find width or height for any aspect ratio. Common ratios: 16:9, 4:3, 1:1, 21:9."
+  slug="aspect-ratio-calculator"
+  category="Color & Design"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Aspect Ratio Calculator</h1>
+  <p class="text-gray-500 mb-8">Calculate dimensions for any aspect ratio — for images, videos, and responsive design.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <!-- Mode selector -->
+    <div class="flex flex-wrap gap-2">
+      <button class="mode-btn text-sm border border-indigo-400 bg-indigo-50 rounded-lg px-4 py-2 text-indigo-700" data-mode="find-height">Find Height</button>
+      <button class="mode-btn text-sm border border-gray-200 rounded-lg px-4 py-2 text-gray-600 hover:border-indigo-300" data-mode="find-width">Find Width</button>
+      <button class="mode-btn text-sm border border-gray-200 rounded-lg px-4 py-2 text-gray-600 hover:border-indigo-300" data-mode="find-ratio">Find Ratio</button>
+    </div>
+
+    <div id="ar-form" class="grid grid-cols-1 sm:grid-cols-3 gap-4"></div>
+
+    <div id="ar-result" class="hidden bg-indigo-50 border border-indigo-200 rounded-xl p-4">
+      <div class="text-sm text-indigo-600 mb-1">Result</div>
+      <div id="ar-result-val" class="text-2xl font-bold font-mono text-indigo-900"></div>
+    </div>
+
+    <!-- Visual preview -->
+    <div>
+      <p class="label mb-2">Visual Preview</p>
+      <div class="bg-gray-50 rounded-xl border border-gray-100 p-4 flex items-center justify-center" style="min-height:120px">
+        <div id="ar-vis" class="bg-gradient-to-br from-indigo-400 to-purple-500 rounded-lg flex items-center justify-center text-white text-sm font-mono max-w-full transition-all shadow" style="width:160px;height:90px">16:9</div>
+      </div>
+    </div>
+
+    <!-- Common ratios -->
+    <div>
+      <p class="label mb-2">Common Aspect Ratios</p>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        {[
+          { label: '16:9', desc: 'Widescreen HD / YouTube', w: 16, h: 9 },
+          { label: '4:3', desc: 'Classic TV / VGA', w: 4, h: 3 },
+          { label: '1:1', desc: 'Square / Instagram', w: 1, h: 1 },
+          { label: '21:9', desc: 'Ultra-wide cinema', w: 21, h: 9 },
+          { label: '3:2', desc: 'DSLR / 35mm film', w: 3, h: 2 },
+          { label: '9:16', desc: 'Portrait / Reels / Stories', w: 9, h: 16 },
+          { label: '4:5', desc: 'Portrait Instagram', w: 4, h: 5 },
+          { label: '2.39:1', desc: 'Anamorphic widescreen', w: 239, h: 100 },
+          { label: '1.91:1', desc: 'OG image / Facebook link', w: 191, h: 100 },
+          { label: '5:4', desc: 'Large format photography', w: 5, h: 4 },
+          { label: '16:10', desc: 'Laptop display', w: 16, h: 10 },
+          { label: '2:1', desc: 'Panavision / Twitter banner', w: 2, h: 1 },
+        ].map(({ label, desc, w, h }) => (
+          <button class="ratio-preset text-xs border border-gray-200 rounded-lg p-2 text-left hover:border-indigo-300 hover:bg-indigo-50 transition-colors" data-w={w} data-h={h}>
+            <div class="font-mono font-semibold text-gray-800">{label}</div>
+            <div class="text-gray-400 truncate">{desc}</div>
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <!-- Screen size table -->
+    <div>
+      <p class="label mb-2">Common Screen Resolutions at 16:9</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead><tr class="bg-gray-50 text-left">
+            <th class="px-3 py-2 font-medium text-gray-600 rounded-l">Name</th>
+            <th class="px-3 py-2 font-medium text-gray-600">Width</th>
+            <th class="px-3 py-2 font-medium text-gray-600">Height</th>
+            <th class="px-3 py-2 font-medium text-gray-600 rounded-r">Use</th>
+          </tr></thead>
+          <tbody class="divide-y divide-gray-100">
+            {[
+              ['720p HD','1280','720','YouTube, streaming'],
+              ['1080p Full HD','1920','1080','YouTube, Vimeo, displays'],
+              ['1440p QHD','2560','1440','High-res displays'],
+              ['4K UHD','3840','2160','4K content'],
+              ['360p','640','360','Mobile low'],
+              ['480p SD','854','480','Mobile standard'],
+            ].map(([name, w, h, use]) => (
+              <tr class="hover:bg-gray-50">
+                <td class="px-3 py-2 font-medium text-gray-800">{name}</td>
+                <td class="px-3 py-2 font-mono text-gray-600">{w}px</td>
+                <td class="px-3 py-2 font-mono text-gray-600">{h}px</td>
+                <td class="px-3 py-2 text-gray-500">{use}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "Why is 16:9 the standard video aspect ratio?", a: "16:9 (1.778:1) became the standard for HDTV and digital video because it's a compromise between the 4:3 TV standard and 2.39:1 cinema widescreen. It was chosen in the 1980s by SMPTE as the geometric mean between 4:3 and 2.39:1 — it letterboxes or pillarboxes less when displaying either format." },
+        { q: "What is a 1.91:1 aspect ratio used for?", a: "1.91:1 (approximately 1200×628px) is the recommended size for Open Graph images — the preview card when your page is shared on Facebook, LinkedIn, and other platforms. It's also used for Twitter large card images. Google Discover recommends 1200px wide minimum images at this ratio." },
+        { q: "How do I maintain aspect ratio in CSS?", a: "Modern CSS: use aspect-ratio: 16 / 9; on the element. The padding-top trick still works for older browsers: set padding-top: 56.25% (9/16 = 0.5625) on a position:relative container with position:absolute children. Or use intrinsicsize attribute on videos." },
+        { q: "What aspect ratio should I use for Instagram?", a: "Instagram supports: 1:1 (square) for feed posts, 4:5 (portrait, max vertical space in feed), 1.91:1 (landscape), and 9:16 for Reels and Stories. 4:5 portrait gets the most screen real estate in the feed. Minimum 1080px width for all formats." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  let mode = 'find-height';
+  let ratioW = 16, ratioH = 9;
+
+  function gcd(a: number, b: number): number { return b === 0 ? a : gcd(b, a % b); }
+
+  function simplifyRatio(w: number, h: number): [number, number] {
+    const d = gcd(Math.round(w), Math.round(h));
+    return [Math.round(w / d), Math.round(h / d)];
+  }
+
+  function renderForm() {
+    const container = document.getElementById('ar-form')!;
+    if (mode === 'find-height') {
+      container.innerHTML = `
+        <div>
+          <label class="label">Ratio W</label>
+          <input id="ar-rw" type="number" value="${ratioW}" min="1" class="input-field font-mono" />
+        </div>
+        <div>
+          <label class="label">Ratio H</label>
+          <input id="ar-rh" type="number" value="${ratioH}" min="1" class="input-field font-mono" />
+        </div>
+        <div>
+          <label class="label">Width (px)</label>
+          <input id="ar-w" type="number" value="1920" min="1" class="input-field font-mono" />
+        </div>
+      `;
+    } else if (mode === 'find-width') {
+      container.innerHTML = `
+        <div>
+          <label class="label">Ratio W</label>
+          <input id="ar-rw" type="number" value="${ratioW}" min="1" class="input-field font-mono" />
+        </div>
+        <div>
+          <label class="label">Ratio H</label>
+          <input id="ar-rh" type="number" value="${ratioH}" min="1" class="input-field font-mono" />
+        </div>
+        <div>
+          <label class="label">Height (px)</label>
+          <input id="ar-h" type="number" value="1080" min="1" class="input-field font-mono" />
+        </div>
+      `;
+    } else {
+      container.innerHTML = `
+        <div>
+          <label class="label">Width (px)</label>
+          <input id="ar-w" type="number" value="1920" min="1" class="input-field font-mono" />
+        </div>
+        <div>
+          <label class="label">Height (px)</label>
+          <input id="ar-h" type="number" value="1080" min="1" class="input-field font-mono" />
+        </div>
+        <div class="flex items-end"><div id="ar-ratio-display" class="text-2xl font-bold font-mono text-gray-900 pb-2">—</div></div>
+      `;
+    }
+    container.querySelectorAll('input').forEach(el => el.addEventListener('input', calculate));
+    calculate();
+  }
+
+  function calculate() {
+    const rw = parseFloat((document.getElementById('ar-rw') as HTMLInputElement)?.value || String(ratioW));
+    const rh = parseFloat((document.getElementById('ar-rh') as HTMLInputElement)?.value || String(ratioH));
+    const w = parseFloat((document.getElementById('ar-w') as HTMLInputElement)?.value || '0');
+    const h = parseFloat((document.getElementById('ar-h') as HTMLInputElement)?.value || '0');
+
+    if (rw) ratioW = rw;
+    if (rh) ratioH = rh;
+
+    const resultEl = document.getElementById('ar-result')!;
+    const resultVal = document.getElementById('ar-result-val')!;
+
+    if (mode === 'find-height' && rw && rh && w) {
+      const result = Math.round(w * rh / rw);
+      resultVal.textContent = `Height = ${result}px`;
+      resultEl.classList.remove('hidden');
+      updateVis(w, result, `${rw}:${rh}`);
+    } else if (mode === 'find-width' && rw && rh && h) {
+      const result = Math.round(h * rw / rh);
+      resultVal.textContent = `Width = ${result}px`;
+      resultEl.classList.remove('hidden');
+      updateVis(result, h, `${rw}:${rh}`);
+    } else if (mode === 'find-ratio' && w && h) {
+      const [sw, sh] = simplifyRatio(w, h);
+      const ratioStr = `${sw}:${sh}`;
+      const decimal = (w / h).toFixed(4);
+      resultVal.textContent = `Ratio = ${ratioStr} (${decimal}:1)`;
+      resultEl.classList.remove('hidden');
+      const display = document.getElementById('ar-ratio-display');
+      if (display) display.textContent = ratioStr;
+      updateVis(w, h, ratioStr);
+    } else {
+      resultEl.classList.add('hidden');
+    }
+  }
+
+  function updateVis(w: number, h: number, label: string) {
+    const vis = document.getElementById('ar-vis')!;
+    const maxW = 240, maxH = 140;
+    const scale = Math.min(maxW / w, maxH / h, 1);
+    const vw = Math.max(40, Math.round(w * scale));
+    const vh = Math.max(20, Math.round(h * scale));
+    vis.style.width = vw + 'px';
+    vis.style.height = vh + 'px';
+    vis.textContent = label;
+  }
+
+  document.querySelectorAll('.mode-btn').forEach(el => {
+    el.addEventListener('click', () => {
+      mode = (el as HTMLElement).dataset.mode!;
+      document.querySelectorAll('.mode-btn').forEach(b => {
+        b.classList.remove('border-indigo-400','bg-indigo-50','text-indigo-700');
+        b.classList.add('border-gray-200','text-gray-600');
+      });
+      el.classList.add('border-indigo-400','bg-indigo-50','text-indigo-700');
+      el.classList.remove('border-gray-200','text-gray-600');
+      renderForm();
+    });
+  });
+
+  document.querySelectorAll('.ratio-preset').forEach(el => {
+    el.addEventListener('click', () => {
+      ratioW = parseInt((el as HTMLElement).dataset.w!);
+      ratioH = parseInt((el as HTMLElement).dataset.h!);
+      renderForm();
+    });
+  });
+
+  renderForm();
+  updateVis(16, 9, '16:9');
+</script>

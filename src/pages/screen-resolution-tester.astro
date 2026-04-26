@@ -1,0 +1,166 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Screen Resolution Tester"
+  description="Check your current screen resolution, viewport size, device pixel ratio, and color depth. Compare with common screen resolutions and breakpoints."
+  slug="screen-resolution-tester"
+  category="Color & Design"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Screen Resolution Tester</h1>
+  <p class="text-gray-500 mb-8">Check your current screen resolution, viewport, pixel ratio, and responsive breakpoints.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <!-- Live stats -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="sr-stats">
+      {['Screen Resolution','Viewport Size','Device Pixel Ratio','Color Depth'].map(label => (
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
+          <div class="text-xs text-gray-400 mb-1">{label}</div>
+          <div class="font-mono font-bold text-gray-900 text-lg" id={`sr-${label.toLowerCase().replace(/[^a-z]/g,'-').replace(/-+/g,'-')}`}>—</div>
+        </div>
+      ))}
+    </div>
+
+    <!-- More stats -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      {[
+        ['Available Screen','sr-avail'],
+        ['Window Inner','sr-inner'],
+        ['Orientation','sr-orient'],
+        ['Touch Support','sr-touch'],
+      ].map(([label, id]) => (
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+          <div class="text-xs text-gray-400 mb-0.5">{label}</div>
+          <div class="font-mono text-sm font-semibold text-gray-900" id={id}>—</div>
+        </div>
+      ))}
+    </div>
+
+    <!-- Breakpoint indicator -->
+    <div>
+      <p class="label mb-2">Current Responsive Breakpoint</p>
+      <div class="flex flex-wrap gap-2" id="sr-breakpoints">
+        {[
+          { label: 'xs', max: 639, color: 'bg-gray-200 text-gray-600' },
+          { label: 'sm', min: 640, max: 767, color: 'bg-blue-100 text-blue-700' },
+          { label: 'md', min: 768, max: 1023, color: 'bg-green-100 text-green-700' },
+          { label: 'lg', min: 1024, max: 1279, color: 'bg-yellow-100 text-yellow-700' },
+          { label: 'xl', min: 1280, max: 1535, color: 'bg-orange-100 text-orange-700' },
+          { label: '2xl', min: 1536, color: 'bg-purple-100 text-purple-700' },
+        ].map(({ label }) => (
+          <div class="bp-chip text-sm font-mono font-semibold px-4 py-2 rounded-xl border border-transparent opacity-40 transition-all" id={`bp-${label}`}>{label}</div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Common resolutions comparison -->
+    <div>
+      <p class="label mb-2">Common Screen Resolutions</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead><tr class="bg-gray-50">
+            <th class="px-3 py-2 text-left font-medium text-gray-600">Name</th>
+            <th class="px-3 py-2 text-left font-medium text-gray-600">Resolution</th>
+            <th class="px-3 py-2 text-left font-medium text-gray-600">Ratio</th>
+            <th class="px-3 py-2 text-left font-medium text-gray-600">Device</th>
+          </tr></thead>
+          <tbody class="divide-y divide-gray-100" id="sr-table">
+            {[
+              ['360×800','360','800','16:9','Common Android phone'],
+              ['390×844','390','844','~9:19.5','iPhone 12/13/14'],
+              ['414×896','414','896','~9:19.5','iPhone XR/11'],
+              ['768×1024','768','1024','3:4','iPad'],
+              ['1024×768','1024','768','4:3','iPad landscape / old laptop'],
+              ['1280×720','1280','720','16:9','HD laptop'],
+              ['1366×768','1366','768','~16:9','Most common laptop'],
+              ['1440×900','1440','900','16:10','MacBook 13"'],
+              ['1920×1080','1920','1080','16:9','1080p desktop'],
+              ['2560×1440','2560','1440','16:9','QHD / 27" monitor'],
+              ['3840×2160','3840','2160','16:9','4K display'],
+            ].map(([res, w, h, ratio, device]) => (
+              <tr class="hover:bg-gray-50 res-row" data-w={w} data-h={h}>
+                <td class="px-3 py-2 font-mono text-gray-800 font-medium">{res}</td>
+                <td class="px-3 py-2 font-mono text-gray-600">{w}×{h}</td>
+                <td class="px-3 py-2 text-gray-500">{ratio}</td>
+                <td class="px-3 py-2 text-gray-500">{device}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is device pixel ratio (DPR)?", a: "DPR (or window.devicePixelRatio) is the ratio of physical pixels to CSS pixels. A DPR of 2 means 1 CSS pixel = 2×2 physical pixels — this is 'Retina' or HiDPI. For sharp images on high-DPR screens, you need to serve 2× or 3× resolution images. Use the srcset attribute or CSS image-set()." },
+        { q: "What is the difference between screen resolution and viewport?", a: "Screen resolution is the total physical pixel count of your display (e.g., 2560×1600). Viewport is the usable area of the browser window in CSS pixels — which accounts for DPR, browser chrome, and zoom level. For responsive design, viewport width (window.innerWidth) is what matters, not screen resolution." },
+        { q: "What are the Tailwind CSS breakpoints?", a: "Tailwind's default breakpoints: sm = 640px, md = 768px, lg = 1024px, xl = 1280px, 2xl = 1536px. These are minimum widths — styles at sm: apply from 640px and up. Bootstrap uses similar values: sm = 576px, md = 768px, lg = 992px, xl = 1200px, xxl = 1400px." },
+        { q: "What resolution should I design for?", a: "Design for the most common viewport: 1366px is the most common laptop width. For mobile-first: start at 375px (iPhone SE/modern iPhone in portrait). For widescreen: 1920px. Always test at 320px (small phone) and above 1440px. Use Chrome DevTools device toolbar to simulate any resolution." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const BREAKPOINTS = [
+    { id: 'bp-xs', min: 0, max: 639 },
+    { id: 'bp-sm', min: 640, max: 767 },
+    { id: 'bp-md', min: 768, max: 1023 },
+    { id: 'bp-lg', min: 1024, max: 1279 },
+    { id: 'bp-xl', min: 1280, max: 1535 },
+    { id: 'bp-2xl', min: 1536, max: Infinity },
+  ];
+
+  function update() {
+    const sw = screen.width, sh = screen.height;
+    const vw = window.innerWidth, vh = window.innerHeight;
+    const dpr = window.devicePixelRatio || 1;
+    const cd = screen.colorDepth;
+    const avw = screen.availWidth, avh = screen.availHeight;
+    const orient = screen.orientation?.type || (sw > sh ? 'landscape' : 'portrait');
+    const touch = navigator.maxTouchPoints > 0;
+
+    document.getElementById('sr-screen-resolution')!.textContent = `${sw}×${sh}`;
+    document.getElementById('sr-viewport-size')!.textContent = `${vw}×${vh}`;
+    document.getElementById('sr-device-pixel-ratio')!.textContent = `${dpr}×`;
+    document.getElementById('sr-color-depth')!.textContent = `${cd} bit`;
+    document.getElementById('sr-avail')!.textContent = `${avw}×${avh}`;
+    document.getElementById('sr-inner')!.textContent = `${window.innerWidth}×${window.innerHeight}`;
+    document.getElementById('sr-orient')!.textContent = orient.split('-')[0];
+    document.getElementById('sr-touch')!.textContent = touch ? 'Yes' : 'No';
+
+    BREAKPOINTS.forEach(({ id, min, max }) => {
+      const el = document.getElementById(id)!;
+      const active = vw >= min && vw <= max;
+      el.classList.toggle('opacity-40', !active);
+      el.classList.toggle('opacity-100', active);
+      el.classList.toggle('border-indigo-400', active);
+      el.classList.toggle('bg-indigo-50', active);
+      el.classList.toggle('text-indigo-700', active);
+    });
+
+    // Highlight matching resolution row
+    document.querySelectorAll('.res-row').forEach(row => {
+      const rw = parseInt((row as HTMLElement).dataset.w!);
+      const rh = parseInt((row as HTMLElement).dataset.h!);
+      const match = rw === sw && rh === sh;
+      row.classList.toggle('bg-indigo-50', match);
+      row.classList.toggle('font-semibold', match);
+    });
+  }
+
+  update();
+  window.addEventListener('resize', update);
+</script>

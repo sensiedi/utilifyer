@@ -1407,5 +1407,245 @@
     "priority": 89,
     "status": "live",
     "icon": "\ud83d\udccb"
+  },
+  {
+    "slug": "color-converter",
+    "title": "Color Converter",
+    "description": "Convert colors between HEX, RGB, HSL, HSV, CMYK, and CSS formats instantly. Pick a color visually and get all color codes at once.",
+    "category": "Color & Design",
+    "tags": [
+      "color converter",
+      "HEX to RGB",
+      "RGB to HSL",
+      "CMYK",
+      "color codes"
+    ],
+    "priority": 90,
+    "status": "live",
+    "icon": "\ud83c\udfa8"
+  },
+  {
+    "slug": "color-palette-generator",
+    "title": "Color Palette Generator",
+    "description": "Generate beautiful color palettes from any base color. Create complementary, analogous, triadic, split-complementary, and monochromatic color schemes.",
+    "category": "Color & Design",
+    "tags": [
+      "color palette",
+      "color scheme",
+      "complementary colors",
+      "analogous colors",
+      "color theory"
+    ],
+    "priority": 91,
+    "status": "live",
+    "icon": "\ud83d\udd8c\ufe0f"
+  },
+  {
+    "slug": "contrast-checker",
+    "title": "Color Contrast Checker",
+    "description": "Check color contrast ratios for WCAG 2.1 accessibility compliance. Test AA and AAA levels for normal text, large text, and UI components.",
+    "category": "Color & Design",
+    "tags": [
+      "color contrast",
+      "WCAG",
+      "accessibility",
+      "contrast ratio",
+      "color blindness"
+    ],
+    "priority": 92,
+    "status": "live",
+    "icon": "\u267f"
+  },
+  {
+    "slug": "gradient-generator",
+    "title": "CSS Gradient Generator",
+    "description": "Generate beautiful CSS gradients visually. Create linear, radial, and conic gradients with multiple color stops and copy the CSS code instantly.",
+    "category": "Color & Design",
+    "tags": [
+      "CSS gradient",
+      "linear gradient",
+      "radial gradient",
+      "background gradient",
+      "CSS"
+    ],
+    "priority": 93,
+    "status": "live",
+    "icon": "\ud83c\udf08"
+  },
+  {
+    "slug": "image-color-picker",
+    "title": "Image Color Picker",
+    "description": "Upload an image and click anywhere to pick colors. Extract the dominant color palette from any image and get HEX, RGB, and HSL codes instantly.",
+    "category": "Color & Design",
+    "tags": [
+      "image color picker",
+      "color dropper",
+      "dominant colors",
+      "color palette from image",
+      "eyedropper"
+    ],
+    "priority": 94,
+    "status": "live",
+    "icon": "\ud83d\udc89"
+  },
+  {
+    "slug": "box-shadow-generator",
+    "title": "CSS Box Shadow Generator",
+    "description": "Generate CSS box-shadow code visually with live preview. Adjust offset, blur, spread, color, and opacity. Add multiple shadows and copy the CSS.",
+    "category": "Color & Design",
+    "tags": [
+      "box shadow",
+      "CSS shadow",
+      "drop shadow",
+      "CSS generator",
+      "UI design"
+    ],
+    "priority": 95,
+    "status": "live",
+    "icon": "\ud83d\udd32"
+  },
+  {
+    "slug": "border-radius-generator",
+    "title": "CSS Border Radius Generator",
+    "description": "Generate CSS border-radius values visually. Create circles, pills, asymmetric shapes, and custom curved corners with live preview and CSS code output.",
+    "category": "Color & Design",
+    "tags": [
+      "border radius",
+      "CSS border-radius",
+      "rounded corners",
+      "CSS generator",
+      "UI design"
+    ],
+    "priority": 96,
+    "status": "live",
+    "icon": "\u2b1c"
+  },
+  {
+    "slug": "css-triangle-generator",
+    "title": "CSS Triangle Generator",
+    "description": "Generate CSS triangles using the border trick. Create arrows and triangle shapes in any direction, size, and color without images or SVG.",
+    "category": "Color & Design",
+    "tags": [
+      "CSS triangle",
+      "CSS arrow",
+      "border trick",
+      "CSS shapes",
+      "CSS generator"
+    ],
+    "priority": 97,
+    "status": "live",
+    "icon": "\ud83d\udd3a"
+  },
+  {
+    "slug": "typography-scale-generator",
+    "title": "Typography Scale Generator",
+    "description": "Generate a harmonious typography scale for your design system. Choose a base font size and scale ratio to create consistent heading and body text sizes.",
+    "category": "Color & Design",
+    "tags": [
+      "typography scale",
+      "font size",
+      "modular scale",
+      "type scale",
+      "design system"
+    ],
+    "priority": 98,
+    "status": "live",
+    "icon": "\ud83d\udd24"
+  },
+  {
+    "slug": "favicon-generator",
+    "title": "Favicon Generator",
+    "description": "Generate favicons from text, emoji, or simple shapes. Create favicon.ico and PNG files in all required sizes for browsers and devices.",
+    "category": "Color & Design",
+    "tags": [
+      "favicon generator",
+      "favicon",
+      "website icon",
+      "apple touch icon",
+      "PWA icon"
+    ],
+    "priority": 99,
+    "status": "live",
+    "icon": "\u2b50"
+  },
+  {
+    "slug": "aspect-ratio-calculator",
+    "title": "Aspect Ratio Calculator",
+    "description": "Calculate and maintain aspect ratios for images, videos, and screen sizes. Find width or height for any aspect ratio. Common ratios: 16:9, 4:3, 1:1, 21:9.",
+    "category": "Color & Design",
+    "tags": [
+      "aspect ratio",
+      "16:9",
+      "image dimensions",
+      "video dimensions",
+      "responsive design"
+    ],
+    "priority": 100,
+    "status": "live",
+    "icon": "\ud83d\udcd0"
+  },
+  {
+    "slug": "screen-resolution-tester",
+    "title": "Screen Resolution Tester",
+    "description": "Check your current screen resolution, viewport size, device pixel ratio, and color depth. Compare with common screen resolutions and breakpoints.",
+    "category": "Color & Design",
+    "tags": [
+      "screen resolution",
+      "viewport size",
+      "device pixel ratio",
+      "responsive breakpoints",
+      "display"
+    ],
+    "priority": 101,
+    "status": "live",
+    "icon": "\ud83d\udda5\ufe0f"
+  },
+  {
+    "slug": "color-blindness-simulator",
+    "title": "Color Blindness Simulator",
+    "description": "Simulate how colors and images appear to people with color blindness. Test designs for deuteranopia, protanopia, tritanopia, and achromatopsia.",
+    "category": "Color & Design",
+    "tags": [
+      "color blindness",
+      "deuteranopia",
+      "protanopia",
+      "accessibility",
+      "color vision"
+    ],
+    "priority": 102,
+    "status": "live",
+    "icon": "\ud83d\udc41\ufe0f"
+  },
+  {
+    "slug": "spacing-scale-generator",
+    "title": "Spacing Scale Generator",
+    "description": "Generate a consistent spacing scale for your design system. Create CSS custom properties for margin, padding, and gap based on a base unit.",
+    "category": "Color & Design",
+    "tags": [
+      "spacing scale",
+      "design system",
+      "CSS variables",
+      "8pt grid",
+      "design tokens"
+    ],
+    "priority": 103,
+    "status": "live",
+    "icon": "\ud83d\udccf"
+  },
+  {
+    "slug": "image-resizer",
+    "title": "Image Resizer",
+    "description": "Resize images online for free. Crop, scale, and convert images to JPG, PNG, or WebP format \u2014 all processed locally in your browser, no upload needed.",
+    "category": "Color & Design",
+    "tags": [
+      "image resizer",
+      "resize image",
+      "image converter",
+      "compress image",
+      "WebP converter"
+    ],
+    "priority": 104,
+    "status": "live",
+    "icon": "\ud83d\udd04"
   }
 ]

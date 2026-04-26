@@ -1,0 +1,235 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Favicon Generator"
+  description="Generate favicons from text, emoji, or simple shapes. Create favicon.ico and PNG files in all required sizes for browsers and devices."
+  slug="favicon-generator"
+  category="Color & Design"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Favicon Generator</h1>
+  <p class="text-gray-500 mb-8">Create a favicon from text or emoji — get PNG previews in all required sizes.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Text or Emoji</label>
+        <input id="fv-text" type="text" value="⚡" maxlength="4" placeholder="A, AB, ⚡, 🔥" class="input-field text-2xl text-center" />
+        <p class="text-xs text-gray-400 mt-0.5">1–2 characters or an emoji</p>
+      </div>
+      <div>
+        <label class="label">Font Size</label>
+        <div class="flex items-center gap-2">
+          <input type="range" id="fv-fontsize" min="20" max="90" value="60" class="flex-1" />
+          <span id="fv-fontsize-val" class="text-sm font-mono text-gray-600 w-8">60</span>
+        </div>
+      </div>
+      <div>
+        <label class="label">Text Color</label>
+        <div class="flex gap-2">
+          <input type="color" id="fv-color" value="#ffffff" class="w-12 h-10 rounded-lg cursor-pointer border border-gray-200 p-0.5" />
+          <input id="fv-color-hex" type="text" value="#ffffff" class="input-field font-mono w-28" />
+        </div>
+      </div>
+      <div>
+        <label class="label">Background</label>
+        <div class="flex gap-2">
+          <input type="color" id="fv-bg" value="#6366f1" class="w-12 h-10 rounded-lg cursor-pointer border border-gray-200 p-0.5" />
+          <input id="fv-bg-hex" type="text" value="#6366f1" class="input-field font-mono w-28" />
+          <label class="flex items-center gap-1 text-sm text-gray-600 cursor-pointer">
+            <input type="checkbox" id="fv-transparent" class="accent-indigo-600" /> Transparent
+          </label>
+        </div>
+      </div>
+      <div>
+        <label class="label">Shape</label>
+        <select id="fv-shape" class="input-field">
+          <option value="square">Square</option>
+          <option value="rounded" selected>Rounded</option>
+          <option value="circle">Circle</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">Font Weight</label>
+        <select id="fv-weight" class="input-field">
+          <option value="400">Regular (400)</option>
+          <option value="700" selected>Bold (700)</option>
+          <option value="900">Black (900)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <div>
+      <p class="label mb-3">Preview</p>
+      <div class="flex flex-wrap items-end gap-4">
+        <div>
+          <p class="text-xs text-gray-400 mb-1 text-center">256px</p>
+          <canvas id="fv-canvas-256" width="256" height="256" class="border border-gray-200 rounded"></canvas>
+        </div>
+        <div>
+          <p class="text-xs text-gray-400 mb-1 text-center">64px</p>
+          <canvas id="fv-canvas-64" width="64" height="64" class="border border-gray-200 rounded"></canvas>
+        </div>
+        <div>
+          <p class="text-xs text-gray-400 mb-1 text-center">32px</p>
+          <canvas id="fv-canvas-32" width="32" height="32" class="border border-gray-200 rounded"></canvas>
+        </div>
+        <div>
+          <p class="text-xs text-gray-400 mb-1 text-center">16px</p>
+          <canvas id="fv-canvas-16" width="16" height="16" class="border border-gray-200 rounded"></canvas>
+        </div>
+        <div class="bg-gray-900 p-2 rounded">
+          <p class="text-xs text-gray-500 mb-1 text-center">on dark</p>
+          <canvas id="fv-canvas-dark" width="32" height="32" class="border border-gray-700 rounded"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Downloads -->
+    <div>
+      <p class="label mb-2">Download</p>
+      <div class="flex flex-wrap gap-2">
+        {[256, 192, 180, 152, 128, 64, 32, 16].map(size => (
+          <button class="dl-btn text-xs border border-gray-200 rounded-lg px-3 py-1.5 hover:border-indigo-300 hover:bg-indigo-50 transition-colors" data-size={size}>{size}×{size} PNG</button>
+        ))}
+      </div>
+    </div>
+
+    <!-- HTML snippet -->
+    <div>
+      <div class="flex justify-between items-center mb-2">
+        <p class="label">HTML Head Tags</p>
+        <button id="fv-copy" class="text-xs text-indigo-600 hover:text-indigo-800">Copy</button>
+      </div>
+      <pre id="fv-html" class="bg-gray-900 text-green-300 rounded-xl p-4 text-xs font-mono overflow-x-auto whitespace-pre"></pre>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What sizes does a favicon need to be?", a: "Modern best practice: 16×16px (browser tab), 32×32px (browser bookmark), 180×180px (Apple touch icon), 192×192px (Android), 512×512px (PWA splash). You can serve a single SVG favicon that scales perfectly: <link rel='icon' href='favicon.svg' type='image/svg+xml'>. As a fallback, include a 32×32 ICO file." },
+        { q: "Should I use .ico or .png for my favicon?", a: ".ico format is a container that can hold multiple sizes (16px, 32px, 48px) in one file. It's still needed for IE compatibility and some email clients. .png is simpler and widely supported. Modern best practice: serve favicon.svg as primary (scales perfectly), favicon.ico as fallback for old browsers." },
+        { q: "How do I make a transparent favicon?", a: "For transparent favicons, use PNG or SVG formats — ICO supports transparency but inconsistently across browsers. Transparent backgrounds work best when your favicon text/icon is visible on both light (white browser tab) and dark (dark mode) backgrounds." },
+        { q: "What is an Apple Touch Icon?", a: "The Apple Touch Icon is a 180×180px PNG used when users save your website to their iOS home screen. Without it, iOS captures a screenshot of the page. Add it with: <link rel='apple-touch-icon' sizes='180x180' href='/apple-touch-icon.png'>. Android uses 192×192px and 512×512px icons for the same purpose." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  function drawFavicon(canvas: HTMLCanvasElement, size: number, text: string, textColor: string, bgColor: string, transparent: boolean, shape: string, fontSize: number, fontWeight: string) {
+    const ctx = canvas.getContext('2d')!;
+    ctx.clearRect(0, 0, size, size);
+
+    if (!transparent) {
+      ctx.fillStyle = bgColor;
+      const r = shape === 'circle' ? size / 2 : shape === 'rounded' ? size * 0.2 : 0;
+      if (r > 0) {
+        ctx.beginPath();
+        ctx.roundRect(0, 0, size, size, r);
+        ctx.fill();
+      } else {
+        ctx.fillRect(0, 0, size, size);
+      }
+    }
+
+    if (text) {
+      const scaledSize = Math.round((fontSize / 100) * size);
+      ctx.font = `${fontWeight} ${scaledSize}px sans-serif`;
+      ctx.fillStyle = textColor;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, size / 2, size / 2);
+    }
+  }
+
+  function render() {
+    const text = (document.getElementById('fv-text') as HTMLInputElement).value;
+    const textColor = (document.getElementById('fv-color-hex') as HTMLInputElement).value.trim() || '#ffffff';
+    const bgColor = (document.getElementById('fv-bg-hex') as HTMLInputElement).value.trim() || '#6366f1';
+    const transparent = (document.getElementById('fv-transparent') as HTMLInputElement).checked;
+    const shape = (document.getElementById('fv-shape') as HTMLSelectElement).value;
+    const fontSize = parseInt((document.getElementById('fv-fontsize') as HTMLInputElement).value);
+    const fontWeight = (document.getElementById('fv-weight') as HTMLSelectElement).value;
+
+    [256,64,32,16].forEach(s => {
+      const c = document.getElementById(`fv-canvas-${s}`) as HTMLCanvasElement;
+      drawFavicon(c, s, text, textColor, bgColor, transparent, shape, fontSize, fontWeight);
+    });
+
+    const dark = document.getElementById('fv-canvas-dark') as HTMLCanvasElement;
+    drawFavicon(dark, 32, text, textColor, bgColor, transparent, shape, fontSize, fontWeight);
+
+    document.getElementById('fv-html')!.textContent = [
+      `<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />`,
+      `<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />`,
+      `<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />`,
+      `<link rel="icon" sizes="192x192" href="/icon-192x192.png" />`,
+    ].join('\n');
+  }
+
+  function downloadFavicon(size: number) {
+    const text = (document.getElementById('fv-text') as HTMLInputElement).value;
+    const textColor = (document.getElementById('fv-color-hex') as HTMLInputElement).value.trim() || '#ffffff';
+    const bgColor = (document.getElementById('fv-bg-hex') as HTMLInputElement).value.trim() || '#6366f1';
+    const transparent = (document.getElementById('fv-transparent') as HTMLInputElement).checked;
+    const shape = (document.getElementById('fv-shape') as HTMLSelectElement).value;
+    const fontSize = parseInt((document.getElementById('fv-fontsize') as HTMLInputElement).value);
+    const fontWeight = (document.getElementById('fv-weight') as HTMLSelectElement).value;
+
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = size;
+    drawFavicon(canvas, size, text, textColor, bgColor, transparent, shape, fontSize, fontWeight);
+    const a = document.createElement('a');
+    a.href = canvas.toDataURL('image/png');
+    a.download = `favicon-${size}x${size}.png`;
+    a.click();
+  }
+
+  ['fv-text','fv-color-hex','fv-bg-hex','fv-shape','fv-weight'].forEach(id =>
+    document.getElementById(id)?.addEventListener('input', render)
+  );
+  ['fv-transparent','fv-color','fv-bg'].forEach(id =>
+    document.getElementById(id)?.addEventListener('change', () => {
+      if (id === 'fv-color') (document.getElementById('fv-color-hex') as HTMLInputElement).value = (document.getElementById('fv-color') as HTMLInputElement).value;
+      if (id === 'fv-bg') (document.getElementById('fv-bg-hex') as HTMLInputElement).value = (document.getElementById('fv-bg') as HTMLInputElement).value;
+      render();
+    })
+  );
+  ['fv-color','fv-bg'].forEach(id => {
+    document.getElementById(id)?.addEventListener('input', (e) => {
+      const hexId = id + '-hex';
+      (document.getElementById(hexId) as HTMLInputElement).value = (e.target as HTMLInputElement).value;
+      render();
+    });
+  });
+  document.getElementById('fv-fontsize')?.addEventListener('input', (e) => {
+    document.getElementById('fv-fontsize-val')!.textContent = (e.target as HTMLInputElement).value;
+    render();
+  });
+
+  document.querySelectorAll('.dl-btn').forEach(el => {
+    el.addEventListener('click', () => downloadFavicon(parseInt((el as HTMLElement).dataset.size!)));
+  });
+
+  document.getElementById('fv-copy')?.addEventListener('click', () => {
+    navigator.clipboard.writeText(document.getElementById('fv-html')!.textContent || '').then(() => {
+      const btn = document.getElementById('fv-copy')!;
+      btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 1500);
+    });
+  });
+
+  render();
+</script>

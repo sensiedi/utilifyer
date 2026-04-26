@@ -1,0 +1,141 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Typography Scale Generator"
+  description="Generate a harmonious typography scale for your design system. Choose a base font size and scale ratio to create consistent heading and body text sizes."
+  slug="typography-scale-generator"
+  category="Color & Design"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Typography Scale Generator</h1>
+  <p class="text-gray-500 mb-8">Generate a harmonious type scale based on a ratio — for consistent typography across your design system.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div>
+        <label class="label">Base Font Size</label>
+        <div class="flex items-center gap-2">
+          <input id="ts-base" type="number" value="16" min="8" max="32" class="input-field w-24 font-mono" />
+          <span class="text-sm text-gray-500">px</span>
+        </div>
+      </div>
+      <div>
+        <label class="label">Scale Ratio</label>
+        <select id="ts-ratio" class="input-field">
+          <option value="1.067">Minor Second (1.067)</option>
+          <option value="1.125">Major Second (1.125)</option>
+          <option value="1.200">Minor Third (1.200)</option>
+          <option value="1.250" selected>Major Third (1.250)</option>
+          <option value="1.333">Perfect Fourth (1.333)</option>
+          <option value="1.414">Augmented Fourth (1.414)</option>
+          <option value="1.500">Perfect Fifth (1.500)</option>
+          <option value="1.618">Golden Ratio (1.618)</option>
+          <option value="1.667">Minor Sixth (1.667)</option>
+          <option value="2.000">Double (2.000)</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">Unit</label>
+        <select id="ts-unit" class="input-field">
+          <option value="px">px</option>
+          <option value="rem" selected>rem</option>
+          <option value="em">em</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Scale Preview -->
+    <div id="ts-preview" class="space-y-4 border border-gray-100 rounded-xl p-4 bg-gray-50"></div>
+
+    <!-- CSS Output -->
+    <div>
+      <div class="flex justify-between items-center mb-2">
+        <p class="label">CSS Custom Properties</p>
+        <button id="ts-copy" class="text-xs text-indigo-600 hover:text-indigo-800">Copy</button>
+      </div>
+      <pre id="ts-output" class="bg-gray-900 text-green-300 rounded-xl p-4 text-sm font-mono overflow-x-auto whitespace-pre"></pre>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is a modular type scale?", a: "A modular scale is a sequence of font sizes calculated by multiplying a base size by a ratio. Instead of picking arbitrary sizes like 12, 14, 18, 24, you use a formula: size_n = base × ratio^n. This creates visual harmony because the sizes relate to each other mathematically — the same principle used in music for harmonics." },
+        { q: "What ratio should I choose?", a: "For body-heavy content (blogs, articles): Major Third (1.25) or Perfect Fourth (1.333) work well — large enough difference between levels without extreme jumps. For display/marketing pages: Golden Ratio (1.618) creates dramatic hierarchy. For dense UI with many levels: Minor Second (1.067) or Major Second (1.125) provide subtle differentiation." },
+        { q: "Should I use px, rem, or em for font sizes?", a: "rem (root em) is recommended for font sizes — it's relative to the root html font-size (typically 16px), respects user browser zoom settings, and is easy to reason about. px ignores browser zoom preferences (accessibility issue). em compounds with nesting, making it harder to predict. rem gives you control without compounding." },
+        { q: "How do I use a type scale in a design system?", a: "Define CSS custom properties (--text-xs, --text-sm, --text-base, --text-lg, --text-xl, --text-2xl, --text-3xl) and use them consistently. Map scale steps to semantic roles: --text-base for body, --text-lg for lead text, --text-xl to --text-3xl for h3, h2, h1. Avoid using arbitrary font sizes outside the scale." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const STEPS = [
+    { name: 'xs', step: -2, role: 'Caption / label' },
+    { name: 'sm', step: -1, role: 'Small text' },
+    { name: 'base', step: 0, role: 'Body text' },
+    { name: 'lg', step: 1, role: 'Lead / subheading' },
+    { name: 'xl', step: 2, role: 'H4' },
+    { name: '2xl', step: 3, role: 'H3' },
+    { name: '3xl', step: 4, role: 'H2' },
+    { name: '4xl', step: 5, role: 'H1' },
+    { name: '5xl', step: 6, role: 'Display' },
+  ];
+
+  function generate() {
+    const base = parseFloat((document.getElementById('ts-base') as HTMLInputElement).value) || 16;
+    const ratio = parseFloat((document.getElementById('ts-ratio') as HTMLSelectElement).value);
+    const unit = (document.getElementById('ts-unit') as HTMLSelectElement).value;
+
+    const rootPx = 16;
+
+    const sizes = STEPS.map(({ name, step, role }) => {
+      const px = base * Math.pow(ratio, step);
+      let val: string;
+      if (unit === 'px') val = px.toFixed(2) + 'px';
+      else if (unit === 'rem') val = (px / rootPx).toFixed(3) + 'rem';
+      else val = (px / base).toFixed(3) + 'em';
+      return { name, step, role, px, val };
+    });
+
+    // Preview
+    const previewEl = document.getElementById('ts-preview')!;
+    previewEl.innerHTML = sizes.slice().reverse().map(({ name, role, px, val }) => {
+      const displayPx = Math.round(px);
+      return `<div class="flex items-baseline gap-4 border-b border-gray-100 pb-3 last:border-0 last:pb-0">
+        <div class="w-16 flex-shrink-0">
+          <div class="text-xs text-gray-400 font-mono">${val}</div>
+          <div class="text-xs text-gray-300">${displayPx}px</div>
+        </div>
+        <div class="text-gray-800 leading-none overflow-hidden" style="font-size:${Math.min(px, 72)}px;font-weight:${px > 20 ? 700 : 400}">${role}</div>
+      </div>`;
+    }).join('');
+
+    // CSS
+    const cssLines = [':root {', ...sizes.map(({ name, val }) => `  --text-${name}: ${val};`), '}'];
+    document.getElementById('ts-output')!.textContent = cssLines.join('\n');
+  }
+
+  ['ts-base','ts-ratio','ts-unit'].forEach(id =>
+    document.getElementById(id)?.addEventListener('input', generate)
+  );
+
+  document.getElementById('ts-copy')?.addEventListener('click', () => {
+    navigator.clipboard.writeText(document.getElementById('ts-output')!.textContent || '').then(() => {
+      const btn = document.getElementById('ts-copy')!;
+      btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 1500);
+    });
+  });
+
+  generate();
+</script>

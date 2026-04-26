@@ -1,0 +1,235 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Color Contrast Checker"
+  description="Check color contrast ratios for WCAG 2.1 accessibility compliance. Test AA and AAA levels for normal text, large text, and UI components."
+  slug="contrast-checker"
+  category="Color & Design"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Color Contrast Checker</h1>
+  <p class="text-gray-500 mb-8">Check if your text and background colors meet WCAG 2.1 accessibility standards.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+      <div>
+        <label class="label">Foreground (Text) Color</label>
+        <div class="flex gap-2">
+          <input type="color" id="fg-picker" value="#1f2937" class="w-12 h-10 rounded-lg cursor-pointer border border-gray-200 p-0.5" />
+          <input id="fg-hex" type="text" value="#1f2937" placeholder="#000000" class="input-field font-mono" />
+        </div>
+      </div>
+      <div>
+        <label class="label">Background Color</label>
+        <div class="flex gap-2">
+          <input type="color" id="bg-picker" value="#ffffff" class="w-12 h-10 rounded-lg cursor-pointer border border-gray-200 p-0.5" />
+          <input id="bg-hex" type="text" value="#ffffff" placeholder="#ffffff" class="input-field font-mono" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <div id="cc-preview" class="rounded-2xl border border-gray-200 p-6 space-y-3 transition-all" style="background:#ffffff">
+      <p id="cc-normal" class="text-base font-medium" style="color:#1f2937">The quick brown fox jumps over the lazy dog. (Normal text — 16px)</p>
+      <p id="cc-large" class="text-2xl font-semibold" style="color:#1f2937">Large text sample (24px bold)</p>
+      <p id="cc-small" class="text-xs" style="color:#1f2937">Small text (12px) — harder to read, higher contrast needed</p>
+    </div>
+
+    <!-- Ratio & WCAG results -->
+    <div>
+      <div class="flex items-center gap-3 mb-4">
+        <div class="text-4xl font-bold font-mono text-gray-900" id="cc-ratio">—</div>
+        <div>
+          <div class="text-sm text-gray-500">Contrast Ratio</div>
+          <div id="cc-overall" class="text-sm font-medium text-gray-600">—</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {[
+          { id: 'wc-aa-normal', label: 'AA — Normal Text', req: '4.5:1', size: 'normal' },
+          { id: 'wc-aa-large', label: 'AA — Large Text', req: '3:1', size: 'large' },
+          { id: 'wc-aa-ui', label: 'AA — UI Components', req: '3:1', size: 'ui' },
+          { id: 'wc-aaa-normal', label: 'AAA — Normal Text', req: '7:1', size: 'normal' },
+          { id: 'wc-aaa-large', label: 'AAA — Large Text', req: '4.5:1', size: 'large' },
+          { id: 'wc-aaa-ui', label: 'AAA — Enhanced', req: '7:1', size: 'ui' },
+        ].map(({ id, label, req }) => (
+          <div id={id} class="rounded-xl p-3 border border-gray-200 bg-gray-50 text-sm">
+            <div class="text-xs text-gray-400 mb-0.5">{label}</div>
+            <div class="font-semibold text-gray-600">Requires {req}</div>
+            <div class="result-badge mt-1 text-xs">—</div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Swap button -->
+    <button id="cc-swap" class="btn-secondary text-sm">⇄ Swap Colors</button>
+
+    <!-- Suggestions -->
+    <div id="cc-suggestions" class="hidden space-y-2">
+      <p class="text-sm font-semibold text-gray-700">Suggested adjustments to pass AA:</p>
+      <div id="cc-sugg-list" class="flex flex-wrap gap-2"></div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is WCAG contrast compliance?", a: "WCAG (Web Content Accessibility Guidelines) defines minimum contrast ratios to ensure text is readable for people with low vision or color blindness. Level AA is the legal requirement in most countries; AAA is the enhanced standard. Ratio 4.5:1 is required for normal text at AA level." },
+        { q: "What counts as 'large text'?", a: "WCAG defines large text as 18pt (24px) or larger, or 14pt (approximately 19px) bold or larger. Large text has a lower contrast requirement (3:1 for AA) because bigger characters are easier to read at lower contrast." },
+        { q: "Why does color blindness affect contrast requirements?", a: "Color blindness affects ~8% of males and 0.5% of females. Red-green color blindness (deuteranopia) is most common — sufferers cannot distinguish red from green. Good contrast ratios use luminance differences, not just color differences, ensuring readability regardless of color perception." },
+        { q: "Does the contrast ratio apply to icons and images?", a: "WCAG 1.4.11 (Non-text Contrast) requires a 3:1 minimum ratio for UI components like icons, focus indicators, and form field borders against adjacent colors. It does not apply to decorative images or logos. This is a AA-level requirement." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  function hexToRgb(hex: string): [number,number,number] | null {
+    const m = hex.replace('#','').match(/^([0-9a-f]{3}|[0-9a-f]{6})$/i);
+    if (!m) return null;
+    let h = m[1];
+    if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+  }
+
+  function rgbToHex(r: number, g: number, b: number): string {
+    return '#' + [r,g,b].map(v => Math.round(Math.max(0,Math.min(255,v))).toString(16).padStart(2,'0')).join('');
+  }
+
+  function relativeLuminance(r: number, g: number, b: number): number {
+    const [R, G, B] = [r, g, b].map(c => {
+      c /= 255;
+      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * R + 0.7152 * G + 0.0722 * B;
+  }
+
+  function contrastRatio(l1: number, l2: number): number {
+    const lighter = Math.max(l1, l2);
+    const darker = Math.min(l1, l2);
+    return (lighter + 0.05) / (darker + 0.05);
+  }
+
+  function badge(pass: boolean): string {
+    return pass
+      ? `<span class="inline-flex items-center gap-1 text-green-700 font-semibold">✓ Pass</span>`
+      : `<span class="inline-flex items-center gap-1 text-red-600 font-semibold">✗ Fail</span>`;
+  }
+
+  function update() {
+    const fgHex = (document.getElementById('fg-hex') as HTMLInputElement).value.trim();
+    const bgHex = (document.getElementById('bg-hex') as HTMLInputElement).value.trim();
+    const fgRgb = hexToRgb(fgHex.startsWith('#') ? fgHex : '#' + fgHex);
+    const bgRgb = hexToRgb(bgHex.startsWith('#') ? bgHex : '#' + bgHex);
+    if (!fgRgb || !bgRgb) return;
+
+    const fgNorm = fgHex.startsWith('#') ? fgHex : '#' + fgHex;
+    const bgNorm = bgHex.startsWith('#') ? bgHex : '#' + bgHex;
+
+    (document.getElementById('fg-picker') as HTMLInputElement).value = fgNorm;
+    (document.getElementById('bg-picker') as HTMLInputElement).value = bgNorm;
+
+    // Update preview
+    document.getElementById('cc-preview')!.style.background = bgNorm;
+    ['cc-normal','cc-large','cc-small'].forEach(id => {
+      (document.getElementById(id) as HTMLElement).style.color = fgNorm;
+    });
+
+    const lFg = relativeLuminance(...fgRgb);
+    const lBg = relativeLuminance(...bgRgb);
+    const ratio = contrastRatio(lFg, lBg);
+
+    document.getElementById('cc-ratio')!.textContent = ratio.toFixed(2) + ':1';
+
+    const checks = [
+      { id: 'wc-aa-normal', threshold: 4.5 },
+      { id: 'wc-aa-large', threshold: 3 },
+      { id: 'wc-aa-ui', threshold: 3 },
+      { id: 'wc-aaa-normal', threshold: 7 },
+      { id: 'wc-aaa-large', threshold: 4.5 },
+      { id: 'wc-aaa-ui', threshold: 7 },
+    ];
+
+    checks.forEach(({ id, threshold }) => {
+      const pass = ratio >= threshold;
+      const el = document.getElementById(id)!;
+      el.className = `rounded-xl p-3 border text-sm transition-all ${pass ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`;
+      el.querySelector('.result-badge')!.innerHTML = badge(pass);
+    });
+
+    const aaPass = ratio >= 4.5;
+    document.getElementById('cc-overall')!.textContent = aaPass ? 'Passes WCAG AA' : 'Fails WCAG AA';
+    document.getElementById('cc-overall')!.className = `text-sm font-medium ${aaPass ? 'text-green-700' : 'text-red-600'}`;
+
+    // Suggestions if failing AA
+    const suggEl = document.getElementById('cc-suggestions')!;
+    if (!aaPass) {
+      const darkFg = rgbToHex(Math.round(fgRgb[0]*0.5), Math.round(fgRgb[1]*0.5), Math.round(fgRgb[2]*0.5));
+      const lightBg = '#ffffff';
+      const darkBg = '#000000';
+      const suggestions = [
+        { fg: '#000000', bg: bgNorm, label: 'Black text' },
+        { fg: '#ffffff', bg: bgNorm, label: 'White text' },
+        { fg: fgNorm, bg: '#ffffff', label: 'White bg' },
+        { fg: fgNorm, bg: '#000000', label: 'Black bg' },
+        { fg: darkFg, bg: bgNorm, label: 'Darken text' },
+      ].filter(s => {
+        const fR = hexToRgb(s.fg)!, bR = hexToRgb(s.bg)!;
+        return contrastRatio(relativeLuminance(...fR), relativeLuminance(...bR)) >= 4.5;
+      }).slice(0, 4);
+
+      if (suggestions.length > 0) {
+        suggEl.classList.remove('hidden');
+        document.getElementById('cc-sugg-list')!.innerHTML = suggestions.map(s =>
+          `<button class="sugg-btn text-xs border border-gray-200 rounded-lg px-3 py-2 font-mono hover:border-indigo-300 transition-colors" style="background:${s.bg};color:${s.fg}" data-fg="${s.fg}" data-bg="${s.bg}">
+            ${s.label}: ${s.fg} on ${s.bg}
+          </button>`
+        ).join('');
+        document.querySelectorAll('.sugg-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            (document.getElementById('fg-hex') as HTMLInputElement).value = (btn as HTMLElement).dataset.fg!;
+            (document.getElementById('bg-hex') as HTMLInputElement).value = (btn as HTMLElement).dataset.bg!;
+            update();
+          });
+        });
+      } else {
+        suggEl.classList.add('hidden');
+      }
+    } else {
+      suggEl.classList.add('hidden');
+    }
+  }
+
+  document.getElementById('fg-picker')?.addEventListener('input', (e) => {
+    (document.getElementById('fg-hex') as HTMLInputElement).value = (e.target as HTMLInputElement).value;
+    update();
+  });
+  document.getElementById('bg-picker')?.addEventListener('input', (e) => {
+    (document.getElementById('bg-hex') as HTMLInputElement).value = (e.target as HTMLInputElement).value;
+    update();
+  });
+  document.getElementById('fg-hex')?.addEventListener('input', update);
+  document.getElementById('bg-hex')?.addEventListener('input', update);
+
+  document.getElementById('cc-swap')?.addEventListener('click', () => {
+    const fg = (document.getElementById('fg-hex') as HTMLInputElement).value;
+    const bg = (document.getElementById('bg-hex') as HTMLInputElement).value;
+    (document.getElementById('fg-hex') as HTMLInputElement).value = bg;
+    (document.getElementById('bg-hex') as HTMLInputElement).value = fg;
+    update();
+  });
+
+  update();
+</script>

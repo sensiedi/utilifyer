@@ -1,0 +1,257 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Image Color Picker"
+  description="Upload an image and click anywhere to pick colors. Extract the dominant color palette from any image and get HEX, RGB, and HSL codes instantly."
+  slug="image-color-picker"
+  category="Color & Design"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Image Color Picker</h1>
+  <p class="text-gray-500 mb-8">Upload an image, click any spot to sample a color, and extract the dominant palette.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <!-- Upload -->
+    <div id="icp-dropzone" class="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center cursor-pointer hover:border-indigo-400 transition-colors">
+      <input type="file" id="icp-file" accept="image/*" class="hidden" />
+      <div class="text-4xl mb-2">🖼️</div>
+      <p class="text-gray-600 font-medium">Drop an image here or click to upload</p>
+      <p class="text-xs text-gray-400 mt-1">JPG, PNG, GIF, WebP, SVG supported</p>
+    </div>
+
+    <!-- Canvas + interaction -->
+    <div id="icp-canvas-area" class="hidden space-y-3">
+      <p class="text-sm text-gray-500">Click anywhere on the image to pick a color. Hover to preview.</p>
+      <div class="relative inline-block max-w-full">
+        <canvas id="icp-canvas" class="rounded-xl border border-gray-200 cursor-crosshair max-w-full"></canvas>
+        <div id="icp-cursor" class="absolute w-8 h-8 rounded-full border-4 border-white shadow-lg pointer-events-none hidden" style="transform:translate(-50%,-50%)"></div>
+      </div>
+    </div>
+
+    <!-- Picked color -->
+    <div id="icp-picked" class="hidden border border-gray-200 rounded-xl p-4">
+      <p class="text-sm font-semibold text-gray-700 mb-3">Picked Color</p>
+      <div class="flex items-center gap-4">
+        <div id="icp-swatch" class="w-20 h-20 rounded-xl border border-gray-200 shadow-inner flex-shrink-0"></div>
+        <div class="space-y-1 flex-1" id="icp-values"></div>
+      </div>
+    </div>
+
+    <!-- Palette -->
+    <div id="icp-palette-area" class="hidden">
+      <div class="flex justify-between items-center mb-2">
+        <p class="text-sm font-semibold text-gray-700">Dominant Colors</p>
+        <button id="icp-extract" class="text-xs text-indigo-600 hover:text-indigo-800">Re-extract palette</button>
+      </div>
+      <div id="icp-palette" class="grid grid-cols-4 sm:grid-cols-8 gap-2"></div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How does the color extraction work?", a: "The tool uses your browser's Canvas API to read pixel data from the image. For dominant color extraction, it samples pixels across the image, quantizes them into color buckets, and returns the most frequent colors. All processing happens in your browser — images are never uploaded to any server." },
+        { q: "Why do extracted colors look slightly different?", a: "Browsers apply color profiles and gamma correction when rendering images on canvas. JPEG compression also introduces slight color variations. For precise color matching in professional work, use a dedicated color profiling tool or eyedropper in Photoshop/Figma which reads raw uncompressed values." },
+        { q: "What is color quantization?", a: "Color quantization reduces the number of distinct colors in an image to find dominant ones. Algorithms like median cut, k-means, or octree partitioning group similar colors into buckets and return the centroid of each bucket. The result is an approximation of the most representative colors in the image." },
+        { q: "Can I use this for brand color matching?", a: "Yes — upload a logo, product photo, or screenshot to identify brand colors. This is useful when you have a brand asset but no style guide. Note that lossy JPEG compression can shift colors slightly; PNG logos will give more accurate results." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  function rgbToHex(r: number, g: number, b: number): string {
+    return '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('');
+  }
+
+  function rgbToHsl(r: number, g: number, b: number): [number,number,number] {
+    r /= 255; g /= 255; b /= 255;
+    const max = Math.max(r,g,b), min = Math.min(r,g,b);
+    let h = 0, s = 0;
+    const l = (max + min) / 2;
+    if (max !== min) {
+      const d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+        case g: h = ((b - r) / d + 2) / 6; break;
+        case b: h = ((r - g) / d + 4) / 6; break;
+      }
+    }
+    return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
+  }
+
+  function luminance(r: number, g: number, b: number): number {
+    const [R, G, B] = [r, g, b].map(c => {
+      c /= 255;
+      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * R + 0.7152 * G + 0.0722 * B;
+  }
+
+  function extractPalette(ctx: CanvasRenderingContext2D, w: number, h: number, n = 8): string[] {
+    const step = Math.max(1, Math.floor(Math.sqrt((w * h) / 2000)));
+    const buckets: Record<string, number> = {};
+    for (let y = 0; y < h; y += step) {
+      for (let x = 0; x < w; x += step) {
+        const d = ctx.getImageData(x, y, 1, 1).data;
+        if (d[3] < 128) continue;
+        const key = `${Math.round(d[0]/16)*16},${Math.round(d[1]/16)*16},${Math.round(d[2]/16)*16}`;
+        buckets[key] = (buckets[key] || 0) + 1;
+      }
+    }
+    return Object.entries(buckets)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, n * 4)
+      .filter((_, i, arr) => {
+        // deduplicate similar colors
+        const [r1, g1, b1] = arr[i][0].split(',').map(Number);
+        return !arr.slice(0, i).some(([k]) => {
+          const [r2, g2, b2] = k.split(',').map(Number);
+          return Math.abs(r1-r2) < 40 && Math.abs(g1-g2) < 40 && Math.abs(b1-b2) < 40;
+        });
+      })
+      .slice(0, n)
+      .map(([k]) => {
+        const [r, g, b] = k.split(',').map(Number);
+        return rgbToHex(r, g, b);
+      });
+  }
+
+  function showPicked(r: number, g: number, b: number) {
+    const hex = rgbToHex(r, g, b);
+    const [h, s, l] = rgbToHsl(r, g, b);
+    const lum = luminance(r, g, b);
+    const textColor = lum > 0.35 ? '#1f2937' : '#ffffff';
+
+    const pickedEl = document.getElementById('icp-picked')!;
+    pickedEl.classList.remove('hidden');
+    document.getElementById('icp-swatch')!.style.background = hex;
+
+    document.getElementById('icp-values')!.innerHTML = [
+      ['HEX', hex],
+      ['RGB', `rgb(${r}, ${g}, ${b})`],
+      ['HSL', `hsl(${h}, ${s}%, ${l}%)`],
+    ].map(([label, val]) =>
+      `<div class="flex items-center gap-2">
+        <span class="text-xs text-gray-400 w-8">${label}</span>
+        <code class="text-sm font-mono text-gray-800 flex-1">${val}</code>
+        <button class="copy-val text-xs text-indigo-500 hover:text-indigo-700" data-val="${val}">Copy</button>
+      </div>`
+    ).join('');
+
+    document.querySelectorAll('.copy-val').forEach(btn => {
+      btn.addEventListener('click', () => {
+        navigator.clipboard.writeText((btn as HTMLElement).dataset.val || '');
+        btn.textContent = '✓';
+        setTimeout(() => btn.textContent = 'Copy', 1200);
+      });
+    });
+  }
+
+  let canvas: HTMLCanvasElement;
+  let ctx: CanvasRenderingContext2D;
+
+  function loadImage(file: File) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        document.getElementById('icp-dropzone')!.classList.add('hidden');
+        document.getElementById('icp-canvas-area')!.classList.remove('hidden');
+
+        canvas = document.getElementById('icp-canvas') as HTMLCanvasElement;
+        const maxW = canvas.parentElement!.offsetWidth || 600;
+        const scale = Math.min(1, maxW / img.width);
+        canvas.width = Math.round(img.width * scale);
+        canvas.height = Math.round(img.height * scale);
+        ctx = canvas.getContext('2d')!;
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        document.getElementById('icp-palette-area')!.classList.remove('hidden');
+        renderPalette();
+      };
+      img.src = e.target!.result as string;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function renderPalette() {
+    if (!ctx) return;
+    const colors = extractPalette(ctx, canvas.width, canvas.height);
+    document.getElementById('icp-palette')!.innerHTML = colors.map(hex => {
+      const [r, g, b] = [1,3,5].map(i => parseInt(hex.slice(i, i+2), 16));
+      const lum = luminance(r, g, b);
+      const textColor = lum > 0.35 ? '#1f2937' : '#ffffff';
+      return `<div class="palette-swatch h-12 rounded-xl cursor-pointer hover:scale-105 transition-transform border border-gray-100 flex items-end p-1" style="background:${hex}" data-hex="${hex}" title="Click to copy ${hex}">
+        <span class="text-[10px] font-mono" style="color:${textColor}">${hex}</span>
+      </div>`;
+    }).join('');
+
+    document.querySelectorAll('.palette-swatch').forEach(el => {
+      el.addEventListener('click', () => {
+        const hex = (el as HTMLElement).dataset.hex!;
+        const [r, g, b] = [1,3,5].map(i => parseInt(hex.slice(i, i+2), 16));
+        showPicked(r, g, b);
+        navigator.clipboard.writeText(hex);
+      });
+    });
+  }
+
+  const dropzone = document.getElementById('icp-dropzone')!;
+  dropzone.addEventListener('click', () => document.getElementById('icp-file')!.click());
+  dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('border-indigo-400'); });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('border-indigo-400'));
+  dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer?.files[0];
+    if (file && file.type.startsWith('image/')) loadImage(file);
+  });
+
+  document.getElementById('icp-file')?.addEventListener('change', (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) loadImage(file);
+  });
+
+  document.getElementById('icp-extract')?.addEventListener('click', renderPalette);
+
+  document.getElementById('icp-canvas')?.addEventListener('mousemove', (e) => {
+    if (!ctx) return;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = Math.round((e.clientX - rect.left) * scaleX);
+    const y = Math.round((e.clientY - rect.top) * scaleY);
+    const d = ctx.getImageData(Math.min(x, canvas.width-1), Math.min(y, canvas.height-1), 1, 1).data;
+    const cursor = document.getElementById('icp-cursor')!;
+    cursor.classList.remove('hidden');
+    cursor.style.left = (e.clientX - rect.left) + 'px';
+    cursor.style.top = (e.clientY - rect.top) + 'px';
+    cursor.style.background = `rgb(${d[0]},${d[1]},${d[2]})`;
+  });
+
+  document.getElementById('icp-canvas')?.addEventListener('mouseleave', () => {
+    document.getElementById('icp-cursor')!.classList.add('hidden');
+  });
+
+  document.getElementById('icp-canvas')?.addEventListener('click', (e) => {
+    if (!ctx) return;
+    const rect = canvas.getBoundingClientRect();
+    const scaleX = canvas.width / rect.width;
+    const scaleY = canvas.height / rect.height;
+    const x = Math.round((e.clientX - rect.left) * scaleX);
+    const y = Math.round((e.clientY - rect.top) * scaleY);
+    const d = ctx.getImageData(Math.min(x, canvas.width-1), Math.min(y, canvas.height-1), 1, 1).data;
+    showPicked(d[0], d[1], d[2]);
+  });
+</script>

@@ -1,0 +1,262 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Color Palette Generator"
+  description="Generate beautiful color palettes from any base color. Create complementary, analogous, triadic, split-complementary, and monochromatic color schemes."
+  slug="color-palette-generator"
+  category="Color & Design"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Color Palette Generator</h1>
+  <p class="text-gray-500 mb-8">Generate harmonious color palettes from any base color using color theory rules.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="flex flex-wrap items-end gap-4">
+      <div>
+        <label class="label">Base Color</label>
+        <div class="flex gap-2">
+          <input type="color" id="pg-picker" value="#6366f1" class="w-12 h-10 rounded-lg cursor-pointer border border-gray-200 p-0.5" />
+          <input id="pg-hex" type="text" placeholder="#6366f1" class="input-field font-mono w-32" />
+        </div>
+      </div>
+      <div>
+        <label class="label">Color Scheme</label>
+        <select id="pg-scheme" class="input-field">
+          <option value="complementary">Complementary</option>
+          <option value="analogous">Analogous</option>
+          <option value="triadic">Triadic</option>
+          <option value="split">Split-Complementary</option>
+          <option value="tetradic">Tetradic / Square</option>
+          <option value="monochromatic" selected>Monochromatic</option>
+          <option value="shades">Shades & Tints</option>
+        </select>
+      </div>
+      <button id="pg-random" class="btn-secondary">↺ Random</button>
+    </div>
+
+    <div id="pg-palette" class="grid grid-cols-2 sm:grid-cols-5 gap-3"></div>
+
+    <div id="pg-css" class="hidden">
+      <div class="flex justify-between items-center mb-2">
+        <p class="label">CSS Variables</p>
+        <button id="pg-copy" class="text-xs text-indigo-600 hover:text-indigo-800">Copy</button>
+      </div>
+      <pre id="pg-code" class="bg-gray-900 text-green-300 rounded-xl p-4 text-sm font-mono overflow-x-auto whitespace-pre"></pre>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is a complementary color scheme?", a: "Complementary colors sit opposite each other on the color wheel (180° apart). They create maximum contrast and vibrant looks when used together — like blue and orange, or red and green. Use one as the dominant color and the other as an accent to avoid overwhelming the viewer." },
+        { q: "What is an analogous color scheme?", a: "Analogous colors are adjacent on the color wheel (30–60° apart). They create harmonious, natural-feeling palettes since they share a common hue. Great for nature-inspired designs. Examples: yellow, yellow-green, green — or red, red-orange, orange." },
+        { q: "What is a triadic color scheme?", a: "Triadic colors are evenly spaced around the color wheel (120° apart). They create vibrant, balanced palettes that work well for bold designs. The classic primary triadic is red, yellow, blue. To keep it cohesive, use one color as dominant and the other two as accents." },
+        { q: "What is the difference between tints, shades, and tones?", a: "Tints are created by adding white to a color (lighter). Shades are created by adding black (darker). Tones are created by adding gray (more muted). A monochromatic palette uses only tints, shades, and tones of a single hue — creating an elegant, cohesive look." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  function hexToRgb(hex: string): [number,number,number] | null {
+    const m = hex.replace('#','').match(/^([0-9a-f]{3}|[0-9a-f]{6})$/i);
+    if (!m) return null;
+    let h = m[1];
+    if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+  }
+
+  function rgbToHsl(r: number, g: number, b: number): [number,number,number] {
+    r /= 255; g /= 255; b /= 255;
+    const max = Math.max(r,g,b), min = Math.min(r,g,b);
+    let h = 0, s = 0;
+    const l = (max + min) / 2;
+    if (max !== min) {
+      const d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+        case g: h = ((b - r) / d + 2) / 6; break;
+        case b: h = ((r - g) / d + 4) / 6; break;
+      }
+    }
+    return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
+  }
+
+  function hslToHex(h: number, s: number, l: number): string {
+    s /= 100; l /= 100;
+    const a = s * Math.min(l, 1 - l);
+    const f = (n: number) => {
+      const k = (n + h / 30) % 12;
+      const val = l - a * Math.max(-1, Math.min(k - 3, 9 - k, 1));
+      return Math.round(Math.max(0, Math.min(1, val)) * 255).toString(16).padStart(2, '0');
+    };
+    return '#' + f(0) + f(8) + f(4);
+  }
+
+  function getScheme(h: number, s: number, l: number, scheme: string): Array<[number,number,number,string]> {
+    const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
+    switch (scheme) {
+      case 'complementary':
+        return [
+          [h, s, l, 'Base'],
+          [(h + 30) % 360, s, clamp(l + 10, 5, 95), 'Base light'],
+          [(h + 180) % 360, s, l, 'Complement'],
+          [(h + 180) % 360, s, clamp(l + 15, 5, 95), 'Complement light'],
+          [(h + 180) % 360, s, clamp(l - 15, 5, 95), 'Complement dark'],
+        ];
+      case 'analogous':
+        return [
+          [(h - 60 + 360) % 360, s, l, '-60°'],
+          [(h - 30 + 360) % 360, s, l, '-30°'],
+          [h, s, l, 'Base'],
+          [(h + 30) % 360, s, l, '+30°'],
+          [(h + 60) % 360, s, l, '+60°'],
+        ];
+      case 'triadic':
+        return [
+          [h, s, l, 'Base'],
+          [h, s, clamp(l + 20, 5, 95), 'Base light'],
+          [(h + 120) % 360, s, l, '+120°'],
+          [(h + 120) % 360, s, clamp(l + 20, 5, 95), '+120° light'],
+          [(h + 240) % 360, s, l, '+240°'],
+        ];
+      case 'split':
+        return [
+          [h, s, l, 'Base'],
+          [(h + 150) % 360, s, l, '+150°'],
+          [(h + 150) % 360, s, clamp(l + 15, 5, 95), '+150° light'],
+          [(h + 210) % 360, s, l, '+210°'],
+          [(h + 210) % 360, s, clamp(l + 15, 5, 95), '+210° light'],
+        ];
+      case 'tetradic':
+        return [
+          [h, s, l, 'Base'],
+          [(h + 90) % 360, s, l, '+90°'],
+          [(h + 180) % 360, s, l, '+180°'],
+          [(h + 270) % 360, s, l, '+270°'],
+          [h, clamp(s - 20, 10, 90), clamp(l + 20, 5, 95), 'Accent'],
+        ];
+      case 'shades':
+        return [
+          [h, s, clamp(l + 40, 5, 95), 'Lightest'],
+          [h, s, clamp(l + 20, 5, 95), 'Light'],
+          [h, s, l, 'Base'],
+          [h, s, clamp(l - 20, 5, 95), 'Dark'],
+          [h, s, clamp(l - 40, 5, 95), 'Darkest'],
+        ];
+      default: // monochromatic
+        return [
+          [h, clamp(s - 30, 5, 95), clamp(l + 35, 5, 95), 'Lightest'],
+          [h, clamp(s - 10, 5, 95), clamp(l + 18, 5, 95), 'Light'],
+          [h, s, l, 'Base'],
+          [h, clamp(s + 10, 5, 95), clamp(l - 18, 5, 95), 'Dark'],
+          [h, clamp(s + 20, 5, 95), clamp(l - 35, 5, 95), 'Darkest'],
+        ];
+    }
+  }
+
+  function luminance(hex: string): number {
+    const rgb = hexToRgb(hex);
+    if (!rgb) return 0;
+    const [r, g, b] = rgb.map(c => {
+      c /= 255;
+      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+    });
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  }
+
+  function renderPalette() {
+    const hexInput = (document.getElementById('pg-hex') as HTMLInputElement).value.trim();
+    const scheme = (document.getElementById('pg-scheme') as HTMLSelectElement).value;
+    const hex = hexInput.startsWith('#') ? hexInput : '#' + hexInput;
+    const rgb = hexToRgb(hex);
+    if (!rgb) return;
+
+    const [h, s, l] = rgbToHsl(...rgb);
+    const colors = getScheme(h, s, l, scheme);
+
+    const paletteEl = document.getElementById('pg-palette')!;
+    paletteEl.innerHTML = colors.map(([ch, cs, cl, label]) => {
+      const chex = hslToHex(ch, cs, cl);
+      const lum = luminance(chex);
+      const textColor = lum > 0.35 ? '#1f2937' : '#ffffff';
+      return `<div class="rounded-2xl overflow-hidden border border-gray-100 shadow-sm cursor-pointer hover:scale-105 transition-transform copy-swatch" data-hex="${chex}" title="Click to copy ${chex}">
+        <div style="background:${chex};height:100px;" class="flex items-end p-2">
+          <span style="color:${textColor}" class="text-xs font-mono opacity-75">${chex}</span>
+        </div>
+        <div class="bg-white px-3 py-2">
+          <div class="text-xs text-gray-500 truncate">${label}</div>
+          <div class="text-xs font-mono text-gray-700">HSL ${ch}° ${cs}% ${cl}%</div>
+        </div>
+      </div>`;
+    }).join('');
+
+    document.querySelectorAll('.copy-swatch').forEach(el => {
+      el.addEventListener('click', () => {
+        navigator.clipboard.writeText((el as HTMLElement).dataset.hex || '');
+        const orig = el.getAttribute('title');
+        el.setAttribute('title', '✓ Copied!');
+        setTimeout(() => el.setAttribute('title', orig || ''), 1200);
+      });
+    });
+
+    const cssVars = colors.map(([ch, cs, cl, label], i) => {
+      const chex = hslToHex(ch, cs, cl);
+      const varName = `--color-${label.toLowerCase().replace(/[^a-z0-9]/g,'-')}`;
+      return `${varName}: ${chex}; /* hsl(${ch}, ${cs}%, ${cl}%) */`;
+    });
+    document.getElementById('pg-code')!.textContent = `:root {\n  ${cssVars.join('\n  ')}\n}`;
+    document.getElementById('pg-css')!.classList.remove('hidden');
+  }
+
+  function syncHex(val: string) {
+    const hex = val.startsWith('#') ? val : '#' + val;
+    if (/^#[0-9a-f]{6}$/i.test(hex)) {
+      (document.getElementById('pg-picker') as HTMLInputElement).value = hex;
+      (document.getElementById('pg-hex') as HTMLInputElement).value = hex;
+    }
+  }
+
+  document.getElementById('pg-picker')?.addEventListener('input', (e) => {
+    const v = (e.target as HTMLInputElement).value;
+    (document.getElementById('pg-hex') as HTMLInputElement).value = v;
+    renderPalette();
+  });
+
+  document.getElementById('pg-hex')?.addEventListener('input', (e) => {
+    syncHex((e.target as HTMLInputElement).value.trim());
+    renderPalette();
+  });
+
+  document.getElementById('pg-scheme')?.addEventListener('change', renderPalette);
+
+  document.getElementById('pg-random')?.addEventListener('click', () => {
+    const h = Math.floor(Math.random() * 360);
+    const s = 50 + Math.floor(Math.random() * 40);
+    const l = 35 + Math.floor(Math.random() * 30);
+    const hex = hslToHex(h, s, l);
+    (document.getElementById('pg-picker') as HTMLInputElement).value = hex;
+    (document.getElementById('pg-hex') as HTMLInputElement).value = hex;
+    renderPalette();
+  });
+
+  document.getElementById('pg-copy')?.addEventListener('click', () => {
+    navigator.clipboard.writeText(document.getElementById('pg-code')!.textContent || '').then(() => {
+      const btn = document.getElementById('pg-copy')!;
+      btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 1500);
+    });
+  });
+
+  renderPalette();
+</script>

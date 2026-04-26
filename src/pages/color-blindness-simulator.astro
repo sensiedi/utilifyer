@@ -1,0 +1,200 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Color Blindness Simulator"
+  description="Simulate how colors and images appear to people with color blindness. Test designs for deuteranopia, protanopia, tritanopia, and achromatopsia."
+  slug="color-blindness-simulator"
+  category="Color & Design"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Color Blindness Simulator</h1>
+  <p class="text-gray-500 mb-8">Preview how your colors and images appear to users with different types of color blindness.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <!-- Input: color or image -->
+    <div class="flex flex-wrap gap-3 items-center">
+      <div>
+        <label class="label">Test a Color</label>
+        <div class="flex gap-2">
+          <input type="color" id="cb-color" value="#6366f1" class="w-12 h-10 rounded-lg cursor-pointer border border-gray-200 p-0.5" />
+          <input id="cb-hex" type="text" value="#6366f1" class="input-field font-mono w-28" />
+        </div>
+      </div>
+      <div class="text-gray-300 text-xl hidden sm:block">|</div>
+      <div>
+        <label class="label">Or Upload Image</label>
+        <div class="flex gap-2 items-center">
+          <input type="file" id="cb-file" accept="image/*" class="hidden" />
+          <button id="cb-file-btn" class="btn-secondary text-sm">Upload image</button>
+          <span id="cb-file-name" class="text-xs text-gray-400"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Color swatches mode -->
+    <div id="cb-color-view">
+      <p class="label mb-3">How this color appears with different vision types</p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3" id="cb-swatches"></div>
+    </div>
+
+    <!-- Image mode -->
+    <div id="cb-image-view" class="hidden space-y-4">
+      <p class="label">Image simulation</p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4" id="cb-canvases"></div>
+    </div>
+
+    <!-- Info box -->
+    <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
+      <p class="font-semibold mb-1">About Color Blindness</p>
+      <p>~8% of males and 0.5% of females have some form of color vision deficiency. Deuteranopia (green-blind) is the most common. Design accessible UIs by not relying on color alone — always use shape, text, or pattern as a secondary indicator.</p>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What are the types of color blindness?", a: "The main types: Deuteranopia — reduced sensitivity to green (most common, ~5% of males). Protanopia — reduced sensitivity to red (~1% of males). Tritanopia — reduced sensitivity to blue (rare, ~0.001%). Achromatopsia — sees only grayscale (very rare). There are also milder forms: deuteranomaly (anomalous green) and protanomaly (anomalous red)." },
+        { q: "How do I make my design accessible for color blind users?", a: "Key rules: (1) Never use color alone to convey meaning — add text labels, icons, or patterns. (2) Ensure sufficient contrast between adjacent colors. (3) Avoid red/green combinations. (4) Use color blind-friendly palettes (e.g., ColorBrewer scales). (5) Test with tools like this one or browser extensions." },
+        { q: "What colors are hardest for color blind users?", a: "Red-green confusion is most common: traffic lights, success/error states (use icons too), map legends. Blue-yellow is less common but purple can look blue, and yellow can look desaturated. Completely avoiding red/green isn't necessary — ensuring sufficient luminance contrast between them helps." },
+        { q: "Are there WCAG guidelines for color blindness?", a: "WCAG 1.4.1 (Use of Color) requires that color is not the only visual means of conveying information, indicating an action, or distinguishing a visual element. This is a Level A requirement. The contrast ratio requirements (1.4.3 and 1.4.11) also indirectly help because they ensure luminance differences that color blind users can still perceive." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  // Daltonization matrices (simplified CVD simulation)
+  const CVD_MATRICES: Record<string, number[]> = {
+    normal:       [1,0,0, 0,1,0, 0,0,1],
+    deuteranopia: [0.367, 0.861,-0.228, 0.280, 0.673, 0.047, -0.012, 0.043, 0.969],
+    protanopia:   [0.152, 1.053,-0.205, 0.115, 0.786, 0.099, -0.004,-0.048, 1.052],
+    tritanopia:   [1.256,-0.077,-0.179, -0.078, 0.931, 0.148, 0.005, 0.691, 0.304],
+    achromatopsia:[0.213, 0.715, 0.072, 0.213, 0.715, 0.072, 0.213, 0.715, 0.072],
+    deuteranomaly:[0.625, 0.375, 0, 0.700, 0.300, 0, 0, 0.300, 0.700],
+    protanomaly:  [0.817, 0.183, 0, 0.333, 0.667, 0, 0, 0.125, 0.875],
+  };
+
+  const TYPES = [
+    { id: 'normal', label: 'Normal Vision', desc: 'Full color vision' },
+    { id: 'deuteranopia', label: 'Deuteranopia', desc: 'Green-blind (~5% of males)' },
+    { id: 'protanopia', label: 'Protanopia', desc: 'Red-blind (~1% of males)' },
+    { id: 'tritanopia', label: 'Tritanopia', desc: 'Blue-blind (rare)' },
+    { id: 'achromatopsia', label: 'Achromatopsia', desc: 'No color (very rare)' },
+    { id: 'deuteranomaly', label: 'Deuteranomaly', desc: 'Weak green (most common)' },
+  ];
+
+  function applyMatrix(r: number, g: number, b: number, m: number[]): [number,number,number] {
+    return [
+      Math.min(255, Math.max(0, Math.round(r*m[0] + g*m[1] + b*m[2]))),
+      Math.min(255, Math.max(0, Math.round(r*m[3] + g*m[4] + b*m[5]))),
+      Math.min(255, Math.max(0, Math.round(r*m[6] + g*m[7] + b*m[8]))),
+    ];
+  }
+
+  function simulateColor(hex: string, type: string): string {
+    const r = parseInt(hex.slice(1,3),16);
+    const g = parseInt(hex.slice(3,5),16);
+    const b = parseInt(hex.slice(5,7),16);
+    const m = CVD_MATRICES[type];
+    const [nr, ng, nb] = applyMatrix(r, g, b, m);
+    return '#' + [nr,ng,nb].map(v => v.toString(16).padStart(2,'0')).join('');
+  }
+
+  function renderSwatches() {
+    const hex = (document.getElementById('cb-hex') as HTMLInputElement).value.trim();
+    const fullHex = hex.startsWith('#') ? hex : '#' + hex;
+    if (!/^#[0-9a-f]{6}$/i.test(fullHex)) return;
+
+    document.getElementById('cb-swatches')!.innerHTML = TYPES.map(({ id, label, desc }) => {
+      const simColor = simulateColor(fullHex, id);
+      const r = parseInt(simColor.slice(1,3),16);
+      const g = parseInt(simColor.slice(3,5),16);
+      const b = parseInt(simColor.slice(5,7),16);
+      const lum = 0.2126*(r/255) + 0.7152*(g/255) + 0.0722*(b/255);
+      const textColor = lum > 0.35 ? '#1f2937' : '#ffffff';
+      return `<div class="rounded-xl overflow-hidden border border-gray-100 shadow-sm">
+        <div style="background:${simColor};height:80px" class="flex items-end px-3 pb-2">
+          <span style="color:${textColor}" class="text-xs font-mono">${simColor}</span>
+        </div>
+        <div class="p-3 bg-white">
+          <div class="text-sm font-semibold text-gray-800">${label}</div>
+          <div class="text-xs text-gray-400">${desc}</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function simulateImageCanvas(src: HTMLCanvasElement | HTMLImageElement, type: string, targetCanvas: HTMLCanvasElement) {
+    const w = (src instanceof HTMLCanvasElement ? src.width : src.naturalWidth) || 1;
+    const h = (src instanceof HTMLCanvasElement ? src.height : src.naturalHeight) || 1;
+    targetCanvas.width = w;
+    targetCanvas.height = h;
+    const tCtx = targetCanvas.getContext('2d')!;
+    tCtx.drawImage(src, 0, 0, w, h);
+    const imgData = tCtx.getImageData(0, 0, w, h);
+    const m = CVD_MATRICES[type];
+    const d = imgData.data;
+    for (let i = 0; i < d.length; i += 4) {
+      const [nr, ng, nb] = applyMatrix(d[i], d[i+1], d[i+2], m);
+      d[i] = nr; d[i+1] = ng; d[i+2] = nb;
+    }
+    tCtx.putImageData(imgData, 0, 0);
+  }
+
+  let loadedImg: HTMLImageElement | null = null;
+
+  function renderImageCanvases() {
+    if (!loadedImg) return;
+    const container = document.getElementById('cb-canvases')!;
+    container.innerHTML = TYPES.map(({ id, label, desc }) =>
+      `<div class="space-y-1">
+        <canvas id="cbc-${id}" class="w-full rounded-xl border border-gray-100"></canvas>
+        <div class="text-xs font-semibold text-gray-700">${label}</div>
+        <div class="text-xs text-gray-400">${desc}</div>
+      </div>`
+    ).join('');
+
+    TYPES.forEach(({ id }) => {
+      const c = document.getElementById(`cbc-${id}`) as HTMLCanvasElement;
+      simulateImageCanvas(loadedImg!, id, c);
+    });
+  }
+
+  document.getElementById('cb-color')?.addEventListener('input', (e) => {
+    const hex = (e.target as HTMLInputElement).value;
+    (document.getElementById('cb-hex') as HTMLInputElement).value = hex;
+    renderSwatches();
+  });
+  document.getElementById('cb-hex')?.addEventListener('input', renderSwatches);
+
+  document.getElementById('cb-file-btn')?.addEventListener('click', () => document.getElementById('cb-file')!.click());
+  document.getElementById('cb-file')?.addEventListener('change', (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    document.getElementById('cb-file-name')!.textContent = file.name;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const img = new Image();
+      img.onload = () => {
+        loadedImg = img;
+        document.getElementById('cb-color-view')!.classList.add('hidden');
+        document.getElementById('cb-image-view')!.classList.remove('hidden');
+        renderImageCanvases();
+      };
+      img.src = ev.target!.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  renderSwatches();
+</script>

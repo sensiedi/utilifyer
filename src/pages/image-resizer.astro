@@ -1,0 +1,248 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Image Resizer"
+  description="Resize images online for free. Crop, scale, and convert images to JPG, PNG, or WebP format — all processed locally in your browser, no upload needed."
+  slug="image-resizer"
+  category="Color & Design"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Image Resizer</h1>
+  <p class="text-gray-500 mb-8">Resize and convert images in your browser — no uploads, no servers, completely private.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <!-- Drop zone -->
+    <div id="ir-dropzone" class="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center cursor-pointer hover:border-indigo-400 transition-colors">
+      <input type="file" id="ir-file" accept="image/*" class="hidden" />
+      <div class="text-4xl mb-2">🖼️</div>
+      <p class="text-gray-600 font-medium">Drop an image here or click to upload</p>
+      <p class="text-xs text-gray-400 mt-1">JPG, PNG, WebP, GIF, BMP, SVG — processed locally</p>
+    </div>
+
+    <!-- Controls (hidden until image loaded) -->
+    <div id="ir-controls" class="hidden space-y-4">
+
+      <!-- Original info -->
+      <div class="flex flex-wrap gap-3">
+        <div class="bg-gray-50 border border-gray-100 rounded-xl px-4 py-2 text-sm text-center">
+          <div class="text-xs text-gray-400">Original</div>
+          <div id="ir-orig-dims" class="font-mono font-semibold text-gray-800">—</div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl px-4 py-2 text-sm text-center">
+          <div class="text-xs text-gray-400">File Size</div>
+          <div id="ir-orig-size" class="font-mono font-semibold text-gray-800">—</div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl px-4 py-2 text-sm text-center">
+          <div class="text-xs text-gray-400">Format</div>
+          <div id="ir-orig-format" class="font-mono font-semibold text-gray-800">—</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="label">New Width (px)</label>
+          <input id="ir-w" type="number" min="1" max="8000" class="input-field font-mono" placeholder="e.g. 800" />
+        </div>
+        <div>
+          <label class="label">New Height (px)</label>
+          <input id="ir-h" type="number" min="1" max="8000" class="input-field font-mono" placeholder="e.g. 600" />
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-4 items-center">
+        <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+          <input type="checkbox" id="ir-lock" checked class="accent-indigo-600" />
+          Lock aspect ratio
+        </label>
+        <div class="flex items-center gap-2">
+          <label class="text-sm text-gray-600">Output format:</label>
+          <select id="ir-format" class="input-field w-auto text-sm py-1.5">
+            <option value="image/jpeg">JPG</option>
+            <option value="image/png">PNG</option>
+            <option value="image/webp">WebP</option>
+          </select>
+        </div>
+        <div class="flex items-center gap-2">
+          <label class="text-sm text-gray-600">Quality:</label>
+          <input type="range" id="ir-quality" min="1" max="100" value="90" class="w-24" />
+          <span id="ir-quality-val" class="text-sm font-mono text-gray-600 w-8">90%</span>
+        </div>
+      </div>
+
+      <!-- Preset sizes -->
+      <div>
+        <p class="text-xs text-gray-400 mb-2">Quick presets:</p>
+        <div class="flex flex-wrap gap-2">
+          {[
+            ['Social 1200×630','1200','630'],
+            ['HD 1920×1080','1920','1080'],
+            ['Thumbnail 300×300','300','300'],
+            ['Avatar 200×200','200','200'],
+            ['Mobile 640×','640',''],
+            ['Custom','',''],
+          ].map(([label, w, h]) => (
+            <button class="preset-size text-xs border border-gray-200 rounded-lg px-3 py-1.5 hover:border-indigo-300 hover:bg-indigo-50 transition-colors" data-w={w} data-h={h}>{label}</button>
+          ))}
+        </div>
+      </div>
+
+      <!-- Output preview -->
+      <div id="ir-output-area" class="hidden space-y-3">
+        <div class="flex flex-wrap gap-3 items-center">
+          <div class="bg-indigo-50 border border-indigo-200 rounded-xl px-4 py-2 text-sm text-center">
+            <div class="text-xs text-indigo-500">Output Size</div>
+            <div id="ir-out-dims" class="font-mono font-semibold text-indigo-800">—</div>
+          </div>
+          <div class="bg-indigo-50 border border-indigo-200 rounded-xl px-4 py-2 text-sm text-center">
+            <div class="text-xs text-indigo-500">Est. File Size</div>
+            <div id="ir-out-size" class="font-mono font-semibold text-indigo-800">—</div>
+          </div>
+          <button id="ir-download" class="btn-primary ml-auto">Download</button>
+        </div>
+        <canvas id="ir-canvas" class="hidden"></canvas>
+        <img id="ir-preview-img" class="max-w-full rounded-xl border border-gray-200 max-h-64 object-contain" alt="Preview" />
+      </div>
+
+      <button id="ir-resize" class="btn-primary">Resize Image</button>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "Is my image uploaded to your server?", a: "No — all processing happens entirely in your browser using the Canvas API. Your image never leaves your device. This makes it faster, more private, and works completely offline after the page loads." },
+        { q: "What is the best format for web images?", a: "WebP is recommended for web: it's 25–35% smaller than JPEG at equivalent quality and supports transparency like PNG. Browser support is 97%+. Use JPEG for photographs where transparency isn't needed. Use PNG for screenshots, logos, or images needing sharp edges. Avoid GIF for new work — use WebP or CSS animations instead." },
+        { q: "What quality setting should I use?", a: "For JPEG/WebP: 80–90% is a good balance between quality and file size. Below 60% introduces visible compression artifacts. 100% is rarely needed and produces large files. For background images where slight degradation is invisible: 70–75% works well. For hero images and product photos: 85–90%." },
+        { q: "How do I resize images for social media?", a: "Facebook/LinkedIn link: 1200×630px. Twitter/X large card: 1200×628px. Instagram feed: 1080×1080 (square) or 1080×1350 (portrait). Instagram Stories/Reels: 1080×1920. YouTube thumbnail: 1280×720. LinkedIn post: 1200×627. Always save at 2× resolution if displaying on Retina/HiDPI screens." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  let origW = 0, origH = 0;
+  let origImg: HTMLImageElement | null = null;
+  let lockRatio = true;
+
+  function fmtSize(bytes: number): string {
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+    return (bytes/1024/1024).toFixed(2) + ' MB';
+  }
+
+  function loadFile(file: File) {
+    document.getElementById('ir-orig-size')!.textContent = fmtSize(file.size);
+    document.getElementById('ir-orig-format')!.textContent = file.type.replace('image/','').toUpperCase() || 'Unknown';
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        origW = img.naturalWidth;
+        origH = img.naturalHeight;
+        origImg = img;
+        document.getElementById('ir-orig-dims')!.textContent = `${origW}×${origH}`;
+        (document.getElementById('ir-w') as HTMLInputElement).value = String(origW);
+        (document.getElementById('ir-h') as HTMLInputElement).value = String(origH);
+        document.getElementById('ir-dropzone')!.classList.add('hidden');
+        document.getElementById('ir-controls')!.classList.remove('hidden');
+        document.getElementById('ir-output-area')!.classList.add('hidden');
+      };
+      img.src = e.target!.result as string;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function resize() {
+    if (!origImg) return;
+    const w = parseInt((document.getElementById('ir-w') as HTMLInputElement).value) || origW;
+    const h = parseInt((document.getElementById('ir-h') as HTMLInputElement).value) || origH;
+    const format = (document.getElementById('ir-format') as HTMLSelectElement).value;
+    const quality = parseInt((document.getElementById('ir-quality') as HTMLInputElement).value) / 100;
+
+    const canvas = document.getElementById('ir-canvas') as HTMLCanvasElement;
+    canvas.width = w;
+    canvas.height = h;
+    const ctx = canvas.getContext('2d')!;
+    ctx.clearRect(0, 0, w, h);
+    ctx.drawImage(origImg, 0, 0, w, h);
+
+    const dataUrl = canvas.toDataURL(format, quality);
+    const previewImg = document.getElementById('ir-preview-img') as HTMLImageElement;
+    previewImg.src = dataUrl;
+
+    // Estimate size from base64
+    const base64 = dataUrl.split(',')[1] || '';
+    const estBytes = Math.round(base64.length * 0.75);
+    document.getElementById('ir-out-dims')!.textContent = `${w}×${h}`;
+    document.getElementById('ir-out-size')!.textContent = fmtSize(estBytes);
+    document.getElementById('ir-output-area')!.classList.remove('hidden');
+
+    document.getElementById('ir-download')!.onclick = () => {
+      const ext = format.split('/')[1].replace('jpeg','jpg');
+      const a = document.createElement('a');
+      a.href = dataUrl;
+      a.download = `resized-${w}x${h}.${ext}`;
+      a.click();
+    };
+  }
+
+  const dropzone = document.getElementById('ir-dropzone')!;
+  dropzone.addEventListener('click', () => document.getElementById('ir-file')!.click());
+  dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('border-indigo-400'); });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('border-indigo-400'));
+  dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer?.files[0];
+    if (file?.type.startsWith('image/')) loadFile(file);
+  });
+  document.getElementById('ir-file')?.addEventListener('change', (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) loadFile(file);
+  });
+
+  document.getElementById('ir-lock')?.addEventListener('change', (e) => {
+    lockRatio = (e.target as HTMLInputElement).checked;
+  });
+
+  document.getElementById('ir-w')?.addEventListener('input', (e) => {
+    if (lockRatio && origW && origH) {
+      const newW = parseInt((e.target as HTMLInputElement).value);
+      if (newW) (document.getElementById('ir-h') as HTMLInputElement).value = String(Math.round(newW * origH / origW));
+    }
+  });
+  document.getElementById('ir-h')?.addEventListener('input', (e) => {
+    if (lockRatio && origW && origH) {
+      const newH = parseInt((e.target as HTMLInputElement).value);
+      if (newH) (document.getElementById('ir-w') as HTMLInputElement).value = String(Math.round(newH * origW / origH));
+    }
+  });
+
+  document.getElementById('ir-quality')?.addEventListener('input', (e) => {
+    document.getElementById('ir-quality-val')!.textContent = (e.target as HTMLInputElement).value + '%';
+  });
+
+  document.getElementById('ir-resize')?.addEventListener('click', resize);
+
+  document.querySelectorAll('.preset-size').forEach(el => {
+    el.addEventListener('click', () => {
+      const pw = (el as HTMLElement).dataset.w;
+      const ph = (el as HTMLElement).dataset.h;
+      if (pw) (document.getElementById('ir-w') as HTMLInputElement).value = pw;
+      if (ph) (document.getElementById('ir-h') as HTMLInputElement).value = ph;
+      if (pw && !ph && origW && origH) {
+        (document.getElementById('ir-h') as HTMLInputElement).value = String(Math.round(parseInt(pw) * origH / origW));
+      }
+    });
+  });
+</script>

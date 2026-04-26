@@ -1,0 +1,175 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Spacing Scale Generator"
+  description="Generate a consistent spacing scale for your design system. Create CSS custom properties for margin, padding, and gap based on a base unit."
+  slug="spacing-scale-generator"
+  category="Color & Design"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Spacing Scale Generator</h1>
+  <p class="text-gray-500 mb-8">Generate a systematic spacing scale for consistent layouts in your design system or CSS framework.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div>
+        <label class="label">Base Unit</label>
+        <div class="flex items-center gap-2">
+          <input id="ss-base" type="number" value="4" min="1" max="16" class="input-field w-20 font-mono" />
+          <span class="text-sm text-gray-500">px</span>
+        </div>
+        <p class="text-xs text-gray-400 mt-0.5">4px is common (Material, Tailwind)</p>
+      </div>
+      <div>
+        <label class="label">Scale Type</label>
+        <select id="ss-type" class="input-field">
+          <option value="linear" selected>Linear (×1, ×2, ×3…)</option>
+          <option value="t4">T-shirt (xs/sm/md/lg/xl)</option>
+          <option value="tailwind">Tailwind CSS style</option>
+          <option value="material">Material Design</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">Unit</label>
+        <select id="ss-unit" class="input-field">
+          <option value="px">px</option>
+          <option value="rem" selected>rem</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Visual Scale -->
+    <div>
+      <p class="label mb-3">Visual Scale</p>
+      <div id="ss-visual" class="space-y-2"></div>
+    </div>
+
+    <!-- CSS Output -->
+    <div>
+      <div class="flex justify-between items-center mb-2">
+        <p class="label">CSS Custom Properties</p>
+        <div class="flex gap-3">
+          <button id="ss-copy-css" class="text-xs text-indigo-600 hover:text-indigo-800">Copy CSS</button>
+          <button id="ss-copy-tailwind" class="text-xs text-indigo-600 hover:text-indigo-800">Copy Tailwind config</button>
+        </div>
+      </div>
+      <pre id="ss-output" class="bg-gray-900 text-green-300 rounded-xl p-4 text-sm font-mono overflow-x-auto whitespace-pre max-h-72 overflow-y-auto"></pre>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is a spacing scale?", a: "A spacing scale is a set of predefined spacing values used consistently throughout a design system. Instead of arbitrary values like 7px, 11px, 23px, you use a limited set like 4, 8, 12, 16, 24, 32, 48, 64px. This creates visual rhythm and makes layouts feel cohesive. All spacing — margin, padding, gap, width, height — comes from the same scale." },
+        { q: "Why use a 4px base unit?", a: "4px (0.25rem) aligns well with most font metrics and creates a grid that divides evenly. It's the base unit used by Material Design, Tailwind CSS, Ant Design, and Chakra UI. The 8pt grid is also popular: multiples of 8 (8, 16, 24, 32) work well for component spacing while multiples of 4 work for tighter micro-spacing." },
+        { q: "Should I use px or rem for spacing?", a: "rem is preferred for accessibility — it respects the user's browser font size setting. If a user sets their default font to 20px (for readability), rem-based spacing scales proportionally. px ignores this. The root font is typically 16px, so 1rem = 16px, 0.25rem = 4px, 0.5rem = 8px, etc." },
+        { q: "What is the Tailwind CSS spacing scale?", a: "Tailwind uses a 4px base: space-1 = 4px (0.25rem), space-2 = 8px, space-4 = 16px, space-6 = 24px, space-8 = 32px, space-12 = 48px, space-16 = 64px. The numbers map to multiples of 4px. Tailwind includes half-values (space-1.5 = 6px) and non-linear values at larger sizes." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  interface ScaleEntry { name: string; px: number; }
+
+  function generateScale(base: number, type: string): ScaleEntry[] {
+    if (type === 'tailwind') {
+      return [
+        {name:'px', px:1}, {name:'0.5', px:2}, {name:'1', px:4}, {name:'1.5', px:6},
+        {name:'2', px:8}, {name:'2.5', px:10}, {name:'3', px:12}, {name:'3.5', px:14},
+        {name:'4', px:16}, {name:'5', px:20}, {name:'6', px:24}, {name:'7', px:28},
+        {name:'8', px:32}, {name:'9', px:36}, {name:'10', px:40}, {name:'11', px:44},
+        {name:'12', px:48}, {name:'14', px:56}, {name:'16', px:64}, {name:'20', px:80},
+        {name:'24', px:96}, {name:'28', px:112}, {name:'32', px:128},
+      ];
+    }
+    if (type === 'material') {
+      return [2,4,8,12,16,20,24,32,40,48,56,64,80,96].map((px, i) => ({ name: String(i+1), px }));
+    }
+    if (type === 't4') {
+      return [
+        {name:'2xs', px: base},
+        {name:'xs', px: base*2},
+        {name:'sm', px: base*3},
+        {name:'md', px: base*4},
+        {name:'lg', px: base*6},
+        {name:'xl', px: base*8},
+        {name:'2xl', px: base*12},
+        {name:'3xl', px: base*16},
+        {name:'4xl', px: base*24},
+      ];
+    }
+    // linear
+    return [1,2,3,4,5,6,8,10,12,16,20,24].map(mult => ({
+      name: String(mult),
+      px: base * mult,
+    }));
+  }
+
+  function format(px: number, unit: string): string {
+    if (unit === 'rem') return (px / 16).toFixed(px % 16 === 0 ? 0 : 3).replace(/\.?0+$/, '') + 'rem';
+    return px + 'px';
+  }
+
+  function render() {
+    const base = parseInt((document.getElementById('ss-base') as HTMLInputElement).value) || 4;
+    const type = (document.getElementById('ss-type') as HTMLSelectElement).value;
+    const unit = (document.getElementById('ss-unit') as HTMLSelectElement).value;
+    const scale = generateScale(base, type);
+
+    const maxPx = scale[scale.length - 1]?.px || 1;
+
+    document.getElementById('ss-visual')!.innerHTML = scale.map(({ name, px }) => {
+      const val = format(px, unit);
+      const barW = Math.round((px / maxPx) * 100);
+      return `<div class="flex items-center gap-3 text-sm">
+        <span class="font-mono text-gray-400 w-10 text-right text-xs">${name}</span>
+        <div class="bg-indigo-400 rounded h-5 flex-shrink-0 transition-all" style="width:${Math.max(4, barW * 2.4)}px"></div>
+        <span class="font-mono text-gray-700 text-xs">${val}</span>
+        <span class="text-gray-300 text-xs">${px}px</span>
+      </div>`;
+    }).join('');
+
+    // CSS vars
+    const cssLines = [':root {', ...scale.map(({ name, px }) => `  --space-${name}: ${format(px, unit)};`), '}'];
+    document.getElementById('ss-output')!.textContent = cssLines.join('\n');
+
+    // Store scale for copy buttons
+    (window as any)._spacing_scale = scale;
+    (window as any)._spacing_unit = unit;
+  }
+
+  ['ss-base','ss-type','ss-unit'].forEach(id =>
+    document.getElementById(id)?.addEventListener('input', render)
+  );
+
+  document.getElementById('ss-copy-css')?.addEventListener('click', () => {
+    navigator.clipboard.writeText(document.getElementById('ss-output')!.textContent || '').then(() => {
+      const btn = document.getElementById('ss-copy-css')!;
+      btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy CSS', 1500);
+    });
+  });
+
+  document.getElementById('ss-copy-tailwind')?.addEventListener('click', () => {
+    const scale = (window as any)._spacing_scale as ScaleEntry[];
+    const unit = (window as any)._spacing_unit as string;
+    const entries = scale.map(({ name, px }) => `      '${name}': '${format(px, unit)}'`).join(',\n');
+    const config = `// tailwind.config.js\nmodule.exports = {\n  theme: {\n    spacing: {\n${entries}\n    }\n  }\n}`;
+    navigator.clipboard.writeText(config).then(() => {
+      const btn = document.getElementById('ss-copy-tailwind')!;
+      btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy Tailwind config', 1500);
+    });
+  });
+
+  render();
+</script>
