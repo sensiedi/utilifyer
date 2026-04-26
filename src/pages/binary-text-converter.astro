@@ -1,0 +1,128 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Binary to Text Converter"
+  description="Convert text to binary (ASCII/UTF-8) or binary back to text. Also supports hex and octal representations. Instant two-way conversion."
+  slug="binary-text-converter"
+  category="Developer"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Binary ↔ Text Converter</h1>
+  <p class="text-gray-500 mb-8">Convert text to binary, hex, or octal — and back again.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-4">
+
+    <div class="flex flex-wrap gap-2">
+      <button id="btn-to-bin" class="btn-primary">Text → Binary</button>
+      <button id="btn-to-text" class="btn-secondary">Binary → Text</button>
+      <button id="btn-swap" class="btn-secondary">⇄ Swap</button>
+      <button id="btn-clear" class="btn-secondary">Clear</button>
+      <div class="ml-auto flex items-center gap-2">
+        <label class="text-sm text-gray-600">Format:</label>
+        <select id="bin-format" class="input-field w-auto text-sm py-1.5">
+          <option value="binary">Binary (base 2)</option>
+          <option value="hex">Hexadecimal (base 16)</option>
+          <option value="octal">Octal (base 8)</option>
+          <option value="decimal">Decimal (base 10)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Input</label>
+        <textarea id="bin-input" rows={8} placeholder="Enter text or binary here…" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y text-sm font-mono"></textarea>
+      </div>
+      <div>
+        <div class="flex justify-between mb-1">
+          <label class="label">Output</label>
+          <button id="copy-output" class="text-xs text-indigo-600 hover:text-indigo-800">Copy</button>
+        </div>
+        <textarea id="bin-output" rows={8} readonly class="w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-800 bg-gray-50 resize-y text-sm font-mono"></textarea>
+      </div>
+    </div>
+
+    <div id="error-box" class="hidden bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700"></div>
+
+    <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+      <p class="text-sm font-semibold text-gray-700 mb-3">ASCII Quick Reference</p>
+      <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5 text-xs font-mono">
+        {[['A','01000001','41'],['B','01000010','42'],['C','01000011','43'],
+          ['a','01100001','61'],['b','01100010','62'],['c','01100011','63'],
+          ['0','00110000','30'],['1','00110001','31'],['Space','00100000','20']].map(([ch, bin, hex]) => (
+          <div class="bg-white border border-gray-200 rounded p-1.5 text-center">
+            <div class="font-bold text-indigo-700">{ch}</div>
+            <div class="text-gray-400 text-xs">{bin}</div>
+            <div class="text-gray-400 text-xs">0x{hex}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How is text stored as binary?", a: "Each character is mapped to a number using a standard encoding (ASCII or Unicode/UTF-8), then that number is stored as binary. The letter 'A' is ASCII 65, which is 01000001 in 8-bit binary. UTF-8 extends this to support all world scripts using 1–4 bytes per character." },
+        { q: "What is ASCII?", a: "ASCII (American Standard Code for Information Interchange) is a 7-bit encoding standard from 1963 that maps 128 characters — letters, digits, punctuation, and control codes — to numbers 0–127. It is the foundation of all modern text encoding." },
+        { q: "What is the difference between ASCII and UTF-8?", a: "ASCII covers only 128 characters (English alphabet + basics). UTF-8 is backward-compatible with ASCII for the first 128 values but extends to all 1.1 million Unicode code points using multi-byte sequences. UTF-8 is now the dominant encoding on the web (98%+ of websites)." },
+        { q: "Why does each binary character have 8 digits?", a: "Modern computers use 8 bits (1 byte) as the minimum addressable unit. ASCII only needs 7 bits (128 values), but bytes are stored with a leading zero for the 8th bit. Extended ASCII and the first 256 UTF-8 characters use all 8 bits." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const inp = document.getElementById('bin-input') as HTMLTextAreaElement;
+  const out = document.getElementById('bin-output') as HTMLTextAreaElement;
+  const errBox = document.getElementById('error-box')!;
+
+  function getFormat(): number {
+    const f = (document.getElementById('bin-format') as HTMLSelectElement).value;
+    return f === 'binary' ? 2 : f === 'hex' ? 16 : f === 'octal' ? 8 : 10;
+  }
+
+  function textToBin() {
+    errBox.classList.add('hidden');
+    try {
+      const base = getFormat();
+      const encoder = new TextEncoder();
+      const bytes = encoder.encode(inp.value);
+      out.value = Array.from(bytes)
+        .map(b => b.toString(base).padStart(base === 2 ? 8 : base === 16 ? 2 : 3, '0'))
+        .join(' ');
+    } catch (e: any) { errBox.textContent = e.message; errBox.classList.remove('hidden'); }
+  }
+
+  function binToText() {
+    errBox.classList.add('hidden');
+    try {
+      const base = getFormat();
+      const parts = inp.value.trim().split(/\s+/);
+      const bytes = parts.map(p => parseInt(p, base));
+      if (bytes.some(isNaN)) throw new Error('Invalid input for selected format.');
+      out.value = new TextDecoder().decode(new Uint8Array(bytes));
+    } catch (e: any) { errBox.textContent = e.message; errBox.classList.remove('hidden'); }
+  }
+
+  document.getElementById('btn-to-bin')?.addEventListener('click', textToBin);
+  document.getElementById('btn-to-text')?.addEventListener('click', binToText);
+  document.getElementById('btn-swap')?.addEventListener('click', () => { const t = inp.value; inp.value = out.value; out.value = t; });
+  document.getElementById('btn-clear')?.addEventListener('click', () => { inp.value = ''; out.value = ''; errBox.classList.add('hidden'); });
+  document.getElementById('copy-output')?.addEventListener('click', () => {
+    if (!out.value) return;
+    navigator.clipboard.writeText(out.value).then(() => {
+      const btn = document.getElementById('copy-output')!;
+      btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 1500);
+    });
+  });
+</script>

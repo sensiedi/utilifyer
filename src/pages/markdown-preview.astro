@@ -1,0 +1,220 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Markdown Preview"
+  description="Write Markdown and see a live rendered preview side by side. Supports headings, bold, italic, links, tables, code blocks, and lists."
+  slug="markdown-preview"
+  category="Developer"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Markdown Preview</h1>
+  <p class="text-gray-500 mb-8">Write Markdown on the left, see the rendered output on the right.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-4">
+
+    <div class="flex flex-wrap gap-2 items-center">
+      <button id="btn-clear" class="btn-secondary text-sm">Clear</button>
+      <button id="btn-copy-md" class="btn-secondary text-sm">Copy Markdown</button>
+      <button id="btn-copy-html" class="btn-secondary text-sm">Copy HTML</button>
+      <span id="word-count" class="text-xs text-gray-400 ml-auto"></span>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Markdown</label>
+        <textarea id="md-input" rows={20} class="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y text-sm font-mono leading-relaxed"></textarea>
+      </div>
+      <div>
+        <label class="label">Preview</label>
+        <div id="md-output" class="min-h-[460px] border border-gray-200 rounded-xl p-4 prose prose-sm max-w-none overflow-auto text-gray-800"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is Markdown?", a: "Markdown is a lightweight markup language created by John Gruber in 2004. It uses plain text formatting conventions that convert to HTML. It's used in GitHub READMEs, documentation, blog posts, Reddit, and many note-taking apps." },
+        { q: "How do I create a table in Markdown?", a: "Use pipe characters and hyphens: | Column 1 | Column 2 | on one line, then | --- | --- | as a separator, then rows. Alignment is controlled by colons: |:---| left, |---:| right, |:---:| center." },
+        { q: "What is the difference between Markdown and HTML?", a: "Markdown is a simpler notation that converts to HTML. Where HTML requires <strong>bold</strong>, Markdown uses **bold**. Markdown is faster to write but has fewer features. Most Markdown parsers also accept raw HTML inside Markdown documents." },
+        { q: "Which apps support Markdown?", a: "GitHub, GitLab, Notion, Obsidian, VS Code, Reddit, Slack (subset), Discord (subset), Stack Overflow, most static site generators (Hugo, Jekyll, Astro), and many documentation tools. Markdown has become the de facto standard for developer documentation." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<style>
+  #md-output h1 { font-size: 1.5rem; font-weight: 700; margin: 1rem 0 0.5rem; border-bottom: 2px solid #e5e7eb; padding-bottom: 0.25rem; }
+  #md-output h2 { font-size: 1.25rem; font-weight: 700; margin: 0.875rem 0 0.4rem; border-bottom: 1px solid #f3f4f6; padding-bottom: 0.2rem; }
+  #md-output h3 { font-size: 1.1rem; font-weight: 600; margin: 0.75rem 0 0.35rem; }
+  #md-output h4, #md-output h5, #md-output h6 { font-size: 1rem; font-weight: 600; margin: 0.5rem 0 0.3rem; }
+  #md-output p { margin: 0.5rem 0; line-height: 1.65; }
+  #md-output ul { list-style: disc; padding-left: 1.5rem; margin: 0.4rem 0; }
+  #md-output ol { list-style: decimal; padding-left: 1.5rem; margin: 0.4rem 0; }
+  #md-output li { margin: 0.2rem 0; }
+  #md-output blockquote { border-left: 3px solid #6366f1; padding: 0.25rem 0.75rem; color: #6b7280; background: #f8f7ff; margin: 0.5rem 0; border-radius: 0 6px 6px 0; }
+  #md-output code { background: #f3f4f6; padding: 0.1rem 0.3rem; border-radius: 4px; font-size: 0.85em; font-family: monospace; color: #7c3aed; }
+  #md-output pre { background: #1e1e2e; color: #cdd6f4; padding: 1rem; border-radius: 8px; overflow-x: auto; margin: 0.5rem 0; }
+  #md-output pre code { background: none; color: inherit; padding: 0; font-size: 0.85rem; }
+  #md-output table { width: 100%; border-collapse: collapse; margin: 0.5rem 0; font-size: 0.875rem; }
+  #md-output th { background: #f3f4f6; padding: 0.5rem 0.75rem; text-align: left; font-weight: 600; border: 1px solid #e5e7eb; }
+  #md-output td { padding: 0.4rem 0.75rem; border: 1px solid #e5e7eb; }
+  #md-output tr:nth-child(even) td { background: #fafafa; }
+  #md-output a { color: #6366f1; text-decoration: underline; }
+  #md-output hr { border: none; border-top: 2px solid #e5e7eb; margin: 1rem 0; }
+  #md-output img { max-width: 100%; border-radius: 6px; }
+  #md-output del { text-decoration: line-through; color: #9ca3af; }
+</style>
+
+<script>
+  const DEFAULT_MD = `# Welcome to Markdown Preview
+
+A **live editor** with instant preview.
+
+## Text Formatting
+
+*Italic*, **bold**, ~~strikethrough~~, and \`inline code\`.
+
+## Lists
+
+- Item one
+- Item two
+  - Nested item
+
+1. First step
+2. Second step
+3. Third step
+
+## Code Block
+
+\`\`\`javascript
+function greet(name) {
+  return \`Hello, \${name}!\`;
+}
+\`\`\`
+
+## Table
+
+| Syntax | Description |
+| --- | --- |
+| Header | Title |
+| Paragraph | Text |
+
+## Blockquote
+
+> The best way to get started is to quit talking and begin doing.
+> — Walt Disney
+
+## Links & Images
+
+[Visit utilifyer.com](https://utilifyer.com)
+
+---
+
+*That's the basics!*
+`;
+
+  function escapeHtml(s: string): string {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function parseMarkdown(md: string): string {
+    let html = md;
+
+    // Fenced code blocks
+    html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_, lang, code) =>
+      `<pre><code class="language-${lang}">${escapeHtml(code.trimEnd())}</code></pre>`
+    );
+
+    // Headers
+    html = html.replace(/^#{6}\s+(.+)$/gm, '<h6>$1</h6>');
+    html = html.replace(/^#{5}\s+(.+)$/gm, '<h5>$1</h5>');
+    html = html.replace(/^#{4}\s+(.+)$/gm, '<h4>$1</h4>');
+    html = html.replace(/^#{3}\s+(.+)$/gm, '<h3>$1</h3>');
+    html = html.replace(/^#{2}\s+(.+)$/gm, '<h2>$1</h2>');
+    html = html.replace(/^#{1}\s+(.+)$/gm, '<h1>$1</h1>');
+
+    // Blockquotes
+    html = html.replace(/^>\s?(.+)$/gm, '<blockquote>$1</blockquote>');
+
+    // Horizontal rule
+    html = html.replace(/^---+$/gm, '<hr>');
+
+    // Tables
+    html = html.replace(/^\|(.+)\|\s*\n\|\s*[-:| ]+\|\s*\n((?:\|.+\|\s*\n?)*)/gm, (_, header, rows) => {
+      const ths = header.split('|').filter((s: string) => s.trim()).map((h: string) => `<th>${h.trim()}</th>`).join('');
+      const trs = rows.trim().split('\n').map((row: string) =>
+        '<tr>' + row.split('|').filter((s: string) => s.trim()).map((c: string) => `<td>${c.trim()}</td>`).join('') + '</tr>'
+      ).join('');
+      return `<table><thead><tr>${ths}</tr></thead><tbody>${trs}</tbody></table>`;
+    });
+
+    // Inline formatting
+    html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, '<img src="$2" alt="$1">');
+    html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+    html = html.replace(/~~(.+?)~~/g, '<del>$1</del>');
+    html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    html = html.replace(/__(.+?)__/g, '<strong>$1</strong>');
+    html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+    html = html.replace(/_(.+?)_/g, '<em>$1</em>');
+    html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+    // Unordered lists
+    html = html.replace(/((?:^[ \t]*[-*+]\s.+\n?)+)/gm, (match) => {
+      const items = match.trim().split('\n').map(l => `<li>${l.replace(/^[ \t]*[-*+]\s/, '')}</li>`).join('');
+      return `<ul>${items}</ul>`;
+    });
+
+    // Ordered lists
+    html = html.replace(/((?:^\d+\.\s.+\n?)+)/gm, (match) => {
+      const items = match.trim().split('\n').map(l => `<li>${l.replace(/^\d+\.\s/, '')}</li>`).join('');
+      return `<ol>${items}</ol>`;
+    });
+
+    // Paragraphs
+    html = html.replace(/\n{2,}/g, '</p><p>');
+    html = '<p>' + html + '</p>';
+    html = html.replace(/<p>(\s*<(?:h[1-6]|ul|ol|pre|table|blockquote|hr)[\s\S]*?<\/(?:h[1-6]|ul|ol|pre|table|blockquote)>|<hr>)\s*<\/p>/g, '$1');
+    html = html.replace(/<p>\s*<\/p>/g, '');
+
+    return html;
+  }
+
+  const input = document.getElementById('md-input') as HTMLTextAreaElement;
+  const output = document.getElementById('md-output')!;
+
+  function update() {
+    const md = input.value;
+    output.innerHTML = parseMarkdown(md);
+    const words = md.trim().split(/\s+/).filter(Boolean).length;
+    document.getElementById('word-count')!.textContent = md ? `${words} words · ${md.length} chars` : '';
+  }
+
+  input.addEventListener('input', update);
+
+  document.getElementById('btn-clear')?.addEventListener('click', () => { input.value = ''; update(); });
+  document.getElementById('btn-copy-md')?.addEventListener('click', () => {
+    navigator.clipboard.writeText(input.value).then(() => {
+      const btn = document.getElementById('btn-copy-md')!;
+      btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy Markdown', 1500);
+    });
+  });
+  document.getElementById('btn-copy-html')?.addEventListener('click', () => {
+    navigator.clipboard.writeText(output.innerHTML).then(() => {
+      const btn = document.getElementById('btn-copy-html')!;
+      btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy HTML', 1500);
+    });
+  });
+
+  input.value = DEFAULT_MD;
+  update();
+</script>

@@ -658,5 +658,35 @@
     "priority": 66,
     "status": "live",
     "icon": "💼"
+  },
+  {
+    "slug": "markdown-preview",
+    "title": "Markdown Preview",
+    "description": "Write Markdown and see a live rendered preview. Supports headings, tables, code blocks, bold, italic, and links.",
+    "category": "Developer",
+    "tags": ["markdown", "markdown preview", "markdown editor", "markdown to HTML"],
+    "priority": 67,
+    "status": "live",
+    "icon": "📝"
+  },
+  {
+    "slug": "regex-tester",
+    "title": "Regex Tester",
+    "description": "Test regular expressions with live match highlighting, capture group details, and common pattern library.",
+    "category": "Developer",
+    "tags": ["regex", "regular expression", "regex tester", "regex checker", "pattern matching"],
+    "priority": 68,
+    "status": "live",
+    "icon": "🔍"
+  },
+  {
+    "slug": "binary-text-converter",
+    "title": "Binary to Text Converter",
+    "description": "Convert text to binary, hex, octal, or decimal — and back. Supports ASCII and UTF-8 encoding.",
+    "category": "Developer",
+    "tags": ["binary to text", "text to binary", "ASCII", "hex converter", "binary converter"],
+    "priority": 69,
+    "status": "live",
+    "icon": "💻"
   }
 ]
