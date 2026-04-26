@@ -1,0 +1,119 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Energy Converter"
+  description="Convert between joules, calories, kilocalories, watt-hours, kilowatt-hours, BTUs, electron volts, and more energy units."
+  slug="energy-converter"
+  category="Converters"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Energy Converter</h1>
+  <p class="text-gray-500 mb-8">Convert between joules, calories, kWh, BTU, and more energy units.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Value</label>
+        <input id="en-value" type="number" placeholder="Enter a value" class="input-field text-lg" />
+      </div>
+      <div>
+        <label class="label">From Unit</label>
+        <select id="en-from" class="input-field">
+          <option value="j">Joule (J)</option>
+          <option value="kj">Kilojoule (kJ)</option>
+          <option value="mj">Megajoule (MJ)</option>
+          <option value="cal">Calorie (cal)</option>
+          <option value="kcal">Kilocalorie / kcal (food Cal)</option>
+          <option value="wh">Watt-hour (Wh)</option>
+          <option value="kwh">Kilowatt-hour (kWh)</option>
+          <option value="btu">BTU (British Thermal Unit)</option>
+          <option value="ev">Electron-volt (eV)</option>
+          <option value="ftlb">Foot-pound (ft·lb)</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="en-results" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+
+    <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+      <p class="text-sm font-semibold text-gray-700 mb-3">Common Energy References</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-600">
+        {[
+          ['1 kcal (food Calorie)', '4,184 J / 1.163 Wh'],
+          ['1 kWh', '3,600,000 J / 3,412 BTU'],
+          ['1 BTU', '1,055 J / 0.293 Wh'],
+          ['Avg meal (2000 kcal/day)', '8,368 kJ / 2.326 kWh'],
+        ].map(([a, b]) => (
+          <div class="flex justify-between bg-white border border-gray-100 rounded px-3 py-1.5">
+            <span class="font-medium text-gray-700">{a}</span>
+            <span class="text-gray-500">{b}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is the difference between a calorie and a Calorie?", a: "A lowercase calorie (cal) is the energy needed to raise 1 gram of water by 1°C — a very small unit. A food Calorie (Cal, kcal) is 1,000 calories. Nutrition labels always use kilocalories (kcal), often written as 'Cal' with a capital C." },
+        { q: "How many joules in a kilowatt-hour?", a: "1 kWh = 3,600,000 joules (3.6 MJ). A watt-hour is the energy used by a 1-watt device running for 1 hour. One kilowatt-hour is what powers a 1000W device for 1 hour, or a 100W bulb for 10 hours." },
+        { q: "What is a BTU used for?", a: "BTU (British Thermal Unit) is the energy needed to raise 1 pound of water by 1°F. It is commonly used for HVAC systems, furnaces, and air conditioners in the US to measure heating/cooling capacity." },
+        { q: "What is an electron-volt?", a: "An electron-volt (eV) is the kinetic energy gained by an electron accelerated through 1 volt. It equals 1.602 × 10⁻¹⁹ joules. It is used in atomic physics, chemistry, and particle physics to describe energy at the molecular scale." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const TO_J: Record<string, number> = {
+    j: 1, kj: 1000, mj: 1e6,
+    cal: 4.184, kcal: 4184, wh: 3600,
+    kwh: 3600000, btu: 1055.05585, ev: 1.602176634e-19,
+    ftlb: 1.3558179483,
+  };
+  const LABELS: Record<string, string> = {
+    j: 'Joule', kj: 'Kilojoule', mj: 'Megajoule',
+    cal: 'Calorie (cal)', kcal: 'Kilocalorie (kcal)', wh: 'Watt-hour',
+    kwh: 'Kilowatt-hour', btu: 'BTU', ev: 'Electron-volt', ftlb: 'Foot-pound',
+  };
+  const UNITS: Record<string, string> = {
+    j: 'J', kj: 'kJ', mj: 'MJ', cal: 'cal', kcal: 'kcal',
+    wh: 'Wh', kwh: 'kWh', btu: 'BTU', ev: 'eV', ftlb: 'ft·lb',
+  };
+
+  function fmt(n: number): string {
+    if (n === 0) return '0';
+    if (Math.abs(n) >= 1e12 || (Math.abs(n) < 1e-8 && n !== 0)) return n.toExponential(4);
+    return parseFloat(n.toPrecision(8)).toString();
+  }
+
+  function convert() {
+    const val = parseFloat((document.getElementById('en-value') as HTMLInputElement).value);
+    const from = (document.getElementById('en-from') as HTMLSelectElement).value;
+    const container = document.getElementById('en-results')!;
+    if (isNaN(val)) { container.innerHTML = ''; return; }
+    const joules = val * TO_J[from];
+    container.innerHTML = Object.entries(TO_J).map(([unit, factor]) => {
+      const result = joules / factor;
+      const active = unit === from ? 'border-indigo-300 bg-indigo-50' : 'border-gray-100 bg-gray-50';
+      return `<div class="flex justify-between items-center border ${active} rounded-xl px-4 py-2.5">
+        <span class="text-sm text-gray-500">${LABELS[unit]}</span>
+        <span class="font-mono text-sm font-medium text-gray-800 select-all">${fmt(result)} ${UNITS[unit]}</span>
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('en-value')?.addEventListener('input', convert);
+  document.getElementById('en-from')?.addEventListener('change', convert);
+</script>

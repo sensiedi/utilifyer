@@ -538,5 +538,35 @@
     "priority": 54,
     "status": "live",
     "icon": "🗺️"
+  },
+  {
+    "slug": "pressure-converter",
+    "title": "Pressure Converter",
+    "description": "Convert between pascals, bar, PSI, atmospheres, mmHg, kPa, and more pressure units.",
+    "category": "Unit Converters",
+    "tags": ["pressure", "PSI", "bar", "pascal", "atm", "mmHg", "convert"],
+    "priority": 55,
+    "status": "live",
+    "icon": "🌡️"
+  },
+  {
+    "slug": "energy-converter",
+    "title": "Energy Converter",
+    "description": "Convert between joules, calories, kilocalories, watt-hours, kilowatt-hours, BTU, and electron-volts.",
+    "category": "Unit Converters",
+    "tags": ["energy", "joules", "calories", "kWh", "BTU", "convert"],
+    "priority": 56,
+    "status": "live",
+    "icon": "⚡"
+  },
+  {
+    "slug": "fuel-efficiency-converter",
+    "title": "Fuel Efficiency Converter",
+    "description": "Convert between MPG (US/UK), L/100km, km/L, and miles per liter fuel economy units.",
+    "category": "Unit Converters",
+    "tags": ["fuel", "MPG", "L/100km", "fuel economy", "gas mileage", "convert"],
+    "priority": 57,
+    "status": "live",
+    "icon": "⛽"
   }
 ]

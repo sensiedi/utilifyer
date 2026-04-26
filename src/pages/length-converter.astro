@@ -1,0 +1,117 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Length Converter"
+  description="Convert between meters, kilometers, miles, feet, inches, yards, centimeters, millimeters, nautical miles, and light-years instantly."
+  slug="length-converter"
+  category="Converters"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Length Converter</h1>
+  <p class="text-gray-500 mb-8">Convert between metric, imperial, and other length units instantly.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Value</label>
+        <input id="len-value" type="number" placeholder="Enter a value" class="input-field text-lg" />
+      </div>
+      <div>
+        <label class="label">From Unit</label>
+        <select id="len-from" class="input-field">
+          <option value="m">Meter (m)</option>
+          <option value="km">Kilometer (km)</option>
+          <option value="cm">Centimeter (cm)</option>
+          <option value="mm">Millimeter (mm)</option>
+          <option value="mi">Mile (mi)</option>
+          <option value="yd">Yard (yd)</option>
+          <option value="ft">Foot (ft)</option>
+          <option value="in">Inch (in)</option>
+          <option value="nmi">Nautical Mile (nmi)</option>
+          <option value="ly">Light-year (ly)</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="len-results" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+
+    <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+      <p class="text-sm font-semibold text-gray-700 mb-3">Quick Reference</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-600">
+        {[
+          ['1 km', '0.621371 miles'],
+          ['1 mile', '1.60934 km'],
+          ['1 foot', '0.3048 m'],
+          ['1 inch', '2.54 cm'],
+          ['1 yard', '0.9144 m'],
+          ['1 nautical mile', '1.852 km'],
+        ].map(([a, b]) => (
+          <div class="flex justify-between bg-white border border-gray-100 rounded px-3 py-1.5">
+            <span class="font-medium text-gray-700">{a}</span>
+            <span class="text-gray-500">= {b}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How many feet are in a mile?", a: "There are exactly 5,280 feet in one mile. This comes from the Roman mille passuum (1,000 paces), where each pace was 5 Roman feet." },
+        { q: "What is the difference between a nautical mile and a regular mile?", a: "A nautical mile (1,852 m) is based on the Earth's circumference — it equals one minute of latitude. A statute mile is 1,609.34 m. Nautical miles are used in navigation and aviation." },
+        { q: "How many centimeters in an inch?", a: "One inch equals exactly 2.54 centimeters. This was defined in 1959 by international agreement to standardize the relationship between imperial and metric units." },
+        { q: "What is a light-year?", a: "A light-year is the distance light travels in one year — approximately 9.461 × 10¹⁵ meters (9.461 trillion km or 5.879 trillion miles). It is used to measure astronomical distances." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const TO_M: Record<string, number> = {
+    m: 1, km: 1e3, cm: 0.01, mm: 0.001,
+    mi: 1609.344, yd: 0.9144, ft: 0.3048, in: 0.0254,
+    nmi: 1852, ly: 9.461e15,
+  };
+  const LABELS: Record<string, string> = {
+    m: 'Meter', km: 'Kilometer', cm: 'Centimeter', mm: 'Millimeter',
+    mi: 'Mile', yd: 'Yard', ft: 'Foot', in: 'Inch',
+    nmi: 'Nautical Mile', ly: 'Light-year',
+  };
+
+  function fmt(n: number): string {
+    if (n === 0) return '0';
+    if (Math.abs(n) >= 1e15 || (Math.abs(n) < 1e-6 && n !== 0)) return n.toExponential(6);
+    return parseFloat(n.toPrecision(10)).toString();
+  }
+
+  function convert() {
+    const val = parseFloat((document.getElementById('len-value') as HTMLInputElement).value);
+    const from = (document.getElementById('len-from') as HTMLSelectElement).value;
+    const container = document.getElementById('len-results')!;
+    if (isNaN(val)) { container.innerHTML = ''; return; }
+    const meters = val * TO_M[from];
+    container.innerHTML = Object.entries(TO_M).map(([unit, factor]) => {
+      const result = meters / factor;
+      const active = unit === from ? 'border-indigo-300 bg-indigo-50' : 'border-gray-100 bg-gray-50';
+      return `<div class="flex justify-between items-center border ${active} rounded-xl px-4 py-2.5 cursor-pointer hover:border-indigo-200" onclick="(document.getElementById('len-value')).value='${val}';(document.getElementById('len-from')).value='${unit}';convert()">
+        <span class="text-sm text-gray-500">${LABELS[unit]}</span>
+        <span class="font-mono text-sm font-medium text-gray-800 select-all">${fmt(result)} ${unit}</span>
+      </div>`;
+    }).join('');
+  }
+
+  (window as any).convert = convert;
+  document.getElementById('len-value')?.addEventListener('input', convert);
+  document.getElementById('len-from')?.addEventListener('change', convert);
+</script>

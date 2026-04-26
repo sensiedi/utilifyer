@@ -1,0 +1,155 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Unix Timestamp Converter"
+  description="Convert Unix timestamps to human-readable dates and vice versa. Supports seconds and milliseconds. Shows current UTC and local time."
+  slug="unix-timestamp-converter"
+  category="Converters"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Unix Timestamp Converter</h1>
+  <p class="text-gray-500 mb-8">Convert Unix timestamps to readable dates and back.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-6">
+
+    <!-- Current time panel -->
+    <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
+      <p class="text-xs font-semibold text-indigo-500 uppercase tracking-wide mb-2">Current Time</p>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+        <div>
+          <span class="text-gray-500 text-xs">Unix (seconds)</span>
+          <div id="now-sec" class="font-mono font-bold text-gray-900 text-lg select-all"></div>
+        </div>
+        <div>
+          <span class="text-gray-500 text-xs">Unix (milliseconds)</span>
+          <div id="now-ms" class="font-mono font-bold text-gray-900 text-lg select-all"></div>
+        </div>
+        <div>
+          <span class="text-gray-500 text-xs">ISO 8601 (UTC)</span>
+          <div id="now-iso" class="font-mono text-gray-900 text-sm select-all mt-1"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Timestamp → Date -->
+    <div>
+      <label class="label">Unix Timestamp → Human Date</label>
+      <div class="flex gap-2 mb-3">
+        <input id="ts-input" type="number" placeholder="e.g. 1700000000" class="input-field flex-1 font-mono" />
+        <select id="ts-unit" class="input-field w-auto">
+          <option value="s">Seconds</option>
+          <option value="ms">Milliseconds</option>
+        </select>
+        <button id="use-now" class="btn-secondary flex-shrink-0 text-sm">Now</button>
+      </div>
+      <div id="ts-results" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+    </div>
+
+    <!-- Date → Timestamp -->
+    <div>
+      <label class="label">Human Date → Unix Timestamp</label>
+      <input id="date-input" type="datetime-local" class="input-field" />
+      <div id="date-results" class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is a Unix timestamp?", a: "A Unix timestamp is the number of seconds (or milliseconds) elapsed since January 1, 1970 00:00:00 UTC — called the Unix Epoch. It is the universal standard for representing time in programming, databases, and APIs." },
+        { q: "Why does the Unix Epoch start at January 1, 1970?", a: "This date was chosen by the Unix developers at Bell Labs in the early 1970s as a convenient round number close to when the Unix system was being created. It is arbitrary but has become universal." },
+        { q: "What is the Year 2038 problem?", a: "32-bit systems store Unix timestamps as signed integers, which overflow on January 19, 2038 at 03:14:07 UTC. 64-bit systems don't have this problem — they can represent dates billions of years into the future." },
+        { q: "What is the difference between seconds and milliseconds timestamps?", a: "Unix timestamps in seconds are 10 digits long (~1,700,000,000). Millisecond timestamps are 13 digits (seconds × 1000). Many JavaScript APIs (Date.now()) use milliseconds; most databases and server-side APIs use seconds." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  function updateNow() {
+    const now = Date.now();
+    document.getElementById('now-sec')!.textContent = Math.floor(now / 1000).toString();
+    document.getElementById('now-ms')!.textContent = now.toString();
+    document.getElementById('now-iso')!.textContent = new Date(now).toISOString();
+  }
+
+  setInterval(updateNow, 1000);
+  updateNow();
+
+  function tsToDate(ts: number, unit: string) {
+    const ms = unit === 'ms' ? ts : ts * 1000;
+    const d = new Date(ms);
+    if (isNaN(d.getTime())) return null;
+    return d;
+  }
+
+  function renderTsResults(d: Date) {
+    const container = document.getElementById('ts-results')!;
+    const fields = [
+      ['UTC', d.toUTCString()],
+      ['ISO 8601', d.toISOString()],
+      ['Local Time', d.toLocaleString()],
+      ['UTC Date', d.toISOString().split('T')[0]],
+      ['UTC Time', d.toISOString().split('T')[1].replace('Z','') + ' UTC'],
+      ['Day of Week', d.toLocaleDateString('en-US', { weekday: 'long' })],
+    ];
+    container.innerHTML = fields.map(([label, val]) =>
+      `<div class="bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5">
+        <div class="text-xs text-gray-400 mb-0.5">${label}</div>
+        <div class="font-mono text-sm text-gray-800 select-all">${val}</div>
+      </div>`
+    ).join('');
+  }
+
+  function convertTs() {
+    const val = parseFloat((document.getElementById('ts-input') as HTMLInputElement).value);
+    const unit = (document.getElementById('ts-unit') as HTMLSelectElement).value;
+    if (isNaN(val)) { document.getElementById('ts-results')!.innerHTML = ''; return; }
+    const d = tsToDate(val, unit);
+    if (d) renderTsResults(d);
+    else document.getElementById('ts-results')!.innerHTML = '<p class="text-sm text-red-600">Invalid timestamp</p>';
+  }
+
+  document.getElementById('ts-input')?.addEventListener('input', convertTs);
+  document.getElementById('ts-unit')?.addEventListener('change', convertTs);
+  document.getElementById('use-now')?.addEventListener('click', () => {
+    const unit = (document.getElementById('ts-unit') as HTMLSelectElement).value;
+    const val = unit === 'ms' ? Date.now() : Math.floor(Date.now() / 1000);
+    (document.getElementById('ts-input') as HTMLInputElement).value = val.toString();
+    convertTs();
+  });
+
+  document.getElementById('date-input')?.addEventListener('input', () => {
+    const val = (document.getElementById('date-input') as HTMLInputElement).value;
+    if (!val) { document.getElementById('date-results')!.innerHTML = ''; return; }
+    const d = new Date(val);
+    const ms = d.getTime();
+    const sec = Math.floor(ms / 1000);
+    document.getElementById('date-results')!.innerHTML = [
+      ['Unix (seconds)', sec.toString()],
+      ['Unix (milliseconds)', ms.toString()],
+      ['ISO 8601 (UTC)', d.toISOString()],
+      ['UTC String', d.toUTCString()],
+    ].map(([label, val]) =>
+      `<div class="bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5">
+        <div class="text-xs text-gray-400 mb-0.5">${label}</div>
+        <div class="font-mono text-sm text-gray-800 select-all">${val}</div>
+      </div>`
+    ).join('');
+  });
+
+  // Set default date input to now
+  const now = new Date();
+  const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+  (document.getElementById('date-input') as HTMLInputElement).value = local;
+  document.getElementById('date-input')!.dispatchEvent(new Event('input'));
+</script>

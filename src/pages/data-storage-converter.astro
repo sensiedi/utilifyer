@@ -1,0 +1,124 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Data Storage Converter"
+  description="Convert between bits, bytes, kilobytes, megabytes, gigabytes, terabytes, petabytes — both decimal (SI) and binary (IEC) standards."
+  slug="data-storage-converter"
+  category="Converters"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Data Storage Converter</h1>
+  <p class="text-gray-500 mb-8">Convert between bits, bytes, KB, MB, GB, TB — decimal and binary.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Value</label>
+        <input id="ds-value" type="number" placeholder="Enter a value" class="input-field text-lg" />
+      </div>
+      <div>
+        <label class="label">From Unit</label>
+        <select id="ds-from" class="input-field">
+          <optgroup label="Decimal (SI)">
+            <option value="bit">Bit (b)</option>
+            <option value="byte">Byte (B)</option>
+            <option value="kb">Kilobyte (KB) — 10³</option>
+            <option value="mb">Megabyte (MB) — 10⁶</option>
+            <option value="gb">Gigabyte (GB) — 10⁹</option>
+            <option value="tb">Terabyte (TB) — 10¹²</option>
+            <option value="pb">Petabyte (PB) — 10¹⁵</option>
+          </optgroup>
+          <optgroup label="Binary (IEC)">
+            <option value="kib">Kibibyte (KiB) — 2¹⁰</option>
+            <option value="mib">Mebibyte (MiB) — 2²⁰</option>
+            <option value="gib">Gibibyte (GiB) — 2³⁰</option>
+            <option value="tib">Tebibyte (TiB) — 2⁴⁰</option>
+            <option value="pib">Pebibyte (PiB) — 2⁵⁰</option>
+          </optgroup>
+        </select>
+      </div>
+    </div>
+
+    <div id="ds-results" class="space-y-2"></div>
+
+    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-700">
+      <strong>Decimal vs Binary:</strong> Hard drive manufacturers use decimal (1 GB = 1,000,000,000 bytes). Operating systems use binary (1 GB = 1,073,741,824 bytes = 1 GiB). That's why a "1 TB" drive shows ~931 GB in Windows.
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "Why does my hard drive show less space than advertised?", a: "Hard drive manufacturers use decimal gigabytes (1 GB = 10⁹ bytes). Your OS measures in binary gibibytes (1 GiB = 2³⁰ = 1,073,741,824 bytes). A '1 TB' drive is 10¹² bytes, which equals ~931 GiB in your OS." },
+        { q: "What is the difference between a bit and a byte?", a: "A bit is the smallest unit of data — a single 0 or 1. A byte is 8 bits and can represent 256 different values (2⁸). Text characters, pixels, and most data are measured in bytes or multiples of bytes." },
+        { q: "What is the difference between KB and KiB?", a: "KB (kilobyte) = 1,000 bytes in decimal SI. KiB (kibibyte) = 1,024 bytes in binary IEC. The IEC introduced KiB/MiB/GiB/TiB in 1998 to eliminate ambiguity, but KB is still loosely used for both." },
+        { q: "How many GB is a 4K movie?", a: "A 4K HDR movie typically ranges from 50–100 GB for a Blu-ray rip, or 15–25 GB for streaming quality. Blu-ray discs hold 50 GB (dual-layer) or 100 GB (triple-layer)." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const TO_BITS: Record<string, number> = {
+    bit: 1, byte: 8,
+    kb: 8e3, mb: 8e6, gb: 8e9, tb: 8e12, pb: 8e15,
+    kib: 8 * 1024, mib: 8 * 1048576, gib: 8 * 1073741824,
+    tib: 8 * 1099511627776, pib: 8 * 1125899906842624,
+  };
+  const LABELS: Record<string, string> = {
+    bit: 'Bit', byte: 'Byte',
+    kb: 'Kilobyte (KB)', mb: 'Megabyte (MB)', gb: 'Gigabyte (GB)', tb: 'Terabyte (TB)', pb: 'Petabyte (PB)',
+    kib: 'Kibibyte (KiB)', mib: 'Mebibyte (MiB)', gib: 'Gibibyte (GiB)', tib: 'Tebibyte (TiB)', pib: 'Pebibyte (PiB)',
+  };
+  const UNITS: Record<string, string> = {
+    bit: 'b', byte: 'B', kb: 'KB', mb: 'MB', gb: 'GB', tb: 'TB', pb: 'PB',
+    kib: 'KiB', mib: 'MiB', gib: 'GiB', tib: 'TiB', pib: 'PiB',
+  };
+  const GROUPS: Record<string, string> = {
+    bit: 'Decimal', byte: 'Decimal', kb: 'Decimal', mb: 'Decimal', gb: 'Decimal', tb: 'Decimal', pb: 'Decimal',
+    kib: 'Binary', mib: 'Binary', gib: 'Binary', tib: 'Binary', pib: 'Binary',
+  };
+
+  function fmt(n: number): string {
+    if (n === 0) return '0';
+    if (Math.abs(n) >= 1e18 || (Math.abs(n) < 1e-6 && n !== 0)) return n.toExponential(4);
+    return parseFloat(n.toPrecision(10)).toString();
+  }
+
+  function convert() {
+    const val = parseFloat((document.getElementById('ds-value') as HTMLInputElement).value);
+    const from = (document.getElementById('ds-from') as HTMLSelectElement).value;
+    const container = document.getElementById('ds-results')!;
+    if (isNaN(val)) { container.innerHTML = ''; return; }
+    const bits = val * TO_BITS[from];
+
+    let decimalHTML = '<p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Decimal (SI)</p>';
+    let binaryHTML = '<p class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1 mt-3">Binary (IEC)</p>';
+
+    Object.entries(TO_BITS).forEach(([unit, factor]) => {
+      const result = bits / factor;
+      const active = unit === from ? 'border-indigo-300 bg-indigo-50' : 'border-gray-100 bg-gray-50';
+      const row = `<div class="flex justify-between items-center border ${active} rounded-xl px-4 py-2.5 mb-1.5">
+        <span class="text-sm text-gray-500">${LABELS[unit]}</span>
+        <span class="font-mono text-sm font-medium text-gray-800 select-all">${fmt(result)} ${UNITS[unit]}</span>
+      </div>`;
+      if (GROUPS[unit] === 'Decimal') decimalHTML += row;
+      else binaryHTML += row;
+    });
+
+    container.innerHTML = decimalHTML + binaryHTML;
+  }
+
+  document.getElementById('ds-value')?.addEventListener('input', convert);
+  document.getElementById('ds-from')?.addEventListener('change', convert);
+</script>

@@ -1,0 +1,136 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Fuel Efficiency Converter"
+  description="Convert between MPG (US), MPG (UK), L/100km, km/L, and miles per liter. Compare fuel economy across different standards."
+  slug="fuel-efficiency-converter"
+  category="Converters"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Fuel Efficiency Converter</h1>
+  <p class="text-gray-500 mb-8">Convert between MPG (US/UK), L/100km, km/L, and miles per liter.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Value</label>
+        <input id="fuel-value" type="number" placeholder="Enter a value" class="input-field text-lg" />
+      </div>
+      <div>
+        <label class="label">From Unit</label>
+        <select id="fuel-from" class="input-field">
+          <option value="mpg_us">MPG (US miles per gallon)</option>
+          <option value="mpg_uk">MPG (UK miles per gallon)</option>
+          <option value="l100km">L/100km (liters per 100 km)</option>
+          <option value="kml">km/L (kilometers per liter)</option>
+          <option value="mpl">mi/L (miles per liter)</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="fuel-results" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+
+    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-700">
+      <strong>Note:</strong> L/100km is an inverse measure — lower is more efficient. MPG and km/L are direct — higher is better.
+    </div>
+
+    <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+      <p class="text-sm font-semibold text-gray-700 mb-3">Real-World Benchmarks</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-600">
+        {[
+          ['Efficient small car', '35–45 MPG (US) / 6–7 L/100km'],
+          ['Average sedan', '25–35 MPG (US) / 7–9 L/100km'],
+          ['Large SUV/Truck', '15–22 MPG (US) / 11–16 L/100km'],
+          ['Toyota Prius hybrid', '≈52 MPG (US) / 4.5 L/100km'],
+        ].map(([a, b]) => (
+          <div class="flex justify-between bg-white border border-gray-100 rounded px-3 py-1.5">
+            <span class="font-medium text-gray-700">{a}</span>
+            <span class="text-gray-500">{b}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "Why is UK MPG higher than US MPG for the same car?", a: "A UK gallon (imperial gallon) is 4.546 liters, while a US gallon is 3.785 liters — about 20% larger. The same car that gets 30 US MPG would show about 36 UK MPG. Always check which standard is being used when comparing fuel economy." },
+        { q: "How do you convert MPG to L/100km?", a: "To convert US MPG to L/100km: divide 235.21 by the MPG value. For example, 30 MPG = 235.21 ÷ 30 = 7.84 L/100km. For UK MPG, use 282.48 as the conversion constant." },
+        { q: "Is lower L/100km better?", a: "Yes — L/100km measures how many liters of fuel you need per 100 kilometers, so lower is more efficient. It is the opposite of MPG or km/L, where higher is better. L/100km is standard in Europe, Canada, and Australia." },
+        { q: "What is a good L/100km for a new car?", a: "Under 6 L/100km is excellent (equivalent to about 39+ US MPG). 6–8 L/100km is good for a non-hybrid. 8–11 L/100km is average. Over 12 L/100km is considered poor fuel economy for a modern vehicle." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  /* All conversions go through km/L as the base unit */
+  /* L/100km is inverse: kml = 100 / l100km */
+
+  function toKml(val: number, unit: string): number {
+    switch (unit) {
+      case 'mpg_us': return val * 1.60934 / 3.785411784;
+      case 'mpg_uk': return val * 1.60934 / 4.54609;
+      case 'l100km': return val > 0 ? 100 / val : 0;
+      case 'kml': return val;
+      case 'mpl': return val * 1.60934;
+      default: return val;
+    }
+  }
+
+  function fromKml(kml: number, unit: string): number {
+    switch (unit) {
+      case 'mpg_us': return kml * 3.785411784 / 1.60934;
+      case 'mpg_uk': return kml * 4.54609 / 1.60934;
+      case 'l100km': return kml > 0 ? 100 / kml : 0;
+      case 'kml': return kml;
+      case 'mpl': return kml / 1.60934;
+      default: return kml;
+    }
+  }
+
+  const LABELS: Record<string, string> = {
+    mpg_us: 'MPG (US)', mpg_uk: 'MPG (UK)',
+    l100km: 'L/100km', kml: 'km/L', mpl: 'mi/L',
+  };
+  const UNITS: Record<string, string> = {
+    mpg_us: 'MPG', mpg_uk: 'MPG (UK)',
+    l100km: 'L/100km', kml: 'km/L', mpl: 'mi/L',
+  };
+
+  function fmt(n: number): string {
+    if (n === 0) return '0';
+    return parseFloat(n.toPrecision(6)).toString();
+  }
+
+  function convert() {
+    const val = parseFloat((document.getElementById('fuel-value') as HTMLInputElement).value);
+    const from = (document.getElementById('fuel-from') as HTMLSelectElement).value;
+    const container = document.getElementById('fuel-results')!;
+    if (isNaN(val) || val <= 0) { container.innerHTML = ''; return; }
+    const kml = toKml(val, from);
+    const units = ['mpg_us', 'mpg_uk', 'l100km', 'kml', 'mpl'];
+    container.innerHTML = units.map(unit => {
+      const result = fromKml(kml, unit);
+      const active = unit === from ? 'border-indigo-300 bg-indigo-50' : 'border-gray-100 bg-gray-50';
+      return `<div class="flex justify-between items-center border ${active} rounded-xl px-4 py-2.5">
+        <span class="text-sm text-gray-500">${LABELS[unit]}</span>
+        <span class="font-mono text-sm font-medium text-gray-800 select-all">${fmt(result)} ${UNITS[unit]}</span>
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('fuel-value')?.addEventListener('input', convert);
+  document.getElementById('fuel-from')?.addEventListener('change', convert);
+</script>

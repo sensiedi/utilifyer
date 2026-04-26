@@ -1,0 +1,127 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Number Base Converter"
+  description="Convert numbers between binary (base 2), octal (base 8), decimal (base 10), hexadecimal (base 16), and any custom base from 2 to 36."
+  slug="number-base-converter"
+  category="Converters"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Number Base Converter</h1>
+  <p class="text-gray-500 mb-8">Convert between binary, octal, decimal, hex, and any base 2–36.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Input Number</label>
+        <input id="nb-input" type="text" placeholder="e.g. 255" class="input-field text-lg font-mono uppercase" />
+      </div>
+      <div>
+        <label class="label">From Base</label>
+        <select id="nb-from" class="input-field">
+          <option value="10">Decimal (Base 10)</option>
+          <option value="2">Binary (Base 2)</option>
+          <option value="8">Octal (Base 8)</option>
+          <option value="16">Hexadecimal (Base 16)</option>
+          <option value="32">Base 32</option>
+          <option value="36">Base 36</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="nb-error" class="hidden bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700"></div>
+
+    <div id="nb-results" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+
+    <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+      <p class="text-sm font-semibold text-gray-700 mb-3">Common Values</p>
+      <div class="overflow-x-auto">
+        <table class="text-xs w-full">
+          <thead>
+            <tr class="text-gray-500 border-b border-gray-200">
+              <th class="text-left pb-2 pr-4">Decimal</th>
+              <th class="text-left pb-2 pr-4">Binary</th>
+              <th class="text-left pb-2 pr-4">Octal</th>
+              <th class="text-left pb-2">Hex</th>
+            </tr>
+          </thead>
+          <tbody class="font-mono text-gray-700">
+            {[[0,'0000','0','0'],[1,'0001','1','1'],[8,'1000','10','8'],[10,'1010','12','A'],[15,'1111','17','F'],[16,'10000','20','10'],[255,'11111111','377','FF'],[256,'100000000','400','100']].map(([d,b,o,h]) => (
+              <tr class="border-b border-gray-100 hover:bg-white cursor-pointer" onclick={`document.getElementById('nb-input').value='${d}';document.getElementById('nb-from').value='10';convert()`}>
+                <td class="py-1.5 pr-4">{d}</td>
+                <td class="py-1.5 pr-4">{b}</td>
+                <td class="py-1.5 pr-4">{o}</td>
+                <td class="py-1.5">{h}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "Why do computers use binary?", a: "Computers use binary (base 2) because electronic circuits have two stable states: on (1) and off (0). This maps directly to transistors. Binary is also noise-resistant — unlike analog systems, small signal variations don't change the meaning of a 0 or 1." },
+        { q: "What is hexadecimal used for?", a: "Hexadecimal (base 16) is used as a compact representation of binary. Since 16 = 2⁴, each hex digit represents exactly 4 bits. One byte (8 bits) is two hex digits. Hex is used for memory addresses, color codes (#FF5733), and data dumps." },
+        { q: "How do you convert binary to decimal?", a: "Multiply each bit by its positional power of 2, then sum them. For example: 1011 = 1×8 + 0×4 + 1×2 + 1×1 = 8 + 0 + 2 + 1 = 11." },
+        { q: "What is base 36?", a: "Base 36 uses digits 0–9 and letters A–Z (case-insensitive) — 36 total symbols. It is the most compact base that uses only alphanumeric characters. It's used for URL shorteners, unique ID generation, and compact numeric encoding." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const BASES = [
+    { id: 2, label: 'Binary (Base 2)', prefix: '0b' },
+    { id: 8, label: 'Octal (Base 8)', prefix: '0o' },
+    { id: 10, label: 'Decimal (Base 10)', prefix: '' },
+    { id: 16, label: 'Hexadecimal (Base 16)', prefix: '0x' },
+    { id: 32, label: 'Base 32', prefix: '' },
+    { id: 36, label: 'Base 36', prefix: '' },
+  ];
+
+  function convert() {
+    const input = (document.getElementById('nb-input') as HTMLInputElement).value.trim().toUpperCase();
+    const from = parseInt((document.getElementById('nb-from') as HTMLSelectElement).value);
+    const container = document.getElementById('nb-results')!;
+    const errBox = document.getElementById('nb-error')!;
+    errBox.classList.add('hidden');
+    if (!input) { container.innerHTML = ''; return; }
+
+    let decimal: number;
+    try {
+      decimal = parseInt(input, from);
+      if (isNaN(decimal)) throw new Error('Invalid');
+    } catch {
+      errBox.textContent = `"${input}" is not valid in base ${from}.`;
+      errBox.classList.remove('hidden');
+      container.innerHTML = '';
+      return;
+    }
+
+    container.innerHTML = BASES.map(({ id, label, prefix }) => {
+      const result = decimal.toString(id).toUpperCase();
+      const active = id === from ? 'border-indigo-300 bg-indigo-50' : 'border-gray-100 bg-gray-50';
+      return `<div class="flex justify-between items-center border ${active} rounded-xl px-4 py-2.5">
+        <span class="text-sm text-gray-500">${label}</span>
+        <span class="font-mono text-sm font-medium text-gray-800 select-all">${prefix}${result}</span>
+      </div>`;
+    }).join('');
+  }
+
+  (window as any).convert = convert;
+  document.getElementById('nb-input')?.addEventListener('input', convert);
+  document.getElementById('nb-from')?.addEventListener('change', convert);
+</script>

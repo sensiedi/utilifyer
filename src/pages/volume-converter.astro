@@ -1,0 +1,125 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Volume Converter"
+  description="Convert between liters, milliliters, gallons, fluid ounces, cups, pints, quarts, cubic meters, and more instantly."
+  slug="volume-converter"
+  category="Converters"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Volume Converter</h1>
+  <p class="text-gray-500 mb-8">Convert between metric and imperial volume units instantly.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Value</label>
+        <input id="vol-value" type="number" placeholder="Enter a value" class="input-field text-lg" />
+      </div>
+      <div>
+        <label class="label">From Unit</label>
+        <select id="vol-from" class="input-field">
+          <option value="l">Liter (L)</option>
+          <option value="ml">Milliliter (mL)</option>
+          <option value="m3">Cubic Meter (m³)</option>
+          <option value="cm3">Cubic Centimeter (cm³)</option>
+          <option value="gal_us">US Gallon</option>
+          <option value="gal_uk">UK Gallon</option>
+          <option value="qt">US Quart</option>
+          <option value="pt">US Pint</option>
+          <option value="cup">US Cup</option>
+          <option value="floz_us">US Fluid Ounce</option>
+          <option value="tbsp">Tablespoon (US)</option>
+          <option value="tsp">Teaspoon (US)</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="vol-results" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></div>
+
+    <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+      <p class="text-sm font-semibold text-gray-700 mb-3">Quick Reference</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-gray-600">
+        {[
+          ['1 US gallon', '3.78541 L'],
+          ['1 UK gallon', '4.54609 L'],
+          ['1 cup', '236.588 mL'],
+          ['1 fl oz (US)', '29.5735 mL'],
+          ['1 tablespoon', '14.787 mL'],
+          ['1 teaspoon', '4.929 mL'],
+        ].map(([a, b]) => (
+          <div class="flex justify-between bg-white border border-gray-100 rounded px-3 py-1.5">
+            <span class="font-medium text-gray-700">{a}</span>
+            <span class="text-gray-500">= {b}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How many cups are in a gallon?", a: "There are 16 cups in a US gallon. A gallon contains 4 quarts, each quart contains 2 pints, each pint contains 2 cups — so 4 × 2 × 2 = 16 cups." },
+        { q: "What is the difference between US and UK gallons?", a: "A US gallon is 3.785 liters, while a UK (imperial) gallon is 4.546 liters — about 20% larger. This difference matters for fuel economy comparisons between countries." },
+        { q: "How many ml in a fluid ounce?", a: "One US fluid ounce equals 29.5735 mL. UK fluid ounce is slightly different at 28.413 mL. This matters when following recipes from different countries." },
+        { q: "Is a cubic centimeter the same as a milliliter?", a: "Yes — 1 cm³ = 1 mL exactly. This equivalence is why medical dosages are often expressed in cc (cubic centimeters) interchangeably with mL." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const TO_L: Record<string, number> = {
+    l: 1, ml: 0.001, m3: 1000, cm3: 0.001,
+    gal_us: 3.785411784, gal_uk: 4.54609, qt: 0.946352946,
+    pt: 0.473176473, cup: 0.2365882365, floz_us: 0.0295735296,
+    tbsp: 0.0147867648, tsp: 0.0049289216,
+  };
+  const LABELS: Record<string, string> = {
+    l: 'Liter', ml: 'Milliliter', m3: 'Cubic Meter', cm3: 'Cubic Centimeter',
+    gal_us: 'US Gallon', gal_uk: 'UK Gallon', qt: 'US Quart',
+    pt: 'US Pint', cup: 'US Cup', floz_us: 'US Fluid Oz',
+    tbsp: 'Tablespoon', tsp: 'Teaspoon',
+  };
+  const UNITS: Record<string, string> = {
+    l: 'L', ml: 'mL', m3: 'm³', cm3: 'cm³',
+    gal_us: 'gal', gal_uk: 'gal UK', qt: 'qt', pt: 'pt',
+    cup: 'cup', floz_us: 'fl oz', tbsp: 'tbsp', tsp: 'tsp',
+  };
+
+  function fmt(n: number): string {
+    if (n === 0) return '0';
+    if (Math.abs(n) >= 1e9 || (Math.abs(n) < 1e-6 && n !== 0)) return n.toExponential(4);
+    return parseFloat(n.toPrecision(8)).toString();
+  }
+
+  function convert() {
+    const val = parseFloat((document.getElementById('vol-value') as HTMLInputElement).value);
+    const from = (document.getElementById('vol-from') as HTMLSelectElement).value;
+    const container = document.getElementById('vol-results')!;
+    if (isNaN(val)) { container.innerHTML = ''; return; }
+    const liters = val * TO_L[from];
+    container.innerHTML = Object.entries(TO_L).map(([unit, factor]) => {
+      const result = liters / factor;
+      const active = unit === from ? 'border-indigo-300 bg-indigo-50' : 'border-gray-100 bg-gray-50';
+      return `<div class="flex justify-between items-center border ${active} rounded-xl px-4 py-2.5">
+        <span class="text-sm text-gray-500">${LABELS[unit]}</span>
+        <span class="font-mono text-sm font-medium text-gray-800 select-all">${fmt(result)} ${UNITS[unit]}</span>
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('vol-value')?.addEventListener('input', convert);
+  document.getElementById('vol-from')?.addEventListener('change', convert);
+</script>
