@@ -1,0 +1,135 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Statistics Calculator"
+  description="Calculate mean, median, mode, standard deviation, variance, min, max, range, and more from any set of numbers."
+  slug="statistics-calculator"
+  category="Math"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Statistics Calculator</h1>
+  <p class="text-gray-500 mb-8">Calculate mean, median, mode, standard deviation, and more from any data set.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div>
+      <label class="label">Data Set (comma or space separated)</label>
+      <textarea id="stat-input" rows={3} placeholder="e.g. 4, 8, 6, 5, 3, 2, 8, 9, 2, 5" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y text-sm font-mono"></textarea>
+      <div class="flex gap-2 mt-2">
+        <button id="calc-btn" class="btn-primary">Calculate</button>
+        <button id="clear-btn" class="btn-secondary">Clear</button>
+        <span id="n-count" class="text-xs text-gray-400 self-center ml-auto"></span>
+      </div>
+    </div>
+
+    <div id="stat-error" class="hidden bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700"></div>
+
+    <div id="stat-results" class="hidden space-y-4">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3" id="stat-grid"></div>
+
+      <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+        <p class="text-sm font-semibold text-gray-700 mb-2">Sorted Data</p>
+        <div id="sorted-data" class="font-mono text-xs text-gray-600 break-all select-all"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is the difference between mean, median, and mode?", a: "Mean is the arithmetic average (sum ÷ count). Median is the middle value when sorted — resistant to outliers. Mode is the most frequently occurring value. For symmetric distributions they are similar; for skewed data they diverge significantly." },
+        { q: "What is standard deviation?", a: "Standard deviation measures how spread out values are from the mean. A low SD means values cluster near the mean; a high SD means they are spread out. About 68% of values fall within ±1 SD, 95% within ±2 SD (for normal distributions)." },
+        { q: "What is the difference between population and sample standard deviation?", a: "Population SD divides by N (all data). Sample SD divides by N−1 (Bessel's correction) to produce an unbiased estimate when working with a subset. Use sample SD (N−1) when your data is a sample from a larger population." },
+        { q: "What is variance?", a: "Variance is the square of the standard deviation. It measures the average squared deviation from the mean. It is harder to interpret in original units (since it's squared), which is why standard deviation (the square root) is typically reported." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  function fmt(n: number): string {
+    return parseFloat(n.toPrecision(8)).toString();
+  }
+
+  function calculate() {
+    const raw = (document.getElementById('stat-input') as HTMLTextAreaElement).value;
+    const errBox = document.getElementById('stat-error')!;
+    const results = document.getElementById('stat-results')!;
+    errBox.classList.add('hidden');
+
+    const nums = raw.split(/[\s,]+/).filter(Boolean).map(Number);
+    if (nums.some(isNaN)) {
+      errBox.textContent = 'All values must be numbers.'; errBox.classList.remove('hidden');
+      results.classList.add('hidden'); return;
+    }
+    if (nums.length === 0) { results.classList.add('hidden'); return; }
+
+    const n = nums.length;
+    document.getElementById('n-count')!.textContent = `${n} value${n !== 1 ? 's' : ''}`;
+    const sorted = [...nums].sort((a, b) => a - b);
+    const sum = nums.reduce((a, b) => a + b, 0);
+    const mean = sum / n;
+    const median = n % 2 === 0
+      ? (sorted[n/2 - 1] + sorted[n/2]) / 2
+      : sorted[Math.floor(n/2)];
+
+    const freq: Record<number, number> = {};
+    nums.forEach(v => freq[v] = (freq[v] || 0) + 1);
+    const maxFreq = Math.max(...Object.values(freq));
+    const modes = Object.entries(freq).filter(([,f]) => f === maxFreq).map(([v]) => Number(v));
+    const modeStr = maxFreq === 1 ? 'No mode' : modes.join(', ');
+
+    const varPop = nums.reduce((a, b) => a + (b - mean) ** 2, 0) / n;
+    const varSam = n > 1 ? nums.reduce((a, b) => a + (b - mean) ** 2, 0) / (n - 1) : 0;
+    const sdPop = Math.sqrt(varPop);
+    const sdSam = Math.sqrt(varSam);
+    const q1 = sorted[Math.floor(n * 0.25)];
+    const q3 = sorted[Math.floor(n * 0.75)];
+
+    const stats = [
+      { label: 'Count (n)', val: n.toString() },
+      { label: 'Sum', val: fmt(sum) },
+      { label: 'Mean', val: fmt(mean) },
+      { label: 'Median', val: fmt(median) },
+      { label: 'Mode', val: modeStr },
+      { label: 'Min', val: fmt(sorted[0]) },
+      { label: 'Max', val: fmt(sorted[n-1]) },
+      { label: 'Range', val: fmt(sorted[n-1] - sorted[0]) },
+      { label: 'Q1 (25th)', val: fmt(q1) },
+      { label: 'Q3 (75th)', val: fmt(q3) },
+      { label: 'IQR', val: fmt(q3 - q1) },
+      { label: 'Variance (pop)', val: fmt(varPop) },
+      { label: 'Variance (sample)', val: fmt(varSam) },
+      { label: 'Std Dev (pop)', val: fmt(sdPop) },
+      { label: 'Std Dev (sample)', val: fmt(sdSam) },
+      { label: 'Coeff of Variation', val: mean !== 0 ? fmt((sdSam / mean) * 100) + '%' : 'N/A' },
+    ];
+
+    document.getElementById('stat-grid')!.innerHTML = stats.map(({ label, val }) =>
+      `<div class="bg-gray-50 border border-gray-100 rounded-xl p-3">
+        <div class="text-xs text-gray-400 mb-0.5">${label}</div>
+        <div class="font-mono text-sm font-semibold text-gray-900 select-all">${val}</div>
+      </div>`
+    ).join('');
+
+    document.getElementById('sorted-data')!.textContent = sorted.join(', ');
+    results.classList.remove('hidden');
+  }
+
+  document.getElementById('calc-btn')?.addEventListener('click', calculate);
+  document.getElementById('stat-input')?.addEventListener('input', calculate);
+  document.getElementById('clear-btn')?.addEventListener('click', () => {
+    (document.getElementById('stat-input') as HTMLTextAreaElement).value = '';
+    document.getElementById('stat-results')!.classList.add('hidden');
+    document.getElementById('n-count')!.textContent = '';
+  });
+</script>

@@ -1,0 +1,145 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Quadratic Equation Solver"
+  description="Solve quadratic equations of the form ax² + bx + c = 0. Shows real and complex roots, discriminant, vertex, and step-by-step work."
+  slug="quadratic-equation-solver"
+  category="Math"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Quadratic Equation Solver</h1>
+  <p class="text-gray-500 mb-8">Solve ax² + bx + c = 0 with step-by-step solutions.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div>
+      <label class="label">Equation: ax² + bx + c = 0</label>
+      <div class="flex flex-wrap items-center gap-2">
+        <input id="coef-a" type="number" placeholder="a" class="input-field w-20 text-center" />
+        <span class="text-gray-600 font-medium">x² +</span>
+        <input id="coef-b" type="number" placeholder="b" class="input-field w-20 text-center" />
+        <span class="text-gray-600 font-medium">x +</span>
+        <input id="coef-c" type="number" placeholder="c" class="input-field w-20 text-center" />
+        <span class="text-gray-600 font-medium">= 0</span>
+      </div>
+    </div>
+
+    <div id="quad-error" class="hidden bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700"></div>
+    <div id="quad-results" class="hidden space-y-4"></div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is the quadratic formula?", a: "The quadratic formula solves ax² + bx + c = 0: x = (−b ± √(b²−4ac)) / 2a. The ± gives two solutions — x₁ uses addition, x₂ uses subtraction." },
+        { q: "What is the discriminant?", a: "The discriminant is b² − 4ac. If positive: two distinct real roots. If zero: one repeated real root. If negative: two complex (imaginary) roots. The discriminant tells you the nature of solutions without fully solving the equation." },
+        { q: "What is the vertex of a parabola?", a: "The vertex is the highest or lowest point of the parabola y = ax² + bx + c. Its x-coordinate is −b/(2a), and the y-coordinate is c − b²/(4a). The vertex is also where the axis of symmetry passes." },
+        { q: "What are complex roots?", a: "When the discriminant is negative, the square root produces an imaginary number. Complex roots come in conjugate pairs: x = p ± qi, where i = √(−1). These roots don't appear on the real number line but are valid solutions in the complex plane." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  function fmt(n: number): string { return parseFloat(n.toPrecision(10)).toString(); }
+
+  function solve() {
+    const a = parseFloat((document.getElementById('coef-a') as HTMLInputElement).value);
+    const b = parseFloat((document.getElementById('coef-b') as HTMLInputElement).value);
+    const c = parseFloat((document.getElementById('coef-c') as HTMLInputElement).value);
+    const errBox = document.getElementById('quad-error')!;
+    const results = document.getElementById('quad-results')!;
+    errBox.classList.add('hidden'); results.classList.add('hidden');
+
+    if ([a, b, c].some(isNaN)) return;
+    if (a === 0) {
+      if (b === 0) {
+        errBox.textContent = c === 0 ? 'Infinite solutions (0 = 0).' : 'No solution (contradiction).';
+        errBox.classList.remove('hidden'); return;
+      }
+      const x = -c / b;
+      results.innerHTML = `<div class="grid grid-cols-2 gap-3">
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 text-center col-span-2">
+          <div class="text-xs text-indigo-500 mb-1">Linear equation (a=0): x = ${fmt(x)}</div>
+        </div></div>`;
+      results.classList.remove('hidden'); return;
+    }
+
+    const disc = b * b - 4 * a * c;
+    const eqStr = `${a}x² ${b >= 0 ? '+' : '−'} ${Math.abs(b)}x ${c >= 0 ? '+' : '−'} ${Math.abs(c)} = 0`;
+    const vertexX = -b / (2 * a);
+    const vertexY = c - (b * b) / (4 * a);
+
+    let rootsHTML = '';
+    let discDesc = '';
+    if (disc > 0) {
+      const x1 = (-b + Math.sqrt(disc)) / (2 * a);
+      const x2 = (-b - Math.sqrt(disc)) / (2 * a);
+      discDesc = 'Positive — two distinct real roots';
+      rootsHTML = `<div class="grid grid-cols-2 gap-3">
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 text-center">
+          <div class="text-xs text-indigo-500 mb-1">Root x₁</div>
+          <div class="text-2xl font-bold text-indigo-800 font-mono">${fmt(x1)}</div>
+        </div>
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 text-center">
+          <div class="text-xs text-indigo-500 mb-1">Root x₂</div>
+          <div class="text-2xl font-bold text-indigo-800 font-mono">${fmt(x2)}</div>
+        </div>
+      </div>`;
+    } else if (disc === 0) {
+      const x1 = -b / (2 * a);
+      discDesc = 'Zero — one repeated real root';
+      rootsHTML = `<div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 text-center">
+        <div class="text-xs text-indigo-500 mb-1">Repeated Root x₁ = x₂</div>
+        <div class="text-2xl font-bold text-indigo-800 font-mono">${fmt(x1)}</div>
+      </div>`;
+    } else {
+      const real = fmt(-b / (2 * a));
+      const imag = fmt(Math.sqrt(-disc) / (2 * a));
+      discDesc = 'Negative — two complex (imaginary) roots';
+      rootsHTML = `<div class="grid grid-cols-2 gap-3">
+        <div class="bg-purple-50 border border-purple-200 rounded-xl p-4 text-center">
+          <div class="text-xs text-purple-500 mb-1">Root x₁ (complex)</div>
+          <div class="text-lg font-bold text-purple-800 font-mono">${real} + ${imag}i</div>
+        </div>
+        <div class="bg-purple-50 border border-purple-200 rounded-xl p-4 text-center">
+          <div class="text-xs text-purple-500 mb-1">Root x₂ (complex)</div>
+          <div class="text-lg font-bold text-purple-800 font-mono">${real} − ${imag}i</div>
+        </div>
+      </div>`;
+    }
+
+    results.innerHTML = `
+      <div class="bg-gray-50 border border-gray-200 rounded-xl p-3 font-mono text-sm text-center text-gray-700">${eqStr}</div>
+      ${rootsHTML}
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm">
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-3">
+          <div class="text-xs text-gray-400 mb-0.5">Discriminant (b²−4ac)</div>
+          <div class="font-mono font-semibold text-gray-900">${fmt(disc)}</div>
+          <div class="text-xs text-gray-500 mt-0.5">${discDesc}</div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-3">
+          <div class="text-xs text-gray-400 mb-0.5">Vertex (h, k)</div>
+          <div class="font-mono font-semibold text-gray-900">(${fmt(vertexX)}, ${fmt(vertexY)})</div>
+          <div class="text-xs text-gray-500 mt-0.5">Axis of symmetry: x = ${fmt(vertexX)}</div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-3">
+          <div class="text-xs text-gray-400 mb-0.5">Parabola opens</div>
+          <div class="font-mono font-semibold text-gray-900">${a > 0 ? 'Upward ∪' : 'Downward ∩'}</div>
+          <div class="text-xs text-gray-500 mt-0.5">${a > 0 ? 'Minimum at vertex' : 'Maximum at vertex'}</div>
+        </div>
+      </div>`;
+    results.classList.remove('hidden');
+  }
+
+  ['coef-a','coef-b','coef-c'].forEach(id => document.getElementById(id)?.addEventListener('input', solve));
+</script>

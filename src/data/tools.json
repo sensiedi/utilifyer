@@ -568,5 +568,55 @@
     "priority": 57,
     "status": "live",
     "icon": "⛽"
+  },
+  {
+    "slug": "gcd-lcm-calculator",
+    "title": "GCD & LCM Calculator",
+    "description": "Calculate the Greatest Common Divisor and Least Common Multiple of two or more numbers with prime factorization.",
+    "category": "Math",
+    "tags": ["GCD", "LCM", "greatest common divisor", "least common multiple", "prime factors"],
+    "priority": 58,
+    "status": "live",
+    "icon": "🔢"
+  },
+  {
+    "slug": "quadratic-equation-solver",
+    "title": "Quadratic Equation Solver",
+    "description": "Solve ax² + bx + c = 0. Shows real and complex roots, discriminant, vertex, and parabola properties.",
+    "category": "Math",
+    "tags": ["quadratic", "equation", "roots", "discriminant", "parabola", "algebra"],
+    "priority": 59,
+    "status": "live",
+    "icon": "📐"
+  },
+  {
+    "slug": "pythagorean-calculator",
+    "title": "Pythagorean Theorem Calculator",
+    "description": "Find any side of a right triangle using a² + b² = c². Shows angles, area, and perimeter.",
+    "category": "Math",
+    "tags": ["pythagorean theorem", "right triangle", "hypotenuse", "trigonometry", "geometry"],
+    "priority": 60,
+    "status": "live",
+    "icon": "📐"
+  },
+  {
+    "slug": "prime-checker",
+    "title": "Prime Number Checker",
+    "description": "Check if a number is prime, find its prime factors, or generate all primes up to any limit.",
+    "category": "Math",
+    "tags": ["prime number", "prime factors", "sieve of eratosthenes", "factorization"],
+    "priority": 61,
+    "status": "live",
+    "icon": "🔢"
+  },
+  {
+    "slug": "scientific-calculator",
+    "title": "Scientific Calculator",
+    "description": "Full scientific calculator with trig, log, powers, roots, factorial, π, e, and calculation history.",
+    "category": "Math",
+    "tags": ["scientific calculator", "trigonometry", "logarithm", "sin cos tan", "calculator"],
+    "priority": 62,
+    "status": "live",
+    "icon": "🧮"
   }
 ]

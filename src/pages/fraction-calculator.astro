@@ -1,0 +1,157 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Fraction Calculator"
+  description="Add, subtract, multiply, and divide fractions. Automatically simplifies results to lowest terms and converts to mixed numbers and decimals."
+  slug="fraction-calculator"
+  category="Math"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Fraction Calculator</h1>
+  <p class="text-gray-500 mb-8">Add, subtract, multiply, or divide fractions — simplified automatically.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="flex flex-wrap items-end gap-3">
+      <!-- Fraction A -->
+      <div class="flex flex-col items-center gap-1">
+        <input id="a-num" type="number" placeholder="1" class="input-field w-20 text-center text-lg" />
+        <div class="w-20 border-t-2 border-gray-400"></div>
+        <input id="a-den" type="number" placeholder="2" class="input-field w-20 text-center text-lg" />
+      </div>
+
+      <!-- Operator -->
+      <select id="frac-op" class="input-field w-16 text-xl text-center mb-1">
+        <option value="add">+</option>
+        <option value="sub">−</option>
+        <option value="mul">×</option>
+        <option value="div">÷</option>
+      </select>
+
+      <!-- Fraction B -->
+      <div class="flex flex-col items-center gap-1">
+        <input id="b-num" type="number" placeholder="1" class="input-field w-20 text-center text-lg" />
+        <div class="w-20 border-t-2 border-gray-400"></div>
+        <input id="b-den" type="number" placeholder="3" class="input-field w-20 text-center text-lg" />
+      </div>
+
+      <span class="text-2xl text-gray-400 mb-1">=</span>
+
+      <!-- Result display -->
+      <div id="frac-result" class="flex flex-col items-center gap-1 min-w-[80px]"></div>
+    </div>
+
+    <div id="frac-details" class="grid grid-cols-1 sm:grid-cols-3 gap-3 hidden">
+      <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-3 text-center">
+        <div class="text-xs text-gray-500 mb-1">Fraction</div>
+        <div id="res-fraction" class="font-mono font-bold text-indigo-800"></div>
+      </div>
+      <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-3 text-center">
+        <div class="text-xs text-gray-500 mb-1">Mixed Number</div>
+        <div id="res-mixed" class="font-mono font-bold text-indigo-800"></div>
+      </div>
+      <div class="bg-indigo-50 border border-indigo-100 rounded-xl p-3 text-center">
+        <div class="text-xs text-gray-500 mb-1">Decimal</div>
+        <div id="res-decimal" class="font-mono font-bold text-indigo-800"></div>
+      </div>
+    </div>
+
+    <div id="frac-error" class="hidden bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700"></div>
+
+    <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+      <p class="text-sm font-semibold text-gray-700 mb-2">Quick Reference</p>
+      <div class="text-xs text-gray-600 space-y-1">
+        <div><strong>Add/Sub:</strong> Convert to common denominator, then add/subtract numerators</div>
+        <div><strong>Multiply:</strong> Multiply numerators and denominators directly</div>
+        <div><strong>Divide:</strong> Multiply by the reciprocal of the second fraction</div>
+        <div><strong>Simplify:</strong> Divide both parts by their GCD</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How do you add fractions with different denominators?", a: "Find the least common denominator (LCD), convert each fraction, then add the numerators. For example: 1/3 + 1/4. LCD = 12. Convert: 4/12 + 3/12 = 7/12." },
+        { q: "How do you divide fractions?", a: "Flip the second fraction (take its reciprocal) and multiply. For example: 2/3 ÷ 4/5 = 2/3 × 5/4 = 10/12 = 5/6. This is the 'keep, change, flip' method." },
+        { q: "What is a mixed number?", a: "A mixed number combines a whole number and a fraction. For example: 7/4 = 1¾. The whole part is the quotient and the fraction part is the remainder over the original denominator." },
+        { q: "How do you simplify a fraction?", a: "Divide both the numerator and denominator by their Greatest Common Divisor (GCD). For example: 12/16 — GCD(12,16) = 4, so 12÷4 / 16÷4 = 3/4." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  function gcd(a: number, b: number): number { return b === 0 ? Math.abs(a) : gcd(b, a % b); }
+
+  function simplify(num: number, den: number): [number, number] {
+    if (den === 0) return [num, den];
+    const g = gcd(Math.abs(num), Math.abs(den));
+    const sign = den < 0 ? -1 : 1;
+    return [sign * num / g, sign * den / g];
+  }
+
+  function calculate() {
+    const an = parseInt((document.getElementById('a-num') as HTMLInputElement).value);
+    const ad = parseInt((document.getElementById('a-den') as HTMLInputElement).value);
+    const bn = parseInt((document.getElementById('b-num') as HTMLInputElement).value);
+    const bd = parseInt((document.getElementById('b-den') as HTMLInputElement).value);
+    const op = (document.getElementById('frac-op') as HTMLSelectElement).value;
+    const errBox = document.getElementById('frac-error')!;
+    const details = document.getElementById('frac-details')!;
+    errBox.classList.add('hidden');
+
+    if ([an, ad, bn, bd].some(isNaN)) { details.classList.add('hidden'); return; }
+    if (ad === 0 || bd === 0) {
+      errBox.textContent = 'Denominator cannot be zero.'; errBox.classList.remove('hidden');
+      details.classList.add('hidden'); return;
+    }
+    if (op === 'div' && bn === 0) {
+      errBox.textContent = 'Cannot divide by zero.'; errBox.classList.remove('hidden');
+      details.classList.add('hidden'); return;
+    }
+
+    let rn: number, rd: number;
+    switch (op) {
+      case 'add': rn = an * bd + bn * ad; rd = ad * bd; break;
+      case 'sub': rn = an * bd - bn * ad; rd = ad * bd; break;
+      case 'mul': rn = an * bn; rd = ad * bd; break;
+      case 'div': rn = an * bd; rd = ad * bn; break;
+      default: return;
+    }
+
+    const [sn, sd] = simplify(rn, rd);
+    const decimal = sn / sd;
+    const whole = Math.trunc(sn / sd);
+    const remNum = Math.abs(sn) % Math.abs(sd);
+
+    const fracStr = `${sn}/${sd}`;
+    const mixedStr = whole !== 0 && remNum !== 0 ? `${whole} ${remNum}/${Math.abs(sd)}` : (remNum === 0 ? `${whole}` : fracStr);
+    const decStr = parseFloat(decimal.toPrecision(10)).toString();
+
+    document.getElementById('res-fraction')!.textContent = fracStr;
+    document.getElementById('res-mixed')!.textContent = mixedStr;
+    document.getElementById('res-decimal')!.textContent = decStr;
+
+    const resultEl = document.getElementById('frac-result')!;
+    if (remNum !== 0) {
+      resultEl.innerHTML = `<span class="text-lg font-mono font-bold text-indigo-700">${sn}</span><div class="w-20 border-t-2 border-indigo-400"></div><span class="text-lg font-mono font-bold text-indigo-700">${sd}</span>`;
+    } else {
+      resultEl.innerHTML = `<span class="text-2xl font-mono font-bold text-indigo-700 mb-1">${whole}</span>`;
+    }
+    details.classList.remove('hidden');
+  }
+
+  ['a-num','a-den','b-num','b-den','frac-op'].forEach(id =>
+    document.getElementById(id)?.addEventListener('input', calculate)
+  );
+</script>

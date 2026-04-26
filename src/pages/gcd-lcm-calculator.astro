@@ -1,0 +1,108 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="GCD & LCM Calculator"
+  description="Calculate the Greatest Common Divisor (GCD) and Least Common Multiple (LCM) of two or more numbers. Shows step-by-step work."
+  slug="gcd-lcm-calculator"
+  category="Math"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">GCD & LCM Calculator</h1>
+  <p class="text-gray-500 mb-8">Find the Greatest Common Divisor and Least Common Multiple of any numbers.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div>
+      <label class="label">Numbers (comma or space separated)</label>
+      <input id="gcd-input" type="text" placeholder="e.g. 12, 18, 24" class="input-field font-mono text-lg" />
+    </div>
+
+    <div id="gcd-error" class="hidden bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700"></div>
+
+    <div id="gcd-results" class="hidden grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="bg-indigo-50 border border-indigo-200 rounded-2xl p-5 text-center">
+        <div class="text-sm font-semibold text-indigo-500 uppercase tracking-wide mb-1">GCD</div>
+        <div id="gcd-val" class="text-4xl font-bold text-indigo-800 font-mono my-2"></div>
+        <div class="text-xs text-gray-500">Greatest Common Divisor</div>
+      </div>
+      <div class="bg-green-50 border border-green-200 rounded-2xl p-5 text-center">
+        <div class="text-sm font-semibold text-green-600 uppercase tracking-wide mb-1">LCM</div>
+        <div id="lcm-val" class="text-4xl font-bold text-green-800 font-mono my-2"></div>
+        <div class="text-xs text-gray-500">Least Common Multiple</div>
+      </div>
+    </div>
+
+    <div id="gcd-steps" class="hidden bg-gray-50 border border-gray-200 rounded-xl p-4">
+      <p class="text-sm font-semibold text-gray-700 mb-2">Prime Factorizations</p>
+      <div id="factors-display" class="text-sm font-mono text-gray-700 space-y-1"></div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is the GCD (Greatest Common Divisor)?", a: "The GCD (also called HCF — Highest Common Factor) is the largest positive integer that divides all given numbers without a remainder. For example, GCD(12, 18) = 6, because 6 divides both 12 and 18, and no larger number does." },
+        { q: "What is the LCM (Least Common Multiple)?", a: "The LCM is the smallest positive integer that is divisible by all given numbers. For example, LCM(4, 6) = 12, the smallest number that both 4 and 6 divide into evenly." },
+        { q: "What is the relationship between GCD and LCM?", a: "For two numbers a and b: LCM(a,b) = |a × b| / GCD(a,b). This means knowing the GCD lets you calculate the LCM instantly. For more than two numbers, apply this pairwise." },
+        { q: "Where are GCD and LCM used?", a: "GCD is used to simplify fractions (divide by GCD). LCM is used to find common denominators when adding fractions. Both appear in cryptography (RSA keys), scheduling problems, and gear ratio calculations." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  function gcd(a: number, b: number): number { return b === 0 ? Math.abs(a) : gcd(b, a % b); }
+  function lcm(a: number, b: number): number { return Math.abs(a * b) / gcd(a, b); }
+
+  function primeFactors(n: number): number[] {
+    const factors: number[] = [];
+    let d = 2;
+    while (d * d <= n) {
+      while (n % d === 0) { factors.push(d); n = Math.floor(n / d); }
+      d++;
+    }
+    if (n > 1) factors.push(n);
+    return factors;
+  }
+
+  function calculate() {
+    const raw = (document.getElementById('gcd-input') as HTMLInputElement).value;
+    const errBox = document.getElementById('gcd-error')!;
+    const results = document.getElementById('gcd-results')!;
+    const steps = document.getElementById('gcd-steps')!;
+    errBox.classList.add('hidden');
+
+    const nums = raw.split(/[\s,]+/).filter(Boolean).map(Number);
+    if (nums.length < 2) { results.classList.add('hidden'); steps.classList.add('hidden'); return; }
+    if (nums.some(v => isNaN(v) || !Number.isInteger(v) || v <= 0)) {
+      errBox.textContent = 'All values must be positive integers.'; errBox.classList.remove('hidden');
+      results.classList.add('hidden'); steps.classList.add('hidden'); return;
+    }
+
+    const gcdResult = nums.reduce(gcd);
+    const lcmResult = nums.reduce(lcm);
+
+    document.getElementById('gcd-val')!.textContent = gcdResult.toString();
+    document.getElementById('lcm-val')!.textContent = lcmResult.toString();
+
+    document.getElementById('factors-display')!.innerHTML = nums.map(n => {
+      const factors = primeFactors(n);
+      const display = factors.length ? factors.join(' × ') : String(n);
+      return `<div><span class="text-indigo-600 font-bold">${n}</span> = ${display}</div>`;
+    }).join('');
+
+    results.classList.remove('hidden');
+    steps.classList.remove('hidden');
+  }
+
+  document.getElementById('gcd-input')?.addEventListener('input', calculate);
+</script>

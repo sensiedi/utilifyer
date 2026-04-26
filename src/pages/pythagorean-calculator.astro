@@ -1,0 +1,144 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Pythagorean Theorem Calculator"
+  description="Calculate the missing side of a right triangle using the Pythagorean theorem (a² + b² = c²). Find hypotenuse or leg length instantly."
+  slug="pythagorean-calculator"
+  category="Math"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Pythagorean Theorem Calculator</h1>
+  <p class="text-gray-500 mb-8">Find the missing side of a right triangle using a² + b² = c².</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <p class="text-sm text-gray-500">Enter any two sides — the missing side is calculated automatically. Leave one field blank.</p>
+
+    <div class="grid grid-cols-3 gap-4 items-end">
+      <div class="text-center">
+        <label class="label text-center block">Side a (leg)</label>
+        <input id="side-a" type="number" min="0" placeholder="?" class="input-field text-center text-lg" />
+      </div>
+      <div class="text-center">
+        <label class="label text-center block">Side b (leg)</label>
+        <input id="side-b" type="number" min="0" placeholder="?" class="input-field text-center text-lg" />
+      </div>
+      <div class="text-center">
+        <label class="label text-center block">Side c (hypotenuse)</label>
+        <input id="side-c" type="number" min="0" placeholder="?" class="input-field text-center text-lg border-indigo-300 bg-indigo-50" />
+      </div>
+    </div>
+
+    <!-- Triangle diagram -->
+    <div class="flex justify-center">
+      <svg width="220" height="180" viewBox="0 0 220 180" class="text-gray-700">
+        <polygon points="20,160 20,20 200,160" fill="none" stroke="#6366f1" stroke-width="2"/>
+        <rect x="20" y="142" width="18" height="18" fill="none" stroke="#6366f1" stroke-width="1.5"/>
+        <text x="10" y="95" fill="#4b5563" font-size="14" font-weight="bold">a</text>
+        <text x="105" y="178" fill="#4b5563" font-size="14" font-weight="bold">b</text>
+        <text x="115" y="90" fill="#4b5563" font-size="14" font-weight="bold">c</text>
+        <text id="svg-a" x="10" y="110" fill="#6366f1" font-size="11" font-weight="bold"></text>
+        <text id="svg-b" x="95" y="178" fill="#6366f1" font-size="11" font-weight="bold"></text>
+        <text id="svg-c" x="112" y="105" fill="#6366f1" font-size="11" font-weight="bold"></text>
+      </svg>
+    </div>
+
+    <div id="pyth-error" class="hidden bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700"></div>
+
+    <div id="pyth-results" class="hidden grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+        <div class="text-xs text-gray-400 mb-0.5">Perimeter</div>
+        <div id="res-perimeter" class="font-mono font-bold text-gray-900"></div>
+      </div>
+      <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+        <div class="text-xs text-gray-400 mb-0.5">Area</div>
+        <div id="res-area" class="font-mono font-bold text-gray-900"></div>
+      </div>
+      <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+        <div class="text-xs text-gray-400 mb-0.5">Angles (α, β)</div>
+        <div id="res-angles" class="font-mono font-bold text-gray-900"></div>
+      </div>
+    </div>
+
+    <!-- Common triples -->
+    <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+      <p class="text-sm font-semibold text-gray-700 mb-2">Common Pythagorean Triples</p>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+        {[[3,4,5],[5,12,13],[8,15,17],[7,24,25],[6,8,10],[9,12,15],[10,24,26],[20,21,29]].map(([a,b,c]) => (
+          <button onclick={`document.getElementById('side-a').value='${a}';document.getElementById('side-b').value='${b}';document.getElementById('side-c').value='';solve()`}
+            class="bg-white border border-gray-200 hover:border-indigo-300 rounded-lg px-2 py-1.5 font-mono text-gray-700 hover:text-indigo-700 transition-colors">
+            {a}–{b}–{c}
+          </button>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is the Pythagorean theorem?", a: "In a right triangle, the square of the hypotenuse (longest side) equals the sum of squares of the other two sides: a² + b² = c². Named after Pythagoras (~570–495 BC), though known to Babylonian mathematicians 1,000 years earlier." },
+        { q: "What is a Pythagorean triple?", a: "A Pythagorean triple is a set of three positive integers (a, b, c) that satisfy a² + b² = c². The simplest is (3, 4, 5): 9 + 16 = 25. Multiples of any triple are also triples: (6, 8, 10), (9, 12, 15)." },
+        { q: "How do you find the hypotenuse?", a: "Given legs a and b: c = √(a² + b²). For example, a=3, b=4: c = √(9+16) = √25 = 5." },
+        { q: "How do you find a leg given the hypotenuse?", a: "Given hypotenuse c and one leg a: b = √(c² − a²). For example, c=13, a=5: b = √(169−25) = √144 = 12." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  function fmt(n: number): string { return parseFloat(n.toPrecision(8)).toString(); }
+
+  function solve() {
+    const aEl = document.getElementById('side-a') as HTMLInputElement;
+    const bEl = document.getElementById('side-b') as HTMLInputElement;
+    const cEl = document.getElementById('side-c') as HTMLInputElement;
+    const errBox = document.getElementById('pyth-error')!;
+    const results = document.getElementById('pyth-results')!;
+    errBox.classList.add('hidden'); results.classList.add('hidden');
+
+    const av = aEl.value ? parseFloat(aEl.value) : NaN;
+    const bv = bEl.value ? parseFloat(bEl.value) : NaN;
+    const cv = cEl.value ? parseFloat(cEl.value) : NaN;
+
+    const known = [!isNaN(av), !isNaN(bv), !isNaN(cv)].filter(Boolean).length;
+    if (known < 2) return;
+
+    let a = av, b = bv, c = cv;
+    if (isNaN(a)) a = Math.sqrt(c * c - b * b);
+    else if (isNaN(b)) b = Math.sqrt(c * c - a * a);
+    else if (isNaN(c)) c = Math.sqrt(a * a + b * b);
+
+    if ([a, b, c].some(v => isNaN(v) || v <= 0)) {
+      errBox.textContent = 'These values don\'t form a valid right triangle.';
+      errBox.classList.remove('hidden'); return;
+    }
+
+    if (isNaN(av)) aEl.value = fmt(a);
+    if (isNaN(bv)) bEl.value = fmt(b);
+    if (isNaN(cv)) cEl.value = fmt(c);
+
+    document.getElementById('svg-a')!.textContent = fmt(a);
+    document.getElementById('svg-b')!.textContent = fmt(b);
+    document.getElementById('svg-c')!.textContent = fmt(c);
+
+    const angleA = (Math.atan(a / b) * 180 / Math.PI);
+    const angleB = 90 - angleA;
+    document.getElementById('res-perimeter')!.textContent = fmt(a + b + c);
+    document.getElementById('res-area')!.textContent = fmt(0.5 * a * b);
+    document.getElementById('res-angles')!.textContent = `${fmt(angleA)}°, ${fmt(angleB)}°`;
+    results.classList.remove('hidden');
+  }
+
+  (window as any).solve = solve;
+  ['side-a','side-b','side-c'].forEach(id => document.getElementById(id)?.addEventListener('input', solve));
+</script>
