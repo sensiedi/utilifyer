@@ -1,0 +1,239 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Coffee Ratio Calculator"
+  description="Calculate the perfect coffee-to-water ratio for any brew method. Get exact measurements for espresso, pour over, French press, cold brew, and more."
+  slug="coffee-ratio-calculator"
+  category="Food & Cooking"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Coffee Ratio Calculator</h1>
+  <p class="text-gray-500 mb-8">Calculate the perfect coffee-to-water ratio for any brew method — in grams, tablespoons, or cups.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Brew Method</label>
+        <select id="cr-method" class="input-field"></select>
+      </div>
+      <div>
+        <label class="label">Strength</label>
+        <select id="cr-strength" class="input-field">
+          <option value="weak">Light / Weak</option>
+          <option value="medium" selected>Medium / Golden ratio</option>
+          <option value="strong">Strong / Bold</option>
+          <option value="custom">Custom ratio</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="cr-custom-ratio" class="hidden">
+      <label class="label">Custom Ratio (water:coffee)</label>
+      <div class="flex items-center gap-2">
+        <input id="cr-ratio" type="number" value="16" min="1" max="100" step="0.5" class="input-field font-mono w-24" />
+        <span class="text-gray-500 text-sm">:1 (water:coffee)</span>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Calculate by</label>
+        <div class="flex gap-2">
+          <button class="calc-mode mode-active text-sm border border-indigo-400 bg-indigo-50 text-indigo-700 rounded-lg px-4 py-2" data-mode="water">Water amount</button>
+          <button class="calc-mode text-sm border border-gray-200 rounded-lg px-4 py-2 text-gray-600 hover:border-indigo-300" data-mode="coffee">Coffee amount</button>
+        </div>
+      </div>
+      <div>
+        <label class="label" id="cr-input-label">Water amount</label>
+        <div class="flex gap-2">
+          <input id="cr-input" type="number" value="300" min="1" class="input-field font-mono flex-1" />
+          <select id="cr-unit" class="input-field w-auto text-sm py-2">
+            <option value="g" selected>g / ml</option>
+            <option value="oz">fl oz</option>
+            <option value="cup">cups</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div id="cr-results" class="hidden space-y-3">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-center">
+          <div class="text-xs text-indigo-500 mb-0.5">Coffee (grams)</div>
+          <div id="cr-coffee-g" class="text-2xl font-bold font-mono text-indigo-900">—</div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+          <div class="text-xs text-gray-400 mb-0.5">Water (ml/g)</div>
+          <div id="cr-water-g" class="text-2xl font-bold font-mono text-gray-900">—</div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+          <div class="text-xs text-gray-400 mb-0.5">Coffee (tbsp)</div>
+          <div id="cr-coffee-tbsp" class="text-xl font-bold font-mono text-gray-900">—</div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+          <div class="text-xs text-gray-400 mb-0.5">Ratio</div>
+          <div id="cr-ratio-display" class="text-xl font-bold font-mono text-gray-900">—</div>
+        </div>
+      </div>
+      <p id="cr-notes" class="text-sm text-gray-500 bg-gray-50 rounded-xl p-3"></p>
+    </div>
+
+    <!-- Brew methods reference -->
+    <div>
+      <p class="label mb-2">Brew Method Reference</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead><tr class="bg-gray-50 text-left">
+            <th class="px-3 py-2 font-medium text-gray-600">Method</th>
+            <th class="px-3 py-2 font-medium text-gray-600">Ratio</th>
+            <th class="px-3 py-2 font-medium text-gray-600">Grind</th>
+            <th class="px-3 py-2 font-medium text-gray-600">Time</th>
+          </tr></thead>
+          <tbody class="divide-y divide-gray-100">
+            {[
+              ['Espresso','1:2 (coffee:water)','Fine','25–30 sec'],
+              ['Moka pot','1:7','Fine-medium','5–10 min'],
+              ['AeroPress','1:12–15','Medium-fine','1.5–2.5 min'],
+              ['Pour over (V60)','1:15–17','Medium','3–4 min'],
+              ['French press','1:12–15','Coarse','4 min'],
+              ['Drip machine','1:15–18','Medium','5–8 min'],
+              ['Chemex','1:15–17','Medium-coarse','4–5 min'],
+              ['Cold brew','1:4–8 (concentrate)','Coarse','12–24 hrs'],
+            ].map(([method, ratio, grind, time]) => (
+              <tr class="hover:bg-gray-50">
+                <td class="px-3 py-2 font-medium text-gray-800">{method}</td>
+                <td class="px-3 py-2 font-mono text-gray-600">{ratio}</td>
+                <td class="px-3 py-2 text-gray-500">{grind}</td>
+                <td class="px-3 py-2 text-gray-500">{time}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is the golden ratio for coffee?", a: "The Specialty Coffee Association (SCA) golden ratio is 1:15–18 (coffee:water by weight), equivalent to 1–2 tablespoons per 6 oz water. For 300ml water, use 17–20g coffee. This applies to pour-over, drip, and similar methods. Espresso uses a much stronger ratio (1:2)." },
+        { q: "Why measure coffee by weight instead of volume?", a: "Coffee beans have inconsistent volume — grind size, bean density, and humidity all affect how much a tablespoon contains. 1 tablespoon of fine grind weighs more than 1 tablespoon of coarse grind. Weight (grams) is consistent regardless of grind or bean type, making it far more reliable for reproducible results." },
+        { q: "How does the ratio affect extraction?", a: "Higher coffee:water ratio (less water) = stronger, more intense cup but can be over-extracted (bitter). Lower ratio (more water) = lighter, weaker cup, potentially under-extracted (sour/thin). The ideal balance depends on brew method, grind size, water temperature, and contact time." },
+        { q: "What is cold brew ratio?", a: "Cold brew uses a much higher coffee concentration because the low temperature (room temp or fridge) extracts slowly over 12–24 hours. A 1:4–8 ratio is typical for concentrate; 1:8–10 for ready-to-drink. Cold brew concentrate is usually diluted 1:1 with water or milk before drinking." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  interface BrewMethod {
+    label: string;
+    ratios: { weak: number; medium: number; strong: number };
+    notes: string;
+  }
+
+  const METHODS: Record<string, BrewMethod> = {
+    drip:        { label: 'Drip / Filter coffee', ratios: { weak: 18, medium: 16, strong: 13 }, notes: 'Standard drip machine. Use medium grind.' },
+    pour_over:   { label: 'Pour over (V60/Chemex)', ratios: { weak: 17, medium: 16, strong: 14 }, notes: 'Brew time 3–4 min. Use medium grind. Temperature 93–96°C (200–205°F).' },
+    french_press:{ label: 'French press', ratios: { weak: 15, medium: 13, strong: 11 }, notes: 'Steep 4 min. Use coarse grind. Press gently.' },
+    aeropress:   { label: 'AeroPress', ratios: { weak: 16, medium: 14, strong: 12 }, notes: 'Brew time 1.5–2.5 min. Very flexible — experiment freely.' },
+    moka:        { label: 'Moka pot (stovetop)', ratios: { weak: 8, medium: 7, strong: 6 }, notes: 'Use fine-to-medium grind. Fill filter basket without tamping.' },
+    espresso:    { label: 'Espresso (double shot)', ratios: { weak: 2.5, medium: 2, strong: 1.5 }, notes: 'Ratio is coffee:water yield (not water:coffee). Pull in 25–30 sec.' },
+    cold_brew:   { label: 'Cold brew concentrate', ratios: { weak: 8, medium: 6, strong: 4 }, notes: 'Steep 12–24 hrs cold. Dilute 1:1 with water/milk before serving.' },
+    cupping:     { label: 'Cupping (professional)', ratios: { weak: 18, medium: 17, strong: 16 }, notes: 'SCA standard: 8.25g per 150ml. Steep 4 min without stirring.' },
+  };
+
+  const methodSel = document.getElementById('cr-method') as HTMLSelectElement;
+  methodSel.innerHTML = Object.entries(METHODS).map(([k,v]) => `<option value="${k}">${v.label}</option>`).join('');
+  methodSel.value = 'pour_over';
+
+  const UNIT_TO_G: Record<string, number> = { g: 1, oz: 29.5735, cup: 236.588 };
+  let calcMode = 'water';
+  const G_PER_TBSP_COFFEE = 5.5; // approx
+
+  function calculate() {
+    const method = (document.getElementById('cr-method') as HTMLSelectElement).value;
+    const strength = (document.getElementById('cr-strength') as HTMLSelectElement).value;
+    const customRatio = parseFloat((document.getElementById('cr-ratio') as HTMLInputElement).value);
+    const inputVal = parseFloat((document.getElementById('cr-input') as HTMLInputElement).value);
+    const unit = (document.getElementById('cr-unit') as HTMLSelectElement).value;
+
+    if (isNaN(inputVal)) return;
+
+    const m = METHODS[method];
+    let ratio: number;
+    if (strength === 'custom') ratio = customRatio || 16;
+    else if (method === 'espresso') ratio = m.ratios[strength as 'weak'|'medium'|'strong'];
+    else ratio = m.ratios[strength as 'weak'|'medium'|'strong'];
+
+    const inputG = inputVal * UNIT_TO_G[unit];
+    let coffeeG: number, waterG: number;
+
+    if (method === 'espresso') {
+      // Espresso: ratio = water/coffee (yield)
+      if (calcMode === 'coffee') {
+        coffeeG = inputG;
+        waterG = coffeeG * ratio;
+      } else {
+        waterG = inputG;
+        coffeeG = waterG / ratio;
+      }
+    } else {
+      // Standard: ratio = water:coffee
+      if (calcMode === 'water') {
+        waterG = inputG;
+        coffeeG = waterG / ratio;
+      } else {
+        coffeeG = inputG;
+        waterG = coffeeG * ratio;
+      }
+    }
+
+    const tbsp = coffeeG / G_PER_TBSP_COFFEE;
+    const ratioLabel = method === 'espresso' ? `1:${ratio}` : `1:${ratio}`;
+
+    document.getElementById('cr-coffee-g')!.textContent = coffeeG.toFixed(1) + 'g';
+    document.getElementById('cr-water-g')!.textContent = waterG.toFixed(0) + 'ml';
+    document.getElementById('cr-coffee-tbsp')!.textContent = tbsp.toFixed(1);
+    document.getElementById('cr-ratio-display')!.textContent = ratioLabel;
+    document.getElementById('cr-notes')!.textContent = m.notes;
+    document.getElementById('cr-results')!.classList.remove('hidden');
+  }
+
+  document.querySelectorAll('.calc-mode').forEach(el => {
+    el.addEventListener('click', () => {
+      calcMode = (el as HTMLElement).dataset.mode!;
+      document.querySelectorAll('.calc-mode').forEach(b => {
+        b.classList.remove('mode-active','border-indigo-400','bg-indigo-50','text-indigo-700');
+        b.classList.add('border-gray-200','text-gray-600');
+      });
+      el.classList.add('mode-active','border-indigo-400','bg-indigo-50','text-indigo-700');
+      el.classList.remove('border-gray-200','text-gray-600');
+      document.getElementById('cr-input-label')!.textContent = calcMode === 'water' ? 'Water amount' : 'Coffee amount';
+      calculate();
+    });
+  });
+
+  document.getElementById('cr-strength')?.addEventListener('change', (e) => {
+    const isCustom = (e.target as HTMLSelectElement).value === 'custom';
+    document.getElementById('cr-custom-ratio')!.classList.toggle('hidden', !isCustom);
+    calculate();
+  });
+
+  ['cr-method','cr-strength','cr-ratio','cr-input','cr-unit'].forEach(id =>
+    document.getElementById(id)?.addEventListener('input', calculate)
+  );
+
+  calculate();
+</script>

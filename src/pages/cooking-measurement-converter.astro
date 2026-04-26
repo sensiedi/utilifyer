@@ -1,0 +1,211 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Cooking Measurement Converter"
+  description="Convert cooking measurements instantly. Cups to ml, tablespoons to grams, ounces to cups, and more. Includes ingredient-specific weight conversions."
+  slug="cooking-measurement-converter"
+  category="Food & Cooking"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Cooking Measurement Converter</h1>
+  <p class="text-gray-500 mb-8">Convert between cups, tablespoons, teaspoons, grams, ounces, and milliliters — with ingredient-specific densities.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 items-end">
+      <div>
+        <label class="label">Amount</label>
+        <input id="cm-amount" type="number" value="1" min="0" step="0.125" class="input-field font-mono" />
+      </div>
+      <div>
+        <label class="label">From</label>
+        <select id="cm-from" class="input-field text-sm"></select>
+      </div>
+      <div>
+        <label class="label">To</label>
+        <select id="cm-to" class="input-field text-sm"></select>
+      </div>
+      <div>
+        <label class="label">Ingredient (for vol↔weight)</label>
+        <select id="cm-ingredient" class="input-field text-sm"></select>
+      </div>
+    </div>
+
+    <div id="cm-result-area" class="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
+      <div class="text-xs text-indigo-500 mb-1">Result</div>
+      <div id="cm-result" class="text-3xl font-bold font-mono text-indigo-900">—</div>
+      <div id="cm-note" class="text-xs text-indigo-400 mt-1"></div>
+    </div>
+
+    <!-- Quick reference table -->
+    <div>
+      <p class="label mb-2">Quick Reference — Common Conversions</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead><tr class="bg-gray-50 text-left">
+            <th class="px-3 py-2 font-medium text-gray-600">Amount</th>
+            <th class="px-3 py-2 font-medium text-gray-600">US</th>
+            <th class="px-3 py-2 font-medium text-gray-600">Metric</th>
+          </tr></thead>
+          <tbody class="divide-y divide-gray-100 font-mono text-xs">
+            {[
+              ['1 tsp','5 ml','5g (water)'],
+              ['1 tbsp','3 tsp / 15 ml','15g (water)'],
+              ['¼ cup','4 tbsp / 60 ml','60g (water)'],
+              ['⅓ cup','5⅓ tbsp / 79 ml','79g (water)'],
+              ['½ cup','8 tbsp / 118 ml','118g (water)'],
+              ['1 cup','16 tbsp / 237 ml','237g (water)'],
+              ['1 fl oz','2 tbsp / 30 ml','30g (water)'],
+              ['1 pint','2 cups / 473 ml','473g (water)'],
+              ['1 quart','4 cups / 946 ml','0.946 liter'],
+              ['1 gallon','4 quarts / 3.785 l','3785g (water)'],
+              ['1 oz','28.35g','—'],
+              ['1 lb','16 oz / 453.6g','—'],
+            ].map(([amt, us, metric]) => (
+              <tr class="hover:bg-gray-50">
+                <td class="px-3 py-1.5 font-semibold text-gray-800">{amt}</td>
+                <td class="px-3 py-1.5 text-gray-600">{us}</td>
+                <td class="px-3 py-1.5 text-gray-600">{metric}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Ingredient density table -->
+    <div>
+      <p class="label mb-2">Ingredient Densities (1 cup = ?g)</p>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs" id="cm-density-grid"></div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "Why do cup measurements differ by ingredient?", a: "Volume measures space occupied; weight measures mass. Different ingredients have different densities. 1 cup of flour weighs ~125g but 1 cup of butter weighs ~227g. This is why weight-based recipes (using grams) are more precise than volume-based ones, especially for baking where ratios matter." },
+        { q: "Is a US cup the same as an Australian or UK cup?", a: "No — a US cup = 236.6ml. An Australian cup = 250ml (metric cup). A UK cup = 284ml (imperial). Most modern recipes use the US or metric cup. The difference matters for baking: 1 US cup of flour ≈ 125g vs 1 metric cup ≈ 132g. Always check which cup size your recipe uses." },
+        { q: "How do I measure flour correctly?", a: "The most accurate method: spoon flour into the measuring cup and level off with a straight edge (the 'spoon and level' method). Scooping directly packs flour, adding 20–30% more than intended. Weight is most reliable: 1 cup = 120–130g depending on the recipe's intended density." },
+        { q: "What is a 'stick' of butter in metric?", a: "1 US butter stick = ½ cup = 8 tablespoons = 4 oz = 113g. Recipes using 'sticks' are US-specific. For metric countries: ½ cup butter ≈ 113g (not 125g — butter is denser than water). 1 tablespoon butter = 14g." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const UNITS: Record<string, { label: string; ml: number; isWeight?: boolean }> = {
+    tsp:    { label: 'teaspoon (tsp)',      ml: 4.92892 },
+    tbsp:   { label: 'tablespoon (tbsp)',   ml: 14.7868 },
+    cup:    { label: 'cup (US)',            ml: 236.588 },
+    cup_au: { label: 'cup (AU/metric)',     ml: 250 },
+    floz:   { label: 'fluid oz (fl oz)',    ml: 29.5735 },
+    pt:     { label: 'pint (US)',           ml: 473.176 },
+    qt:     { label: 'quart (US)',          ml: 946.353 },
+    ml:     { label: 'milliliter (ml)',     ml: 1 },
+    l:      { label: 'liter (l)',           ml: 1000 },
+    g:      { label: 'gram (g)',            ml: 1, isWeight: true },
+    oz_wt:  { label: 'ounce weight (oz)',   ml: 28.3495, isWeight: true },
+    lb:     { label: 'pound (lb)',          ml: 453.592, isWeight: true },
+    kg:     { label: 'kilogram (kg)',       ml: 1000, isWeight: true },
+  };
+
+  // g per ml (density) for ingredients
+  const INGREDIENTS: Record<string, { label: string; gPerMl: number }> = {
+    water:        { label: 'Water',                gPerMl: 1.0 },
+    flour_ap:     { label: 'Flour (all-purpose)',  gPerMl: 0.529 },
+    flour_bread:  { label: 'Flour (bread)',        gPerMl: 0.543 },
+    sugar_white:  { label: 'Sugar (white)',        gPerMl: 0.845 },
+    sugar_brown:  { label: 'Sugar (brown, packed)',gPerMl: 0.93 },
+    sugar_powder: { label: 'Sugar (powdered)',     gPerMl: 0.564 },
+    butter:       { label: 'Butter',               gPerMl: 0.959 },
+    oil:          { label: 'Vegetable oil',        gPerMl: 0.91 },
+    milk:         { label: 'Milk (whole)',         gPerMl: 1.03 },
+    honey:        { label: 'Honey',                gPerMl: 1.42 },
+    salt:         { label: 'Salt (table)',         gPerMl: 1.217 },
+    cocoa:        { label: 'Cocoa powder',         gPerMl: 0.423 },
+    rice_raw:     { label: 'Rice (raw)',           gPerMl: 0.85 },
+    oats:         { label: 'Rolled oats',          gPerMl: 0.39 },
+    nuts_chopped: { label: 'Nuts (chopped)',       gPerMl: 0.5 },
+    cream_cheese: { label: 'Cream cheese',         gPerMl: 1.07 },
+    yogurt:       { label: 'Yogurt',               gPerMl: 1.03 },
+    syrup:        { label: 'Maple syrup',          gPerMl: 1.33 },
+    peanut_butter:{ label: 'Peanut butter',        gPerMl: 1.08 },
+    cornstarch:   { label: 'Cornstarch',           gPerMl: 0.6 },
+  };
+
+  // Populate selects
+  const fromSel = document.getElementById('cm-from') as HTMLSelectElement;
+  const toSel = document.getElementById('cm-to') as HTMLSelectElement;
+  const ingSel = document.getElementById('cm-ingredient') as HTMLSelectElement;
+
+  const volGroup = Object.entries(UNITS).filter(([,v]) => !v.isWeight).map(([k,v]) => `<option value="${k}">${v.label}</option>`).join('');
+  const wtGroup = Object.entries(UNITS).filter(([,v]) => v.isWeight).map(([k,v]) => `<option value="${k}">${v.label}</option>`).join('');
+  const groupHtml = `<optgroup label="Volume">${volGroup}</optgroup><optgroup label="Weight">${wtGroup}</optgroup>`;
+  fromSel.innerHTML = toSel.innerHTML = groupHtml;
+  fromSel.value = 'cup'; toSel.value = 'g';
+
+  ingSel.innerHTML = Object.entries(INGREDIENTS).map(([k,v]) => `<option value="${k}">${v.label}</option>`).join('');
+  ingSel.value = 'flour_ap';
+
+  function convert() {
+    const amount = parseFloat((document.getElementById('cm-amount') as HTMLInputElement).value);
+    const from = (document.getElementById('cm-from') as HTMLSelectElement).value;
+    const to = (document.getElementById('cm-to') as HTMLSelectElement).value;
+    const ing = (document.getElementById('cm-ingredient') as HTMLSelectElement).value;
+    const noteEl = document.getElementById('cm-note')!;
+
+    if (isNaN(amount)) { document.getElementById('cm-result')!.textContent = '—'; return; }
+
+    const fromU = UNITS[from], toU = UNITS[to];
+    const density = INGREDIENTS[ing].gPerMl;
+    let result: number;
+    let note = '';
+
+    if (fromU.isWeight === toU.isWeight) {
+      // Same type: straight conversion
+      result = amount * fromU.ml / toU.ml;
+      note = '';
+    } else if (!fromU.isWeight && toU.isWeight) {
+      // Volume → Weight
+      const ml = amount * fromU.ml;
+      const grams = ml * density;
+      result = grams * 1 / toU.ml; // toU.ml for weights is g-equivalent
+      note = `Using density of ${INGREDIENTS[ing].label}: ${density} g/ml`;
+    } else {
+      // Weight → Volume
+      const grams = amount * fromU.ml;
+      const ml = grams / density;
+      result = ml / toU.ml;
+      note = `Using density of ${INGREDIENTS[ing].label}: ${density} g/ml`;
+    }
+
+    const fmt = result < 0.001 ? result.toExponential(3) : result < 10 ? parseFloat(result.toFixed(4)).toString() : result.toFixed(2);
+    document.getElementById('cm-result')!.textContent = fmt + ' ' + to.replace('_wt','').replace('_au','');
+    noteEl.textContent = note;
+  }
+
+  ['cm-amount','cm-from','cm-to','cm-ingredient'].forEach(id =>
+    document.getElementById(id)?.addEventListener('input', convert)
+  );
+
+  // Density grid
+  const cup_ml = 236.588;
+  document.getElementById('cm-density-grid')!.innerHTML = Object.entries(INGREDIENTS).map(([, v]) => `
+    <div class="bg-gray-50 border border-gray-100 rounded-lg p-2 text-center">
+      <div class="text-gray-600 truncate">${v.label}</div>
+      <div class="font-mono font-semibold text-gray-900">${Math.round(cup_ml * v.gPerMl)}g</div>
+      <div class="text-gray-400 text-[10px]">per cup</div>
+    </div>
+  `).join('');
+
+  convert();
+</script>

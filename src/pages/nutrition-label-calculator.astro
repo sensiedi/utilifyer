@@ -1,0 +1,202 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Nutrition Label Calculator"
+  description="Create a nutrition label for any food or recipe. Enter macronutrients and micronutrients to generate a US FDA-style nutrition facts panel."
+  slug="nutrition-label-calculator"
+  category="Food & Cooking"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Nutrition Label Calculator</h1>
+  <p class="text-gray-500 mb-8">Enter macros and nutrients to generate a US FDA-style nutrition facts label.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Inputs -->
+      <div class="space-y-4">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="label">Serving Size</label>
+            <input id="nl-serving-size" type="number" value="100" min="1" class="input-field font-mono" />
+          </div>
+          <div>
+            <label class="label">Unit</label>
+            <select id="nl-serving-unit" class="input-field">
+              <option value="g" selected>g (grams)</option>
+              <option value="ml">ml</option>
+              <option value="oz">oz</option>
+              <option value="cup">cup</option>
+              <option value="tbsp">tbsp</option>
+              <option value="piece">piece</option>
+            </select>
+          </div>
+          <div>
+            <label class="label">Servings per Container</label>
+            <input id="nl-servings" type="number" value="1" min="1" step="0.5" class="input-field font-mono" />
+          </div>
+        </div>
+
+        <div class="space-y-2">
+          <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Macronutrients (per serving)</p>
+          {[
+            { id: 'nl-calories', label: 'Calories (kcal)', unit: '' },
+            { id: 'nl-fat', label: 'Total Fat', unit: 'g' },
+            { id: 'nl-sat-fat', label: '— Saturated Fat', unit: 'g' },
+            { id: 'nl-trans-fat', label: '— Trans Fat', unit: 'g' },
+            { id: 'nl-cholesterol', label: 'Cholesterol', unit: 'mg' },
+            { id: 'nl-sodium', label: 'Sodium', unit: 'mg' },
+            { id: 'nl-carbs', label: 'Total Carbohydrate', unit: 'g' },
+            { id: 'nl-fiber', label: '— Dietary Fiber', unit: 'g' },
+            { id: 'nl-sugars', label: '— Total Sugars', unit: 'g' },
+            { id: 'nl-protein', label: 'Protein', unit: 'g' },
+          ].map(({ id, label, unit }) => (
+            <div class="flex items-center gap-2">
+              <label class="text-sm text-gray-600 flex-1">{label}</label>
+              <div class="flex items-center gap-1">
+                <input id={id} type="number" value="0" min="0" step="0.1" class="border border-gray-200 rounded-lg px-2 py-1 w-20 text-sm font-mono text-right focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+                {unit && <span class="text-xs text-gray-400 w-6">{unit}</span>}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div class="space-y-2">
+          <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide">Micronutrients (% Daily Value)</p>
+          {[
+            { id: 'nl-vit-d', label: 'Vitamin D' },
+            { id: 'nl-calcium', label: 'Calcium' },
+            { id: 'nl-iron', label: 'Iron' },
+            { id: 'nl-potassium', label: 'Potassium' },
+          ].map(({ id, label }) => (
+            <div class="flex items-center gap-2">
+              <label class="text-sm text-gray-600 flex-1">{label}</label>
+              <div class="flex items-center gap-1">
+                <input id={id} type="number" value="0" min="0" max="999" step="1" class="border border-gray-200 rounded-lg px-2 py-1 w-20 text-sm font-mono text-right focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+                <span class="text-xs text-gray-400 w-4">%</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <!-- Nutrition Label Preview -->
+      <div>
+        <p class="label mb-2">Nutrition Facts Label</p>
+        <div id="nl-label" class="border-4 border-gray-900 p-3 font-sans max-w-xs text-gray-900" style="font-family:Arial,Helvetica,sans-serif">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How are calories calculated from macros?", a: "Calories come from three macronutrients: Protein provides 4 kcal/g, Carbohydrates provide 4 kcal/g, Fat provides 9 kcal/g. Alcohol provides 7 kcal/g but isn't on standard nutrition labels. This is why high-fat foods like nuts and oils are calorie-dense." },
+        { q: "What is % Daily Value on nutrition labels?", a: "% Daily Value (%DV) shows how much a nutrient in a serving contributes to a 2,000-calorie daily diet. 5% or less is considered low; 20% or more is high. The 2,000-calorie reference is an average — individual needs vary by age, sex, height, weight, and activity level." },
+        { q: "What is the difference between total sugars and added sugars?", a: "Total sugars includes all sugars — both naturally occurring (like fructose in fruit or lactose in milk) and added sugars. Added sugars are sugars added during processing. As of 2020, US FDA-required labels must list added sugars separately. WHO recommends added sugars stay under 10% of daily calories." },
+        { q: "What is trans fat and why is it listed separately?", a: "Trans fats are industrially produced (partially hydrogenated oils) that raise LDL (bad) cholesterol while lowering HDL (good) cholesterol. They're strongly linked to heart disease. The FDA effectively banned artificial trans fats in 2018, but naturally occurring trans fats from ruminants still appear in small amounts in dairy and beef." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const DV: Record<string, number> = {
+    fat: 78, 'sat-fat': 20, cholesterol: 300, sodium: 2300, carbs: 275, fiber: 28, 'vit-d': 100, calcium: 100, iron: 100, potassium: 100,
+  };
+
+  function g(id: string): number {
+    return parseFloat((document.getElementById(id) as HTMLInputElement).value) || 0;
+  }
+
+  function pct(val: number, key: string): string {
+    const dv = DV[key];
+    if (!dv) return '';
+    return Math.round((val / dv) * 100) + '%';
+  }
+
+  function renderLabel() {
+    const servingSize = g('nl-serving-size');
+    const servingUnit = (document.getElementById('nl-serving-unit') as HTMLSelectElement).value;
+    const servings = g('nl-servings');
+    const cal = g('nl-calories');
+    const fat = g('nl-fat');
+    const satFat = g('nl-sat-fat');
+    const transFat = g('nl-trans-fat');
+    const chol = g('nl-cholesterol');
+    const sodium = g('nl-sodium');
+    const carbs = g('nl-carbs');
+    const fiber = g('nl-fiber');
+    const sugars = g('nl-sugars');
+    const protein = g('nl-protein');
+    const vitD = g('nl-vit-d');
+    const calcium = g('nl-calcium');
+    const iron = g('nl-iron');
+    const potassium = g('nl-potassium');
+
+    const row = (label: string, amt: string, dvPct: string, bold = false, indent = false) =>
+      `<div class="flex justify-between items-baseline ${bold ? 'font-bold' : ''} border-t border-gray-900 pt-0.5 mt-0.5 ${indent ? 'pl-4' : ''}">
+        <span>${label} <span class="${bold ? 'font-bold' : 'font-normal'}">${amt}</span></span>
+        ${dvPct ? `<span class="font-bold">${dvPct}</span>` : '<span></span>'}
+      </div>`;
+
+    document.getElementById('nl-label')!.innerHTML = `
+      <div class="text-4xl font-black leading-none mb-1">Nutrition Facts</div>
+      <div class="text-xs border-t-4 border-b border-gray-900 py-0.5">${servings} serving${servings !== 1 ? 's' : ''} per container</div>
+      <div class="flex justify-between items-end border-b-8 border-gray-900 pb-1 mb-1">
+        <div><div class="font-bold">Serving size</div></div>
+        <div class="font-bold">${servingSize}${servingUnit}</div>
+      </div>
+      <div class="text-xs text-gray-600 mb-0.5">Amount per serving</div>
+      <div class="flex justify-between items-end border-b-4 border-gray-900 pb-1">
+        <div class="text-xl font-black">Calories</div>
+        <div class="text-4xl font-black">${cal}</div>
+      </div>
+      <div class="text-xs text-right border-b border-gray-900 py-0.5 font-bold">% Daily Value*</div>
+      ${row('Total Fat', fat + 'g', pct(fat,'fat'), true)}
+      ${row('Saturated Fat', satFat + 'g', pct(satFat,'sat-fat'), false, true)}
+      ${row('<i>Trans</i> Fat', transFat + 'g', '', false, true)}
+      ${row('Cholesterol', chol + 'mg', pct(chol,'cholesterol'), true)}
+      ${row('Sodium', sodium + 'mg', pct(sodium,'sodium'), true)}
+      ${row('Total Carbohydrate', carbs + 'g', pct(carbs,'carbs'), true)}
+      ${row('Dietary Fiber', fiber + 'g', pct(fiber,'fiber'), false, true)}
+      ${row('Total Sugars', sugars + 'g', '', false, true)}
+      ${row('Protein', protein + 'g', '', true)}
+      <div class="border-t-8 border-b border-gray-900 mt-1 pt-1">
+        <div class="grid grid-cols-2 gap-x-2 text-xs">
+          <div class="flex justify-between border-r border-gray-900 pr-2">Vitamin D <span>${vitD}%</span></div>
+          <div class="flex justify-between pl-2">Calcium <span>${calcium}%</span></div>
+          <div class="flex justify-between border-r border-gray-900 pr-2 border-t">Iron <span>${iron}%</span></div>
+          <div class="flex justify-between pl-2 border-t">Potassium <span>${potassium}%</span></div>
+        </div>
+      </div>
+      <div class="text-xs mt-1 leading-tight">*The % Daily Value tells you how much a nutrient in a serving contributes to a daily diet. 2,000 calories a day is used for general nutrition advice.</div>
+    `;
+  }
+
+  document.querySelectorAll('input, select').forEach(el =>
+    el.addEventListener('input', renderLabel)
+  );
+
+  // Pre-fill with a typical serving of oatmeal
+  (document.getElementById('nl-calories') as HTMLInputElement).value = '150';
+  (document.getElementById('nl-fat') as HTMLInputElement).value = '3';
+  (document.getElementById('nl-carbs') as HTMLInputElement).value = '27';
+  (document.getElementById('nl-fiber') as HTMLInputElement).value = '4';
+  (document.getElementById('nl-sugars') as HTMLInputElement).value = '1';
+  (document.getElementById('nl-protein') as HTMLInputElement).value = '5';
+  (document.getElementById('nl-sodium') as HTMLInputElement).value = '0';
+  (document.getElementById('nl-iron') as HTMLInputElement).value = '10';
+  renderLabel();
+</script>

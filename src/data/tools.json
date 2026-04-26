@@ -1647,5 +1647,149 @@
     "priority": 104,
     "status": "live",
     "icon": "\ud83d\udd04"
+  },
+  {
+    "slug": "recipe-converter",
+    "title": "Recipe Converter & Scaler",
+    "description": "Scale any recipe up or down by servings. Convert recipe measurements between cups, tablespoons, teaspoons, grams, and ounces instantly.",
+    "category": "Food & Cooking",
+    "tags": [
+      "recipe scaler",
+      "recipe converter",
+      "cooking measurements",
+      "recipe servings",
+      "cooking"
+    ],
+    "priority": 105,
+    "status": "live",
+    "icon": "\ud83d\udcd6"
+  },
+  {
+    "slug": "cooking-measurement-converter",
+    "title": "Cooking Measurement Converter",
+    "description": "Convert cooking measurements instantly. Cups to ml, tablespoons to grams, ounces to cups, and more. Includes ingredient-specific weight conversions.",
+    "category": "Food & Cooking",
+    "tags": [
+      "cups to grams",
+      "cooking measurements",
+      "tablespoons to ml",
+      "cooking converter",
+      "baking"
+    ],
+    "priority": 106,
+    "status": "live",
+    "icon": "\ud83e\udd44"
+  },
+  {
+    "slug": "calorie-calculator",
+    "title": "Calorie Calculator",
+    "description": "Calculate calories burned by activity and daily calorie needs. Enter your weight, activity, and duration to get accurate calorie burn estimates.",
+    "category": "Food & Cooking",
+    "tags": [
+      "calories burned",
+      "calorie calculator",
+      "TDEE",
+      "calorie deficit",
+      "exercise calories"
+    ],
+    "priority": 107,
+    "status": "live",
+    "icon": "\ud83d\udd25"
+  },
+  {
+    "slug": "oven-temperature-converter",
+    "title": "Oven Temperature Converter",
+    "description": "Convert oven temperatures between Fahrenheit, Celsius, and Gas Mark. Instantly convert baking temperatures for any recipe.",
+    "category": "Food & Cooking",
+    "tags": [
+      "oven temperature",
+      "Fahrenheit to Celsius",
+      "Gas Mark",
+      "baking temperature",
+      "cooking"
+    ],
+    "priority": 108,
+    "status": "live",
+    "icon": "\ud83c\udf21\ufe0f"
+  },
+  {
+    "slug": "baking-substitution-guide",
+    "title": "Baking Substitution Guide",
+    "description": "Find substitutes for common baking ingredients. Missing buttermilk, eggs, or baking powder? Get exact substitution ratios instantly.",
+    "category": "Food & Cooking",
+    "tags": [
+      "baking substitutes",
+      "egg substitute",
+      "butter substitute",
+      "buttermilk substitute",
+      "baking"
+    ],
+    "priority": 109,
+    "status": "live",
+    "icon": "\ud83d\udd01"
+  },
+  {
+    "slug": "alcohol-unit-calculator",
+    "title": "Alcohol Unit Calculator",
+    "description": "Calculate alcohol units in any drink. Find out how many UK units or standard drinks are in beer, wine, spirits, and cocktails based on volume and ABV.",
+    "category": "Food & Cooking",
+    "tags": [
+      "alcohol units",
+      "UK units",
+      "standard drinks",
+      "ABV calculator",
+      "alcohol"
+    ],
+    "priority": 110,
+    "status": "live",
+    "icon": "\ud83c\udf7a"
+  },
+  {
+    "slug": "coffee-ratio-calculator",
+    "title": "Coffee Ratio Calculator",
+    "description": "Calculate the perfect coffee-to-water ratio for any brew method. Get exact measurements for espresso, pour over, French press, cold brew, and more.",
+    "category": "Food & Cooking",
+    "tags": [
+      "coffee ratio",
+      "coffee calculator",
+      "pour over ratio",
+      "espresso ratio",
+      "French press ratio"
+    ],
+    "priority": 111,
+    "status": "live",
+    "icon": "\u2615"
+  },
+  {
+    "slug": "meat-cooking-temperature-guide",
+    "title": "Meat Cooking Temperature Guide",
+    "description": "Find safe internal cooking temperatures for beef, chicken, pork, fish, and more. Includes USDA recommended temperatures and doneness levels.",
+    "category": "Food & Cooking",
+    "tags": [
+      "meat temperature",
+      "cooking temperature",
+      "internal temperature",
+      "food safety",
+      "USDA temperature"
+    ],
+    "priority": 112,
+    "status": "live",
+    "icon": "\ud83e\udd69"
+  },
+  {
+    "slug": "nutrition-label-calculator",
+    "title": "Nutrition Label Calculator",
+    "description": "Create a nutrition label for any food or recipe. Enter macronutrients and micronutrients to generate a US FDA-style nutrition facts panel.",
+    "category": "Food & Cooking",
+    "tags": [
+      "nutrition label",
+      "nutrition facts",
+      "macros calculator",
+      "calories protein fat carbs",
+      "food label"
+    ],
+    "priority": 113,
+    "status": "live",
+    "icon": "\ud83c\udff7\ufe0f"
   }
 ]

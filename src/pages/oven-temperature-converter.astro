@@ -1,0 +1,170 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Oven Temperature Converter"
+  description="Convert oven temperatures between Fahrenheit, Celsius, and Gas Mark. Instantly convert baking temperatures for any recipe."
+  slug="oven-temperature-converter"
+  category="Food & Cooking"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Oven Temperature Converter</h1>
+  <p class="text-gray-500 mb-8">Convert baking temperatures between Fahrenheit, Celsius, and Gas Mark.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div>
+        <label class="label">°Fahrenheit</label>
+        <input id="ot-f" type="number" placeholder="e.g. 350" class="input-field font-mono text-xl" />
+      </div>
+      <div>
+        <label class="label">°Celsius</label>
+        <input id="ot-c" type="number" placeholder="e.g. 180" class="input-field font-mono text-xl" />
+      </div>
+      <div>
+        <label class="label">Gas Mark</label>
+        <input id="ot-g" type="number" placeholder="e.g. 4" step="0.5" class="input-field font-mono text-xl" />
+      </div>
+    </div>
+
+    <div id="ot-description" class="hidden bg-amber-50 border border-amber-200 rounded-xl p-3 text-sm text-amber-800"></div>
+
+    <!-- Reference table -->
+    <div>
+      <p class="label mb-2">Oven Temperature Reference</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead><tr class="bg-gray-50 text-left">
+            <th class="px-3 py-2 font-medium text-gray-600">Description</th>
+            <th class="px-3 py-2 font-medium text-gray-600">°F</th>
+            <th class="px-3 py-2 font-medium text-gray-600">°C</th>
+            <th class="px-3 py-2 font-medium text-gray-600">Fan/Convection °C</th>
+            <th class="px-3 py-2 font-medium text-gray-600">Gas Mark</th>
+          </tr></thead>
+          <tbody class="divide-y divide-gray-100">
+            {[
+              ['Very low / warm',   '212–250', '100–120', '80–100',   '¼–½'],
+              ['Low / slow',        '275–300', '135–150', '115–130',  '1–2'],
+              ['Moderately low',    '325',     '160–165', '140–145',  '3'],
+              ['Moderate',          '350',     '175–180', '155–160',  '4'],
+              ['Moderately hot',    '375–400', '190–200', '170–180',  '5–6'],
+              ['Hot',               '425',     '220',     '200',      '7'],
+              ['Very hot',          '450–475', '230–245', '210–225',  '8–9'],
+              ['Extremely hot',     '500+',    '260+',    '240+',     '10'],
+            ].map(([desc, f, c, fan, gas]) => (
+              <tr class="hover:bg-gray-50 ot-row cursor-pointer" data-f={f.split('–')[0]} data-c={c.split('–')[0]} data-desc={desc}>
+                <td class="px-3 py-2 font-medium text-gray-800">{desc}</td>
+                <td class="px-3 py-2 font-mono text-gray-600">{f}°F</td>
+                <td class="px-3 py-2 font-mono text-gray-600">{c}°C</td>
+                <td class="px-3 py-2 font-mono text-gray-500">{fan}°C</td>
+                <td class="px-3 py-2 font-mono text-gray-600">{gas}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Common baking temps -->
+    <div>
+      <p class="label mb-2">Common Baking Temperatures</p>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
+        {[
+          ['Cheesecake','325°F / 163°C'],
+          ['Muffins','375°F / 190°C'],
+          ['Cookies','350–375°F / 175–190°C'],
+          ['Brownies','325–350°F / 163–175°C'],
+          ['Bread','375–425°F / 190–220°C'],
+          ['Pizza','450–500°F / 230–260°C'],
+          ['Roast chicken','375°F / 190°C'],
+          ['Roast vegetables','400–425°F / 200–220°C'],
+        ].map(([item, temp]) => (
+          <div class="bg-gray-50 border border-gray-100 rounded-lg p-2">
+            <div class="font-medium text-gray-700">{item}</div>
+            <div class="font-mono text-gray-500">{temp}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How do I convert Gas Mark to Celsius?", a: "Gas Mark 1 ≈ 140°C (275°F). Each Gas Mark roughly adds 14°C: Gas 2 ≈ 150°C, Gas 3 ≈ 160°C, Gas 4 ≈ 180°C, Gas 5 ≈ 190°C, Gas 6 ≈ 200°C, Gas 7 ≈ 220°C, Gas 8 ≈ 230°C, Gas 9 ≈ 240°C. Gas Mark 4 (180°C/350°F) is the most common baking temperature." },
+        { q: "Should I reduce temperature for a fan/convection oven?", a: "Yes — reduce the temperature by 20°C (35°F) when using a fan/convection oven. Fan ovens circulate hot air more efficiently, cooking food faster and more evenly. A recipe calling for 180°C in a regular oven becomes 160°C in a fan oven. Some modern ovens auto-adjust when you select fan mode." },
+        { q: "Why do UK and US recipes have different temperatures?", a: "UK recipes traditionally use Gas Mark or Celsius; US recipes use Fahrenheit. Both systems describe the same physical temperatures — 180°C = 356°F ≈ 350°F, Gas 4. The difference is just units. Confusingly, some older British recipes use Fahrenheit, and many modern US recipes include Celsius." },
+        { q: "How do I know if my oven runs hot or cold?", a: "Use an oven thermometer — a simple analog dial thermometer placed inside the oven. Set the oven to 350°F (175°C), wait 15 minutes, and compare the reading. Many ovens are off by 25–50°F. Adjust accordingly: if your oven runs 25°F hot, set it 25°F lower than the recipe calls for." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  // Gas mark to Celsius approx
+  function gasToC(gas: number): number { return Math.round(gas * 14 + 121); }
+  function cToGas(c: number): number { return Math.round(((c - 121) / 14) * 2) / 2; }
+  function fToC(f: number): number { return (f - 32) * 5/9; }
+  function cToF(c: number): number { return c * 9/5 + 32; }
+
+  const DESCRIPTIONS: Array<[number, number, string]> = [
+    [100, 150, 'Very low / warm — good for meringues, keeping food warm'],
+    [150, 175, 'Low — ideal for slow cooking, custards, cheesecake'],
+    [175, 190, 'Moderate — most cakes, cookies, muffins, casseroles'],
+    [190, 210, 'Moderately hot — bread, roast chicken, pizza'],
+    [210, 240, 'Hot — roast vegetables, pies, crusty bread'],
+    [240, 300, 'Very hot — pizza, searing, ultra-crispy results'],
+  ];
+
+  function getDescription(c: number): string {
+    const match = DESCRIPTIONS.find(([lo, hi]) => c >= lo && c <= hi);
+    return match ? match[2] : '';
+  }
+
+  let updating = false;
+  function updateAll(c: number, skipId?: string) {
+    if (updating) return;
+    updating = true;
+    const f = Math.round(cToF(c));
+    const gas = cToGas(c);
+    if (skipId !== 'ot-f') (document.getElementById('ot-f') as HTMLInputElement).value = String(f);
+    if (skipId !== 'ot-c') (document.getElementById('ot-c') as HTMLInputElement).value = String(Math.round(c));
+    if (skipId !== 'ot-g') (document.getElementById('ot-g') as HTMLInputElement).value = String(Math.max(0.25, gas));
+    const desc = getDescription(c);
+    const descEl = document.getElementById('ot-description')!;
+    if (desc) { descEl.textContent = '🌡️ ' + desc; descEl.classList.remove('hidden'); }
+    else descEl.classList.add('hidden');
+    updating = false;
+  }
+
+  document.getElementById('ot-f')?.addEventListener('input', (e) => {
+    const f = parseFloat((e.target as HTMLInputElement).value);
+    if (!isNaN(f)) updateAll(fToC(f), 'ot-f');
+  });
+  document.getElementById('ot-c')?.addEventListener('input', (e) => {
+    const c = parseFloat((e.target as HTMLInputElement).value);
+    if (!isNaN(c)) updateAll(c, 'ot-c');
+  });
+  document.getElementById('ot-g')?.addEventListener('input', (e) => {
+    const g = parseFloat((e.target as HTMLInputElement).value);
+    if (!isNaN(g)) updateAll(gasToC(g), 'ot-g');
+  });
+
+  document.querySelectorAll('.ot-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const f = parseInt((row as HTMLElement).dataset.f!);
+      if (!isNaN(f)) updateAll(fToC(f));
+    });
+  });
+
+  updateAll(180);
+</script>

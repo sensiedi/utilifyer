@@ -1,0 +1,256 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Calorie Calculator"
+  description="Calculate calories burned by activity and daily calorie needs. Enter your weight, activity, and duration to get accurate calorie burn estimates."
+  slug="calorie-calculator"
+  category="Food & Cooking"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Calorie Calculator</h1>
+  <p class="text-gray-500 mb-8">Calculate calories burned by activity, and estimate your daily calorie needs.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-6">
+
+    <!-- Activity Calories -->
+    <div>
+      <h2 class="text-base font-semibold text-gray-800 mb-3">Calories Burned by Activity</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <label class="label">Weight</label>
+          <div class="flex gap-2">
+            <input id="ca-weight" type="number" value="70" min="1" class="input-field font-mono flex-1" />
+            <select id="ca-weight-unit" class="input-field w-auto text-sm py-2">
+              <option value="kg" selected>kg</option>
+              <option value="lb">lb</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="label">Activity</label>
+          <select id="ca-activity" class="input-field text-sm"></select>
+        </div>
+        <div>
+          <label class="label">Duration</label>
+          <div class="flex gap-2">
+            <input id="ca-duration" type="number" value="30" min="1" class="input-field font-mono flex-1" />
+            <span class="flex items-center text-sm text-gray-500">min</span>
+          </div>
+        </div>
+      </div>
+      <div id="ca-activity-result" class="mt-3 hidden">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-center">
+            <div class="text-xs text-indigo-500 mb-0.5">Calories Burned</div>
+            <div id="ca-burned" class="text-2xl font-bold font-mono text-indigo-900">—</div>
+          </div>
+          <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+            <div class="text-xs text-gray-400 mb-0.5">Per Minute</div>
+            <div id="ca-per-min" class="text-xl font-bold font-mono text-gray-900">—</div>
+          </div>
+          <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+            <div class="text-xs text-gray-400 mb-0.5">MET Value</div>
+            <div id="ca-met" class="text-xl font-bold font-mono text-gray-900">—</div>
+          </div>
+          <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+            <div class="text-xs text-gray-400 mb-0.5">Intensity</div>
+            <div id="ca-intensity" class="text-sm font-semibold text-gray-700">—</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Daily calorie needs (TDEE) -->
+    <div class="border-t border-gray-100 pt-5">
+      <h2 class="text-base font-semibold text-gray-800 mb-3">Daily Calorie Needs (TDEE)</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+        <div>
+          <label class="label">Age</label>
+          <input id="td-age" type="number" value="30" min="1" max="120" class="input-field font-mono" />
+        </div>
+        <div>
+          <label class="label">Sex</label>
+          <select id="td-sex" class="input-field">
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+        <div>
+          <label class="label">Height</label>
+          <div class="flex gap-2">
+            <input id="td-height" type="number" value="170" min="1" class="input-field font-mono flex-1" />
+            <select id="td-height-unit" class="input-field w-auto text-sm py-2">
+              <option value="cm" selected>cm</option>
+              <option value="in">in</option>
+            </select>
+          </div>
+        </div>
+        <div>
+          <label class="label">Weight</label>
+          <div class="flex gap-2">
+            <input id="td-weight" type="number" value="70" min="1" class="input-field font-mono flex-1" />
+            <select id="td-weight-unit" class="input-field w-auto text-sm py-2">
+              <option value="kg" selected>kg</option>
+              <option value="lb">lb</option>
+            </select>
+          </div>
+        </div>
+        <div class="sm:col-span-2">
+          <label class="label">Activity Level</label>
+          <select id="td-activity" class="input-field">
+            <option value="1.2">Sedentary (desk job, little exercise)</option>
+            <option value="1.375">Lightly active (exercise 1–3 days/wk)</option>
+            <option value="1.55" selected>Moderately active (exercise 3–5 days/wk)</option>
+            <option value="1.725">Very active (hard exercise 6–7 days/wk)</option>
+            <option value="1.9">Extra active (very hard exercise, physical job)</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="td-results" class="mt-4 hidden space-y-3">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-center">
+            <div class="text-xs text-indigo-500 mb-0.5">TDEE (Maintenance)</div>
+            <div id="td-tdee" class="text-2xl font-bold font-mono text-indigo-900">—</div>
+            <div class="text-xs text-indigo-400">cal/day</div>
+          </div>
+          <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+            <div class="text-xs text-gray-400 mb-0.5">Weight Loss (−500)</div>
+            <div id="td-loss" class="text-xl font-bold font-mono text-gray-900">—</div>
+            <div class="text-xs text-gray-400">~0.5 kg/week</div>
+          </div>
+          <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+            <div class="text-xs text-gray-400 mb-0.5">Fast Loss (−1000)</div>
+            <div id="td-fast-loss" class="text-xl font-bold font-mono text-gray-900">—</div>
+            <div class="text-xs text-gray-400">~1 kg/week</div>
+          </div>
+          <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+            <div class="text-xs text-gray-400 mb-0.5">Weight Gain (+500)</div>
+            <div id="td-gain" class="text-xl font-bold font-mono text-gray-900">—</div>
+            <div class="text-xs text-gray-400">~0.5 kg/week</div>
+          </div>
+        </div>
+        <p class="text-xs text-gray-400">Based on Mifflin-St Jeor BMR equation × activity multiplier.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is MET value?", a: "MET (Metabolic Equivalent of Task) measures the energy cost of an activity relative to rest. Resting = 1 MET. Light activity (walking slowly) = 2–3 MET. Moderate (brisk walking, cycling) = 3–6 MET. Vigorous (running, swimming laps) = 6+ MET. Calories burned = MET × weight (kg) × time (hours)." },
+        { q: "What is TDEE?", a: "TDEE (Total Daily Energy Expenditure) is the total calories your body needs to maintain your current weight, accounting for your activity level. It's calculated by multiplying your BMR (Basal Metabolic Rate — calories burned at complete rest) by an activity multiplier (1.2–1.9)." },
+        { q: "How accurate are calorie burn estimates?", a: "Activity calorie calculators are estimates with ±15–25% error depending on individual metabolism, body composition, exercise intensity, and environmental conditions. Heart rate monitors and fitness trackers are more personalized but still estimate. For nutrition planning, use the numbers as a starting point and adjust based on real-world results." },
+        { q: "How many calories is a pound of fat?", a: "Approximately 3,500 calories = 1 pound (0.45 kg) of body fat. This is the basis for the 500 cal/day deficit = 1 lb/week rule. In practice, weight loss is not perfectly linear — water retention, muscle gain, and metabolic adaptation all play a role." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const ACTIVITIES: Array<{ label: string; met: number; cat: string }> = [
+    { label: 'Sitting / office work', met: 1.5, cat: 'Daily' },
+    { label: 'Standing', met: 1.8, cat: 'Daily' },
+    { label: 'Slow walking (2 mph)', met: 2.5, cat: 'Walking' },
+    { label: 'Brisk walking (3.5 mph)', met: 3.8, cat: 'Walking' },
+    { label: 'Fast walking (4.5 mph)', met: 5.0, cat: 'Walking' },
+    { label: 'Hiking (moderate terrain)', met: 5.3, cat: 'Walking' },
+    { label: 'Jogging (5 mph)', met: 8.0, cat: 'Running' },
+    { label: 'Running (6 mph)', met: 10.0, cat: 'Running' },
+    { label: 'Running (8 mph)', met: 13.5, cat: 'Running' },
+    { label: 'Cycling (leisure, <10 mph)', met: 4.0, cat: 'Cycling' },
+    { label: 'Cycling (moderate, 12–14 mph)', met: 8.0, cat: 'Cycling' },
+    { label: 'Cycling (vigorous, 16–19 mph)', met: 10.0, cat: 'Cycling' },
+    { label: 'Swimming (leisure)', met: 6.0, cat: 'Swimming' },
+    { label: 'Swimming laps (vigorous)', met: 10.0, cat: 'Swimming' },
+    { label: 'Weight training (general)', met: 3.5, cat: 'Gym' },
+    { label: 'Weight training (vigorous)', met: 6.0, cat: 'Gym' },
+    { label: 'Circuit training', met: 8.0, cat: 'Gym' },
+    { label: 'Jump rope', met: 10.0, cat: 'Gym' },
+    { label: 'Yoga', met: 2.5, cat: 'Other' },
+    { label: 'Pilates', met: 3.0, cat: 'Other' },
+    { label: 'Dancing (general)', met: 4.5, cat: 'Other' },
+    { label: 'Basketball (game)', met: 8.0, cat: 'Sports' },
+    { label: 'Soccer (game)', met: 10.0, cat: 'Sports' },
+    { label: 'Tennis (singles)', met: 8.0, cat: 'Sports' },
+    { label: 'Golf (walking, carrying clubs)', met: 4.3, cat: 'Sports' },
+    { label: 'Gardening', met: 3.5, cat: 'Daily' },
+    { label: 'Cleaning / housework', met: 3.0, cat: 'Daily' },
+  ];
+
+  // Populate activity select by category
+  const cats: Record<string, string[]> = {};
+  ACTIVITIES.forEach(a => { (cats[a.cat] = cats[a.cat] || []).push(a.label); });
+  const sel = document.getElementById('ca-activity') as HTMLSelectElement;
+  sel.innerHTML = Object.entries(cats).map(([cat, labels]) =>
+    `<optgroup label="${cat}">${labels.map((l,_i) => `<option value="${l}">${l}</option>`).join('')}</optgroup>`
+  ).join('');
+  sel.value = 'Brisk walking (3.5 mph)';
+
+  function calcActivity() {
+    const weightRaw = parseFloat((document.getElementById('ca-weight') as HTMLInputElement).value);
+    const unit = (document.getElementById('ca-weight-unit') as HTMLSelectElement).value;
+    const kg = unit === 'lb' ? weightRaw * 0.453592 : weightRaw;
+    const actLabel = (document.getElementById('ca-activity') as HTMLSelectElement).value;
+    const dur = parseFloat((document.getElementById('ca-duration') as HTMLInputElement).value);
+    if (!kg || !actLabel || !dur) return;
+
+    const act = ACTIVITIES.find(a => a.label === actLabel);
+    if (!act) return;
+
+    const cals = act.met * kg * (dur / 60);
+    const intensity = act.met < 3 ? 'Light' : act.met < 6 ? 'Moderate' : 'Vigorous';
+
+    document.getElementById('ca-burned')!.textContent = Math.round(cals) + ' kcal';
+    document.getElementById('ca-per-min')!.textContent = (cals / dur).toFixed(1);
+    document.getElementById('ca-met')!.textContent = act.met.toFixed(1);
+    document.getElementById('ca-intensity')!.textContent = intensity;
+    document.getElementById('ca-activity-result')!.classList.remove('hidden');
+  }
+
+  function calcTdee() {
+    const age = parseFloat((document.getElementById('td-age') as HTMLInputElement).value);
+    const sex = (document.getElementById('td-sex') as HTMLSelectElement).value;
+    const heightRaw = parseFloat((document.getElementById('td-height') as HTMLInputElement).value);
+    const heightUnit = (document.getElementById('td-height-unit') as HTMLSelectElement).value;
+    const weightRaw = parseFloat((document.getElementById('td-weight') as HTMLInputElement).value);
+    const weightUnit = (document.getElementById('td-weight-unit') as HTMLSelectElement).value;
+    const actMult = parseFloat((document.getElementById('td-activity') as HTMLSelectElement).value);
+
+    const kg = weightUnit === 'lb' ? weightRaw * 0.453592 : weightRaw;
+    const cm = heightUnit === 'in' ? heightRaw * 2.54 : heightRaw;
+
+    if (!age || !kg || !cm) return;
+
+    // Mifflin-St Jeor
+    const bmr = sex === 'male'
+      ? 10 * kg + 6.25 * cm - 5 * age + 5
+      : 10 * kg + 6.25 * cm - 5 * age - 161;
+    const tdee = Math.round(bmr * actMult);
+
+    document.getElementById('td-tdee')!.textContent = tdee.toLocaleString();
+    document.getElementById('td-loss')!.textContent = (tdee - 500).toLocaleString();
+    document.getElementById('td-fast-loss')!.textContent = (tdee - 1000).toLocaleString();
+    document.getElementById('td-gain')!.textContent = (tdee + 500).toLocaleString();
+    document.getElementById('td-results')!.classList.remove('hidden');
+  }
+
+  ['ca-weight','ca-weight-unit','ca-activity','ca-duration'].forEach(id =>
+    document.getElementById(id)?.addEventListener('input', calcActivity)
+  );
+  ['td-age','td-sex','td-height','td-height-unit','td-weight','td-weight-unit','td-activity'].forEach(id =>
+    document.getElementById(id)?.addEventListener('input', calcTdee)
+  );
+
+  calcActivity();
+  calcTdee();
+</script>

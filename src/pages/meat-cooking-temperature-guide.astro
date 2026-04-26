@@ -1,0 +1,217 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Meat Cooking Temperature Guide"
+  description="Find safe internal cooking temperatures for beef, chicken, pork, fish, and more. Includes USDA recommended temperatures and doneness levels."
+  slug="meat-cooking-temperature-guide"
+  category="Food & Cooking"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Meat Cooking Temperature Guide</h1>
+  <p class="text-gray-500 mb-8">Safe internal temperatures and doneness levels for all types of meat and poultry.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <!-- Temp converter -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Convert Temperature</label>
+        <div class="flex gap-2">
+          <input id="mt-f" type="number" placeholder="°F" class="input-field font-mono flex-1" />
+          <span class="flex items-center text-gray-400">↔</span>
+          <input id="mt-c" type="number" placeholder="°C" class="input-field font-mono flex-1" />
+        </div>
+      </div>
+      <div id="mt-match" class="flex items-center">
+        <div id="mt-match-text" class="text-sm text-gray-500 bg-gray-50 border border-gray-100 rounded-xl px-4 py-2 w-full"></div>
+      </div>
+    </div>
+
+    <!-- Beef / Lamb -->
+    <div>
+      <p class="text-sm font-semibold text-gray-700 mb-2">🥩 Beef, Veal & Lamb (Steaks, Roasts)</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead><tr class="bg-red-50 text-left">
+            <th class="px-3 py-2 font-medium text-red-700">Doneness</th>
+            <th class="px-3 py-2 font-medium text-red-700">°F</th>
+            <th class="px-3 py-2 font-medium text-red-700">°C</th>
+            <th class="px-3 py-2 font-medium text-red-700">Description</th>
+          </tr></thead>
+          <tbody class="divide-y divide-red-50">
+            {[
+              ['Rare',         '120–125', '49–52',  'Cool red center'],
+              ['Medium rare',  '130–135', '54–57',  'Warm red center — most popular'],
+              ['Medium',       '140–145', '60–63',  'Warm pink center'],
+              ['Medium well',  '150–155', '66–68',  'Slightly pink center'],
+              ['Well done',    '160+',    '71+',    'No pink, firm throughout'],
+            ].map(([d, f, c, desc]) => (
+              <tr class="hover:bg-red-50 temp-row cursor-pointer" data-f={f.split('–')[0]}>
+                <td class="px-3 py-2 font-medium text-gray-800">{d}</td>
+                <td class="px-3 py-2 font-mono text-gray-600">{f}°F</td>
+                <td class="px-3 py-2 font-mono text-gray-600">{c}°C</td>
+                <td class="px-3 py-2 text-gray-500">{desc}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Poultry -->
+    <div>
+      <p class="text-sm font-semibold text-gray-700 mb-2">🍗 Poultry (Chicken, Turkey, Duck)</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead><tr class="bg-yellow-50 text-left">
+            <th class="px-3 py-2 font-medium text-yellow-700">Cut</th>
+            <th class="px-3 py-2 font-medium text-yellow-700">°F (USDA)</th>
+            <th class="px-3 py-2 font-medium text-yellow-700">°C</th>
+            <th class="px-3 py-2 font-medium text-yellow-700">Notes</th>
+          </tr></thead>
+          <tbody class="divide-y divide-yellow-50">
+            {[
+              ['Whole chicken',    '165',    '74',   'Check thickest part of thigh, not touching bone'],
+              ['Chicken breast',   '165',    '74',   'Pull at 155–160°F — carryover finishes it'],
+              ['Chicken thighs',   '175–180','79–82','Better texture at higher temp for collagen breakdown'],
+              ['Ground chicken',   '165',    '74',   'Must reach 165°F throughout'],
+              ['Turkey (whole)',   '165',    '74',   'Thigh temp. Breast will be done before thigh.'],
+              ['Duck breast',      '135–140','57–60','Unlike chicken, can be served medium-rare safely'],
+            ].map(([cut, f, c, notes]) => (
+              <tr class="hover:bg-yellow-50 temp-row cursor-pointer" data-f={f.split('–')[0]}>
+                <td class="px-3 py-2 font-medium text-gray-800">{cut}</td>
+                <td class="px-3 py-2 font-mono text-gray-600">{f}°F</td>
+                <td class="px-3 py-2 font-mono text-gray-600">{c}°C</td>
+                <td class="px-3 py-2 text-gray-500 text-xs">{notes}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Pork -->
+    <div>
+      <p class="text-sm font-semibold text-gray-700 mb-2">🐷 Pork</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead><tr class="bg-pink-50 text-left">
+            <th class="px-3 py-2 font-medium text-pink-700">Cut</th>
+            <th class="px-3 py-2 font-medium text-pink-700">°F</th>
+            <th class="px-3 py-2 font-medium text-pink-700">°C</th>
+            <th class="px-3 py-2 font-medium text-pink-700">Notes</th>
+          </tr></thead>
+          <tbody class="divide-y divide-pink-50">
+            {[
+              ['Pork chops / loin','145 + 3 min rest','63','Can be slightly pink — USDA updated 2011'],
+              ['Pork shoulder',    '195–205',         '90–96','For pulled pork — collagen fully breaks down'],
+              ['Pork ribs',        '195–205',         '90–96','Bend test: bone pulls back, meat tears easily'],
+              ['Ground pork',      '160',             '71','Must be fully cooked through'],
+              ['Ham (raw)',         '145 + 3 min rest','63','Pre-cooked ham: heat to 140°F (60°C)'],
+              ['Pork belly',       '195–200',         '90–93','For braised/slow-cooked — renders fat well'],
+            ].map(([cut, f, c, notes]) => (
+              <tr class="hover:bg-pink-50 temp-row cursor-pointer" data-f={f.split('–')[0].replace(/\s.*/,'')}>
+                <td class="px-3 py-2 font-medium text-gray-800">{cut}</td>
+                <td class="px-3 py-2 font-mono text-gray-600">{f}°F</td>
+                <td class="px-3 py-2 font-mono text-gray-600">{c}°C</td>
+                <td class="px-3 py-2 text-gray-500 text-xs">{notes}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Fish & Seafood -->
+    <div>
+      <p class="text-sm font-semibold text-gray-700 mb-2">🐟 Fish & Seafood</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead><tr class="bg-blue-50 text-left">
+            <th class="px-3 py-2 font-medium text-blue-700">Type</th>
+            <th class="px-3 py-2 font-medium text-blue-700">°F</th>
+            <th class="px-3 py-2 font-medium text-blue-700">°C</th>
+            <th class="px-3 py-2 font-medium text-blue-700">Notes</th>
+          </tr></thead>
+          <tbody class="divide-y divide-blue-50">
+            {[
+              ['Fish (general)', '145',     '63',   'Flakes easily with fork'],
+              ['Salmon (restaurant style)', '125–130', '52–54', 'Translucent, silky — safe for sushi-grade fish'],
+              ['Shrimp',        '120',     '49',   'Just pink/opaque throughout; C-shaped = perfect'],
+              ['Scallops',      '130',     '54',   'Opaque, firm but still tender'],
+              ['Lobster / crab','145',     '63',   'Shell turns bright red, meat opaque white'],
+            ].map(([type, f, c, notes]) => (
+              <tr class="hover:bg-blue-50 temp-row cursor-pointer" data-f={f.split('–')[0]}>
+                <td class="px-3 py-2 font-medium text-gray-800">{type}</td>
+                <td class="px-3 py-2 font-mono text-gray-600">{f}°F</td>
+                <td class="px-3 py-2 font-mono text-gray-600">{c}°C</td>
+                <td class="px-3 py-2 text-gray-500 text-xs">{notes}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
+      <p class="font-semibold">⚠️ Food Safety Notes</p>
+      <p class="mt-1">Always use a calibrated meat thermometer. "Carryover cooking" raises internal temp 5–10°F after removing from heat — rest meat before cutting. USDA minimum safe temperatures shown; personal preference may vary for whole muscle cuts.</p>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "Why is resting meat important?", a: "During cooking, muscle fibers contract and push juices toward the center. Resting (5–20 minutes depending on size) allows fibers to relax and redistribute moisture throughout the meat. A rested steak retains 40% more juices than one cut immediately. Cover loosely with foil to keep warm without steaming." },
+        { q: "What is carryover cooking?", a: "When you remove meat from heat, the surface temperature is still higher than the center. Heat continues to flow inward, raising the internal temperature 5–10°F for 15–20 minutes. Remove steaks and roasts from heat 5–10°F before your target temperature. Smaller cuts (chicken breast) have less carryover." },
+        { q: "Is pink pork safe to eat?", a: "Yes — the USDA updated guidelines in 2011. Whole-muscle pork (chops, roasts, tenderloin) is safe at 145°F (63°C) with a 3-minute rest, which may leave a slight pink tinge. This is similar to beef medium. Ground pork must still reach 160°F. The old 160°F for whole pork was unnecessarily conservative." },
+        { q: "Can chicken be pink inside?", a: "Slightly pink chicken near the bone can still be safe if it reaches 165°F (74°C). Pink color in poultry near bones is a chemical reaction between hemoglobin and carbon monoxide in smoke or heat — not a sign of undercooking. Always verify with a thermometer, not color alone." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  let updating = false;
+  function syncTemps(f?: number, c?: number, skipId?: string) {
+    if (updating) return;
+    updating = true;
+    if (f !== undefined && !isNaN(f)) {
+      const cVal = (f - 32) * 5/9;
+      if (skipId !== 'mt-f') (document.getElementById('mt-f') as HTMLInputElement).value = String(Math.round(f));
+      if (skipId !== 'mt-c') (document.getElementById('mt-c') as HTMLInputElement).value = cVal.toFixed(1);
+    } else if (c !== undefined && !isNaN(c)) {
+      const fVal = c * 9/5 + 32;
+      if (skipId !== 'mt-f') (document.getElementById('mt-f') as HTMLInputElement).value = fVal.toFixed(1);
+      if (skipId !== 'mt-c') (document.getElementById('mt-c') as HTMLInputElement).value = String(Math.round(c));
+    }
+    updating = false;
+  }
+
+  document.getElementById('mt-f')?.addEventListener('input', (e) => {
+    const f = parseFloat((e.target as HTMLInputElement).value);
+    syncTemps(f, undefined, 'mt-f');
+    document.getElementById('mt-match-text')!.textContent = '';
+  });
+  document.getElementById('mt-c')?.addEventListener('input', (e) => {
+    const c = parseFloat((e.target as HTMLInputElement).value);
+    syncTemps(undefined, c, 'mt-c');
+    document.getElementById('mt-match-text')!.textContent = '';
+  });
+
+  document.querySelectorAll('.temp-row').forEach(row => {
+    row.addEventListener('click', () => {
+      const f = parseInt((row as HTMLElement).dataset.f || '0');
+      if (f) syncTemps(f);
+    });
+  });
+</script>

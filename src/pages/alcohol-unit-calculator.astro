@@ -1,0 +1,169 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Alcohol Unit Calculator"
+  description="Calculate alcohol units in any drink. Find out how many UK units or standard drinks are in beer, wine, spirits, and cocktails based on volume and ABV."
+  slug="alcohol-unit-calculator"
+  category="Food & Cooking"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Alcohol Unit Calculator</h1>
+  <p class="text-gray-500 mb-8">Calculate UK units, US standard drinks, and grams of alcohol for any beverage.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+      <div>
+        <label class="label">Volume</label>
+        <div class="flex gap-2">
+          <input id="au-vol" type="number" value="330" min="1" class="input-field font-mono flex-1" />
+          <select id="au-vol-unit" class="input-field w-auto text-sm py-2">
+            <option value="ml" selected>ml</option>
+            <option value="oz">fl oz</option>
+            <option value="pint">pint (568ml)</option>
+          </select>
+        </div>
+      </div>
+      <div>
+        <label class="label">ABV (alcohol %)</label>
+        <div class="flex items-center gap-2">
+          <input id="au-abv" type="number" value="5" min="0.1" max="100" step="0.1" class="input-field font-mono flex-1" />
+          <span class="text-gray-400">%</span>
+        </div>
+      </div>
+      <div>
+        <label class="label">Number of drinks</label>
+        <input id="au-drinks" type="number" value="1" min="1" max="50" class="input-field font-mono" />
+      </div>
+    </div>
+
+    <!-- Results -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-center">
+        <div class="text-xs text-indigo-500 mb-0.5">UK Units</div>
+        <div id="au-uk-units" class="text-2xl font-bold font-mono text-indigo-900">—</div>
+        <div class="text-xs text-indigo-400">per drink</div>
+      </div>
+      <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+        <div class="text-xs text-gray-400 mb-0.5">US Std Drinks</div>
+        <div id="au-us-drinks" class="text-2xl font-bold font-mono text-gray-900">—</div>
+        <div class="text-xs text-gray-400">per drink</div>
+      </div>
+      <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+        <div class="text-xs text-gray-400 mb-0.5">Alcohol (g)</div>
+        <div id="au-grams" class="text-2xl font-bold font-mono text-gray-900">—</div>
+        <div class="text-xs text-gray-400">per drink</div>
+      </div>
+      <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+        <div class="text-xs text-gray-400 mb-0.5">Total Units</div>
+        <div id="au-total" class="text-2xl font-bold font-mono text-gray-900">—</div>
+        <div class="text-xs text-gray-400">for all drinks</div>
+      </div>
+    </div>
+
+    <!-- Guideline comparison -->
+    <div id="au-guideline" class="hidden border border-gray-200 rounded-xl p-4 space-y-2">
+      <p class="text-sm font-semibold text-gray-700">Weekly Guideline Comparison</p>
+      <div id="au-guideline-bars" class="space-y-2"></div>
+    </div>
+
+    <!-- Common drinks quick reference -->
+    <div>
+      <p class="label mb-2">Quick Select — Common Drinks</p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+        {[
+          { label: 'Regular beer (330ml can)', vol: 330, abv: 5 },
+          { label: 'Pint of beer (568ml)', vol: 568, abv: 4.5 },
+          { label: 'Strong beer (330ml)', vol: 330, abv: 6.5 },
+          { label: 'Glass of wine (175ml)', vol: 175, abv: 13 },
+          { label: 'Large wine (250ml)', vol: 250, abv: 13 },
+          { label: 'Bottle of wine (750ml)', vol: 750, abv: 12.5 },
+          { label: 'Single spirit (25ml)', vol: 25, abv: 40 },
+          { label: 'Double spirit (50ml)', vol: 50, abv: 40 },
+          { label: 'Champagne (125ml glass)', vol: 125, abv: 12 },
+          { label: 'Cider pint (568ml)', vol: 568, abv: 4.5 },
+          { label: 'Gin & tonic (250ml)', vol: 250, abv: 8 },
+          { label: 'Cocktail (150ml)', vol: 150, abv: 15 },
+        ].map(({ label, vol, abv }) => (
+          <button class="drink-preset text-xs border border-gray-200 rounded-lg p-2 text-left hover:border-indigo-300 hover:bg-indigo-50 transition-colors" data-vol={vol} data-abv={abv}>
+            <span class="text-gray-700 font-medium block truncate">{label}</span>
+            <span class="text-gray-400 font-mono">{vol}ml · {abv}% ABV</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is a UK alcohol unit?", a: "1 UK unit = 10ml (8g) of pure alcohol. Formula: Units = (Volume in ml × ABV%) ÷ 1000. UK guidelines recommend no more than 14 units per week spread across 3+ days, with several alcohol-free days. That's roughly 6 pints of average-strength beer or 10 small glasses of wine." },
+        { q: "What is a US standard drink?", a: "1 US standard drink = 14g (17.7ml) of pure alcohol — compared to the UK's 8g per unit. A 12 oz (355ml) can of regular beer (5%), a 5 oz (148ml) glass of wine (12%), and a 1.5 oz (44ml) shot of spirits (40%) are all approximately 1 US standard drink. US guidelines: up to 1 drink/day for women, 2 for men." },
+        { q: "How is blood alcohol level affected by drinking speed?", a: "The liver processes approximately 1 UK unit (or 1 US standard drink) per hour. Drinking faster than this causes blood alcohol to accumulate. BAC also depends on body weight, sex, food intake, and genetics. A 70kg male drinking 4 pints in 2 hours reaches approximately 0.08% BAC — the UK driving limit." },
+        { q: "Does alcohol content change in mixed drinks?", a: "In cocktails, use the total amount of pure alcohol from each spirit. A 50ml serving of 40% vodka = 50 × 40/100 = 20ml pure alcohol = 2 UK units (or 1.1 US standard drinks). Mixers like juice, soda, or water don't contain alcohol — they just dilute the drink, affecting perception but not total units." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const VOL_TO_ML: Record<string, number> = { ml: 1, oz: 29.5735, pint: 568 };
+
+  function calculate() {
+    const volRaw = parseFloat((document.getElementById('au-vol') as HTMLInputElement).value);
+    const volUnit = (document.getElementById('au-vol-unit') as HTMLSelectElement).value;
+    const abv = parseFloat((document.getElementById('au-abv') as HTMLInputElement).value);
+    const numDrinks = parseFloat((document.getElementById('au-drinks') as HTMLInputElement).value) || 1;
+
+    if (isNaN(volRaw) || isNaN(abv)) return;
+    const ml = volRaw * VOL_TO_ML[volUnit];
+    const pureAlcoholMl = ml * (abv / 100);
+    const ukUnits = pureAlcoholMl / 10;
+    const usStdDrinks = pureAlcoholMl / 17.7;
+    const grams = pureAlcoholMl * 0.789;
+
+    document.getElementById('au-uk-units')!.textContent = ukUnits.toFixed(1);
+    document.getElementById('au-us-drinks')!.textContent = usStdDrinks.toFixed(2);
+    document.getElementById('au-grams')!.textContent = grams.toFixed(1) + 'g';
+    document.getElementById('au-total')!.textContent = (ukUnits * numDrinks).toFixed(1) + ' UK';
+
+    const totalUnits = ukUnits * numDrinks;
+    const weeklyUK = 14;
+    const guidelineEl = document.getElementById('au-guideline')!;
+    const pct = Math.min((totalUnits / weeklyUK) * 100, 100);
+    const pctFull = (totalUnits / weeklyUK) * 100;
+
+    guidelineEl.classList.remove('hidden');
+    document.getElementById('au-guideline-bars')!.innerHTML = `
+      <div class="text-xs text-gray-500 mb-1">UK: ${totalUnits.toFixed(1)} of 14 weekly units (${pctFull.toFixed(0)}%)</div>
+      <div class="h-3 bg-gray-100 rounded-full overflow-hidden">
+        <div class="h-full rounded-full transition-all ${pctFull > 100 ? 'bg-red-500' : pctFull > 70 ? 'bg-yellow-400' : 'bg-green-400'}" style="width:${pct}%"></div>
+      </div>
+      <div class="text-xs text-gray-400 mt-1">${pctFull > 100 ? '⚠️ Exceeds weekly UK guideline' : pctFull > 70 ? '⚠️ Approaches weekly UK guideline' : '✅ Within weekly UK guideline'}</div>
+    `;
+  }
+
+  ['au-vol','au-vol-unit','au-abv','au-drinks'].forEach(id =>
+    document.getElementById(id)?.addEventListener('input', calculate)
+  );
+
+  document.querySelectorAll('.drink-preset').forEach(el => {
+    el.addEventListener('click', () => {
+      (document.getElementById('au-vol') as HTMLInputElement).value = (el as HTMLElement).dataset.vol!;
+      (document.getElementById('au-vol-unit') as HTMLSelectElement).value = 'ml';
+      (document.getElementById('au-abv') as HTMLInputElement).value = (el as HTMLElement).dataset.abv!;
+      calculate();
+    });
+  });
+
+  calculate();
+</script>

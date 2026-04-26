@@ -1,0 +1,214 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Recipe Converter & Scaler"
+  description="Scale any recipe up or down by servings. Convert recipe measurements between cups, tablespoons, teaspoons, grams, and ounces instantly."
+  slug="recipe-converter"
+  category="Food & Cooking"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Recipe Converter & Scaler</h1>
+  <p class="text-gray-500 mb-8">Scale recipes for any number of servings and convert between cooking measurements.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-6">
+
+    <!-- Servings scaler -->
+    <div>
+      <h2 class="text-base font-semibold text-gray-800 mb-3">Scale a Recipe</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <label class="label">Original Servings</label>
+          <input id="rc-orig" type="number" value="4" min="0.25" step="0.25" class="input-field font-mono" />
+        </div>
+        <div>
+          <label class="label">Desired Servings</label>
+          <input id="rc-new" type="number" value="6" min="0.25" step="0.25" class="input-field font-mono" />
+        </div>
+        <div class="flex items-end">
+          <div class="bg-indigo-50 border border-indigo-200 rounded-xl px-4 py-3 w-full text-center">
+            <div class="text-xs text-indigo-500 mb-0.5">Scale Factor</div>
+            <div id="rc-factor" class="text-2xl font-bold font-mono text-indigo-800">1.5×</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ingredient list -->
+      <div class="mt-4">
+        <div class="flex justify-between items-center mb-2">
+          <p class="text-sm font-semibold text-gray-700">Ingredients</p>
+          <button id="rc-add" class="text-sm text-indigo-600 hover:text-indigo-800">+ Add ingredient</button>
+        </div>
+        <div id="rc-ingredients" class="space-y-2"></div>
+      </div>
+    </div>
+
+    <!-- Measurement converter -->
+    <div class="border-t border-gray-100 pt-5">
+      <h2 class="text-base font-semibold text-gray-800 mb-3">Convert a Measurement</h2>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 items-end">
+        <div>
+          <label class="label">Amount</label>
+          <input id="mc-amount" type="number" value="1" min="0" step="0.125" class="input-field font-mono" />
+        </div>
+        <div>
+          <label class="label">From</label>
+          <select id="mc-from" class="input-field text-sm"></select>
+        </div>
+        <div>
+          <label class="label">To</label>
+          <select id="mc-to" class="input-field text-sm"></select>
+        </div>
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl px-4 py-3 text-center">
+          <div id="mc-result" class="text-xl font-bold font-mono text-indigo-900">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How do I scale a recipe for more people?", a: "Divide the desired servings by the original servings to get the scale factor. Multiply each ingredient amount by the factor. Note: cooking time doesn't scale linearly — a double recipe in the same pan may need more time; a doubled cake in a larger pan may need less time per inch of depth." },
+        { q: "How many teaspoons are in a tablespoon?", a: "3 teaspoons = 1 tablespoon. 16 tablespoons = 1 cup. 2 tablespoons = 1 fluid ounce. 4 tablespoons = ¼ cup. When halving a recipe with odd measurements: ½ of 1 tablespoon = 1½ teaspoons." },
+        { q: "How do I convert cups to grams?", a: "The weight of a cup varies by ingredient: 1 cup all-purpose flour ≈ 120–125g. 1 cup sugar ≈ 200g. 1 cup butter ≈ 227g (2 sticks). 1 cup water/milk ≈ 240g. For baking, weight measurements are more accurate than volume — a scooped cup of flour can vary by 20–30g." },
+        { q: "Can I double all ingredients including leavening?", a: "For most savory recipes, yes. For baked goods, be careful: doubling baking powder/soda exactly often works, but err on the slightly less side (e.g., 1.75× instead of 2×). Salt is usually scaled at 0.75× when doubling. Yeast for bread can often stay the same — just let the dough rise longer." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  // Volume in mL as base
+  const UNITS: Record<string, { label: string; ml: number }> = {
+    tsp:    { label: 'teaspoon (tsp)',       ml: 4.92892 },
+    tbsp:   { label: 'tablespoon (tbsp)',    ml: 14.7868 },
+    floz:   { label: 'fluid ounce (fl oz)', ml: 29.5735 },
+    cup:    { label: 'cup (US)',             ml: 236.588 },
+    pt:     { label: 'pint (US)',            ml: 473.176 },
+    qt:     { label: 'quart (US)',           ml: 946.353 },
+    gal:    { label: 'gallon (US)',          ml: 3785.41 },
+    ml:     { label: 'milliliter (ml)',      ml: 1 },
+    l:      { label: 'liter (l)',            ml: 1000 },
+    g:      { label: 'gram (g)',             ml: 1 },       // weight — treated separately
+    oz_wt:  { label: 'ounce (oz weight)',    ml: 28.3495 },
+    lb:     { label: 'pound (lb)',           ml: 453.592 },
+    kg:     { label: 'kilogram (kg)',        ml: 1000 },
+  };
+
+  const VOLUME_UNITS = ['tsp','tbsp','floz','cup','pt','qt','gal','ml','l'];
+  const WEIGHT_UNITS = ['g','oz_wt','lb','kg'];
+
+  // Populate selects
+  const fromSel = document.getElementById('mc-from') as HTMLSelectElement;
+  const toSel = document.getElementById('mc-to') as HTMLSelectElement;
+  [fromSel, toSel].forEach(sel => {
+    sel.innerHTML = [
+      '<optgroup label="Volume">',
+      ...VOLUME_UNITS.map(k => `<option value="${k}">${UNITS[k].label}</option>`),
+      '</optgroup>',
+      '<optgroup label="Weight">',
+      ...WEIGHT_UNITS.map(k => `<option value="${k}">${UNITS[k].label}</option>`),
+      '</optgroup>',
+    ].join('');
+  });
+  fromSel.value = 'cup';
+  toSel.value = 'ml';
+
+  function convert() {
+    const amount = parseFloat((document.getElementById('mc-amount') as HTMLInputElement).value);
+    const from = (document.getElementById('mc-from') as HTMLSelectElement).value;
+    const to = (document.getElementById('mc-to') as HTMLSelectElement).value;
+    if (isNaN(amount)) { document.getElementById('mc-result')!.textContent = '—'; return; }
+    const result = amount * UNITS[from].ml / UNITS[to].ml;
+    const fmt = result < 0.01 ? result.toExponential(2) : result < 10 ? result.toFixed(3).replace(/\.?0+$/,'') : result.toFixed(2).replace(/\.?0+$/,'');
+    document.getElementById('mc-result')!.textContent = fmt + ' ' + to.replace('_wt','');
+  }
+
+  ['mc-amount','mc-from','mc-to'].forEach(id =>
+    document.getElementById(id)?.addEventListener('input', convert)
+  );
+  convert();
+
+  // Ingredient scaler
+  interface Ingredient { name: string; amount: string; unit: string; }
+  let ingredients: Ingredient[] = [
+    { name: 'All-purpose flour', amount: '2', unit: 'cup' },
+    { name: 'Butter', amount: '0.5', unit: 'cup' },
+    { name: 'Sugar', amount: '0.75', unit: 'cup' },
+    { name: 'Eggs', amount: '2', unit: '' },
+    { name: 'Vanilla extract', amount: '1', unit: 'tsp' },
+    { name: 'Baking powder', amount: '2', unit: 'tsp' },
+    { name: 'Salt', amount: '0.5', unit: 'tsp' },
+  ];
+
+  function getScale(): number {
+    const orig = parseFloat((document.getElementById('rc-orig') as HTMLInputElement).value) || 4;
+    const newS = parseFloat((document.getElementById('rc-new') as HTMLInputElement).value) || 4;
+    return newS / orig;
+  }
+
+  function fmtAmount(n: number): string {
+    if (n === Math.round(n)) return String(n);
+    const fractions: Array<[number, string]> = [[1/8,'⅛'],[1/4,'¼'],[1/3,'⅓'],[3/8,'⅜'],[1/2,'½'],[5/8,'⅝'],[2/3,'⅔'],[3/4,'¾'],[7/8,'⅞']];
+    const whole = Math.floor(n);
+    const frac = n - whole;
+    const closest = fractions.sort((a,b) => Math.abs(a[0]-frac) - Math.abs(b[0]-frac))[0];
+    if (Math.abs(frac - closest[0]) < 0.04) return (whole > 0 ? whole + ' ' : '') + closest[1];
+    return n.toFixed(2).replace(/\.?0+$/,'');
+  }
+
+  function renderIngredients() {
+    const factor = getScale();
+    document.getElementById('rc-factor')!.textContent = factor.toFixed(factor % 1 === 0 ? 0 : 2) + '×';
+
+    const container = document.getElementById('rc-ingredients')!;
+    container.innerHTML = ingredients.map((ing, i) => {
+      const scaled = parseFloat(ing.amount) * factor;
+      const scaledStr = isNaN(scaled) ? ing.amount : fmtAmount(scaled);
+      return `<div class="flex items-center gap-2 text-sm">
+        <input data-i="${i}" data-field="name" type="text" value="${ing.name.replace(/"/g,'&quot;')}" placeholder="Ingredient" class="flex-1 border border-gray-200 rounded-lg px-3 py-1.5 focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+        <input data-i="${i}" data-field="amount" type="text" value="${ing.amount}" placeholder="1" class="w-16 border border-gray-200 rounded-lg px-2 py-1.5 font-mono text-center focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+        <input data-i="${i}" data-field="unit" type="text" value="${ing.unit}" placeholder="cup" class="w-16 border border-gray-200 rounded-lg px-2 py-1.5 font-mono focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+        <span class="text-indigo-700 font-mono font-semibold w-14 text-right flex-shrink-0">→ ${scaledStr}</span>
+        <span class="text-gray-400 text-xs w-10">${ing.unit}</span>
+        <button data-i="${i}" class="ing-remove text-gray-300 hover:text-red-400 text-xs flex-shrink-0">✕</button>
+      </div>`;
+    }).join('');
+
+    container.querySelectorAll('[data-i]').forEach(el => {
+      el.addEventListener('input', (e) => {
+        const i = parseInt((e.target as HTMLElement).dataset.i!);
+        const field = (e.target as HTMLElement).dataset.field as keyof Ingredient;
+        if (field) ingredients[i][field] = (e.target as HTMLInputElement).value;
+        renderIngredients();
+      });
+    });
+    container.querySelectorAll('.ing-remove').forEach(el => {
+      el.addEventListener('click', (e) => {
+        const i = parseInt((e.target as HTMLElement).dataset.i!);
+        ingredients.splice(i, 1);
+        renderIngredients();
+      });
+    });
+  }
+
+  document.getElementById('rc-add')?.addEventListener('click', () => {
+    ingredients.push({ name: '', amount: '1', unit: '' });
+    renderIngredients();
+  });
+
+  ['rc-orig','rc-new'].forEach(id =>
+    document.getElementById(id)?.addEventListener('input', renderIngredients)
+  );
+
+  renderIngredients();
+</script>
