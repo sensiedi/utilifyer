@@ -1,0 +1,115 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Base64 Encoder / Decoder"
+  description="Encode text to Base64 or decode Base64 strings back to plain text. Supports URL-safe Base64 and file encoding."
+  slug="base64-encoder-decoder"
+  category="Developer"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Base64 Encoder / Decoder</h1>
+  <p class="text-gray-500 mb-8">Encode text to Base64 or decode Base64 back to plain text instantly.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-4">
+
+    <div class="flex flex-wrap gap-2">
+      <button id="btn-encode" class="btn-primary">Encode → Base64</button>
+      <button id="btn-decode" class="btn-secondary">Decode ← Base64</button>
+      <button id="btn-swap" class="btn-secondary">⇄ Swap</button>
+      <button id="btn-clear" class="btn-secondary">Clear</button>
+      <label class="flex items-center gap-2 text-sm text-gray-600 ml-auto cursor-pointer">
+        <input type="checkbox" id="url-safe" class="accent-indigo-600" />
+        URL-safe Base64
+      </label>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div>
+        <div class="flex justify-between mb-1">
+          <label class="label">Input</label>
+          <span id="input-len" class="text-xs text-gray-400"></span>
+        </div>
+        <textarea id="b64-input" rows={10} placeholder="Enter text or Base64 here…" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y text-sm font-mono"></textarea>
+      </div>
+      <div>
+        <div class="flex justify-between mb-1">
+          <label class="label">Output</label>
+          <button id="copy-output" class="text-xs text-indigo-600 hover:text-indigo-800">Copy</button>
+        </div>
+        <textarea id="b64-output" rows={10} readonly class="w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-800 bg-gray-50 resize-y text-sm font-mono"></textarea>
+      </div>
+    </div>
+
+    <div id="error-box" class="hidden bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700"></div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is Base64 encoding?", a: "Base64 is a binary-to-text encoding scheme that represents binary data using 64 ASCII characters (A–Z, a–z, 0–9, +, /). It is commonly used to embed binary data (images, files) in text formats like HTML, CSS, JSON, or email." },
+        { q: "Why does Base64 output end with == or =?", a: "Base64 works in 3-byte groups. If the input isn't divisible by 3, padding characters (=) are added to make it a multiple of 4 output characters. One = means 1 padding byte was needed; == means 2 were needed." },
+        { q: "What is URL-safe Base64?", a: "Standard Base64 uses + and / which have special meaning in URLs. URL-safe Base64 replaces + with - and / with _, making the output safe to use in URLs and filenames without percent-encoding." },
+        { q: "Is Base64 a form of encryption?", a: "No. Base64 is encoding, not encryption. Anyone can decode a Base64 string without a key. It is used for data transport and storage compatibility, not security. Do not use it to hide sensitive data." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const input = document.getElementById('b64-input') as HTMLTextAreaElement;
+  const output = document.getElementById('b64-output') as HTMLTextAreaElement;
+  const errBox = document.getElementById('error-box')!;
+
+  function urlSafe(str: string) {
+    return (document.getElementById('url-safe') as HTMLInputElement).checked
+      ? str.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
+      : str;
+  }
+
+  input.addEventListener('input', () => {
+    document.getElementById('input-len')!.textContent = input.value.length + ' chars';
+  });
+
+  document.getElementById('btn-encode')?.addEventListener('click', () => {
+    errBox.classList.add('hidden');
+    try {
+      output.value = urlSafe(btoa(unescape(encodeURIComponent(input.value))));
+    } catch (e: any) { errBox.textContent = e.message; errBox.classList.remove('hidden'); }
+  });
+
+  document.getElementById('btn-decode')?.addEventListener('click', () => {
+    errBox.classList.add('hidden');
+    try {
+      let b64 = input.value.replace(/-/g, '+').replace(/_/g, '/');
+      while (b64.length % 4) b64 += '=';
+      output.value = decodeURIComponent(escape(atob(b64)));
+    } catch { errBox.textContent = 'Invalid Base64 input.'; errBox.classList.remove('hidden'); }
+  });
+
+  document.getElementById('btn-swap')?.addEventListener('click', () => {
+    const tmp = input.value; input.value = output.value; output.value = tmp;
+  });
+
+  document.getElementById('btn-clear')?.addEventListener('click', () => {
+    input.value = ''; output.value = ''; errBox.classList.add('hidden');
+    document.getElementById('input-len')!.textContent = '';
+  });
+
+  document.getElementById('copy-output')?.addEventListener('click', () => {
+    if (!output.value) return;
+    navigator.clipboard.writeText(output.value).then(() => {
+      const btn = document.getElementById('copy-output')!;
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 1500);
+    });
+  });
+</script>

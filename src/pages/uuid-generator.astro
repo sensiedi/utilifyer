@@ -1,0 +1,140 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="UUID Generator"
+  description="Generate random UUID v4 values instantly. Bulk generate up to 100 UUIDs at once. One-click copy. Runs entirely in your browser."
+  slug="uuid-generator"
+  category="Developer"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">UUID Generator</h1>
+  <p class="text-gray-500 mb-8">Generate cryptographically random UUID v4 values instantly.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <!-- Single UUID -->
+    <div>
+      <label class="label">Generated UUID</label>
+      <div class="flex gap-2">
+        <div id="single-uuid" class="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-mono text-gray-800 text-sm tracking-wide select-all"></div>
+        <button id="copy-single" class="btn-secondary flex-shrink-0 px-3">Copy</button>
+        <button id="regen-single" class="btn-secondary flex-shrink-0 px-3">🔄</button>
+      </div>
+    </div>
+
+    <!-- Bulk -->
+    <div class="space-y-3">
+      <div class="flex gap-3 items-end">
+        <div class="flex-1">
+          <label class="label">Bulk Generate</label>
+          <input id="bulk-count" type="number" value="10" min="1" max="100" class="input-field" />
+        </div>
+        <div class="flex-1">
+          <label class="label">Format</label>
+          <select id="uuid-format" class="input-field">
+            <option value="standard">Standard (lowercase)</option>
+            <option value="upper">UPPERCASE</option>
+            <option value="no-hyphens">No hyphens</option>
+            <option value="braces">With braces {}</option>
+          </select>
+        </div>
+        <button id="btn-generate" class="btn-primary flex-shrink-0">Generate</button>
+      </div>
+
+      <div class="flex gap-2">
+        <button id="copy-all" class="btn-secondary text-sm">Copy All</button>
+        <button id="download-all" class="btn-secondary text-sm">Download .txt</button>
+      </div>
+
+      <div id="uuid-list" class="space-y-1 max-h-80 overflow-y-auto"></div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is a UUID?", a: "A UUID (Universally Unique Identifier) is a 128-bit value used to uniquely identify information in distributed systems. The standard format is 8-4-4-4-12 hexadecimal characters separated by hyphens, e.g.: 550e8400-e29b-41d4-a716-446655440000" },
+        { q: "What is UUID v4?", a: "UUID v4 is generated using random numbers. It has no structure — all bits (except the version and variant bits) are random. It's the most commonly used version because it doesn't require a unique host identifier or timestamp." },
+        { q: "How unique is a UUID v4?", a: "UUID v4 has 122 random bits, giving 2^122 ≈ 5.3 × 10^36 possible values. The probability of generating two identical UUIDs is astronomically small — roughly 1 in a billion trillion." },
+        { q: "What is the difference between UUID and GUID?", a: "GUID (Globally Unique Identifier) is Microsoft's implementation of the UUID standard. They are functionally identical. The terms are used interchangeably in most contexts, with GUID being more common in Windows/C# environments." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  function generateUUID(): string {
+    return (crypto as any).randomUUID ? crypto.randomUUID() :
+      '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, (c: string) => {
+        const n = parseInt(c);
+        return (n ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (n / 4)))).toString(16);
+      });
+  }
+
+  function applyFormat(uuid: string): string {
+    const fmt = (document.getElementById('uuid-format') as HTMLSelectElement).value;
+    switch (fmt) {
+      case 'upper': return uuid.toUpperCase();
+      case 'no-hyphens': return uuid.replace(/-/g, '');
+      case 'braces': return '{' + uuid + '}';
+      default: return uuid;
+    }
+  }
+
+  let generatedList: string[] = [];
+
+  function refreshSingle() {
+    const uuid = applyFormat(generateUUID());
+    document.getElementById('single-uuid')!.textContent = uuid;
+    return uuid;
+  }
+
+  document.getElementById('regen-single')?.addEventListener('click', refreshSingle);
+  document.getElementById('copy-single')?.addEventListener('click', () => {
+    const val = document.getElementById('single-uuid')!.textContent || '';
+    navigator.clipboard.writeText(val).then(() => {
+      const btn = document.getElementById('copy-single')!;
+      btn.textContent = '✅'; setTimeout(() => btn.textContent = 'Copy', 1500);
+    });
+  });
+
+  document.getElementById('btn-generate')?.addEventListener('click', () => {
+    const count = Math.min(parseInt((document.getElementById('bulk-count') as HTMLInputElement).value) || 10, 100);
+    generatedList = Array.from({ length: count }, () => applyFormat(generateUUID()));
+    document.getElementById('uuid-list')!.innerHTML = generatedList.map(u =>
+      `<div class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-lg px-3 py-1.5 gap-2">
+        <span class="font-mono text-sm text-gray-700 select-all">${u}</span>
+        <button onclick="navigator.clipboard.writeText('${u}')" class="text-xs text-indigo-500 hover:text-indigo-700 flex-shrink-0">Copy</button>
+      </div>`
+    ).join('');
+  });
+
+  document.getElementById('copy-all')?.addEventListener('click', () => {
+    if (!generatedList.length) return;
+    navigator.clipboard.writeText(generatedList.join('\n')).then(() => {
+      const btn = document.getElementById('copy-all')!;
+      btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy All', 1500);
+    });
+  });
+
+  document.getElementById('download-all')?.addEventListener('click', () => {
+    if (!generatedList.length) return;
+    const blob = new Blob([generatedList.join('\n')], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'uuids.txt';
+    a.click();
+  });
+
+  refreshSingle();
+  document.getElementById('btn-generate')!.click();
+</script>

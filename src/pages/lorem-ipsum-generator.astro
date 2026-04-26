@@ -1,0 +1,125 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Lorem Ipsum Generator"
+  description="Generate Lorem Ipsum placeholder text by paragraphs, sentences, or words. Start with classic Lorem Ipsum or random Latin."
+  slug="lorem-ipsum-generator"
+  category="Developer"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Lorem Ipsum Generator</h1>
+  <p class="text-gray-500 mb-8">Generate placeholder text for your designs and mockups.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div>
+        <label class="label">Generate</label>
+        <div class="flex gap-2">
+          <input id="amount" type="number" value="3" min="1" max="100" class="input-field" />
+          <select id="unit" class="input-field w-auto flex-shrink-0">
+            <option value="paragraphs">Paragraphs</option>
+            <option value="sentences">Sentences</option>
+            <option value="words">Words</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex items-end gap-2">
+        <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer pb-2.5">
+          <input type="checkbox" id="start-lorem" checked class="accent-indigo-600" />
+          Start with "Lorem ipsum…"
+        </label>
+      </div>
+      <div class="flex items-end">
+        <button id="generate-btn" class="btn-primary w-full">Generate</button>
+      </div>
+    </div>
+
+    <div>
+      <div class="flex justify-between items-center mb-1">
+        <label class="label">Generated Text</label>
+        <div class="flex gap-2">
+          <span id="word-count" class="text-xs text-gray-400"></span>
+          <button id="copy-btn" class="text-xs text-indigo-600 hover:text-indigo-800">Copy</button>
+        </div>
+      </div>
+      <div id="output" class="w-full min-h-32 bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm text-gray-700 leading-relaxed select-all"></div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is Lorem Ipsum?", a: "Lorem Ipsum is placeholder text derived from a Latin text by Cicero from 45 BC. It has been the industry standard dummy text for graphic design and print since the 1960s. It's used because it looks like natural text distribution without being readable." },
+        { q: "Why use Lorem Ipsum instead of real text?", a: "Using placeholder text during design prevents readers from being distracted by content, allowing focus on the visual layout. Real content can be distracting or emotionally charged, which skews feedback about the design itself." },
+        { q: "What does Lorem Ipsum mean?", a: 'The beginning "Lorem ipsum dolor sit amet" is a corrupted version of "Dolorem ipsum quia dolor sit amet" from Cicero\'s de Finibus Bonorum et Malorum (About the Ends of Good and Evil). The text is largely nonsensical when assembled.' },
+        { q: "Is Lorem Ipsum appropriate for all projects?", a: "For most design mockups, yes. However, if you're testing typography with a specific language or script, use placeholder text in that language. For accessibility testing, use realistic content to catch real-world issues." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const WORDS = 'lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod tempor incididunt ut labore et dolore magna aliqua enim ad minim veniam quis nostrud exercitation ullamco laboris nisi aliquip commodo consequat duis aute irure dolor reprehenderit voluptate velit esse cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non proident sunt culpa qui officia deserunt mollit anim id est laborum sed perspiciatis unde omnis iste natus error voluptatem accusantium doloremque laudantium totam rem aperiam eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta explicabo nemo enim ipsam quia voluptas aspernatur aut odit fugit neque porro quisquam qui dolorem ipsum sequi nesciunt aliquam quaerat voluptatem ut enim minima veniam quis nostrum exercitationem ullam corporis suscipit laboriosam nisi aliquid ex ea commodi consequatur quis autem vel eum iure reprehenderit qui voluptate velit esse quam nihil molestiae consequatur vel illum qui dolorem eum fugiat'.split(' ');
+
+  const LOREM_START = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.';
+
+  function randomWord() { return WORDS[Math.floor(Math.random() * WORDS.length)]; }
+
+  function makeSentence(minWords = 8, maxWords = 18): string {
+    const len = Math.floor(Math.random() * (maxWords - minWords)) + minWords;
+    const words = Array.from({ length: len }, randomWord);
+    words[0] = words[0].charAt(0).toUpperCase() + words[0].slice(1);
+    return words.join(' ') + '.';
+  }
+
+  function makeParagraph(minSent = 3, maxSent = 7): string {
+    const len = Math.floor(Math.random() * (maxSent - minSent)) + minSent;
+    return Array.from({ length: len }, makeSentence).join(' ');
+  }
+
+  function generate() {
+    const amount = parseInt((document.getElementById('amount') as HTMLInputElement).value) || 3;
+    const unit = (document.getElementById('unit') as HTMLSelectElement).value;
+    const startLorem = (document.getElementById('start-lorem') as HTMLInputElement).checked;
+
+    let result = '';
+    if (unit === 'paragraphs') {
+      const paras = Array.from({ length: amount }, (_, i) => {
+        if (i === 0 && startLorem) return LOREM_START + ' ' + makeParagraph(2, 5);
+        return makeParagraph();
+      });
+      result = paras.join('\n\n');
+    } else if (unit === 'sentences') {
+      const sents = Array.from({ length: amount }, (_, i) => i === 0 && startLorem ? LOREM_START : makeSentence());
+      result = sents.join(' ');
+    } else {
+      const words = Array.from({ length: amount }, (_, i) => i === 0 && startLorem ? 'Lorem' : randomWord());
+      result = words.join(' ') + '.';
+    }
+
+    const output = document.getElementById('output')!;
+    output.textContent = result;
+    const wordCount = result.split(/\s+/).filter(Boolean).length;
+    document.getElementById('word-count')!.textContent = `${wordCount} words`;
+  }
+
+  document.getElementById('generate-btn')?.addEventListener('click', generate);
+  document.getElementById('copy-btn')?.addEventListener('click', () => {
+    const text = document.getElementById('output')!.textContent || '';
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copy-btn')!;
+      btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 1500);
+    });
+  });
+
+  generate();
+</script>

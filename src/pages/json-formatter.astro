@@ -1,0 +1,149 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="JSON Formatter & Validator"
+  description="Format, validate, and minify JSON online. Instantly spot syntax errors with clear error messages. Free and runs entirely in your browser."
+  slug="json-formatter"
+  category="Developer"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">JSON Formatter & Validator</h1>
+  <p class="text-gray-500 mb-8">Paste JSON to format, validate, or minify it instantly.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-4">
+
+    <div class="flex flex-wrap gap-2">
+      <button id="btn-format" class="btn-primary">Format / Prettify</button>
+      <button id="btn-minify" class="btn-secondary">Minify</button>
+      <button id="btn-validate" class="btn-secondary">Validate</button>
+      <button id="btn-clear" class="btn-secondary">Clear</button>
+      <div class="flex items-center gap-2 ml-auto">
+        <label class="text-sm text-gray-600">Indent:</label>
+        <select id="indent" class="input-field w-auto text-sm py-1.5">
+          <option value="2">2 spaces</option>
+          <option value="4">4 spaces</option>
+          <option value="tab">Tab</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="error-box" class="hidden bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700 font-mono"></div>
+    <div id="success-box" class="hidden bg-green-50 border border-green-200 rounded-xl p-3 text-sm text-green-700"></div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Input JSON</label>
+        <textarea id="json-input" rows={18} placeholder='{"name":"John","age":30}' class="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y text-xs font-mono"></textarea>
+      </div>
+      <div>
+        <div class="flex justify-between items-center mb-1">
+          <label class="label">Output</label>
+          <button id="copy-output" class="text-xs text-indigo-600 hover:text-indigo-800">Copy</button>
+        </div>
+        <textarea id="json-output" rows={18} readonly class="w-full border border-gray-200 rounded-xl px-4 py-3 text-gray-800 bg-gray-50 text-xs font-mono resize-y"></textarea>
+      </div>
+    </div>
+
+    <div id="stats-box" class="hidden flex flex-wrap gap-4 text-xs text-gray-500 pt-1">
+      <span id="stat-keys"></span>
+      <span id="stat-size-in"></span>
+      <span id="stat-size-out"></span>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is JSON?", a: "JSON (JavaScript Object Notation) is a lightweight data interchange format. It uses key-value pairs and arrays to structure data. It is human-readable and widely used for APIs, config files, and data storage." },
+        { q: "What causes JSON syntax errors?", a: "Common errors include: missing quotes around keys, trailing commas after the last item, using single quotes instead of double quotes, undefined or NaN values (not valid JSON), and unescaped special characters in strings." },
+        { q: "What is the difference between JSON and JavaScript objects?", a: "JSON is a text format based on JavaScript object syntax, but with stricter rules. JSON keys must be double-quoted strings. Values cannot be functions, undefined, or dates. JSON is a subset of valid JavaScript but not the same as a JS object." },
+        { q: "How do I minify JSON?", a: "Minifying JSON removes all whitespace (spaces, newlines, indentation) that is not inside string values. This reduces file size for transmission over networks. The data is identical — only formatting is removed." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  function getIndent(): string | number {
+    const v = (document.getElementById('indent') as HTMLSelectElement).value;
+    return v === 'tab' ? '\t' : parseInt(v);
+  }
+
+  function showError(msg: string) {
+    const el = document.getElementById('error-box')!;
+    el.textContent = '❌ ' + msg;
+    el.classList.remove('hidden');
+    document.getElementById('success-box')!.classList.add('hidden');
+  }
+  function showSuccess(msg: string) {
+    const el = document.getElementById('success-box')!;
+    el.textContent = '✅ ' + msg;
+    el.classList.remove('hidden');
+    document.getElementById('error-box')!.classList.add('hidden');
+  }
+  function clearMessages() {
+    document.getElementById('error-box')!.classList.add('hidden');
+    document.getElementById('success-box')!.classList.add('hidden');
+  }
+
+  document.getElementById('btn-format')?.addEventListener('click', () => {
+    const input = (document.getElementById('json-input') as HTMLTextAreaElement).value.trim();
+    if (!input) return;
+    try {
+      const parsed = JSON.parse(input);
+      const formatted = JSON.stringify(parsed, null, getIndent());
+      (document.getElementById('json-output') as HTMLTextAreaElement).value = formatted;
+      showSuccess('Valid JSON — formatted successfully.');
+      const keys = JSON.stringify(parsed).match(/"[^"]+"\s*:/g)?.length || 0;
+      document.getElementById('stats-box')!.classList.remove('hidden');
+      document.getElementById('stat-keys')!.textContent = `${keys} keys`;
+      document.getElementById('stat-size-in')!.textContent = `Input: ${input.length} chars`;
+      document.getElementById('stat-size-out')!.textContent = `Output: ${formatted.length} chars`;
+    } catch (e: any) { showError(e.message); }
+  });
+
+  document.getElementById('btn-minify')?.addEventListener('click', () => {
+    const input = (document.getElementById('json-input') as HTMLTextAreaElement).value.trim();
+    if (!input) return;
+    try {
+      const minified = JSON.stringify(JSON.parse(input));
+      (document.getElementById('json-output') as HTMLTextAreaElement).value = minified;
+      showSuccess(`Minified — ${input.length} → ${minified.length} chars (saved ${input.length - minified.length} chars).`);
+    } catch (e: any) { showError(e.message); }
+  });
+
+  document.getElementById('btn-validate')?.addEventListener('click', () => {
+    const input = (document.getElementById('json-input') as HTMLTextAreaElement).value.trim();
+    if (!input) return;
+    try {
+      JSON.parse(input);
+      showSuccess('Valid JSON.');
+    } catch (e: any) { showError(e.message); }
+  });
+
+  document.getElementById('btn-clear')?.addEventListener('click', () => {
+    (document.getElementById('json-input') as HTMLTextAreaElement).value = '';
+    (document.getElementById('json-output') as HTMLTextAreaElement).value = '';
+    clearMessages();
+    document.getElementById('stats-box')!.classList.add('hidden');
+  });
+
+  document.getElementById('copy-output')?.addEventListener('click', () => {
+    const val = (document.getElementById('json-output') as HTMLTextAreaElement).value;
+    if (!val) return;
+    navigator.clipboard.writeText(val).then(() => {
+      const btn = document.getElementById('copy-output')!;
+      btn.textContent = 'Copied!';
+      setTimeout(() => btn.textContent = 'Copy', 1500);
+    });
+  });
+</script>

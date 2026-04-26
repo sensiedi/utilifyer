@@ -1,0 +1,137 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="URL Slug Generator"
+  description="Convert any title or phrase into a clean, SEO-friendly URL slug. Handles accents, special characters, and multiple separators."
+  slug="slug-generator"
+  category="Developer"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">URL Slug Generator</h1>
+  <p class="text-gray-500 mb-8">Convert any title into a clean, SEO-friendly URL slug instantly.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div>
+      <label class="label">Title or Phrase</label>
+      <input id="slug-input" type="text" placeholder="e.g. How to Build a Website in 2025 🚀" class="input-field text-lg" />
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div>
+        <label class="label text-xs">Separator</label>
+        <select id="separator" class="input-field">
+          <option value="-">Hyphen (-)</option>
+          <option value="_">Underscore (_)</option>
+          <option value=".">Period (.)</option>
+        </select>
+      </div>
+      <div>
+        <label class="label text-xs">Case</label>
+        <select id="case-opt" class="input-field">
+          <option value="lower">lowercase</option>
+          <option value="upper">UPPERCASE</option>
+          <option value="original">Keep original</option>
+        </select>
+      </div>
+      <label class="flex items-end gap-2 text-sm text-gray-600 cursor-pointer pb-2.5 col-span-1">
+        <input type="checkbox" id="remove-stop" class="accent-indigo-600" />
+        Remove stop words
+      </label>
+      <label class="flex items-end gap-2 text-sm text-gray-600 cursor-pointer pb-2.5 col-span-1">
+        <input type="checkbox" id="truncate" class="accent-indigo-600" />
+        Truncate to 60 chars
+      </label>
+    </div>
+
+    <!-- Live output -->
+    <div>
+      <label class="label">Generated Slug</label>
+      <div class="flex gap-2">
+        <div id="slug-output" class="flex-1 bg-indigo-50 border border-indigo-200 rounded-xl px-4 py-3 font-mono text-indigo-800 text-sm min-h-[48px] break-all select-all"></div>
+        <button id="copy-slug" class="btn-secondary flex-shrink-0 px-3">Copy</button>
+      </div>
+    </div>
+
+    <!-- Bulk slugs -->
+    <div>
+      <label class="label">Bulk Convert (one title per line)</label>
+      <textarea id="bulk-input" rows={5} placeholder="How to Bake a Cake&#10;Best Running Shoes 2025&#10;10 Tips for Better Sleep" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y text-sm"></textarea>
+      <button id="bulk-btn" class="btn-secondary mt-2">Convert All</button>
+      <div id="bulk-output" class="mt-2 space-y-1.5"></div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is a URL slug?", a: "A URL slug is the part of a URL that identifies a specific page in human-readable words. For example, in utilifyer.com/url-slug-generator, the slug is 'url-slug-generator'. Good slugs are lowercase, use hyphens, and describe the page content." },
+        { q: "Why use hyphens instead of underscores in slugs?", a: "Google treats hyphens as word separators (like spaces) in URLs. Underscores are treated as joining characters — 'url_slug' is treated as one word 'urlslug'. Use hyphens for better SEO." },
+        { q: "How long should a URL slug be?", a: "Keep slugs under 60 characters when possible. Shorter slugs are easier to share and remember. Include your primary keyword but avoid keyword stuffing. Remove filler words like 'a', 'the', 'and'." },
+        { q: "Should I include dates in URL slugs?", a: "Avoid dates in slugs for evergreen content — '2025-guide-to-seo' becomes outdated. Use dates only for news articles or time-specific content. Changing URLs later breaks links and loses SEO equity." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const STOP_WORDS = new Set(['a','an','the','and','or','but','in','on','at','to','for','of','with','by','from','is','it','its','as','was','are','were','been','this','that','these','those','i','you','he','she','we','they']);
+
+  function makeSlug(text: string): string {
+    const sep = (document.getElementById('separator') as HTMLSelectElement).value;
+    const caseOpt = (document.getElementById('case-opt') as HTMLSelectElement).value;
+    const removeStop = (document.getElementById('remove-stop') as HTMLInputElement).checked;
+    const truncate = (document.getElementById('truncate') as HTMLInputElement).checked;
+
+    let slug = text
+      .normalize('NFD').replace(/[̀-ͯ]/g, '')
+      .replace(/[^\w\s-]/g, '')
+      .trim()
+      .split(/\s+/)
+      .filter(w => !removeStop || !STOP_WORDS.has(w.toLowerCase()))
+      .join('-');
+
+    if (caseOpt === 'lower') slug = slug.toLowerCase();
+    else if (caseOpt === 'upper') slug = slug.toUpperCase();
+
+    slug = slug.replace(/-+/g, sep).replace(/^[-_.]|[-_.]$/g, '');
+    if (truncate) slug = slug.slice(0, 60).replace(/[-_.]$/, '');
+    return slug;
+  }
+
+  function updateSlug() {
+    const val = (document.getElementById('slug-input') as HTMLInputElement).value;
+    document.getElementById('slug-output')!.textContent = val ? makeSlug(val) : '';
+  }
+
+  document.getElementById('slug-input')?.addEventListener('input', updateSlug);
+  ['separator','case-opt','remove-stop','truncate'].forEach(id => document.getElementById(id)?.addEventListener('change', updateSlug));
+
+  document.getElementById('copy-slug')?.addEventListener('click', () => {
+    const val = document.getElementById('slug-output')!.textContent || '';
+    navigator.clipboard.writeText(val).then(() => {
+      const btn = document.getElementById('copy-slug')!;
+      btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 1500);
+    });
+  });
+
+  document.getElementById('bulk-btn')?.addEventListener('click', () => {
+    const lines = (document.getElementById('bulk-input') as HTMLTextAreaElement).value.split('\n').filter(l => l.trim());
+    document.getElementById('bulk-output')!.innerHTML = lines.map(line => {
+      const slug = makeSlug(line.trim());
+      return `<div class="flex items-center gap-2 bg-gray-50 border border-gray-100 rounded-lg px-3 py-1.5">
+        <span class="font-mono text-sm text-indigo-700 flex-1 select-all">${slug}</span>
+        <button onclick="navigator.clipboard.writeText('${slug.replace(/'/g, "\\'")}')" class="text-xs text-gray-400 hover:text-indigo-600">Copy</button>
+      </div>`;
+    }).join('');
+  });
+</script>
