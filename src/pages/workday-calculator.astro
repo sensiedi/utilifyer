@@ -1,0 +1,161 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Business Day Calculator"
+  description="Calculate the number of business days between two dates. Add or subtract working days from a date. Excludes weekends automatically."
+  slug="workday-calculator"
+  category="Date & Time"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Business Day Calculator</h1>
+  <p class="text-gray-500 mb-8">Count working days between dates or find a date that is N business days away.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-6">
+
+    <!-- Business days between two dates -->
+    <div>
+      <h2 class="text-base font-semibold text-gray-800 mb-3">Business Days Between Two Dates</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="label">Start Date</label>
+          <input id="bd-start" type="date" class="input-field" />
+        </div>
+        <div>
+          <label class="label">End Date</label>
+          <input id="bd-end" type="date" class="input-field" />
+        </div>
+      </div>
+      <div id="bd-results" class="mt-3 hidden grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+    </div>
+
+    <hr class="border-gray-100" />
+
+    <!-- Add business days to a date -->
+    <div>
+      <h2 class="text-base font-semibold text-gray-800 mb-3">Add Business Days to a Date</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="label">Start Date</label>
+          <input id="wd-start" type="date" class="input-field" />
+        </div>
+        <div>
+          <label class="label">Business Days to Add</label>
+          <input id="wd-days" type="number" value="10" min="1" max="500" class="input-field" />
+        </div>
+      </div>
+      <button id="wd-btn" class="btn-primary mt-3">Calculate</button>
+      <div id="wd-result" class="hidden mt-3 bg-indigo-50 border border-indigo-200 rounded-xl p-4"></div>
+    </div>
+
+    <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-700">
+      This calculator excludes weekends (Saturday and Sunday). Public holidays vary by country and are not excluded.
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What counts as a business day?", a: "A business day is typically Monday through Friday, excluding public holidays. This calculator excludes weekends but does not account for holidays, which vary by country, region, and industry." },
+        { q: "How do you count business days between two dates?", a: "Count all days in the range, then subtract the number of Saturdays and Sundays. A quick estimate: total days × (5/7) ≈ business days. The exact count depends on where the range starts and ends relative to the weekend." },
+        { q: "What is a T+2 settlement date?", a: "T+2 means 'trade date plus 2 business days.' If you buy a stock on Monday, it settles Wednesday. If you buy on Thursday, it settles Monday (skipping weekend). T+2 is the standard settlement period for US and most international stock markets." },
+        { q: "Why do contracts use business days instead of calendar days?", a: "Business days reflect actual working time available to complete tasks. A 5 business day deadline is a full work week, regardless of when it starts. Calendar days can be misleading when they span weekends or holidays." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  function parseLocal(s: string): Date {
+    const [y, m, d] = s.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }
+
+  function fmtDate(d: Date): string {
+    return `${DAYS[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+  }
+
+  function businessDaysBetween(start: Date, end: Date): number {
+    let count = 0;
+    const cur = new Date(start);
+    while (cur <= end) {
+      const day = cur.getDay();
+      if (day !== 0 && day !== 6) count++;
+      cur.setDate(cur.getDate() + 1);
+    }
+    return count;
+  }
+
+  function addBusinessDays(start: Date, days: number): Date {
+    const d = new Date(start);
+    let added = 0;
+    while (added < days) {
+      d.setDate(d.getDate() + 1);
+      const day = d.getDay();
+      if (day !== 0 && day !== 6) added++;
+    }
+    return d;
+  }
+
+  function calcBdiff() {
+    const s = (document.getElementById('bd-start') as HTMLInputElement).value;
+    const e = (document.getElementById('bd-end') as HTMLInputElement).value;
+    const container = document.getElementById('bd-results')!;
+    if (!s || !e) { container.classList.add('hidden'); return; }
+
+    const start = parseLocal(s);
+    const end = parseLocal(e);
+    if (end < start) { container.classList.add('hidden'); return; }
+
+    const totalDays = Math.round((end.getTime() - start.getTime()) / 86400000) + 1;
+    const bizDays = businessDaysBetween(start, end);
+    const weekendDays = totalDays - bizDays;
+    const bizWeeks = (bizDays / 5).toFixed(2);
+
+    container.innerHTML = [
+      ['Business Days', bizDays],
+      ['Calendar Days', totalDays],
+      ['Weekend Days', weekendDays],
+      ['Business Weeks', bizWeeks],
+    ].map(([l, v]) =>
+      `<div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+        <div class="text-xs text-gray-400 mb-0.5">${l}</div>
+        <div class="font-mono font-bold text-gray-900 text-lg">${v}</div>
+      </div>`
+    ).join('');
+    container.classList.remove('hidden');
+  }
+
+  document.getElementById('bd-start')?.addEventListener('change', calcBdiff);
+  document.getElementById('bd-end')?.addEventListener('change', calcBdiff);
+
+  document.getElementById('wd-btn')?.addEventListener('click', () => {
+    const s = (document.getElementById('wd-start') as HTMLInputElement).value;
+    const days = parseInt((document.getElementById('wd-days') as HTMLInputElement).value);
+    if (!s || isNaN(days)) return;
+    const result = addBusinessDays(parseLocal(s), days);
+    const container = document.getElementById('wd-result')!;
+    container.innerHTML = `
+      <div class="text-xs text-indigo-500 mb-1">Result (${days} business days later)</div>
+      <div class="text-xl font-bold text-indigo-800">${fmtDate(result)}</div>`;
+    container.classList.remove('hidden');
+  });
+
+  const today = new Date().toISOString().split('T')[0];
+  (document.getElementById('bd-start') as HTMLInputElement).value = today;
+  const later = new Date(Date.now() + 30 * 86400000).toISOString().split('T')[0];
+  (document.getElementById('bd-end') as HTMLInputElement).value = later;
+  (document.getElementById('wd-start') as HTMLInputElement).value = today;
+  calcBdiff();
+</script>

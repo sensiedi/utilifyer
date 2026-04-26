@@ -1,0 +1,172 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Time Zone Converter"
+  description="Convert a time from one time zone to another. See the same moment in multiple cities. Handles daylight saving time automatically."
+  slug="timezone-converter"
+  category="Date & Time"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Time Zone Converter</h1>
+  <p class="text-gray-500 mb-8">Convert a specific time across multiple time zones instantly.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Date & Time</label>
+        <input id="tz-datetime" type="datetime-local" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Source Time Zone</label>
+        <select id="tz-from" class="input-field"></select>
+      </div>
+    </div>
+
+    <div id="tz-results" class="space-y-2"></div>
+
+    <div class="border-t border-gray-100 pt-4">
+      <label class="label text-sm">Add Time Zone</label>
+      <div class="flex gap-2">
+        <select id="tz-add-select" class="input-field flex-1"></select>
+        <button id="btn-add-tz" class="btn-secondary flex-shrink-0">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is daylight saving time (DST)?", a: "DST is the practice of setting clocks forward 1 hour in spring and back 1 hour in autumn to make better use of daylight. The US 'springs forward' the second Sunday in March and 'falls back' the first Sunday in November. This tool automatically handles DST transitions." },
+        { q: "How do I schedule a meeting across time zones?", a: "Enter the proposed meeting time and your local time zone in this tool, then add the time zones of all participants to see what time it is for everyone. Aim for overlap during normal business hours (9 AM – 5 PM) for all parties." },
+        { q: "What does UTC offset mean?", a: "UTC offset is the difference between a time zone and UTC (Universal Coordinated Time). For example, Eastern Standard Time (EST) is UTC−5, meaning it is 5 hours behind UTC. When DST is active, Eastern Daylight Time (EDT) is UTC−4." },
+        { q: "Why does time zone conversion get complicated?", a: "Three factors complicate it: (1) DST transitions that happen on different dates in different countries, (2) some countries use half- or quarter-hour offsets, and (3) some countries change their time zone rules over time. Always verify with a live tool for business-critical scheduling." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const TIMEZONES = [
+    ['Pacific/Honolulu','Honolulu, Hawaii (HST)'],
+    ['America/Anchorage','Anchorage, Alaska'],
+    ['America/Los_Angeles','Los Angeles / San Francisco (PT)'],
+    ['America/Denver','Denver / Phoenix (MT)'],
+    ['America/Chicago','Chicago / Dallas (CT)'],
+    ['America/New_York','New York / Miami (ET)'],
+    ['America/Toronto','Toronto (ET)'],
+    ['America/Halifax','Halifax (AT)'],
+    ['America/Sao_Paulo','São Paulo (BRT)'],
+    ['America/Buenos_Aires','Buenos Aires (ART)'],
+    ['Atlantic/Reykjavik','Reykjavik / UTC'],
+    ['Europe/London','London (GMT/BST)'],
+    ['Europe/Lisbon','Lisbon (WET)'],
+    ['Europe/Paris','Paris / Berlin / Madrid (CET)'],
+    ['Europe/Helsinki','Helsinki / Kyiv (EET)'],
+    ['Europe/Moscow','Moscow (MSK)'],
+    ['Asia/Dubai','Dubai (GST)'],
+    ['Asia/Karachi','Karachi (PKT)'],
+    ['Asia/Kolkata','Mumbai / Delhi (IST)'],
+    ['Asia/Dhaka','Dhaka (BST)'],
+    ['Asia/Bangkok','Bangkok / Jakarta (ICT)'],
+    ['Asia/Singapore','Singapore / Kuala Lumpur (SGT)'],
+    ['Asia/Shanghai','Beijing / Shanghai (CST)'],
+    ['Asia/Hong_Kong','Hong Kong (HKT)'],
+    ['Asia/Seoul','Seoul / Tokyo (KST/JST)'],
+    ['Asia/Tokyo','Tokyo (JST)'],
+    ['Australia/Perth','Perth (AWST)'],
+    ['Australia/Sydney','Sydney / Melbourne (AEST)'],
+    ['Pacific/Auckland','Auckland (NZST)'],
+  ];
+
+  let displayZones = [
+    'America/New_York','America/Chicago','America/Los_Angeles',
+    'Europe/London','Europe/Paris','Asia/Tokyo','Australia/Sydney',
+  ];
+
+  function populateSelects() {
+    const opts = TIMEZONES.map(([v, l]) => `<option value="${v}">${l}</option>`).join('');
+    document.getElementById('tz-from')!.innerHTML = opts;
+    document.getElementById('tz-add-select')!.innerHTML = `<option value="">Select timezone…</option>` + opts;
+    try {
+      const local = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      (document.getElementById('tz-from') as HTMLSelectElement).value = local;
+    } catch {}
+  }
+
+  function convert() {
+    const dt = (document.getElementById('tz-datetime') as HTMLInputElement).value;
+    const from = (document.getElementById('tz-from') as HTMLSelectElement).value;
+    if (!dt || !from) return;
+
+    const [datePart, timePart] = dt.split('T');
+    const [y, mo, d] = datePart.split('-').map(Number);
+    const [h, m] = (timePart || '00:00').split(':').map(Number);
+
+    const sourceDate = new Date(Date.UTC(y, mo - 1, d, h, m));
+    const offset = getUtcOffset(from, sourceDate);
+    const utcMs = sourceDate.getTime() - offset * 60000;
+
+    document.getElementById('tz-results')!.innerHTML = displayZones.map(tz => {
+      const targetOffset = getUtcOffset(tz, new Date(utcMs));
+      const local = new Date(utcMs + targetOffset * 60000);
+      const timeStr = local.toUTCString().split(' ').slice(4, 5).join(' ').slice(0, 5);
+      const dateStr = local.toUTCString().split(' ').slice(0, 4).join(' ');
+      const label = TIMEZONES.find(([v]) => v === tz)?.[1] || tz;
+      const isFrom = tz === from;
+      return `<div class="flex items-center justify-between border ${isFrom ? 'border-indigo-300 bg-indigo-50' : 'border-gray-100 bg-gray-50'} rounded-xl px-4 py-3 group relative">
+        <div>
+          <div class="text-sm ${isFrom ? 'text-indigo-700' : 'text-gray-700'} font-medium">${label}</div>
+          <div class="text-xs text-gray-400">${dateStr}</div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="font-mono font-bold text-lg ${isFrom ? 'text-indigo-800' : 'text-gray-900'}">${timeStr}</span>
+          ${!isFrom ? `<button onclick="removeZone('${tz}')" class="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 text-xs">✕</button>` : ''}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  function getUtcOffset(tz: string, d: Date): number {
+    const utcStr = d.toLocaleString('en-US', { timeZone: 'UTC', hour12: false, year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit' });
+    const localStr = d.toLocaleString('en-US', { timeZone: tz, hour12: false, year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit' });
+    function parse(s: string): number {
+      const [date, time] = s.split(', ');
+      const [m, day, y] = date.split('/');
+      const [h, min] = time.split(':');
+      return Date.UTC(parseInt(y), parseInt(m)-1, parseInt(day), parseInt(h), parseInt(min));
+    }
+    return (parse(localStr) - parse(utcStr)) / 60000;
+  }
+
+  (window as any).removeZone = function(tz: string) {
+    displayZones = displayZones.filter(z => z !== tz);
+    convert();
+  };
+
+  document.getElementById('btn-add-tz')?.addEventListener('click', () => {
+    const tz = (document.getElementById('tz-add-select') as HTMLSelectElement).value;
+    if (!tz || displayZones.includes(tz)) return;
+    displayZones.push(tz);
+    convert();
+  });
+
+  document.getElementById('tz-datetime')?.addEventListener('input', convert);
+  document.getElementById('tz-from')?.addEventListener('change', convert);
+
+  populateSelects();
+
+  const now = new Date();
+  const local = new Date(now.getTime() - now.getTimezoneOffset() * 60000).toISOString().slice(0, 16);
+  (document.getElementById('tz-datetime') as HTMLInputElement).value = local;
+  convert();
+</script>

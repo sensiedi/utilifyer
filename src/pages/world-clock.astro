@@ -1,0 +1,141 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="World Clock"
+  description="See the current time in major cities around the world. Compare time zones at a glance. Auto-updates every second."
+  slug="world-clock"
+  category="Date & Time"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">World Clock</h1>
+  <p class="text-gray-500 mb-8">Current time in major cities worldwide — updates every second.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div id="clocks" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+
+    <div class="border-t border-gray-100 pt-4">
+      <label class="label">Add a City / Timezone</label>
+      <div class="flex gap-2">
+        <select id="tz-add" class="input-field flex-1">
+          <option value="">Select a timezone…</option>
+          {[
+            ['Pacific/Honolulu','Honolulu, Hawaii'],
+            ['America/Anchorage','Anchorage, Alaska'],
+            ['America/Los_Angeles','Los Angeles / SF'],
+            ['America/Denver','Denver / Phoenix'],
+            ['America/Chicago','Chicago / Dallas'],
+            ['America/New_York','New York / Miami'],
+            ['America/Sao_Paulo','São Paulo'],
+            ['America/Buenos_Aires','Buenos Aires'],
+            ['Atlantic/Reykjavik','Reykjavik (UTC)'],
+            ['Europe/London','London'],
+            ['Europe/Paris','Paris / Berlin'],
+            ['Europe/Moscow','Moscow'],
+            ['Asia/Dubai','Dubai'],
+            ['Asia/Karachi','Karachi'],
+            ['Asia/Kolkata','Mumbai / Delhi'],
+            ['Asia/Dhaka','Dhaka'],
+            ['Asia/Bangkok','Bangkok / Jakarta'],
+            ['Asia/Singapore','Singapore / KL'],
+            ['Asia/Shanghai','Beijing / Shanghai'],
+            ['Asia/Tokyo','Tokyo / Seoul'],
+            ['Australia/Sydney','Sydney'],
+            ['Pacific/Auckland','Auckland'],
+          ].map(([tz, label]) => <option value={tz}>{label}</option>)}
+        </select>
+        <button id="btn-add-tz" class="btn-secondary flex-shrink-0">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is UTC / GMT?", a: "UTC (Coordinated Universal Time) and GMT (Greenwich Mean Time) are essentially the same for most purposes. UTC is the modern standard that all time zones are defined relative to. For example, New York is UTC−5 (EST) or UTC−4 (EDT during daylight saving)." },
+        { q: "Why do some countries not observe daylight saving time?", a: "Daylight saving time (DST) is a practice of advancing clocks by 1 hour in summer to extend evening daylight. Many countries near the equator don't observe it because day length varies little year-round. Countries like Japan, China, India, and most of Africa do not use DST." },
+        { q: "What is the International Date Line?", a: "The International Date Line is an imaginary line at roughly 180° longitude (the antimeridian). Crossing it eastward moves you back one calendar day; crossing westward moves you forward one day. It's why Samoa and Tonga can be a day ahead of Hawaii despite being geographically close." },
+        { q: "How many time zones are there?", a: "There are 24 main time zones based on 15° longitude bands, but in practice there are about 40 distinct UTC offsets used worldwide. Some countries use half-hour (India, UTC+5:30) or quarter-hour (Nepal, UTC+5:45) offsets." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  interface ClockEntry { tz: string; label: string; }
+
+  let clocks: ClockEntry[] = [
+    { tz: 'America/New_York', label: 'New York' },
+    { tz: 'America/Los_Angeles', label: 'Los Angeles' },
+    { tz: 'Europe/London', label: 'London' },
+    { tz: 'Europe/Paris', label: 'Paris' },
+    { tz: 'Asia/Tokyo', label: 'Tokyo' },
+    { tz: 'Asia/Shanghai', label: 'Shanghai' },
+    { tz: 'Asia/Dubai', label: 'Dubai' },
+    { tz: 'Australia/Sydney', label: 'Sydney' },
+  ];
+
+  const TZ_LABELS: Record<string,string> = {
+    'Pacific/Honolulu':'Honolulu','America/Anchorage':'Anchorage',
+    'America/Los_Angeles':'Los Angeles / SF','America/Denver':'Denver',
+    'America/Chicago':'Chicago','America/New_York':'New York',
+    'America/Sao_Paulo':'São Paulo','America/Buenos_Aires':'Buenos Aires',
+    'Atlantic/Reykjavik':'Reykjavik','Europe/London':'London',
+    'Europe/Paris':'Paris','Europe/Moscow':'Moscow',
+    'Asia/Dubai':'Dubai','Asia/Karachi':'Karachi','Asia/Kolkata':'Mumbai / Delhi',
+    'Asia/Dhaka':'Dhaka','Asia/Bangkok':'Bangkok','Asia/Singapore':'Singapore',
+    'Asia/Shanghai':'Shanghai','Asia/Tokyo':'Tokyo','Australia/Sydney':'Sydney',
+    'Pacific/Auckland':'Auckland',
+  };
+
+  function getOffset(tz: string): string {
+    const d = new Date();
+    const str = d.toLocaleString('en-US', { timeZone: tz, timeZoneName: 'short' });
+    const parts = str.split(' ');
+    return parts[parts.length - 1];
+  }
+
+  function render() {
+    const now = new Date();
+    const container = document.getElementById('clocks')!;
+    container.innerHTML = clocks.map(({ tz, label }) => {
+      const time = now.toLocaleTimeString('en-US', { timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const date = now.toLocaleDateString('en-US', { timeZone: tz, weekday: 'short', month: 'short', day: 'numeric' });
+      const hour = parseInt(now.toLocaleString('en-US', { timeZone: tz, hour: 'numeric', hour12: false }));
+      const isNight = hour < 7 || hour >= 20;
+      const isDark = isNight ? 'bg-gray-900 text-white' : 'bg-white';
+      const offset = getOffset(tz);
+      return `<div class="${isDark} border border-gray-200 rounded-2xl p-4 relative group">
+        <button onclick="removeClock('${tz}')" class="absolute top-2 right-2 text-gray-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity text-xs">✕</button>
+        <div class="text-xs ${isNight ? 'text-gray-400' : 'text-gray-500'} mb-0.5">${label}</div>
+        <div class="font-mono text-xl font-bold ${isNight ? 'text-white' : 'text-gray-900'}">${time}</div>
+        <div class="text-xs ${isNight ? 'text-gray-400' : 'text-gray-500'} mt-0.5">${date} · ${offset}</div>
+        ${isNight ? '<div class="text-xs text-blue-400 mt-0.5">🌙 Night</div>' : ''}
+      </div>`;
+    }).join('');
+  }
+
+  (window as any).removeClock = function(tz: string) {
+    clocks = clocks.filter(c => c.tz !== tz);
+    render();
+  };
+
+  document.getElementById('btn-add-tz')?.addEventListener('click', () => {
+    const tz = (document.getElementById('tz-add') as HTMLSelectElement).value;
+    if (!tz || clocks.some(c => c.tz === tz)) return;
+    clocks.push({ tz, label: TZ_LABELS[tz] || tz });
+    render();
+  });
+
+  render();
+  setInterval(render, 1000);
+</script>

@@ -618,5 +618,45 @@
     "priority": 62,
     "status": "live",
     "icon": "🧮"
+  },
+  {
+    "slug": "date-calculator",
+    "title": "Date Calculator",
+    "description": "Calculate days between dates, add or subtract time from a date, and find the day of the week.",
+    "category": "Date & Time",
+    "tags": ["date calculator", "days between dates", "add days", "day of week", "date difference"],
+    "priority": 63,
+    "status": "live",
+    "icon": "📅"
+  },
+  {
+    "slug": "world-clock",
+    "title": "World Clock",
+    "description": "See the current time in major cities worldwide. Compare time zones at a glance. Auto-updates every second.",
+    "category": "Date & Time",
+    "tags": ["world clock", "time zones", "international time", "current time"],
+    "priority": 64,
+    "status": "live",
+    "icon": "🌍"
+  },
+  {
+    "slug": "timezone-converter",
+    "title": "Time Zone Converter",
+    "description": "Convert a specific time from one time zone to another. Handles daylight saving time automatically.",
+    "category": "Date & Time",
+    "tags": ["timezone converter", "time zone", "daylight saving", "UTC", "EST PST CST"],
+    "priority": 65,
+    "status": "live",
+    "icon": "🕐"
+  },
+  {
+    "slug": "workday-calculator",
+    "title": "Business Day Calculator",
+    "description": "Count business days between two dates or find a date that is N working days away. Excludes weekends.",
+    "category": "Date & Time",
+    "tags": ["business days", "working days", "weekday calculator", "T+2 settlement"],
+    "priority": 66,
+    "status": "live",
+    "icon": "💼"
   }
 ]

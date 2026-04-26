@@ -1,0 +1,199 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Date Calculator"
+  description="Calculate the number of days between two dates. Add or subtract days, weeks, months, or years from a date. Find day of week and age."
+  slug="date-calculator"
+  category="Date & Time"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Date Calculator</h1>
+  <p class="text-gray-500 mb-8">Calculate days between dates, add or subtract time, and find day of the week.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-6">
+
+    <!-- Date difference -->
+    <div>
+      <h2 class="text-base font-semibold text-gray-800 mb-3">Date Difference</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="label">Start Date</label>
+          <input id="diff-start" type="date" class="input-field" />
+        </div>
+        <div>
+          <label class="label">End Date</label>
+          <input id="diff-end" type="date" class="input-field" />
+        </div>
+      </div>
+      <div id="diff-results" class="mt-3 hidden grid grid-cols-2 sm:grid-cols-4 gap-3"></div>
+    </div>
+
+    <hr class="border-gray-100" />
+
+    <!-- Add/subtract from date -->
+    <div>
+      <h2 class="text-base font-semibold text-gray-800 mb-3">Add / Subtract from Date</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="label">Start Date</label>
+          <input id="add-date" type="date" class="input-field" />
+        </div>
+        <div class="flex gap-2 items-end">
+          <div class="flex-1">
+            <label class="label">Amount</label>
+            <input id="add-amount" type="number" value="30" class="input-field" />
+          </div>
+          <select id="add-unit" class="input-field w-auto flex-shrink-0">
+            <option value="days">Days</option>
+            <option value="weeks">Weeks</option>
+            <option value="months">Months</option>
+            <option value="years">Years</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex gap-2 mt-3">
+        <button id="btn-add" class="btn-primary">+ Add</button>
+        <button id="btn-sub" class="btn-secondary">− Subtract</button>
+      </div>
+      <div id="add-result" class="hidden mt-3 bg-indigo-50 border border-indigo-200 rounded-xl p-4">
+        <div class="text-xs text-indigo-500 mb-1">Result Date</div>
+        <div id="add-result-date" class="text-xl font-bold text-indigo-800 font-mono"></div>
+        <div id="add-result-dow" class="text-sm text-indigo-600 mt-0.5"></div>
+      </div>
+    </div>
+
+    <hr class="border-gray-100" />
+
+    <!-- Day of week lookup -->
+    <div>
+      <h2 class="text-base font-semibold text-gray-800 mb-3">Day of Week</h2>
+      <input id="dow-date" type="date" class="input-field w-full sm:w-64" />
+      <div id="dow-result" class="hidden mt-3 bg-gray-50 border border-gray-200 rounded-xl p-4"></div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How do I calculate days between two dates?", a: "Subtract the start date from the end date to get the difference in milliseconds, then divide by (1000 × 60 × 60 × 24) to convert to days. This calculator does it instantly — just pick two dates." },
+        { q: "How do months work when adding to a date?", a: "Adding months adjusts the month component. January 31 + 1 month = February 28/29 (last day of February). Calendars handle the variable month length automatically. This calculator uses standard JavaScript date arithmetic." },
+        { q: "What is a business day calculation?", a: "Business days exclude weekends (Saturday and Sunday) and sometimes holidays. To count business days between dates, subtract the number of weekend days and applicable holidays from the total calendar day count." },
+        { q: "How do I find what day of the week a date was?", a: "Use the Day of Week section above — just enter any date and it instantly shows the day name, ISO week number, and whether it's a weekday or weekend." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+
+  function parseLocal(s: string): Date {
+    const [y, m, d] = s.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }
+
+  function fmtDate(d: Date): string {
+    return `${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+  }
+
+  function isoWeek(d: Date): number {
+    const tmp = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+    tmp.setUTCDate(tmp.getUTCDate() + 4 - (tmp.getUTCDay() || 7));
+    const jan1 = new Date(Date.UTC(tmp.getUTCFullYear(), 0, 1));
+    return Math.ceil(((tmp.getTime() - jan1.getTime()) / 86400000 + 1) / 7);
+  }
+
+  function calcDiff() {
+    const s = (document.getElementById('diff-start') as HTMLInputElement).value;
+    const e = (document.getElementById('diff-end') as HTMLInputElement).value;
+    const container = document.getElementById('diff-results')!;
+    if (!s || !e) { container.classList.add('hidden'); return; }
+
+    const start = parseLocal(s);
+    const end = parseLocal(e);
+    const msDay = 86400000;
+    const totalDays = Math.round((end.getTime() - start.getTime()) / msDay);
+    const absDays = Math.abs(totalDays);
+    const label = totalDays < 0 ? '(before start)' : '';
+
+    const stats = [
+      ['Days', absDays + (label ? ' ' + label : '')],
+      ['Weeks', (absDays / 7).toFixed(2)],
+      ['Months', (absDays / 30.4375).toFixed(2)],
+      ['Years', (absDays / 365.25).toFixed(4)],
+    ];
+
+    container.innerHTML = stats.map(([l, v]) =>
+      `<div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+        <div class="text-xs text-gray-400 mb-0.5">${l}</div>
+        <div class="font-mono font-bold text-gray-900">${v}</div>
+      </div>`
+    ).join('');
+    container.classList.remove('hidden');
+  }
+
+  function addSubDate(add: boolean) {
+    const dateStr = (document.getElementById('add-date') as HTMLInputElement).value;
+    const amount = parseInt((document.getElementById('add-amount') as HTMLInputElement).value);
+    const unit = (document.getElementById('add-unit') as HTMLSelectElement).value;
+    if (!dateStr || isNaN(amount)) return;
+
+    const d = parseLocal(dateStr);
+    const delta = add ? amount : -amount;
+
+    switch (unit) {
+      case 'days': d.setDate(d.getDate() + delta); break;
+      case 'weeks': d.setDate(d.getDate() + delta * 7); break;
+      case 'months': d.setMonth(d.getMonth() + delta); break;
+      case 'years': d.setFullYear(d.getFullYear() + delta); break;
+    }
+
+    document.getElementById('add-result-date')!.textContent = fmtDate(d);
+    document.getElementById('add-result-dow')!.textContent = DAYS[d.getDay()];
+    document.getElementById('add-result')!.classList.remove('hidden');
+  }
+
+  document.getElementById('diff-start')?.addEventListener('change', calcDiff);
+  document.getElementById('diff-end')?.addEventListener('change', calcDiff);
+
+  document.getElementById('btn-add')?.addEventListener('click', () => addSubDate(true));
+  document.getElementById('btn-sub')?.addEventListener('click', () => addSubDate(false));
+
+  document.getElementById('dow-date')?.addEventListener('change', () => {
+    const s = (document.getElementById('dow-date') as HTMLInputElement).value;
+    if (!s) return;
+    const d = parseLocal(s);
+    const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+    const week = isoWeek(d);
+    document.getElementById('dow-result')!.innerHTML = `
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
+        <div><span class="text-xs text-gray-400 block">Day</span><span class="font-bold text-gray-900">${DAYS[d.getDay()]}</span></div>
+        <div><span class="text-xs text-gray-400 block">Full Date</span><span class="font-semibold text-gray-800">${fmtDate(d)}</span></div>
+        <div><span class="text-xs text-gray-400 block">ISO Week</span><span class="font-semibold text-gray-800">Week ${week}, ${d.getFullYear()}</span></div>
+        <div><span class="text-xs text-gray-400 block">Day of Year</span><span class="font-semibold text-gray-800">${Math.floor((d.getTime() - new Date(d.getFullYear(),0,0).getTime())/86400000)}</span></div>
+        <div><span class="text-xs text-gray-400 block">Type</span><span class="font-semibold ${isWeekend ? 'text-orange-600' : 'text-green-700'}">${isWeekend ? 'Weekend' : 'Weekday'}</span></div>
+      </div>`;
+    document.getElementById('dow-result')!.classList.remove('hidden');
+  });
+
+  // Set defaults to today and 30 days later
+  const today = new Date();
+  const todayStr = today.toISOString().split('T')[0];
+  const later = new Date(today.getTime() + 30 * 86400000).toISOString().split('T')[0];
+  (document.getElementById('diff-start') as HTMLInputElement).value = todayStr;
+  (document.getElementById('diff-end') as HTMLInputElement).value = later;
+  (document.getElementById('add-date') as HTMLInputElement).value = todayStr;
+  (document.getElementById('dow-date') as HTMLInputElement).value = todayStr;
+  calcDiff();
+  document.getElementById('dow-date')!.dispatchEvent(new Event('change'));
+</script>
