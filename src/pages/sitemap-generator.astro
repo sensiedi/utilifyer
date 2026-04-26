@@ -1,0 +1,173 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="XML Sitemap Generator"
+  description="Generate an XML sitemap for your website. Enter your URLs with priority and change frequency settings to create a valid sitemap.xml file."
+  slug="sitemap-generator"
+  category="SEO & Marketing"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">XML Sitemap Generator</h1>
+  <p class="text-gray-500 mb-8">Create a valid sitemap.xml file to help search engines discover your pages.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Last Modified Date</label>
+        <input id="sm-lastmod" type="date" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Default Change Frequency</label>
+        <select id="sm-freq" class="input-field">
+          <option value="always">always</option>
+          <option value="hourly">hourly</option>
+          <option value="daily">daily</option>
+          <option value="weekly" selected>weekly</option>
+          <option value="monthly">monthly</option>
+          <option value="yearly">yearly</option>
+          <option value="never">never</option>
+        </select>
+      </div>
+    </div>
+
+    <div>
+      <label class="label">URLs (one per line)</label>
+      <textarea id="sm-urls" rows={8} placeholder="https://example.com/&#10;https://example.com/about&#10;https://example.com/blog&#10;https://example.com/contact" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm font-mono text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y"></textarea>
+    </div>
+
+    <div class="flex flex-wrap gap-4">
+      <div>
+        <label class="label">Homepage Priority</label>
+        <select id="sm-priority" class="input-field w-auto">
+          <option value="1.0" selected>1.0 (highest)</option>
+          <option value="0.9">0.9</option>
+          <option value="0.8">0.8</option>
+          <option value="0.7">0.7</option>
+          <option value="0.5">0.5 (default)</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">Other Pages Priority</label>
+        <select id="sm-other-priority" class="input-field w-auto">
+          <option value="0.9">0.9</option>
+          <option value="0.8">0.8</option>
+          <option value="0.7">0.7</option>
+          <option value="0.6" selected>0.6</option>
+          <option value="0.5">0.5</option>
+          <option value="0.4">0.4</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="sm-stats" class="hidden text-sm text-gray-500"></div>
+
+    <div>
+      <div class="flex justify-between items-center mb-2">
+        <p class="label">Generated sitemap.xml</p>
+        <div class="flex gap-3">
+          <button id="sm-copy" class="text-xs text-indigo-600 hover:text-indigo-800">Copy</button>
+          <button id="sm-download" class="text-xs text-indigo-600 hover:text-indigo-800">Download</button>
+        </div>
+      </div>
+      <pre id="sm-output" class="bg-gray-900 text-green-300 rounded-xl p-4 text-xs font-mono overflow-x-auto whitespace-pre max-h-96 overflow-y-auto"></pre>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is an XML sitemap?", a: "An XML sitemap is a file that lists all the important pages on your website, helping search engines like Google and Bing discover and crawl your content more efficiently. It's especially helpful for large sites, new sites with few backlinks, or sites with pages that aren't well-linked internally." },
+        { q: "How do I submit a sitemap to Google?", a: "Submit your sitemap via Google Search Console: go to Sitemaps under Index, enter the path (e.g., sitemap.xml), and click Submit. You can also reference your sitemap URL in your robots.txt file with: Sitemap: https://yourdomain.com/sitemap.xml" },
+        { q: "What does priority mean in a sitemap?", a: "Priority (0.0–1.0) is a hint to search engines about the relative importance of pages within your site. Your homepage is typically 1.0, main sections 0.8, and inner pages 0.5–0.6. Note: Google largely ignores this value in its ranking algorithm." },
+        { q: "How often should I update my sitemap?", a: "Update your sitemap whenever you add, remove, or significantly change pages. For dynamic sites, generate sitemaps automatically during the build or deploy process. The changefreq tag hints at how often content changes but is also largely advisory — Google uses its own crawl signals." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  function esc(s: string) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function generate() {
+    const raw = (document.getElementById('sm-urls') as HTMLTextAreaElement).value;
+    const freq = (document.getElementById('sm-freq') as HTMLSelectElement).value;
+    const lastmod = (document.getElementById('sm-lastmod') as HTMLInputElement).value;
+    const homePriority = (document.getElementById('sm-priority') as HTMLSelectElement).value;
+    const otherPriority = (document.getElementById('sm-other-priority') as HTMLSelectElement).value;
+
+    const urls = raw.split('\n').map(u => u.trim()).filter(u => {
+      try { new URL(u); return true; } catch { return false; }
+    });
+
+    const statsEl = document.getElementById('sm-stats')!;
+    if (urls.length === 0) {
+      document.getElementById('sm-output')!.textContent = '<!-- Enter URLs above to generate sitemap -->';
+      statsEl.classList.add('hidden');
+      return;
+    }
+
+    statsEl.textContent = `${urls.length} URL${urls.length !== 1 ? 's' : ''} detected`;
+    statsEl.classList.remove('hidden');
+
+    let rootDomain = '';
+    try { rootDomain = new URL(urls[0]).origin + '/'; } catch {}
+
+    const entries = urls.map(url => {
+      const isHome = url === rootDomain || url === rootDomain.slice(0,-1);
+      const priority = isHome ? homePriority : otherPriority;
+      const lines = [`  <url>`, `    <loc>${esc(url)}</loc>`];
+      if (lastmod) lines.push(`    <lastmod>${lastmod}</lastmod>`);
+      lines.push(`    <changefreq>${freq}</changefreq>`);
+      lines.push(`    <priority>${priority}</priority>`);
+      lines.push(`  </url>`);
+      return lines.join('\n');
+    });
+
+    const xml = [
+      `<?xml version="1.0" encoding="UTF-8"?>`,
+      `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">`,
+      ...entries,
+      `</urlset>`,
+    ].join('\n');
+
+    document.getElementById('sm-output')!.textContent = xml;
+  }
+
+  ['sm-urls','sm-freq','sm-lastmod','sm-priority','sm-other-priority'].forEach(id =>
+    document.getElementById(id)?.addEventListener('input', generate)
+  );
+
+  document.getElementById('sm-copy')?.addEventListener('click', () => {
+    navigator.clipboard.writeText(document.getElementById('sm-output')!.textContent || '').then(() => {
+      const btn = document.getElementById('sm-copy')!;
+      btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 1500);
+    });
+  });
+
+  document.getElementById('sm-download')?.addEventListener('click', () => {
+    const content = document.getElementById('sm-output')!.textContent || '';
+    if (!content || content.startsWith('<!--')) return;
+    const blob = new Blob([content], { type: 'application/xml' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'sitemap.xml';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  const today = new Date().toISOString().slice(0,10);
+  (document.getElementById('sm-lastmod') as HTMLInputElement).value = today;
+  generate();
+</script>

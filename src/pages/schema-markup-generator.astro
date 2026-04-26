@@ -1,0 +1,363 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Schema Markup Generator"
+  description="Generate JSON-LD structured data markup for your website. Create schema for articles, FAQs, products, local businesses, and breadcrumbs."
+  slug="schema-markup-generator"
+  category="SEO & Marketing"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Schema Markup Generator</h1>
+  <p class="text-gray-500 mb-8">Generate JSON-LD structured data to help search engines understand your content and enable rich results.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div>
+      <label class="label">Schema Type</label>
+      <select id="sc-type" class="input-field">
+        <option value="Article">Article / Blog Post</option>
+        <option value="FAQPage">FAQ Page</option>
+        <option value="Product">Product</option>
+        <option value="LocalBusiness">Local Business</option>
+        <option value="BreadcrumbList">Breadcrumb</option>
+        <option value="WebSite">Website (Sitelinks Searchbox)</option>
+      </select>
+    </div>
+
+    <div id="sc-fields" class="space-y-4"></div>
+
+    <div>
+      <div class="flex justify-between items-center mb-2">
+        <p class="label">Generated JSON-LD</p>
+        <button id="sc-copy" class="text-xs text-indigo-600 hover:text-indigo-800">Copy</button>
+      </div>
+      <pre id="sc-output" class="bg-gray-900 text-green-300 rounded-xl p-4 text-sm font-mono overflow-x-auto whitespace-pre max-h-96 overflow-y-auto"></pre>
+    </div>
+
+    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-800">
+      <p class="font-semibold mb-1">How to use</p>
+      <p>Add the generated code inside a <code class="bg-blue-100 px-1 rounded">&lt;script type="application/ld+json"&gt;</code> tag in your page's <code class="bg-blue-100 px-1 rounded">&lt;head&gt;</code> or <code class="bg-blue-100 px-1 rounded">&lt;body&gt;</code>. Test it with <a href="https://search.google.com/test/rich-results" target="_blank" rel="noopener" class="underline">Google's Rich Results Test</a>.</p>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is schema markup?", a: "Schema markup (structured data) is code added to your HTML that tells search engines the meaning of your content — not just what it says, but what it represents. It's based on the Schema.org vocabulary and helps Google display rich results like star ratings, FAQ dropdowns, product prices, and breadcrumbs." },
+        { q: "Does schema markup directly improve rankings?", a: "Schema markup is not a direct ranking factor. However, it enables rich results (enhanced SERP features) that increase click-through rates. Higher CTR sends positive signals to Google. FAQ schema can double your SERP real estate, pushing competitors further down the page." },
+        { q: "What is JSON-LD vs Microdata?", a: "JSON-LD (JavaScript Object Notation for Linked Data) is the format recommended by Google. It's added as a script block and doesn't require modifying your HTML structure. Microdata embeds schema as attributes (itemscope, itemprop) directly in your HTML. JSON-LD is preferred because it's easier to maintain and doesn't risk breaking your visible content." },
+        { q: "How do I test if my schema is valid?", a: "Use Google's Rich Results Test (search.google.com/test/rich-results) to check if your structured data is valid and eligible for rich results. The Schema Markup Validator (validator.schema.org) checks against the Schema.org spec. Test after adding markup and again after any content changes." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const SCHEMAS: Record<string, { fields: Array<{ id: string; label: string; type: string; placeholder?: string; hint?: string; rows?: number }>, extra?: string }> = {
+    Article: {
+      fields: [
+        { id: 'url', label: 'Article URL', type: 'text', placeholder: 'https://example.com/my-article' },
+        { id: 'headline', label: 'Headline / Title', type: 'text', placeholder: 'How to Build a Better Website' },
+        { id: 'desc', label: 'Description', type: 'textarea', placeholder: 'A short summary of the article.', rows: 2 },
+        { id: 'image', label: 'Featured Image URL', type: 'text', placeholder: 'https://example.com/article-image.jpg' },
+        { id: 'author', label: 'Author Name', type: 'text', placeholder: 'Jane Smith' },
+        { id: 'org', label: 'Publisher / Organization', type: 'text', placeholder: 'Example Blog' },
+        { id: 'datePublished', label: 'Date Published', type: 'date' },
+        { id: 'dateModified', label: 'Date Modified', type: 'date' },
+      ]
+    },
+    FAQPage: {
+      fields: [],
+      extra: 'faq'
+    },
+    Product: {
+      fields: [
+        { id: 'name', label: 'Product Name', type: 'text', placeholder: 'Blue Wireless Headphones' },
+        { id: 'desc', label: 'Description', type: 'textarea', placeholder: 'Product description', rows: 2 },
+        { id: 'image', label: 'Product Image URL', type: 'text', placeholder: 'https://example.com/product.jpg' },
+        { id: 'brand', label: 'Brand', type: 'text', placeholder: 'SoundMax' },
+        { id: 'sku', label: 'SKU', type: 'text', placeholder: 'SM-BT-101' },
+        { id: 'price', label: 'Price', type: 'text', placeholder: '49.99' },
+        { id: 'currency', label: 'Currency', type: 'text', placeholder: 'USD' },
+        { id: 'availability', label: 'Availability', type: 'select' },
+        { id: 'ratingValue', label: 'Rating (1–5)', type: 'text', placeholder: '4.5' },
+        { id: 'ratingCount', label: 'Rating Count', type: 'text', placeholder: '128' },
+      ]
+    },
+    LocalBusiness: {
+      fields: [
+        { id: 'name', label: 'Business Name', type: 'text', placeholder: 'Joe\'s Plumbing' },
+        { id: 'url', label: 'Website URL', type: 'text', placeholder: 'https://joesplumbing.com' },
+        { id: 'phone', label: 'Phone', type: 'text', placeholder: '+1-555-555-5555' },
+        { id: 'email', label: 'Email', type: 'text', placeholder: 'contact@joesplumbing.com' },
+        { id: 'street', label: 'Street Address', type: 'text', placeholder: '123 Main St' },
+        { id: 'city', label: 'City', type: 'text', placeholder: 'Springfield' },
+        { id: 'state', label: 'State/Province', type: 'text', placeholder: 'IL' },
+        { id: 'zip', label: 'Postal Code', type: 'text', placeholder: '62701' },
+        { id: 'country', label: 'Country Code', type: 'text', placeholder: 'US' },
+        { id: 'priceRange', label: 'Price Range', type: 'text', placeholder: '$$' },
+      ]
+    },
+    BreadcrumbList: {
+      fields: [],
+      extra: 'breadcrumb'
+    },
+    WebSite: {
+      fields: [
+        { id: 'url', label: 'Website URL', type: 'text', placeholder: 'https://example.com' },
+        { id: 'name', label: 'Website Name', type: 'text', placeholder: 'Example' },
+        { id: 'searchAction', label: 'Search URL pattern (optional)', type: 'text', placeholder: 'https://example.com/search?q={search_term_string}', hint: 'Enables sitelinks searchbox in Google' },
+      ]
+    }
+  };
+
+  let faqItems: Array<{q: string, a: string}> = [
+    { q: 'What is this tool?', a: 'This tool generates structured data markup.' },
+  ];
+  let breadcrumbs: Array<{name: string, url: string}> = [
+    { name: 'Home', url: 'https://example.com' },
+    { name: 'Blog', url: 'https://example.com/blog' },
+  ];
+
+  function g(id: string): string {
+    const el = document.getElementById(`sc-${id}`);
+    if (!el) return '';
+    return (el as HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement).value.trim();
+  }
+
+  function renderFields() {
+    const type = (document.getElementById('sc-type') as HTMLSelectElement).value;
+    const schema = SCHEMAS[type];
+    const container = document.getElementById('sc-fields')!;
+
+    if (schema.extra === 'faq') {
+      container.innerHTML = `
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <p class="label">FAQ Items</p>
+            <button id="faq-add" class="text-sm text-indigo-600 hover:text-indigo-800">+ Add item</button>
+          </div>
+          <div id="faq-list" class="space-y-3"></div>
+        </div>
+      `;
+      renderFaq();
+      document.getElementById('faq-add')?.addEventListener('click', () => {
+        faqItems.push({ q: '', a: '' });
+        renderFaq();
+        generate();
+      });
+    } else if (schema.extra === 'breadcrumb') {
+      container.innerHTML = `
+        <div>
+          <div class="flex justify-between items-center mb-2">
+            <p class="label">Breadcrumb Items</p>
+            <button id="bc-add" class="text-sm text-indigo-600 hover:text-indigo-800">+ Add item</button>
+          </div>
+          <div id="bc-list" class="space-y-2"></div>
+        </div>
+      `;
+      renderBreadcrumbs();
+      document.getElementById('bc-add')?.addEventListener('click', () => {
+        breadcrumbs.push({ name: '', url: '' });
+        renderBreadcrumbs();
+        generate();
+      });
+    } else {
+      container.innerHTML = schema.fields.map(f => {
+        if (f.type === 'textarea') {
+          return `<div>
+            <label class="label">${f.label}</label>
+            <textarea id="sc-${f.id}" rows="${f.rows || 2}" placeholder="${f.placeholder || ''}" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
+          </div>`;
+        }
+        if (f.type === 'select') {
+          return `<div>
+            <label class="label">${f.label}</label>
+            <select id="sc-${f.id}" class="input-field">
+              <option value="InStock">In Stock</option>
+              <option value="OutOfStock">Out of Stock</option>
+              <option value="PreOrder">Pre-Order</option>
+              <option value="Discontinued">Discontinued</option>
+            </select>
+          </div>`;
+        }
+        return `<div>
+          <label class="label">${f.label}</label>
+          <input id="sc-${f.id}" type="${f.type}" placeholder="${f.placeholder || ''}" class="input-field ${f.type === 'text' && f.placeholder?.startsWith('https') ? 'font-mono text-sm' : ''}" />
+          ${f.hint ? `<p class="text-xs text-gray-400 mt-0.5">${f.hint}</p>` : ''}
+        </div>`;
+      }).join('');
+
+      container.querySelectorAll('input, textarea, select').forEach(el =>
+        el.addEventListener('input', generate)
+      );
+    }
+
+    generate();
+  }
+
+  function renderFaq() {
+    const list = document.getElementById('faq-list')!;
+    list.innerHTML = faqItems.map((item, i) => `
+      <div class="border border-gray-200 rounded-xl p-3 space-y-2 bg-gray-50">
+        <div class="flex gap-2">
+          <input data-faq="${i}" data-field="q" type="text" value="${item.q.replace(/"/g,'&quot;')}" placeholder="Question" class="flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          ${faqItems.length > 1 ? `<button onclick="removeFaq(${i})" class="text-gray-400 hover:text-red-500 text-xs">✕</button>` : ''}
+        </div>
+        <textarea data-faq="${i}" data-field="a" rows="2" placeholder="Answer" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none">${item.a}</textarea>
+      </div>
+    `).join('');
+    list.querySelectorAll('[data-faq]').forEach(el => {
+      el.addEventListener('input', (e) => {
+        const i = parseInt((e.target as HTMLElement).dataset.faq!);
+        const field = (e.target as HTMLElement).dataset.field as 'q' | 'a';
+        faqItems[i][field] = (e.target as HTMLInputElement).value;
+        generate();
+      });
+    });
+  }
+
+  function renderBreadcrumbs() {
+    const list = document.getElementById('bc-list')!;
+    list.innerHTML = breadcrumbs.map((item, i) => `
+      <div class="flex items-center gap-2">
+        <span class="text-xs text-gray-400 w-4">${i+1}.</span>
+        <input data-bc="${i}" data-field="name" type="text" value="${item.name.replace(/"/g,'&quot;')}" placeholder="Label" class="flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        <input data-bc="${i}" data-field="url" type="text" value="${item.url.replace(/"/g,'&quot;')}" placeholder="https://..." class="flex-1 border border-gray-300 rounded-lg px-3 py-1.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        ${breadcrumbs.length > 1 ? `<button onclick="removeBc(${i})" class="text-gray-400 hover:text-red-500 text-xs">✕</button>` : ''}
+      </div>
+    `).join('');
+    list.querySelectorAll('[data-bc]').forEach(el => {
+      el.addEventListener('input', (e) => {
+        const i = parseInt((e.target as HTMLElement).dataset.bc!);
+        const field = (e.target as HTMLElement).dataset.field as 'name' | 'url';
+        breadcrumbs[i][field] = (e.target as HTMLInputElement).value;
+        generate();
+      });
+    });
+  }
+
+  (window as any).removeFaq = (i: number) => { faqItems.splice(i,1); renderFaq(); generate(); };
+  (window as any).removeBc = (i: number) => { breadcrumbs.splice(i,1); renderBreadcrumbs(); generate(); };
+
+  function generate() {
+    const type = (document.getElementById('sc-type') as HTMLSelectElement).value;
+    let schema: object = {};
+
+    if (type === 'Article') {
+      schema = {
+        '@context': 'https://schema.org',
+        '@type': 'Article',
+        ...(g('url') && { url: g('url') }),
+        ...(g('headline') && { headline: g('headline') }),
+        ...(g('desc') && { description: g('desc') }),
+        ...(g('image') && { image: g('image') }),
+        ...(g('author') && { author: { '@type': 'Person', name: g('author') } }),
+        ...(g('org') && { publisher: { '@type': 'Organization', name: g('org') } }),
+        ...(g('datePublished') && { datePublished: g('datePublished') }),
+        ...(g('dateModified') && { dateModified: g('dateModified') }),
+      };
+    } else if (type === 'FAQPage') {
+      schema = {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: faqItems.filter(f => f.q).map(f => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a },
+        })),
+      };
+    } else if (type === 'Product') {
+      schema = {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        ...(g('name') && { name: g('name') }),
+        ...(g('desc') && { description: g('desc') }),
+        ...(g('image') && { image: g('image') }),
+        ...(g('brand') && { brand: { '@type': 'Brand', name: g('brand') } }),
+        ...(g('sku') && { sku: g('sku') }),
+        offers: {
+          '@type': 'Offer',
+          ...(g('price') && { price: g('price') }),
+          ...(g('currency') && { priceCurrency: g('currency') }),
+          availability: `https://schema.org/${g('availability') || 'InStock'}`,
+        },
+        ...(g('ratingValue') && {
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: g('ratingValue'),
+            ...(g('ratingCount') && { reviewCount: g('ratingCount') }),
+          }
+        }),
+      };
+    } else if (type === 'LocalBusiness') {
+      schema = {
+        '@context': 'https://schema.org',
+        '@type': 'LocalBusiness',
+        ...(g('name') && { name: g('name') }),
+        ...(g('url') && { url: g('url') }),
+        ...(g('phone') && { telephone: g('phone') }),
+        ...(g('email') && { email: g('email') }),
+        ...((g('street') || g('city')) && {
+          address: {
+            '@type': 'PostalAddress',
+            ...(g('street') && { streetAddress: g('street') }),
+            ...(g('city') && { addressLocality: g('city') }),
+            ...(g('state') && { addressRegion: g('state') }),
+            ...(g('zip') && { postalCode: g('zip') }),
+            ...(g('country') && { addressCountry: g('country') }),
+          }
+        }),
+        ...(g('priceRange') && { priceRange: g('priceRange') }),
+      };
+    } else if (type === 'BreadcrumbList') {
+      schema = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: breadcrumbs.filter(b => b.name || b.url).map((b, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: b.name,
+          item: b.url,
+        })),
+      };
+    } else if (type === 'WebSite') {
+      schema = {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        ...(g('url') && { url: g('url') }),
+        ...(g('name') && { name: g('name') }),
+        ...(g('searchAction') && {
+          potentialAction: {
+            '@type': 'SearchAction',
+            target: { '@type': 'EntryPoint', urlTemplate: g('searchAction') },
+            'query-input': 'required name=search_term_string',
+          }
+        }),
+      };
+    }
+
+    document.getElementById('sc-output')!.textContent =
+      `<script type="application/ld+json">\n${JSON.stringify(schema, null, 2)}\n<\/script>`;
+  }
+
+  document.getElementById('sc-type')?.addEventListener('change', renderFields);
+
+  document.getElementById('sc-copy')?.addEventListener('click', () => {
+    navigator.clipboard.writeText(document.getElementById('sc-output')!.textContent || '').then(() => {
+      const btn = document.getElementById('sc-copy')!;
+      btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 1500);
+    });
+  });
+
+  renderFields();
+</script>

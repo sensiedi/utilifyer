@@ -1,0 +1,176 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Meta Tag Generator"
+  description="Generate SEO meta tags, Open Graph tags, and Twitter Card tags for any webpage. Preview how your page looks in search results and social media."
+  slug="meta-tag-generator"
+  category="SEO & Marketing"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Meta Tag Generator</h1>
+  <p class="text-gray-500 mb-8">Generate SEO meta tags, Open Graph, and Twitter Card tags — with live preview.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 gap-4">
+      <div>
+        <label class="label">Page Title <span class="text-xs text-gray-400 ml-1" id="title-len"></span></label>
+        <input id="mt-title" type="text" placeholder="e.g. Free Online Tools — Utilifyer" class="input-field" maxlength="70" />
+        <div class="h-1.5 bg-gray-100 rounded mt-1"><div id="title-bar" class="h-full rounded transition-all"></div></div>
+        <p class="text-xs text-gray-400 mt-0.5">Optimal: 50–60 characters</p>
+      </div>
+      <div>
+        <label class="label">Meta Description <span class="text-xs text-gray-400 ml-1" id="desc-len"></span></label>
+        <textarea id="mt-desc" rows={2} placeholder="e.g. Free online calculators and tools for finance, health, math, and more. No signup required." class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" maxlength="165"></textarea>
+        <div class="h-1.5 bg-gray-100 rounded mt-1"><div id="desc-bar" class="h-full rounded transition-all"></div></div>
+        <p class="text-xs text-gray-400 mt-0.5">Optimal: 120–155 characters</p>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="label">Page URL (canonical)</label>
+          <input id="mt-url" type="text" placeholder="https://example.com/page" class="input-field font-mono text-sm" />
+        </div>
+        <div>
+          <label class="label">OG Image URL</label>
+          <input id="mt-image" type="text" placeholder="https://example.com/og-image.png" class="input-field font-mono text-sm" />
+        </div>
+        <div>
+          <label class="label">Author</label>
+          <input id="mt-author" type="text" placeholder="Your Name or Brand" class="input-field" />
+        </div>
+        <div>
+          <label class="label">Twitter Username</label>
+          <input id="mt-twitter" type="text" placeholder="@yourusername" class="input-field" />
+        </div>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+          <input type="checkbox" id="mt-noindex" class="accent-indigo-600" />
+          noindex (hide from search engines)
+        </label>
+        <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+          <input type="checkbox" id="mt-nofollow" class="accent-indigo-600" />
+          nofollow (don't follow links)
+        </label>
+      </div>
+    </div>
+
+    <!-- Google SERP Preview -->
+    <div>
+      <p class="label mb-2">Google Search Preview</p>
+      <div class="border border-gray-200 rounded-xl p-4 bg-white">
+        <div class="text-xs text-gray-400 font-mono mb-1" id="prev-url">https://example.com/page</div>
+        <div id="prev-title" class="text-indigo-700 text-lg font-medium hover:underline cursor-pointer truncate">Page Title</div>
+        <div id="prev-desc" class="text-sm text-gray-600 mt-0.5 line-clamp-2">Meta description appears here.</div>
+      </div>
+    </div>
+
+    <!-- Generated code -->
+    <div>
+      <div class="flex justify-between items-center mb-2">
+        <p class="label">Generated HTML</p>
+        <button id="copy-meta" class="text-xs text-indigo-600 hover:text-indigo-800">Copy All</button>
+      </div>
+      <pre id="meta-output" class="bg-gray-900 text-gray-100 rounded-xl p-4 text-xs font-mono overflow-x-auto whitespace-pre-wrap"></pre>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is a meta description?", a: "A meta description is an HTML tag that provides a brief summary of a webpage. It appears beneath the page title in Google search results. While not a direct ranking factor, a compelling description improves click-through rates, which indirectly affects SEO." },
+        { q: "What is the ideal meta title length?", a: "Google typically displays 50–60 characters of a page title. Longer titles get truncated with '…'. Include your primary keyword near the beginning and your brand at the end. Titles under 30 characters may be considered thin." },
+        { q: "What are Open Graph tags?", a: "Open Graph (OG) tags control how your page appears when shared on Facebook, LinkedIn, WhatsApp, and other social platforms. The og:title, og:description, og:image, and og:url tags determine the preview card shown in social feeds." },
+        { q: "What is a canonical URL?", a: "A canonical URL tells search engines which version of a page is the 'official' one, preventing duplicate content issues. For example, if your page is accessible at /page and /page?ref=newsletter, the canonical tag points Google to /page as the primary URL to index." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  function esc(s: string) { return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function barColor(len: number, min: number, max: number): string {
+    if (len === 0) return 'bg-gray-200';
+    if (len < min) return 'bg-yellow-400';
+    if (len <= max) return 'bg-green-500';
+    return 'bg-red-500';
+  }
+
+  function generate() {
+    const title = (document.getElementById('mt-title') as HTMLInputElement).value;
+    const desc = (document.getElementById('mt-desc') as HTMLTextAreaElement).value;
+    const url = (document.getElementById('mt-url') as HTMLInputElement).value;
+    const image = (document.getElementById('mt-image') as HTMLInputElement).value;
+    const author = (document.getElementById('mt-author') as HTMLInputElement).value;
+    const twitter = (document.getElementById('mt-twitter') as HTMLInputElement).value;
+    const noindex = (document.getElementById('mt-noindex') as HTMLInputElement).checked;
+    const nofollow = (document.getElementById('mt-nofollow') as HTMLInputElement).checked;
+
+    // Lengths
+    document.getElementById('title-len')!.textContent = `${title.length}/60`;
+    document.getElementById('desc-len')!.textContent = `${desc.length}/155`;
+    (document.getElementById('title-bar') as HTMLElement).style.width = Math.min((title.length / 60) * 100, 100) + '%';
+    document.getElementById('title-bar')!.className = `h-full rounded transition-all ${barColor(title.length, 50, 60)}`;
+    (document.getElementById('desc-bar') as HTMLElement).style.width = Math.min((desc.length / 155) * 100, 100) + '%';
+    document.getElementById('desc-bar')!.className = `h-full rounded transition-all ${barColor(desc.length, 120, 155)}`;
+
+    // SERP preview
+    document.getElementById('prev-url')!.textContent = url || 'https://example.com/page';
+    document.getElementById('prev-title')!.textContent = title || 'Page Title';
+    document.getElementById('prev-desc')!.textContent = desc || 'Meta description appears here.';
+
+    const robots = [noindex ? 'noindex' : 'index', nofollow ? 'nofollow' : 'follow'].join(', ');
+    const lines = [
+      `<!-- Primary Meta Tags -->`,
+      `<title>${esc(title)}</title>`,
+      `<meta name="title" content="${esc(title)}" />`,
+      desc ? `<meta name="description" content="${esc(desc)}" />` : '',
+      author ? `<meta name="author" content="${esc(author)}" />` : '',
+      `<meta name="robots" content="${robots}" />`,
+      url ? `<link rel="canonical" href="${esc(url)}" />` : '',
+      ``,
+      `<!-- Open Graph / Facebook -->`,
+      `<meta property="og:type" content="website" />`,
+      url ? `<meta property="og:url" content="${esc(url)}" />` : '',
+      title ? `<meta property="og:title" content="${esc(title)}" />` : '',
+      desc ? `<meta property="og:description" content="${esc(desc)}" />` : '',
+      image ? `<meta property="og:image" content="${esc(image)}" />` : '',
+      ``,
+      `<!-- Twitter Card -->`,
+      `<meta property="twitter:card" content="summary_large_image" />`,
+      url ? `<meta property="twitter:url" content="${esc(url)}" />` : '',
+      title ? `<meta property="twitter:title" content="${esc(title)}" />` : '',
+      desc ? `<meta property="twitter:description" content="${esc(desc)}" />` : '',
+      image ? `<meta property="twitter:image" content="${esc(image)}" />` : '',
+      twitter ? `<meta property="twitter:site" content="${esc(twitter)}" />` : '',
+    ].filter(l => l !== '');
+
+    document.getElementById('meta-output')!.textContent = lines.join('\n');
+  }
+
+  ['mt-title','mt-desc','mt-url','mt-image','mt-author','mt-twitter','mt-noindex','mt-nofollow'].forEach(id =>
+    document.getElementById(id)?.addEventListener('input', generate)
+  );
+
+  document.getElementById('copy-meta')?.addEventListener('click', () => {
+    navigator.clipboard.writeText(document.getElementById('meta-output')!.textContent || '').then(() => {
+      const btn = document.getElementById('copy-meta')!;
+      btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy All', 1500);
+    });
+  });
+
+  (document.getElementById('mt-title') as HTMLInputElement).value = 'Free Online Tools — Utilifyer';
+  (document.getElementById('mt-desc') as HTMLTextAreaElement).value = 'Free online calculators and tools for finance, health, math, unit conversion, and more. No signup required. Works in your browser.';
+  (document.getElementById('mt-url') as HTMLInputElement).value = 'https://utilifyer.com';
+  generate();
+</script>

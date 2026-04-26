@@ -1,0 +1,144 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Keyword Density Checker"
+  description="Analyze keyword density in your content. Check how often specific keywords appear and whether you're in the optimal 1–2% SEO range."
+  slug="keyword-density-checker"
+  category="SEO & Marketing"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Keyword Density Checker</h1>
+  <p class="text-gray-500 mb-8">Analyze how often your target keywords appear and whether density is in the optimal SEO range.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div>
+      <label class="label">Content / Article Text</label>
+      <textarea id="kd-text" rows={8} placeholder="Paste your full article or web page content here…" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y"></textarea>
+    </div>
+
+    <div>
+      <label class="label">Target Keywords <span class="text-xs text-gray-400">(comma separated, supports phrases)</span></label>
+      <input id="kd-keywords" type="text" placeholder="e.g. mortgage calculator, home loan, refinance" class="input-field" />
+    </div>
+
+    <div id="kd-results" class="hidden space-y-4"></div>
+    <div id="kd-empty" class="text-center py-6 text-gray-400 text-sm">Enter content and target keywords above to analyze density.</div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is keyword density?", a: "Keyword density is the percentage of times a keyword or phrase appears in your content compared to total word count. Formula: (Keyword occurrences ÷ Total words) × 100. For a 1,000-word article, a 1% density means the keyword appears 10 times." },
+        { q: "What is the ideal keyword density for SEO?", a: "There is no magic number, but 1–2% is a common guideline for primary keywords. Densities above 3–4% can appear unnatural and may trigger keyword stuffing penalties. Modern SEO focuses more on natural language, semantic relevance, and LSI (Latent Semantic Indexing) keywords than precise density counts." },
+        { q: "What is keyword stuffing?", a: "Keyword stuffing is the practice of overloading a page with keywords to manipulate search rankings. Google penalizes it via its Panda algorithm. Signs include: exact keyword repetition in unnatural contexts, hidden text with keywords, and keyword-heavy meta tags. Aim for natural, readable content first." },
+        { q: "Do I need exact keyword matches?", a: "No. Google uses natural language processing and can understand synonyms, word variations, and related terms. Using exact-match keywords is less critical than covering the topic thoroughly. However, your primary keyword should appear in your title, first paragraph, and a few times in the body." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  function escHtml(s: string) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  function densityColor(pct: number): { bg: string; text: string; label: string } {
+    if (pct === 0) return { bg: 'bg-gray-200', text: 'text-gray-500', label: 'Not found' };
+    if (pct < 0.5) return { bg: 'bg-blue-300', text: 'text-blue-700', label: 'Too low' };
+    if (pct <= 2.0) return { bg: 'bg-green-400', text: 'text-green-700', label: 'Optimal' };
+    if (pct <= 3.5) return { bg: 'bg-yellow-400', text: 'text-yellow-700', label: 'High' };
+    return { bg: 'bg-red-400', text: 'text-red-700', label: 'Too high' };
+  }
+
+  function highlightKeyword(text: string, keyword: string): string {
+    const escaped = escHtml(text);
+    const re = new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+    return escaped.replace(re, '<mark class="bg-yellow-200 rounded px-0.5">$1</mark>');
+  }
+
+  function analyze() {
+    const text = (document.getElementById('kd-text') as HTMLTextAreaElement).value;
+    const kwInput = (document.getElementById('kd-keywords') as HTMLInputElement).value;
+    const emptyEl = document.getElementById('kd-empty')!;
+    const resultsEl = document.getElementById('kd-results')!;
+
+    if (!text.trim() || !kwInput.trim()) {
+      resultsEl.classList.add('hidden');
+      emptyEl.classList.remove('hidden');
+      return;
+    }
+    emptyEl.classList.add('hidden');
+
+    const words = text.trim().split(/\s+/).filter(Boolean);
+    const wordCount = words.length;
+    const textLower = text.toLowerCase();
+
+    const keywords = kwInput.split(',').map(k => k.trim()).filter(Boolean);
+
+    const kwResults = keywords.map(kw => {
+      const kwLower = kw.toLowerCase();
+      const re = new RegExp(`\\b${kwLower.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}\\b`, 'gi');
+      const matches = text.match(re) || [];
+      const count = matches.length;
+      const kwWords = kwLower.split(/\s+/).length;
+      const pct = wordCount > 0 ? (count * kwWords / wordCount) * 100 : 0;
+      return { kw, count, pct };
+    });
+
+    const stats = `
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 text-sm">
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+          <div class="text-xs text-gray-400 mb-0.5">Total Words</div>
+          <div class="font-mono font-bold text-gray-900">${wordCount.toLocaleString()}</div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+          <div class="text-xs text-gray-400 mb-0.5">Keywords Checked</div>
+          <div class="font-mono font-bold text-gray-900">${keywords.length}</div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+          <div class="text-xs text-gray-400 mb-0.5">Characters</div>
+          <div class="font-mono font-bold text-gray-900">${text.length.toLocaleString()}</div>
+        </div>
+      </div>
+    `;
+
+    const kwHtml = kwResults.map(({ kw, count, pct }) => {
+      const { bg, text: textCls, label } = densityColor(pct);
+      const barW = Math.min((pct / 4) * 100, 100);
+      return `
+        <div class="border border-gray-200 rounded-xl p-4 space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="font-semibold text-gray-800">"${escHtml(kw)}"</span>
+            <span class="text-xs px-2 py-0.5 rounded-full font-medium ${textCls} ${bg.replace('bg-','bg-').replace('-4','00').replace('-3','00')} border">${label}</span>
+          </div>
+          <div class="flex items-center gap-3 text-sm">
+            <div class="flex-1 h-2.5 bg-gray-100 rounded-full">
+              <div class="${bg} h-2.5 rounded-full transition-all" style="width:${barW}%"></div>
+            </div>
+            <span class="font-mono font-bold text-gray-900 w-14 text-right">${pct.toFixed(2)}%</span>
+            <span class="text-gray-400 w-20 text-right">${count} occurrence${count !== 1 ? 's' : ''}</span>
+          </div>
+          <div class="text-xs text-gray-400">
+            Ideal: 1–2% · At ${wordCount} words, that's ${Math.round(wordCount * 0.01)}–${Math.round(wordCount * 0.02)} occurrences
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    resultsEl.innerHTML = stats + kwHtml;
+    resultsEl.classList.remove('hidden');
+  }
+
+  document.getElementById('kd-text')?.addEventListener('input', analyze);
+  document.getElementById('kd-keywords')?.addEventListener('input', analyze);
+</script>

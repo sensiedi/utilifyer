@@ -1,0 +1,184 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Robots.txt Generator"
+  description="Generate a robots.txt file for your website. Control which search engine bots can crawl your pages, block directories, and set your sitemap URL."
+  slug="robots-txt-generator"
+  category="SEO & Marketing"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Robots.txt Generator</h1>
+  <p class="text-gray-500 mb-8">Build a robots.txt file to control search engine crawling of your website.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Sitemap URL (optional)</label>
+        <input id="rb-sitemap" type="text" placeholder="https://example.com/sitemap.xml" class="input-field font-mono text-sm" />
+      </div>
+      <div>
+        <label class="label">Crawl Delay (seconds, optional)</label>
+        <input id="rb-delay" type="number" min="0" max="60" placeholder="e.g. 10" class="input-field" />
+      </div>
+    </div>
+
+    <div>
+      <p class="label mb-2">Crawler Rules</p>
+      <div id="rb-rules" class="space-y-3"></div>
+      <button id="rb-add" class="mt-3 text-sm text-indigo-600 hover:text-indigo-800 flex items-center gap-1">+ Add rule group</button>
+    </div>
+
+    <div>
+      <div class="flex justify-between items-center mb-2">
+        <p class="label">Generated robots.txt</p>
+        <button id="rb-copy" class="text-xs text-indigo-600 hover:text-indigo-800">Copy</button>
+      </div>
+      <pre id="rb-output" class="bg-gray-900 text-green-300 rounded-xl p-4 text-sm font-mono overflow-x-auto whitespace-pre min-h-[120px]"></pre>
+    </div>
+
+    <div class="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-800 space-y-1">
+      <p class="font-semibold">Common Bot Names</p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-1 text-xs mt-2">
+        {[
+          ['Googlebot','Google Search'],
+          ['Bingbot','Bing Search'],
+          ['Slurp','Yahoo Search'],
+          ['DuckDuckBot','DuckDuckGo'],
+          ['Baiduspider','Baidu'],
+          ['YandexBot','Yandex'],
+          ['AhrefsBot','Ahrefs Crawler'],
+          ['SemrushBot','SEMrush Crawler'],
+          ['MJ12bot','Majestic Crawler'],
+        ].map(([bot, label]) => (
+          <span class="font-mono">{bot} <span class="font-sans text-blue-600">({label})</span></span>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is robots.txt?", a: "robots.txt is a text file placed at the root of your website (e.g., https://example.com/robots.txt) that tells search engine crawlers which pages or directories they should or should not access. It follows the Robots Exclusion Protocol (REP)." },
+        { q: "Does robots.txt prevent indexing?", a: "No — Disallow blocks crawling, not indexing. A page can still appear in search results if other sites link to it; Google just won't read its content. To prevent indexing, use a <meta name='robots' content='noindex'> tag or X-Robots-Tag header on the page itself." },
+        { q: "What is Crawl-delay?", a: "Crawl-delay tells bots to wait N seconds between requests to reduce server load. Note: Google ignores Crawl-delay in robots.txt. To control Googlebot's crawl rate, use Google Search Console's crawl rate settings instead." },
+        { q: "Should I block my /admin directory?", a: "Yes — blocking /admin, /wp-admin, and similar backend URLs prevents crawlers from wasting crawl budget on login pages and prevents accidental indexing of admin interfaces. This is a security best practice as well." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  interface Rule {
+    agent: string;
+    allows: string[];
+    disallows: string[];
+  }
+
+  let rules: Rule[] = [
+    { agent: '*', allows: [], disallows: [] },
+  ];
+
+  function renderRules() {
+    const container = document.getElementById('rb-rules')!;
+    container.innerHTML = rules.map((r, i) => `
+      <div class="border border-gray-200 rounded-xl p-4 space-y-3 bg-gray-50">
+        <div class="flex items-center gap-3">
+          <div class="flex-1">
+            <label class="text-xs text-gray-500 mb-1 block">User-agent</label>
+            <input data-i="${i}" data-field="agent" type="text" value="${r.agent}" placeholder="* or Googlebot"
+              class="w-full border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+          </div>
+          ${rules.length > 1 ? `<button onclick="removeRule(${i})" class="mt-5 text-gray-400 hover:text-red-500 text-xs">✕ Remove</button>` : ''}
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="text-xs text-gray-500 mb-1 block">Allow paths (one per line)</label>
+            <textarea data-i="${i}" data-field="allows" rows="3" placeholder="/public/\n/blog/"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none">${r.allows.join('\n')}</textarea>
+          </div>
+          <div>
+            <label class="text-xs text-gray-500 mb-1 block">Disallow paths (one per line)</label>
+            <textarea data-i="${i}" data-field="disallows" rows="3" placeholder="/admin/\n/private/"
+              class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none">${r.disallows.join('\n')}</textarea>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    container.querySelectorAll('input[data-field="agent"]').forEach(el => {
+      el.addEventListener('input', (e) => {
+        const i = parseInt((e.target as HTMLElement).dataset.i!);
+        rules[i].agent = (e.target as HTMLInputElement).value;
+        generate();
+      });
+    });
+    container.querySelectorAll('textarea[data-field="allows"]').forEach(el => {
+      el.addEventListener('input', (e) => {
+        const i = parseInt((e.target as HTMLElement).dataset.i!);
+        rules[i].allows = (e.target as HTMLTextAreaElement).value.split('\n').map(s => s.trim()).filter(Boolean);
+        generate();
+      });
+    });
+    container.querySelectorAll('textarea[data-field="disallows"]').forEach(el => {
+      el.addEventListener('input', (e) => {
+        const i = parseInt((e.target as HTMLElement).dataset.i!);
+        rules[i].disallows = (e.target as HTMLTextAreaElement).value.split('\n').map(s => s.trim()).filter(Boolean);
+        generate();
+      });
+    });
+  }
+
+  (window as any).removeRule = (i: number) => {
+    rules.splice(i, 1);
+    renderRules();
+    generate();
+  };
+
+  function generate() {
+    const sitemap = (document.getElementById('rb-sitemap') as HTMLInputElement).value.trim();
+    const delay = (document.getElementById('rb-delay') as HTMLInputElement).value.trim();
+    const lines: string[] = [];
+
+    rules.forEach((r, idx) => {
+      if (idx > 0) lines.push('');
+      lines.push(`User-agent: ${r.agent || '*'}`);
+      r.allows.forEach(p => lines.push(`Allow: ${p}`));
+      r.disallows.forEach(p => lines.push(`Disallow: ${p}`));
+      if (delay) lines.push(`Crawl-delay: ${delay}`);
+    });
+
+    if (sitemap) { lines.push(''); lines.push(`Sitemap: ${sitemap}`); }
+
+    document.getElementById('rb-output')!.textContent = lines.join('\n');
+  }
+
+  document.getElementById('rb-add')?.addEventListener('click', () => {
+    rules.push({ agent: '*', allows: [], disallows: [] });
+    renderRules();
+    generate();
+  });
+
+  document.getElementById('rb-sitemap')?.addEventListener('input', generate);
+  document.getElementById('rb-delay')?.addEventListener('input', generate);
+
+  document.getElementById('rb-copy')?.addEventListener('click', () => {
+    navigator.clipboard.writeText(document.getElementById('rb-output')!.textContent || '').then(() => {
+      const btn = document.getElementById('rb-copy')!;
+      btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 1500);
+    });
+  });
+
+  renderRules();
+  generate();
+</script>

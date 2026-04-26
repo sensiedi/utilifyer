@@ -1,0 +1,214 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Open Graph Preview Tool"
+  description="Preview how your website looks when shared on Facebook, Twitter/X, LinkedIn, and WhatsApp. Test your OG tags and Twitter Card meta tags."
+  slug="open-graph-preview"
+  category="SEO & Marketing"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Open Graph Preview Tool</h1>
+  <p class="text-gray-500 mb-8">Preview how your page appears when shared on social media platforms.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="sm:col-span-2">
+        <label class="label">Page Title (og:title)</label>
+        <input id="og-title" type="text" placeholder="Your page or article title" class="input-field" maxlength="100" />
+      </div>
+      <div class="sm:col-span-2">
+        <label class="label">Description (og:description)</label>
+        <textarea id="og-desc" rows={2} placeholder="A short description of the page content, shown in social previews." class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none" maxlength="300"></textarea>
+      </div>
+      <div>
+        <label class="label">Page URL (og:url)</label>
+        <input id="og-url" type="text" placeholder="https://example.com/my-article" class="input-field font-mono text-sm" />
+      </div>
+      <div>
+        <label class="label">Site Name (og:site_name)</label>
+        <input id="og-site" type="text" placeholder="e.g. Utilifyer" class="input-field" />
+      </div>
+      <div class="sm:col-span-2">
+        <label class="label">Image URL (og:image) <span class="text-xs text-gray-400">— recommended: 1200×630px</span></label>
+        <input id="og-image" type="text" placeholder="https://example.com/og-image.jpg" class="input-field font-mono text-sm" />
+        <p class="text-xs text-gray-400 mt-0.5">Must be an absolute URL. Recommended size: 1200×630px (1.91:1 ratio) for best results on all platforms.</p>
+      </div>
+      <div>
+        <label class="label">Twitter Username</label>
+        <input id="og-twitter" type="text" placeholder="@yourusername" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Twitter Card Type</label>
+        <select id="og-card" class="input-field">
+          <option value="summary_large_image" selected>summary_large_image (large banner)</option>
+          <option value="summary">summary (small square)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Previews -->
+    <div class="space-y-6">
+      <!-- Facebook/LinkedIn -->
+      <div>
+        <p class="text-sm font-semibold text-gray-700 mb-2">Facebook / LinkedIn Preview</p>
+        <div class="border border-gray-200 rounded-xl overflow-hidden max-w-lg bg-gray-50">
+          <div id="fb-image" class="bg-gray-200 flex items-center justify-center text-gray-400 text-sm" style="height:210px;">
+            No image — add an og:image URL above
+          </div>
+          <div class="bg-white border-t border-gray-200 p-3">
+            <div id="fb-domain" class="text-xs text-gray-400 uppercase tracking-wide mb-0.5">EXAMPLE.COM</div>
+            <div id="fb-title" class="font-bold text-gray-900 text-sm leading-tight mb-0.5 line-clamp-2">Your page title</div>
+            <div id="fb-desc" class="text-xs text-gray-500 line-clamp-2">Your description appears here.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Twitter/X -->
+      <div>
+        <p class="text-sm font-semibold text-gray-700 mb-2">Twitter / X Preview</p>
+        <div id="tw-card" class="border border-gray-200 rounded-2xl overflow-hidden max-w-lg bg-white">
+          <div id="tw-image" class="bg-gray-200 flex items-center justify-center text-gray-400 text-sm" style="height:210px;">
+            No image
+          </div>
+          <div class="p-3">
+            <div id="tw-title" class="font-bold text-gray-900 text-sm line-clamp-2">Your page title</div>
+            <div id="tw-desc" class="text-xs text-gray-500 mt-0.5 line-clamp-2">Your description</div>
+            <div id="tw-domain" class="text-xs text-gray-400 mt-1">example.com</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WhatsApp -->
+      <div>
+        <p class="text-sm font-semibold text-gray-700 mb-2">WhatsApp / iMessage Preview</p>
+        <div class="max-w-xs">
+          <div class="bg-green-100 rounded-2xl rounded-tl-sm overflow-hidden border border-green-200">
+            <div id="wa-image" class="bg-gray-200 flex items-center justify-center text-gray-400 text-xs" style="height:110px;">No image</div>
+            <div class="p-2.5 bg-green-50">
+              <div id="wa-title" class="font-semibold text-gray-800 text-xs line-clamp-2">Your title</div>
+              <div id="wa-desc" class="text-xs text-gray-500 mt-0.5 line-clamp-2">Your description</div>
+              <div id="wa-domain" class="text-xs text-green-600 mt-0.5">example.com</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Generated code -->
+    <div>
+      <div class="flex justify-between items-center mb-2">
+        <p class="label">Generated HTML Tags</p>
+        <button id="og-copy" class="text-xs text-indigo-600 hover:text-indigo-800">Copy All</button>
+      </div>
+      <pre id="og-output" class="bg-gray-900 text-gray-100 rounded-xl p-4 text-xs font-mono overflow-x-auto whitespace-pre-wrap"></pre>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What are Open Graph tags?", a: "Open Graph (OG) is a protocol created by Facebook that controls how URLs appear when shared on social media. The key tags are og:title, og:description, og:image, og:url, and og:type. Without OG tags, social platforms try to scrape a preview from your page's raw HTML, often with poor results." },
+        { q: "What is the ideal OG image size?", a: "The recommended og:image size is 1200×630px (1.91:1 ratio). Facebook minimum is 600×315px. Twitter summary_large_image works best at 1200×628px. Images smaller than 200×200px are rejected. Always use absolute URLs (https://), not relative paths." },
+        { q: "Why isn't my updated OG image showing?", a: "Social platforms aggressively cache OG data. Facebook: use the Sharing Debugger tool (developers.facebook.com/tools/debug) and click 'Scrape Again'. LinkedIn: use the Post Inspector (linkedin.com/post-inspector). Twitter re-scrapes automatically within 7 days or when the card URL changes." },
+        { q: "What is Twitter Card vs Open Graph?", a: "Twitter has its own twitter: meta tags but also falls back to og: tags if twitter: tags are missing. The main Twitter-specific tag is twitter:card which sets the card layout (summary, summary_large_image, app, player). Most sites only need OG tags since Twitter reads them as fallbacks." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  function esc(s: string) { return s.replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  function getDomain(url: string) {
+    try { return new URL(url).hostname.replace('www.',''); } catch { return url || 'example.com'; }
+  }
+
+  function setImage(elId: string, src: string, h: string) {
+    const el = document.getElementById(elId)!;
+    if (src) {
+      el.innerHTML = `<img src="${esc(src)}" alt="" class="w-full h-full object-cover" onerror="this.parentElement.innerHTML='<span class=text-gray-400 text-xs>Image failed to load</span>'" />`;
+      el.style.height = h;
+    } else {
+      el.innerHTML = '<span class="text-gray-400 text-sm">No image — add an og:image URL above</span>';
+      el.style.height = h;
+    }
+  }
+
+  function update() {
+    const title = (document.getElementById('og-title') as HTMLInputElement).value;
+    const desc = (document.getElementById('og-desc') as HTMLTextAreaElement).value;
+    const url = (document.getElementById('og-url') as HTMLInputElement).value;
+    const site = (document.getElementById('og-site') as HTMLInputElement).value;
+    const image = (document.getElementById('og-image') as HTMLInputElement).value;
+    const twitter = (document.getElementById('og-twitter') as HTMLInputElement).value;
+    const card = (document.getElementById('og-card') as HTMLSelectElement).value;
+
+    const displayTitle = title || 'Your page title';
+    const displayDesc = desc || 'Your description appears here.';
+    const domain = getDomain(url);
+
+    // Facebook
+    setImage('fb-image', image, '210px');
+    document.getElementById('fb-domain')!.textContent = domain.toUpperCase();
+    document.getElementById('fb-title')!.textContent = displayTitle.slice(0, 90);
+    document.getElementById('fb-desc')!.textContent = displayDesc.slice(0, 200);
+
+    // Twitter
+    setImage('tw-image', image, card === 'summary' ? '100px' : '210px');
+    document.getElementById('tw-title')!.textContent = displayTitle.slice(0, 70);
+    document.getElementById('tw-desc')!.textContent = displayDesc.slice(0, 200);
+    document.getElementById('tw-domain')!.textContent = domain;
+
+    // WhatsApp
+    setImage('wa-image', image, '110px');
+    document.getElementById('wa-title')!.textContent = displayTitle.slice(0, 60);
+    document.getElementById('wa-desc')!.textContent = displayDesc.slice(0, 100);
+    document.getElementById('wa-domain')!.textContent = domain;
+
+    // Generated code
+    const lines = [
+      `<!-- Open Graph / Social Media -->`,
+      `<meta property="og:type" content="website" />`,
+      title ? `<meta property="og:title" content="${esc(title)}" />` : '',
+      desc ? `<meta property="og:description" content="${esc(desc)}" />` : '',
+      url ? `<meta property="og:url" content="${esc(url)}" />` : '',
+      image ? `<meta property="og:image" content="${esc(image)}" />` : '',
+      image ? `<meta property="og:image:width" content="1200" />` : '',
+      image ? `<meta property="og:image:height" content="630" />` : '',
+      site ? `<meta property="og:site_name" content="${esc(site)}" />` : '',
+      ``,
+      `<!-- Twitter Card -->`,
+      `<meta name="twitter:card" content="${card}" />`,
+      title ? `<meta name="twitter:title" content="${esc(title)}" />` : '',
+      desc ? `<meta name="twitter:description" content="${esc(desc)}" />` : '',
+      image ? `<meta name="twitter:image" content="${esc(image)}" />` : '',
+      url ? `<meta name="twitter:url" content="${esc(url)}" />` : '',
+      twitter ? `<meta name="twitter:site" content="${esc(twitter.startsWith('@') ? twitter : '@' + twitter)}" />` : '',
+    ].filter(l => l !== '');
+
+    document.getElementById('og-output')!.textContent = lines.join('\n');
+  }
+
+  ['og-title','og-desc','og-url','og-site','og-image','og-twitter','og-card'].forEach(id =>
+    document.getElementById(id)?.addEventListener('input', update)
+  );
+
+  document.getElementById('og-copy')?.addEventListener('click', () => {
+    navigator.clipboard.writeText(document.getElementById('og-output')!.textContent || '').then(() => {
+      const btn = document.getElementById('og-copy')!;
+      btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy All', 1500);
+    });
+  });
+
+  update();
+</script>

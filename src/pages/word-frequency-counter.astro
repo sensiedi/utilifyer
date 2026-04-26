@@ -1,0 +1,125 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Word Frequency Counter"
+  description="Analyze the frequency of words in any text. Find the most common words, keyword density, and unique word count. Great for SEO and content analysis."
+  slug="word-frequency-counter"
+  category="SEO & Marketing"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Word Frequency Counter</h1>
+  <p class="text-gray-500 mb-8">Analyze word frequency and keyword density in any text.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-4">
+
+    <div>
+      <label class="label">Text to Analyze</label>
+      <textarea id="wf-input" rows={8} placeholder="Paste your article, blog post, or any text here…" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y"></textarea>
+    </div>
+
+    <div class="flex flex-wrap gap-3 items-center">
+      <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+        <input type="checkbox" id="wf-stopwords" checked class="accent-indigo-600" />
+        Hide common stop words
+      </label>
+      <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+        <input type="checkbox" id="wf-lowercase" checked class="accent-indigo-600" />
+        Case-insensitive
+      </label>
+      <div class="flex items-center gap-2 ml-auto">
+        <label class="text-sm text-gray-600">Show top</label>
+        <select id="wf-limit" class="input-field w-auto text-sm py-1.5">
+          <option value="20">20</option>
+          <option value="50" selected>50</option>
+          <option value="100">100</option>
+        </select>
+        <label class="text-sm text-gray-600">words</label>
+      </div>
+    </div>
+
+    <div id="wf-stats" class="hidden grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm"></div>
+
+    <div id="wf-results" class="hidden space-y-2 max-h-96 overflow-y-auto"></div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is keyword density?", a: "Keyword density is the percentage of times a keyword appears in your text relative to the total word count. Formula: (Keyword Count ÷ Total Words) × 100. For SEO, aim for 1–2% density for your primary keyword. Higher than 3–4% may be flagged as keyword stuffing." },
+        { q: "What are stop words?", a: "Stop words are common words with little semantic meaning: the, a, an, is, are, in, on, at, to, for, of, with, etc. Search engines often ignore them. Removing stop words in frequency analysis highlights meaningful content words and keyword patterns." },
+        { q: "How do I use word frequency for SEO?", a: "Compare your word frequency to top-ranking competitor pages for your target keyword. If competitors use 'mortgage calculator' 15+ times and you use it 3 times, your content may be seen as less relevant. Use frequency analysis to ensure adequate keyword coverage without stuffing." },
+        { q: "What is TF-IDF?", a: "TF-IDF (Term Frequency–Inverse Document Frequency) is a scoring method used by search engines to measure how important a word is to a document relative to a corpus. High TF-IDF means the word is frequent in this document but rare across all documents — suggesting it's a key topic." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const STOP_WORDS = new Set('a an the and or but in on at to for of with by from is are was were be been being have has had do does did will would could should may might must can shall this that these those i you he she we they it its me my him his her us our them their what which who whom when where why how all each every both few more most other some such no not only own same so than too very just'.split(' '));
+
+  function analyze() {
+    const text = (document.getElementById('wf-input') as HTMLTextAreaElement).value;
+    const hideStops = (document.getElementById('wf-stopwords') as HTMLInputElement).checked;
+    const lowercase = (document.getElementById('wf-lowercase') as HTMLInputElement).checked;
+    const limit = parseInt((document.getElementById('wf-limit') as HTMLSelectElement).value);
+    const statsEl = document.getElementById('wf-stats')!;
+    const resultsEl = document.getElementById('wf-results')!;
+
+    if (!text.trim()) { statsEl.classList.add('hidden'); resultsEl.classList.add('hidden'); return; }
+
+    const raw = text.trim().replace(/[^a-zA-Z0-9'\s-]/g, ' ').split(/\s+/).filter(w => w.length > 1);
+    const words = raw.map(w => lowercase ? w.toLowerCase() : w);
+    const totalWords = words.length;
+    const freq: Record<string, number> = {};
+    words.forEach(w => { freq[w] = (freq[w] || 0) + 1; });
+
+    const filtered = Object.entries(freq)
+      .filter(([w]) => !hideStops || !STOP_WORDS.has(w.toLowerCase()))
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, limit);
+
+    const uniqueWords = Object.keys(freq).length;
+    const maxFreq = filtered[0]?.[1] || 1;
+
+    statsEl.innerHTML = [
+      ['Total Words', totalWords.toLocaleString()],
+      ['Unique Words', uniqueWords.toLocaleString()],
+      ['Vocabulary Richness', ((uniqueWords/totalWords)*100).toFixed(1)+'%'],
+      ['Avg Word Frequency', (totalWords/uniqueWords).toFixed(1)+'x'],
+    ].map(([l,v]) =>
+      `<div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+        <div class="text-xs text-gray-400 mb-0.5">${l}</div>
+        <div class="font-mono font-bold text-gray-900">${v}</div>
+      </div>`
+    ).join('');
+    statsEl.classList.remove('hidden');
+
+    resultsEl.innerHTML = filtered.map(([word, count], i) => {
+      const density = ((count / totalWords) * 100).toFixed(2);
+      const barWidth = (count / maxFreq) * 100;
+      return `<div class="flex items-center gap-3 text-sm">
+        <span class="text-gray-400 w-6 text-right text-xs">${i+1}</span>
+        <span class="font-mono text-gray-800 w-32 truncate">${word}</span>
+        <div class="flex-1 h-2 bg-gray-100 rounded-full">
+          <div class="h-2 bg-indigo-400 rounded-full" style="width:${barWidth}%"></div>
+        </div>
+        <span class="font-mono text-gray-700 w-10 text-right">${count}×</span>
+        <span class="text-gray-400 w-14 text-right">${density}%</span>
+      </div>`;
+    }).join('');
+    resultsEl.classList.remove('hidden');
+  }
+
+  ['wf-input','wf-stopwords','wf-lowercase','wf-limit'].forEach(id =>
+    document.getElementById(id)?.addEventListener('input', analyze)
+  );
+</script>

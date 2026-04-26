@@ -1,0 +1,157 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="UTM Link Builder"
+  description="Build UTM-tagged URLs for Google Analytics campaign tracking. Generate campaign, source, medium, term, and content parameters."
+  slug="utm-builder"
+  category="SEO & Marketing"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">UTM Link Builder</h1>
+  <p class="text-gray-500 mb-8">Build UTM-tagged URLs to track your marketing campaigns in Google Analytics.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="sm:col-span-2">
+        <label class="label">Website URL <span class="text-red-500">*</span></label>
+        <input id="utm-url" type="text" placeholder="https://example.com/landing-page" class="input-field font-mono text-sm" />
+      </div>
+      <div>
+        <label class="label">Campaign Source <span class="text-red-500">*</span></label>
+        <input id="utm-source" type="text" placeholder="e.g. google, newsletter, twitter" class="input-field" />
+        <p class="text-xs text-gray-400 mt-0.5">Where traffic comes from</p>
+      </div>
+      <div>
+        <label class="label">Campaign Medium <span class="text-red-500">*</span></label>
+        <input id="utm-medium" type="text" placeholder="e.g. cpc, email, social" class="input-field" />
+        <p class="text-xs text-gray-400 mt-0.5">Marketing channel type</p>
+      </div>
+      <div>
+        <label class="label">Campaign Name <span class="text-red-500">*</span></label>
+        <input id="utm-campaign" type="text" placeholder="e.g. spring_sale, product_launch" class="input-field" />
+        <p class="text-xs text-gray-400 mt-0.5">Specific campaign identifier</p>
+      </div>
+      <div>
+        <label class="label">Campaign Term (optional)</label>
+        <input id="utm-term" type="text" placeholder="e.g. mortgage calculator" class="input-field" />
+        <p class="text-xs text-gray-400 mt-0.5">Paid search keywords</p>
+      </div>
+      <div class="sm:col-span-2">
+        <label class="label">Campaign Content (optional)</label>
+        <input id="utm-content" type="text" placeholder="e.g. banner_top, cta_button" class="input-field" />
+        <p class="text-xs text-gray-400 mt-0.5">Differentiate ads or links (A/B testing)</p>
+      </div>
+    </div>
+
+    <div id="utm-error" class="hidden bg-red-50 border border-red-200 rounded-xl p-3 text-sm text-red-700"></div>
+
+    <div>
+      <div class="flex justify-between items-center mb-2">
+        <label class="label">Generated UTM URL</label>
+        <button id="copy-utm" class="text-xs text-indigo-600 hover:text-indigo-800">Copy</button>
+      </div>
+      <div id="utm-output" class="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 font-mono text-sm text-indigo-700 break-all min-h-[48px] select-all"></div>
+    </div>
+
+    <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+      <p class="text-sm font-semibold text-gray-700 mb-3">Common Source / Medium Combinations</p>
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs">
+        {[
+          ['Google Ads','google','cpc'],
+          ['Facebook Ads','facebook','paid-social'],
+          ['Instagram Ads','instagram','paid-social'],
+          ['Email Newsletter','newsletter','email'],
+          ['Twitter/X Organic','twitter','social'],
+          ['LinkedIn Organic','linkedin','social'],
+          ['Reddit Post','reddit','referral'],
+          ['YouTube Video','youtube','video'],
+          ['Direct / QR Code','qr-code','offline'],
+        ].map(([label, source, medium]) => (
+          <button onclick={`fillUtm('${source}','${medium}')`}
+            class="text-left bg-white border border-gray-200 hover:border-indigo-300 rounded-lg px-2 py-1.5 transition-colors">
+            <span class="font-medium text-gray-700 block">{label}</span>
+            <span class="text-gray-400 font-mono">{source} / {medium}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What are UTM parameters?", a: "UTM (Urchin Tracking Module) parameters are tags added to a URL that tell Google Analytics where traffic came from. When a user clicks the link, GA records the campaign data. There are 5 parameters: utm_source, utm_medium, utm_campaign, utm_term, and utm_content." },
+        { q: "What is utm_source vs utm_medium?", a: "utm_source identifies where the traffic comes from (google, newsletter, facebook). utm_medium identifies the marketing channel type (cpc, email, social, organic). Think of source as 'who sent them' and medium as 'how they got there.'" },
+        { q: "Do UTM parameters affect SEO?", a: "No. UTM parameters are not seen by Googlebot's ranking algorithms. However, if UTM-tagged URLs get indexed, they can create duplicate content issues. Use canonical tags to point to the clean URL, and consider adding UTM patterns to your robots.txt disallow rules." },
+        { q: "Are UTM parameters case-sensitive?", a: "Yes — in Google Analytics 4, utm_source=Google and utm_source=google appear as separate sources. Use lowercase consistently and avoid spaces (use underscores or hyphens). Inconsistent casing is the most common UTM tracking mistake." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  function build() {
+    const url = (document.getElementById('utm-url') as HTMLInputElement).value.trim();
+    const source = (document.getElementById('utm-source') as HTMLInputElement).value.trim();
+    const medium = (document.getElementById('utm-medium') as HTMLInputElement).value.trim();
+    const campaign = (document.getElementById('utm-campaign') as HTMLInputElement).value.trim();
+    const term = (document.getElementById('utm-term') as HTMLInputElement).value.trim();
+    const content = (document.getElementById('utm-content') as HTMLInputElement).value.trim();
+    const errBox = document.getElementById('utm-error')!;
+    const output = document.getElementById('utm-output')!;
+    errBox.classList.add('hidden');
+
+    if (!url || !source || !medium || !campaign) {
+      output.textContent = '';
+      if (url || source || medium || campaign) {
+        errBox.textContent = 'URL, Source, Medium, and Campaign Name are required.';
+        errBox.classList.remove('hidden');
+      }
+      return;
+    }
+
+    try {
+      const base = new URL(url);
+      const params = new URLSearchParams(base.search);
+      params.set('utm_source', source);
+      params.set('utm_medium', medium);
+      params.set('utm_campaign', campaign);
+      if (term) params.set('utm_term', term);
+      if (content) params.set('utm_content', content);
+      base.search = params.toString();
+      output.textContent = base.toString();
+    } catch {
+      errBox.textContent = 'Please enter a valid URL (must start with https://).';
+      errBox.classList.remove('hidden');
+    }
+  }
+
+  (window as any).fillUtm = function(source: string, medium: string) {
+    (document.getElementById('utm-source') as HTMLInputElement).value = source;
+    (document.getElementById('utm-medium') as HTMLInputElement).value = medium;
+    build();
+  };
+
+  ['utm-url','utm-source','utm-medium','utm-campaign','utm-term','utm-content'].forEach(id =>
+    document.getElementById(id)?.addEventListener('input', build)
+  );
+
+  document.getElementById('copy-utm')?.addEventListener('click', () => {
+    const text = document.getElementById('utm-output')!.textContent || '';
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(() => {
+      const btn = document.getElementById('copy-utm')!;
+      btn.textContent = 'Copied!'; setTimeout(() => btn.textContent = 'Copy', 1500);
+    });
+  });
+</script>

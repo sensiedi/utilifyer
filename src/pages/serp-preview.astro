@@ -1,0 +1,176 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="SERP Preview Tool"
+  description="Preview how your page looks in Google search results. Test your title and meta description with live character count feedback before publishing."
+  slug="serp-preview"
+  category="SEO & Marketing"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">SERP Preview Tool</h1>
+  <p class="text-gray-500 mb-8">See exactly how your page will look in Google search results before you publish.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 gap-4">
+      <div>
+        <div class="flex justify-between mb-1">
+          <label class="label">Page Title</label>
+          <span id="sp-title-count" class="text-xs text-gray-400">0 / 60</span>
+        </div>
+        <input id="sp-title" type="text" maxlength="120" placeholder="e.g. Free Mortgage Calculator — Estimate Monthly Payments" class="input-field" />
+        <div class="h-1.5 bg-gray-100 rounded mt-1"><div id="sp-title-bar" class="h-full rounded transition-all bg-gray-200"></div></div>
+        <p class="text-xs text-gray-400 mt-0.5">Optimal: 50–60 characters · Google truncates around 600px (~60 chars)</p>
+      </div>
+      <div>
+        <div class="flex justify-between mb-1">
+          <label class="label">Meta Description</label>
+          <span id="sp-desc-count" class="text-xs text-gray-400">0 / 155</span>
+        </div>
+        <textarea id="sp-desc" rows={3} maxlength="320" placeholder="e.g. Calculate your monthly mortgage payment instantly. Adjust down payment, interest rate, and loan term. Free, no signup required." class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"></textarea>
+        <div class="h-1.5 bg-gray-100 rounded mt-1"><div id="sp-desc-bar" class="h-full rounded transition-all bg-gray-200"></div></div>
+        <p class="text-xs text-gray-400 mt-0.5">Optimal: 120–155 characters · Google may truncate or rewrite longer descriptions</p>
+      </div>
+      <div>
+        <label class="label">Page URL</label>
+        <input id="sp-url" type="text" placeholder="https://example.com/mortgage-calculator" class="input-field font-mono text-sm" />
+      </div>
+    </div>
+
+    <!-- Google SERP Preview -->
+    <div>
+      <p class="label mb-3">Google Search Preview</p>
+      <div class="border border-gray-200 rounded-xl p-5 bg-white max-w-xl">
+        <div class="flex items-center gap-2 mb-2">
+          <div class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-500">G</div>
+          <div class="text-xs">
+            <div id="sp-prev-domain" class="text-gray-800 font-medium">example.com</div>
+            <div id="sp-prev-breadcrumb" class="text-gray-500">example.com › page</div>
+          </div>
+        </div>
+        <div id="sp-prev-title" class="text-indigo-700 text-lg font-medium hover:underline cursor-pointer leading-tight mb-1 truncate">Your Page Title Here</div>
+        <div id="sp-prev-desc" class="text-sm text-gray-600 leading-relaxed" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">Your meta description will appear here. Make it compelling and informative to improve click-through rates from search results.</div>
+      </div>
+    </div>
+
+    <!-- Mobile Preview -->
+    <div>
+      <p class="label mb-3">Mobile Search Preview</p>
+      <div class="border border-gray-200 rounded-xl p-4 bg-white max-w-sm">
+        <div class="text-xs text-gray-500 mb-1" id="sp-mob-domain">example.com</div>
+        <div id="sp-mob-title" class="text-indigo-700 font-medium text-base hover:underline cursor-pointer leading-tight mb-1" style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">Your Page Title Here</div>
+        <div id="sp-mob-desc" class="text-xs text-gray-600" style="display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;">Your meta description will appear here.</div>
+      </div>
+    </div>
+
+    <!-- Analysis -->
+    <div id="sp-analysis" class="space-y-2 text-sm"></div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How does Google decide what title to show?", a: "Google may rewrite your title tag if it's too long, too short, keyword-stuffed, or doesn't match the page content. To minimize rewrites: match the title to your H1, keep it under 60 characters, and avoid all-caps or excessive punctuation. Google rewrites titles about 58% of the time based on recent studies." },
+        { q: "Will Google always show my meta description?", a: "No — Google often generates its own snippet from page content, especially if your meta description doesn't match the user's search query. Google shows your written description about 37% of the time. However, a good description still influences CTR when it is shown." },
+        { q: "What makes a good SERP title?", a: "A high-performing title includes: (1) primary keyword near the start, (2) a clear value proposition or differentiator, (3) brand name at the end, and (4) natural language that's not stuffed. Titles with numbers (e.g., '5 Best…') and power words often increase CTR." },
+        { q: "What is click-through rate (CTR)?", a: "CTR is the percentage of people who click your result after seeing it in search results. Higher CTR can improve your rankings as Google uses it as a relevance signal. Industry average organic CTR for position 1 is around 27–39% on desktop; positions 2 and 3 drop to 15–18% and 11–14%." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  function barColor(len: number, min: number, max: number) {
+    if (len === 0) return 'bg-gray-200';
+    if (len < min) return 'bg-yellow-400';
+    if (len <= max) return 'bg-green-500';
+    return 'bg-red-500';
+  }
+
+  function truncate(s: string, max: number) {
+    return s.length > max ? s.slice(0, max - 1) + '…' : s;
+  }
+
+  function getDomain(url: string) {
+    try { return new URL(url).hostname; } catch { return url || 'example.com'; }
+  }
+
+  function getBreadcrumb(url: string) {
+    try {
+      const u = new URL(url);
+      const parts = u.pathname.split('/').filter(Boolean);
+      return parts.length > 0 ? `${u.hostname} › ${parts.join(' › ')}` : u.hostname;
+    } catch { return 'example.com › page'; }
+  }
+
+  function update() {
+    const title = (document.getElementById('sp-title') as HTMLInputElement).value;
+    const desc = (document.getElementById('sp-desc') as HTMLTextAreaElement).value;
+    const url = (document.getElementById('sp-url') as HTMLInputElement).value;
+
+    // Counters
+    const tLen = title.length;
+    const dLen = desc.length;
+    document.getElementById('sp-title-count')!.textContent = `${tLen} / 60`;
+    document.getElementById('sp-desc-count')!.textContent = `${dLen} / 155`;
+
+    const tBar = document.getElementById('sp-title-bar')!;
+    tBar.style.width = Math.min((tLen / 60) * 100, 100) + '%';
+    tBar.className = `h-full rounded transition-all ${barColor(tLen, 50, 60)}`;
+
+    const dBar = document.getElementById('sp-desc-bar')!;
+    dBar.style.width = Math.min((dLen / 155) * 100, 100) + '%';
+    dBar.className = `h-full rounded transition-all ${barColor(dLen, 120, 155)}`;
+
+    // Desktop preview
+    const displayTitle = title || 'Your Page Title Here';
+    const displayDesc = desc || 'Your meta description will appear here. Make it compelling and informative to improve click-through rates from search results.';
+    const domain = getDomain(url);
+    const breadcrumb = getBreadcrumb(url);
+
+    document.getElementById('sp-prev-domain')!.textContent = domain;
+    document.getElementById('sp-prev-breadcrumb')!.textContent = breadcrumb;
+    document.getElementById('sp-prev-title')!.textContent = truncate(displayTitle, 60);
+    document.getElementById('sp-prev-desc')!.textContent = truncate(displayDesc, 155);
+
+    // Mobile preview
+    document.getElementById('sp-mob-domain')!.textContent = domain;
+    document.getElementById('sp-mob-title')!.textContent = truncate(displayTitle, 70);
+    document.getElementById('sp-mob-desc')!.textContent = truncate(displayDesc, 120);
+
+    // Analysis tips
+    const tips: string[] = [];
+    if (tLen === 0) tips.push('⚠️ Title is empty.');
+    else if (tLen < 30) tips.push('⚠️ Title is very short (under 30 chars). Add more detail.');
+    else if (tLen < 50) tips.push('ℹ️ Title could be longer. Aim for 50–60 characters.');
+    else if (tLen <= 60) tips.push('✅ Title length is optimal (50–60 characters).');
+    else tips.push('⚠️ Title may be truncated in search results (over 60 chars).');
+
+    if (dLen === 0) tips.push('⚠️ Meta description is empty. Google will auto-generate one.');
+    else if (dLen < 70) tips.push('⚠️ Description is too short. Aim for 120–155 characters.');
+    else if (dLen < 120) tips.push('ℹ️ Description could be longer. Aim for 120–155 characters.');
+    else if (dLen <= 155) tips.push('✅ Meta description length is optimal.');
+    else tips.push('⚠️ Description may be truncated (over 155 chars).');
+
+    if (!url) tips.push('ℹ️ Add a page URL to see the full breadcrumb preview.');
+
+    document.getElementById('sp-analysis')!.innerHTML = tips.map(t =>
+      `<div class="text-sm ${t.startsWith('✅') ? 'text-green-700' : t.startsWith('⚠️') ? 'text-amber-700' : 'text-gray-600'}">${t}</div>`
+    ).join('');
+  }
+
+  ['sp-title','sp-desc','sp-url'].forEach(id =>
+    document.getElementById(id)?.addEventListener('input', update)
+  );
+
+  update();
+</script>

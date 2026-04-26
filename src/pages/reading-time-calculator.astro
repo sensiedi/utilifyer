@@ -1,0 +1,155 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Reading Time Calculator"
+  description="Calculate the estimated reading time for any article or text. Paste your content and get reading time for different audiences instantly."
+  slug="reading-time-calculator"
+  category="SEO & Marketing"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Reading Time Calculator</h1>
+  <p class="text-gray-500 mb-8">Estimate reading time for any article, blog post, or document.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div>
+      <div class="flex justify-between mb-1">
+        <label class="label">Paste Your Text</label>
+        <button id="rt-clear" class="text-xs text-gray-400 hover:text-gray-600">Clear</button>
+      </div>
+      <textarea id="rt-input" rows={10} placeholder="Paste your article, blog post, or any text here…" class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-y"></textarea>
+    </div>
+
+    <div id="rt-results" class="hidden space-y-4">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 text-center">
+          <div class="text-xs text-indigo-500 mb-1">Reading Time</div>
+          <div id="rt-time" class="text-2xl font-bold text-indigo-800"></div>
+          <div class="text-xs text-indigo-400 mt-0.5">avg reader (238 wpm)</div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
+          <div class="text-xs text-gray-500 mb-1">Word Count</div>
+          <div id="rt-words" class="text-2xl font-bold text-gray-900 font-mono"></div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
+          <div class="text-xs text-gray-500 mb-1">Characters</div>
+          <div id="rt-chars" class="text-2xl font-bold text-gray-900 font-mono"></div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
+          <div class="text-xs text-gray-500 mb-1">Sentences</div>
+          <div id="rt-sentences" class="text-2xl font-bold text-gray-900 font-mono"></div>
+        </div>
+      </div>
+
+      <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+        <p class="text-sm font-semibold text-gray-700 mb-3">Reading Time by Audience</p>
+        <div class="space-y-2" id="rt-audience"></div>
+      </div>
+
+      <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+        <p class="text-sm font-semibold text-gray-700 mb-2">Content Analysis</p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm" id="rt-analysis"></div>
+      </div>
+    </div>
+
+    <div id="rt-empty" class="text-center py-6 text-gray-400 text-sm">Paste some text above to see reading time estimates.</div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is the average reading speed?", a: "The average adult reads at about 200–250 words per minute for general content. College students average around 300 wpm. Speed readers can reach 400–700 wpm, though comprehension decreases. Medium.com uses 265 wpm as their standard for reading time estimates." },
+        { q: "How does reading time affect blog SEO?", a: "Longer content (1,500–2,500 words) tends to rank better in Google because it can cover topics more thoroughly. However, quality matters more than length. Adding '5 min read' labels to articles improves click-through rates by setting expectations." },
+        { q: "What is the ideal blog post length?", a: "For SEO, 1,500–2,500 words (6–10 min read) performs best for competitive keywords. For news or quick tips, 300–600 words is appropriate. Long-form guides (3,000–5,000 words) rank well for complex topics with high search intent." },
+        { q: "Does adding images affect reading time?", a: "Some reading time formulas account for images: the first image adds 12 seconds, subsequent images add 3–4 seconds each. This calculator focuses on text reading time. Factor in 30–60 seconds for image-heavy articles." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const AUDIENCES = [
+    { label: 'Child / slow reader', wpm: 100 },
+    { label: 'Average adult', wpm: 238 },
+    { label: 'College-educated reader', wpm: 300 },
+    { label: 'Speed reader', wpm: 500 },
+  ];
+
+  function fmtTime(minutes: number): string {
+    if (minutes < 1) return '< 1 min';
+    const m = Math.round(minutes);
+    return m < 60 ? `${m} min` : `${Math.floor(m/60)}h ${m%60}m`;
+  }
+
+  function analyze() {
+    const text = (document.getElementById('rt-input') as HTMLTextAreaElement).value;
+    const empty = document.getElementById('rt-empty')!;
+    const results = document.getElementById('rt-results')!;
+
+    if (!text.trim()) {
+      results.classList.add('hidden'); empty.classList.remove('hidden'); return;
+    }
+    empty.classList.add('hidden');
+
+    const words = text.trim().split(/\s+/).filter(Boolean);
+    const wordCount = words.length;
+    const chars = text.length;
+    const charsNoSpace = text.replace(/\s/g,'').length;
+    const sentences = (text.match(/[.!?]+/g) || []).length;
+    const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim()).length;
+    const avgWordLen = wordCount > 0 ? (charsNoSpace / wordCount).toFixed(1) : '0';
+    const fleschScore = sentences > 0 && wordCount > 0
+      ? Math.max(0, Math.min(100, 206.835 - 1.015 * (wordCount / sentences) - 84.6 * (charsNoSpace / wordCount / 5))).toFixed(0)
+      : 'N/A';
+
+    const avgWpm = 238;
+    const readingMins = wordCount / avgWpm;
+
+    document.getElementById('rt-time')!.textContent = fmtTime(readingMins);
+    document.getElementById('rt-words')!.textContent = wordCount.toLocaleString();
+    document.getElementById('rt-chars')!.textContent = chars.toLocaleString();
+    document.getElementById('rt-sentences')!.textContent = sentences.toLocaleString();
+
+    document.getElementById('rt-audience')!.innerHTML = AUDIENCES.map(({ label, wpm }) => {
+      const mins = wordCount / wpm;
+      const pct = (wpm / 500) * 100;
+      return `<div class="flex items-center gap-3">
+        <span class="text-sm text-gray-600 w-44 flex-shrink-0">${label} (${wpm} wpm)</span>
+        <div class="flex-1 h-2 bg-gray-200 rounded-full">
+          <div class="h-2 bg-indigo-400 rounded-full" style="width:${pct}%"></div>
+        </div>
+        <span class="font-mono text-sm font-semibold text-gray-900 w-16 text-right">${fmtTime(mins)}</span>
+      </div>`;
+    }).join('');
+
+    const fleschLabel = Number(fleschScore) >= 70 ? 'Easy' : Number(fleschScore) >= 50 ? 'Medium' : 'Difficult';
+    document.getElementById('rt-analysis')!.innerHTML = [
+      ['Paragraphs', paragraphs.toLocaleString()],
+      ['Avg word length', avgWordLen + ' chars'],
+      ['Chars (no spaces)', charsNoSpace.toLocaleString()],
+      ['Readability', `${fleschScore} (${fleschLabel})`],
+    ].map(([l, v]) =>
+      `<div class="bg-white border border-gray-100 rounded-xl p-3">
+        <div class="text-xs text-gray-400 mb-0.5">${l}</div>
+        <div class="font-semibold text-gray-900">${v}</div>
+      </div>`
+    ).join('');
+
+    results.classList.remove('hidden');
+  }
+
+  document.getElementById('rt-input')?.addEventListener('input', analyze);
+  document.getElementById('rt-clear')?.addEventListener('click', () => {
+    (document.getElementById('rt-input') as HTMLTextAreaElement).value = '';
+    analyze();
+  });
+</script>

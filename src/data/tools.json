@@ -4,789 +4,1408 @@
     "title": "Percentage Calculator",
     "description": "Calculate percentages instantly. What is X% of Y? X is what percent of Y? And more.",
     "category": "Math",
-    "tags": ["percentage", "percent", "math", "calculator"],
+    "tags": [
+      "percentage",
+      "percent",
+      "math",
+      "calculator"
+    ],
     "priority": 1,
     "status": "live",
-    "icon": "📊"
+    "icon": "\ud83d\udcca"
   },
   {
     "slug": "age-calculator",
     "title": "Age Calculator",
     "description": "Calculate your exact age in years, months, days, and hours from your date of birth.",
     "category": "Date & Time",
-    "tags": ["age", "birthday", "date", "years"],
+    "tags": [
+      "age",
+      "birthday",
+      "date",
+      "years"
+    ],
     "priority": 2,
     "status": "live",
-    "icon": "🎂"
+    "icon": "\ud83c\udf82"
   },
   {
     "slug": "bmi-calculator",
     "title": "BMI Calculator",
     "description": "Calculate your Body Mass Index and find out if you are underweight, normal, overweight, or obese.",
     "category": "Health",
-    "tags": ["bmi", "body mass index", "weight", "health"],
+    "tags": [
+      "bmi",
+      "body mass index",
+      "weight",
+      "health"
+    ],
     "priority": 3,
     "status": "live",
-    "icon": "⚖️"
+    "icon": "\u2696\ufe0f"
   },
   {
     "slug": "temperature-converter",
     "title": "Temperature Converter",
     "description": "Convert between Celsius, Fahrenheit, Kelvin, and Rankine instantly.",
     "category": "Unit Converters",
-    "tags": ["temperature", "celsius", "fahrenheit", "kelvin", "convert"],
+    "tags": [
+      "temperature",
+      "celsius",
+      "fahrenheit",
+      "kelvin",
+      "convert"
+    ],
     "priority": 4,
     "status": "live",
-    "icon": "🌡️"
+    "icon": "\ud83c\udf21\ufe0f"
   },
   {
     "slug": "tip-calculator",
     "title": "Tip Calculator",
     "description": "Calculate tip amount and split the bill between any number of people.",
     "category": "Finance",
-    "tags": ["tip", "bill", "split", "restaurant"],
+    "tags": [
+      "tip",
+      "bill",
+      "split",
+      "restaurant"
+    ],
     "priority": 5,
     "status": "live",
-    "icon": "🍽️"
+    "icon": "\ud83c\udf7d\ufe0f"
   },
   {
     "slug": "days-between-dates",
     "title": "Days Between Dates",
     "description": "Count the exact number of days, weeks, and months between any two dates.",
     "category": "Date & Time",
-    "tags": ["days", "date", "difference", "calendar"],
+    "tags": [
+      "days",
+      "date",
+      "difference",
+      "calendar"
+    ],
     "priority": 6,
     "status": "live",
-    "icon": "📅"
+    "icon": "\ud83d\udcc5"
   },
   {
     "slug": "word-counter",
     "title": "Word Counter",
     "description": "Count words, characters, sentences, and paragraphs. Get reading time estimates.",
     "category": "Text",
-    "tags": ["word count", "characters", "text", "writing"],
+    "tags": [
+      "word count",
+      "characters",
+      "text",
+      "writing"
+    ],
     "priority": 7,
     "status": "live",
-    "icon": "📝"
+    "icon": "\ud83d\udcdd"
   },
   {
     "slug": "random-number-generator",
     "title": "Random Number Generator",
     "description": "Generate random numbers within any range. Single or multiple numbers, no repeats option.",
     "category": "Random",
-    "tags": ["random", "number", "generator", "lottery"],
+    "tags": [
+      "random",
+      "number",
+      "generator",
+      "lottery"
+    ],
     "priority": 8,
     "status": "live",
-    "icon": "🎲"
+    "icon": "\ud83c\udfb2"
   },
   {
     "slug": "mortgage-calculator",
     "title": "Mortgage Calculator",
     "description": "Calculate your monthly mortgage payment, total interest paid, and full amortization schedule.",
     "category": "Finance",
-    "tags": ["mortgage", "loan", "payment", "interest", "amortization"],
+    "tags": [
+      "mortgage",
+      "loan",
+      "payment",
+      "interest",
+      "amortization"
+    ],
     "priority": 9,
     "status": "live",
-    "icon": "🏠"
+    "icon": "\ud83c\udfe0"
   },
   {
     "slug": "discount-calculator",
     "title": "Discount Calculator",
     "description": "Calculate the sale price after a discount. Find out how much you save.",
     "category": "Finance",
-    "tags": ["discount", "sale", "price", "savings", "percent off"],
+    "tags": [
+      "discount",
+      "sale",
+      "price",
+      "savings",
+      "percent off"
+    ],
     "priority": 10,
     "status": "live",
-    "icon": "🏷️"
+    "icon": "\ud83c\udff7\ufe0f"
   },
   {
     "slug": "compound-interest-calculator",
     "title": "Compound Interest Calculator",
     "description": "Visualize how your money grows with compound interest over time.",
     "category": "Finance",
-    "tags": ["compound interest", "investment", "savings", "growth"],
+    "tags": [
+      "compound interest",
+      "investment",
+      "savings",
+      "growth"
+    ],
     "priority": 11,
     "status": "live",
-    "icon": "📈"
+    "icon": "\ud83d\udcc8"
   },
   {
     "slug": "case-converter",
     "title": "Case Converter",
     "description": "Convert text to UPPERCASE, lowercase, Title Case, camelCase, snake_case and more.",
     "category": "Text",
-    "tags": ["case", "uppercase", "lowercase", "title case", "camelcase"],
+    "tags": [
+      "case",
+      "uppercase",
+      "lowercase",
+      "title case",
+      "camelcase"
+    ],
     "priority": 12,
     "status": "live",
-    "icon": "🔤"
+    "icon": "\ud83d\udd24"
   },
   {
     "slug": "coin-flip",
     "title": "Coin Flip",
     "description": "Flip a virtual coin. Get heads or tails instantly. Flip multiple times and track statistics.",
     "category": "Random",
-    "tags": ["coin flip", "heads", "tails", "random", "decision"],
+    "tags": [
+      "coin flip",
+      "heads",
+      "tails",
+      "random",
+      "decision"
+    ],
     "priority": 13,
     "status": "live",
-    "icon": "🪙"
+    "icon": "\ud83e\ude99"
   },
   {
     "slug": "password-generator",
     "title": "Password Generator",
     "description": "Generate strong, random passwords. Customize length, symbols, numbers, and more.",
     "category": "Developer",
-    "tags": ["password", "generator", "security", "random"],
+    "tags": [
+      "password",
+      "generator",
+      "security",
+      "random"
+    ],
     "priority": 14,
     "status": "live",
-    "icon": "🔐"
+    "icon": "\ud83d\udd10"
   },
   {
     "slug": "countdown-timer",
     "title": "Countdown Timer",
     "description": "Count down to any future date or event. Share your countdown with a link.",
     "category": "Date & Time",
-    "tags": ["countdown", "timer", "event", "date"],
+    "tags": [
+      "countdown",
+      "timer",
+      "event",
+      "date"
+    ],
     "priority": 15,
     "status": "live",
-    "icon": "⏳"
+    "icon": "\u23f3"
   },
   {
     "slug": "salary-to-hourly",
     "title": "Salary to Hourly Calculator",
     "description": "Convert annual salary to hourly, daily, weekly, and monthly rates.",
     "category": "Finance",
-    "tags": ["salary", "hourly", "wage", "income", "pay"],
+    "tags": [
+      "salary",
+      "hourly",
+      "wage",
+      "income",
+      "pay"
+    ],
     "priority": 16,
     "status": "live",
-    "icon": "💰"
+    "icon": "\ud83d\udcb0"
   },
   {
     "slug": "qr-code-generator",
     "title": "QR Code Generator",
     "description": "Generate QR codes for URLs, text, WiFi, email, and more. Download as PNG.",
     "category": "Developer",
-    "tags": ["qr code", "generator", "barcode", "url"],
+    "tags": [
+      "qr code",
+      "generator",
+      "barcode",
+      "url"
+    ],
     "priority": 17,
     "status": "live",
-    "icon": "📱"
+    "icon": "\ud83d\udcf1"
   },
   {
     "slug": "color-picker",
     "title": "Color Picker & Converter",
     "description": "Pick any color and get HEX, RGB, HSL, and HSB values instantly.",
     "category": "Design",
-    "tags": ["color", "hex", "rgb", "hsl", "picker", "converter"],
+    "tags": [
+      "color",
+      "hex",
+      "rgb",
+      "hsl",
+      "picker",
+      "converter"
+    ],
     "priority": 18,
     "status": "live",
-    "icon": "🎨"
+    "icon": "\ud83c\udfa8"
   },
   {
     "slug": "character-count",
     "title": "Character Count",
     "description": "Count characters for Twitter/X, LinkedIn, Instagram and other social media platforms.",
     "category": "Text",
-    "tags": ["character count", "twitter", "social media", "text length"],
+    "tags": [
+      "character count",
+      "twitter",
+      "social media",
+      "text length"
+    ],
     "priority": 19,
     "status": "live",
-    "icon": "✏️"
+    "icon": "\u270f\ufe0f"
   },
   {
     "slug": "weight-converter",
     "title": "Weight Converter",
     "description": "Convert between pounds, kilograms, ounces, grams, stones, and more.",
     "category": "Unit Converters",
-    "tags": ["weight", "pounds", "kilograms", "convert", "lbs", "kg"],
+    "tags": [
+      "weight",
+      "pounds",
+      "kilograms",
+      "convert",
+      "lbs",
+      "kg"
+    ],
     "priority": 20,
     "status": "live",
-    "icon": "⚖️"
+    "icon": "\u2696\ufe0f"
   },
   {
     "slug": "loan-payoff-calculator",
     "title": "Loan Payoff Calculator",
     "description": "Calculate how long to pay off any loan and how much interest you will pay in total.",
     "category": "Finance",
-    "tags": ["loan", "payoff", "debt", "interest", "calculator"],
+    "tags": [
+      "loan",
+      "payoff",
+      "debt",
+      "interest",
+      "calculator"
+    ],
     "priority": 21,
     "status": "live",
-    "icon": "🏦"
+    "icon": "\ud83c\udfe6"
   },
   {
     "slug": "credit-card-payoff-calculator",
     "title": "Credit Card Payoff Calculator",
     "description": "See how long it takes to pay off your credit card and how to save on interest.",
     "category": "Finance",
-    "tags": ["credit card", "payoff", "debt", "interest", "minimum payment"],
+    "tags": [
+      "credit card",
+      "payoff",
+      "debt",
+      "interest",
+      "minimum payment"
+    ],
     "priority": 22,
     "status": "live",
-    "icon": "💳"
+    "icon": "\ud83d\udcb3"
   },
   {
     "slug": "vat-calculator",
     "title": "VAT & Sales Tax Calculator",
     "description": "Add or remove VAT and sales tax from any price. Supports any tax rate.",
     "category": "Finance",
-    "tags": ["vat", "sales tax", "tax", "price", "calculator"],
+    "tags": [
+      "vat",
+      "sales tax",
+      "tax",
+      "price",
+      "calculator"
+    ],
     "priority": 23,
     "status": "live",
-    "icon": "🧾"
+    "icon": "\ud83e\uddfe"
   },
   {
     "slug": "savings-goal-calculator",
     "title": "Savings Goal Calculator",
     "description": "Find out how much to save each month to reach your financial goal.",
     "category": "Finance",
-    "tags": ["savings", "goal", "monthly", "finance", "calculator"],
+    "tags": [
+      "savings",
+      "goal",
+      "monthly",
+      "finance",
+      "calculator"
+    ],
     "priority": 24,
     "status": "live",
-    "icon": "🎯"
+    "icon": "\ud83c\udfaf"
   },
   {
     "slug": "car-loan-calculator",
     "title": "Car Loan Calculator",
     "description": "Calculate your monthly car payment, total interest, and true cost of a vehicle loan.",
     "category": "Finance",
-    "tags": ["car loan", "auto loan", "payment", "interest", "vehicle"],
+    "tags": [
+      "car loan",
+      "auto loan",
+      "payment",
+      "interest",
+      "vehicle"
+    ],
     "priority": 25,
     "status": "live",
-    "icon": "🚗"
+    "icon": "\ud83d\ude97"
   },
   {
     "slug": "retirement-savings-calculator",
     "title": "Retirement Savings Calculator",
     "description": "Project your retirement savings based on contributions, returns, and years to retirement.",
     "category": "Finance",
-    "tags": ["retirement", "savings", "401k", "investment", "calculator"],
+    "tags": [
+      "retirement",
+      "savings",
+      "401k",
+      "investment",
+      "calculator"
+    ],
     "priority": 26,
     "status": "live",
-    "icon": "🏖️"
+    "icon": "\ud83c\udfd6\ufe0f"
   },
   {
     "slug": "take-home-pay-calculator",
     "title": "Take-Home Pay Calculator",
     "description": "Estimate your net salary after federal tax, state tax, Social Security, and Medicare.",
     "category": "Finance",
-    "tags": ["take home pay", "net salary", "tax", "paycheck", "income"],
+    "tags": [
+      "take home pay",
+      "net salary",
+      "tax",
+      "paycheck",
+      "income"
+    ],
     "priority": 27,
     "status": "live",
-    "icon": "💵"
+    "icon": "\ud83d\udcb5"
   },
   {
     "slug": "freelance-rate-calculator",
     "title": "Freelance Rate Calculator",
     "description": "Calculate the hourly rate you need to charge as a freelancer to hit your income goal.",
     "category": "Finance",
-    "tags": ["freelance", "rate", "hourly", "self-employed", "income"],
+    "tags": [
+      "freelance",
+      "rate",
+      "hourly",
+      "self-employed",
+      "income"
+    ],
     "priority": 28,
     "status": "live",
-    "icon": "💼"
+    "icon": "\ud83d\udcbc"
   },
   {
     "slug": "break-even-calculator",
     "title": "Break-Even Calculator",
     "description": "Find your break-even point in units and revenue. Essential for pricing and business planning.",
     "category": "Finance",
-    "tags": ["break-even", "business", "profit", "pricing", "calculator"],
+    "tags": [
+      "break-even",
+      "business",
+      "profit",
+      "pricing",
+      "calculator"
+    ],
     "priority": 29,
     "status": "live",
-    "icon": "📉"
+    "icon": "\ud83d\udcc9"
   },
   {
     "slug": "tdee-calculator",
     "title": "TDEE Calculator",
     "description": "Calculate your Total Daily Energy Expenditure based on activity level and body stats.",
     "category": "Health",
-    "tags": ["tdee", "calories", "energy", "metabolism", "fitness"],
+    "tags": [
+      "tdee",
+      "calories",
+      "energy",
+      "metabolism",
+      "fitness"
+    ],
     "priority": 30,
     "status": "live",
-    "icon": "🔥"
+    "icon": "\ud83d\udd25"
   },
   {
     "slug": "calorie-deficit-calculator",
     "title": "Calorie Deficit Calculator",
     "description": "Find the daily calorie deficit you need to lose weight at your target pace.",
     "category": "Health",
-    "tags": ["calorie deficit", "weight loss", "calories", "diet", "calculator"],
+    "tags": [
+      "calorie deficit",
+      "weight loss",
+      "calories",
+      "diet",
+      "calculator"
+    ],
     "priority": 31,
     "status": "live",
-    "icon": "🥗"
+    "icon": "\ud83e\udd57"
   },
   {
     "slug": "macro-calculator",
     "title": "Macro Calculator",
     "description": "Calculate your daily protein, carbs, and fat targets based on your goals.",
     "category": "Health",
-    "tags": ["macros", "protein", "carbs", "fat", "diet", "nutrition"],
+    "tags": [
+      "macros",
+      "protein",
+      "carbs",
+      "fat",
+      "diet",
+      "nutrition"
+    ],
     "priority": 32,
     "status": "live",
-    "icon": "🍗"
+    "icon": "\ud83c\udf57"
   },
   {
     "slug": "running-pace-calculator",
     "title": "Running Pace Calculator",
     "description": "Calculate pace, speed, and finish time for any running distance.",
     "category": "Health",
-    "tags": ["running", "pace", "speed", "marathon", "5k", "fitness"],
+    "tags": [
+      "running",
+      "pace",
+      "speed",
+      "marathon",
+      "5k",
+      "fitness"
+    ],
     "priority": 33,
     "status": "live",
-    "icon": "🏃"
+    "icon": "\ud83c\udfc3"
   },
   {
     "slug": "sleep-cycle-calculator",
     "title": "Sleep Cycle Calculator",
     "description": "Find the best times to wake up or go to sleep based on 90-minute sleep cycles.",
     "category": "Health",
-    "tags": ["sleep", "sleep cycle", "wake up", "bedtime", "health"],
+    "tags": [
+      "sleep",
+      "sleep cycle",
+      "wake up",
+      "bedtime",
+      "health"
+    ],
     "priority": 34,
     "status": "live",
-    "icon": "😴"
+    "icon": "\ud83d\ude34"
   },
   {
     "slug": "one-rep-max-calculator",
     "title": "One Rep Max Calculator",
     "description": "Estimate your 1RM for any lift using weight and reps. Includes percentage table.",
     "category": "Health",
-    "tags": ["one rep max", "1rm", "strength", "weightlifting", "fitness"],
+    "tags": [
+      "one rep max",
+      "1rm",
+      "strength",
+      "weightlifting",
+      "fitness"
+    ],
     "priority": 35,
     "status": "live",
-    "icon": "🏋️"
+    "icon": "\ud83c\udfcb\ufe0f"
   },
   {
     "slug": "water-intake-calculator",
     "title": "Water Intake Calculator",
     "description": "Calculate your recommended daily water intake based on weight and activity level.",
     "category": "Health",
-    "tags": ["water intake", "hydration", "health", "daily water"],
+    "tags": [
+      "water intake",
+      "hydration",
+      "health",
+      "daily water"
+    ],
     "priority": 36,
     "status": "live",
-    "icon": "💧"
+    "icon": "\ud83d\udca7"
   },
   {
     "slug": "heart-rate-zone-calculator",
     "title": "Heart Rate Zone Calculator",
     "description": "Find your 5 heart rate training zones based on your age and resting heart rate.",
     "category": "Health",
-    "tags": ["heart rate", "training zones", "cardio", "fitness", "bpm"],
+    "tags": [
+      "heart rate",
+      "training zones",
+      "cardio",
+      "fitness",
+      "bpm"
+    ],
     "priority": 37,
     "status": "live",
-    "icon": "❤️"
+    "icon": "\u2764\ufe0f"
   },
   {
     "slug": "json-formatter",
     "title": "JSON Formatter & Validator",
     "description": "Format, validate, and minify JSON. Instantly spot syntax errors.",
     "category": "Developer",
-    "tags": ["json", "formatter", "validator", "minify", "developer"],
+    "tags": [
+      "json",
+      "formatter",
+      "validator",
+      "minify",
+      "developer"
+    ],
     "priority": 38,
     "status": "live",
-    "icon": "📋"
+    "icon": "\ud83d\udccb"
   },
   {
     "slug": "base64-encoder-decoder",
     "title": "Base64 Encoder / Decoder",
     "description": "Encode any text to Base64 or decode Base64 strings back to plain text.",
     "category": "Developer",
-    "tags": ["base64", "encode", "decode", "developer", "converter"],
+    "tags": [
+      "base64",
+      "encode",
+      "decode",
+      "developer",
+      "converter"
+    ],
     "priority": 39,
     "status": "live",
-    "icon": "🔁"
+    "icon": "\ud83d\udd01"
   },
   {
     "slug": "url-encoder-decoder",
     "title": "URL Encoder / Decoder",
     "description": "Encode special characters in URLs or decode percent-encoded URLs.",
     "category": "Developer",
-    "tags": ["url", "encode", "decode", "percent encoding", "developer"],
+    "tags": [
+      "url",
+      "encode",
+      "decode",
+      "percent encoding",
+      "developer"
+    ],
     "priority": 40,
     "status": "live",
-    "icon": "🔗"
+    "icon": "\ud83d\udd17"
   },
   {
     "slug": "uuid-generator",
     "title": "UUID Generator",
     "description": "Generate random UUIDs (v4). Bulk generate up to 100 at once. One-click copy.",
     "category": "Developer",
-    "tags": ["uuid", "guid", "generator", "random", "developer"],
+    "tags": [
+      "uuid",
+      "guid",
+      "generator",
+      "random",
+      "developer"
+    ],
     "priority": 41,
     "status": "live",
-    "icon": "🆔"
+    "icon": "\ud83c\udd94"
   },
   {
     "slug": "hash-generator",
     "title": "Hash Generator",
     "description": "Generate MD5, SHA-1, SHA-256, and SHA-512 hashes from any text.",
     "category": "Developer",
-    "tags": ["hash", "md5", "sha256", "sha512", "developer", "security"],
+    "tags": [
+      "hash",
+      "md5",
+      "sha256",
+      "sha512",
+      "developer",
+      "security"
+    ],
     "priority": 42,
     "status": "live",
-    "icon": "#️⃣"
+    "icon": "#\ufe0f\u20e3"
   },
   {
     "slug": "lorem-ipsum-generator",
     "title": "Lorem Ipsum Generator",
     "description": "Generate placeholder Lorem Ipsum text by paragraphs, sentences, or words.",
     "category": "Developer",
-    "tags": ["lorem ipsum", "placeholder", "dummy text", "developer"],
+    "tags": [
+      "lorem ipsum",
+      "placeholder",
+      "dummy text",
+      "developer"
+    ],
     "priority": 43,
     "status": "live",
-    "icon": "📄"
+    "icon": "\ud83d\udcc4"
   },
   {
     "slug": "slug-generator",
     "title": "URL Slug Generator",
     "description": "Convert any title or phrase into a clean, SEO-friendly URL slug.",
     "category": "Developer",
-    "tags": ["slug", "url", "seo", "permalink", "developer"],
+    "tags": [
+      "slug",
+      "url",
+      "seo",
+      "permalink",
+      "developer"
+    ],
     "priority": 44,
     "status": "live",
-    "icon": "🐌"
+    "icon": "\ud83d\udc0c"
   },
   {
     "slug": "length-converter",
     "title": "Length Converter",
     "description": "Convert between meters, feet, inches, miles, kilometers, and more length units.",
     "category": "Unit Converters",
-    "tags": ["length", "meters", "feet", "inches", "miles", "convert"],
+    "tags": [
+      "length",
+      "meters",
+      "feet",
+      "inches",
+      "miles",
+      "convert"
+    ],
     "priority": 45,
     "status": "live",
-    "icon": "📏"
+    "icon": "\ud83d\udccf"
   },
   {
     "slug": "volume-converter",
     "title": "Volume Converter",
     "description": "Convert between liters, gallons, cups, fluid ounces, milliliters, and more.",
     "category": "Unit Converters",
-    "tags": ["volume", "liters", "gallons", "cups", "convert"],
+    "tags": [
+      "volume",
+      "liters",
+      "gallons",
+      "cups",
+      "convert"
+    ],
     "priority": 46,
     "status": "live",
-    "icon": "🧪"
+    "icon": "\ud83e\uddea"
   },
   {
     "slug": "speed-converter",
     "title": "Speed Converter",
     "description": "Convert between mph, km/h, m/s, knots, and more speed units.",
     "category": "Unit Converters",
-    "tags": ["speed", "mph", "kmh", "knots", "convert"],
+    "tags": [
+      "speed",
+      "mph",
+      "kmh",
+      "knots",
+      "convert"
+    ],
     "priority": 47,
     "status": "live",
-    "icon": "💨"
+    "icon": "\ud83d\udca8"
   },
   {
     "slug": "data-storage-converter",
     "title": "Data Storage Converter",
     "description": "Convert between bits, bytes, KB, MB, GB, TB, and beyond.",
     "category": "Unit Converters",
-    "tags": ["data", "bytes", "megabytes", "gigabytes", "storage", "convert"],
+    "tags": [
+      "data",
+      "bytes",
+      "megabytes",
+      "gigabytes",
+      "storage",
+      "convert"
+    ],
     "priority": 48,
     "status": "live",
-    "icon": "💾"
+    "icon": "\ud83d\udcbe"
   },
   {
     "slug": "unix-timestamp-converter",
     "title": "Unix Timestamp Converter",
     "description": "Convert Unix timestamps to readable dates and vice versa. Supports seconds and milliseconds.",
     "category": "Date & Time",
-    "tags": ["unix timestamp", "epoch", "timestamp", "date", "developer"],
+    "tags": [
+      "unix timestamp",
+      "epoch",
+      "timestamp",
+      "date",
+      "developer"
+    ],
     "priority": 49,
     "status": "live",
-    "icon": "🕐"
+    "icon": "\ud83d\udd50"
   },
   {
     "slug": "fraction-calculator",
     "title": "Fraction Calculator",
     "description": "Add, subtract, multiply, and divide fractions. Automatically simplifies results.",
     "category": "Math",
-    "tags": ["fraction", "calculator", "math", "numerator", "denominator"],
+    "tags": [
+      "fraction",
+      "calculator",
+      "math",
+      "numerator",
+      "denominator"
+    ],
     "priority": 50,
     "status": "live",
-    "icon": "½"
+    "icon": "\u00bd"
   },
   {
     "slug": "statistics-calculator",
     "title": "Statistics Calculator",
     "description": "Calculate mean, median, mode, range, variance, and standard deviation from a data set.",
     "category": "Math",
-    "tags": ["statistics", "mean", "median", "mode", "standard deviation", "math"],
+    "tags": [
+      "statistics",
+      "mean",
+      "median",
+      "mode",
+      "standard deviation",
+      "math"
+    ],
     "priority": 51,
     "status": "live",
-    "icon": "📉"
+    "icon": "\ud83d\udcc9"
   },
   {
     "slug": "number-base-converter",
     "title": "Number Base Converter",
     "description": "Convert numbers between binary, octal, decimal, and hexadecimal.",
     "category": "Developer",
-    "tags": ["binary", "hexadecimal", "octal", "decimal", "base converter"],
+    "tags": [
+      "binary",
+      "hexadecimal",
+      "octal",
+      "decimal",
+      "base converter"
+    ],
     "priority": 52,
     "status": "live",
-    "icon": "🔢"
+    "icon": "\ud83d\udd22"
   },
   {
     "slug": "roman-numeral-converter",
     "title": "Roman Numeral Converter",
     "description": "Convert numbers to Roman numerals and Roman numerals back to numbers.",
     "category": "Math",
-    "tags": ["roman numerals", "convert", "numbers", "math"],
+    "tags": [
+      "roman numerals",
+      "convert",
+      "numbers",
+      "math"
+    ],
     "priority": 53,
     "status": "live",
-    "icon": "🏛️"
+    "icon": "\ud83c\udfdb\ufe0f"
   },
   {
     "slug": "area-converter",
     "title": "Area Converter",
     "description": "Convert between square meters, square feet, acres, hectares, and more area units.",
     "category": "Unit Converters",
-    "tags": ["area", "square meters", "acres", "hectares", "convert"],
+    "tags": [
+      "area",
+      "square meters",
+      "acres",
+      "hectares",
+      "convert"
+    ],
     "priority": 54,
     "status": "live",
-    "icon": "🗺️"
+    "icon": "\ud83d\uddfa\ufe0f"
   },
   {
     "slug": "pressure-converter",
     "title": "Pressure Converter",
     "description": "Convert between pascals, bar, PSI, atmospheres, mmHg, kPa, and more pressure units.",
     "category": "Unit Converters",
-    "tags": ["pressure", "PSI", "bar", "pascal", "atm", "mmHg", "convert"],
+    "tags": [
+      "pressure",
+      "PSI",
+      "bar",
+      "pascal",
+      "atm",
+      "mmHg",
+      "convert"
+    ],
     "priority": 55,
     "status": "live",
-    "icon": "🌡️"
+    "icon": "\ud83c\udf21\ufe0f"
   },
   {
     "slug": "energy-converter",
     "title": "Energy Converter",
     "description": "Convert between joules, calories, kilocalories, watt-hours, kilowatt-hours, BTU, and electron-volts.",
     "category": "Unit Converters",
-    "tags": ["energy", "joules", "calories", "kWh", "BTU", "convert"],
+    "tags": [
+      "energy",
+      "joules",
+      "calories",
+      "kWh",
+      "BTU",
+      "convert"
+    ],
     "priority": 56,
     "status": "live",
-    "icon": "⚡"
+    "icon": "\u26a1"
   },
   {
     "slug": "fuel-efficiency-converter",
     "title": "Fuel Efficiency Converter",
     "description": "Convert between MPG (US/UK), L/100km, km/L, and miles per liter fuel economy units.",
     "category": "Unit Converters",
-    "tags": ["fuel", "MPG", "L/100km", "fuel economy", "gas mileage", "convert"],
+    "tags": [
+      "fuel",
+      "MPG",
+      "L/100km",
+      "fuel economy",
+      "gas mileage",
+      "convert"
+    ],
     "priority": 57,
     "status": "live",
-    "icon": "⛽"
+    "icon": "\u26fd"
   },
   {
     "slug": "gcd-lcm-calculator",
     "title": "GCD & LCM Calculator",
     "description": "Calculate the Greatest Common Divisor and Least Common Multiple of two or more numbers with prime factorization.",
     "category": "Math",
-    "tags": ["GCD", "LCM", "greatest common divisor", "least common multiple", "prime factors"],
+    "tags": [
+      "GCD",
+      "LCM",
+      "greatest common divisor",
+      "least common multiple",
+      "prime factors"
+    ],
     "priority": 58,
     "status": "live",
-    "icon": "🔢"
+    "icon": "\ud83d\udd22"
   },
   {
     "slug": "quadratic-equation-solver",
     "title": "Quadratic Equation Solver",
-    "description": "Solve ax² + bx + c = 0. Shows real and complex roots, discriminant, vertex, and parabola properties.",
+    "description": "Solve ax\u00b2 + bx + c = 0. Shows real and complex roots, discriminant, vertex, and parabola properties.",
     "category": "Math",
-    "tags": ["quadratic", "equation", "roots", "discriminant", "parabola", "algebra"],
+    "tags": [
+      "quadratic",
+      "equation",
+      "roots",
+      "discriminant",
+      "parabola",
+      "algebra"
+    ],
     "priority": 59,
     "status": "live",
-    "icon": "📐"
+    "icon": "\ud83d\udcd0"
   },
   {
     "slug": "pythagorean-calculator",
     "title": "Pythagorean Theorem Calculator",
-    "description": "Find any side of a right triangle using a² + b² = c². Shows angles, area, and perimeter.",
+    "description": "Find any side of a right triangle using a\u00b2 + b\u00b2 = c\u00b2. Shows angles, area, and perimeter.",
     "category": "Math",
-    "tags": ["pythagorean theorem", "right triangle", "hypotenuse", "trigonometry", "geometry"],
+    "tags": [
+      "pythagorean theorem",
+      "right triangle",
+      "hypotenuse",
+      "trigonometry",
+      "geometry"
+    ],
     "priority": 60,
     "status": "live",
-    "icon": "📐"
+    "icon": "\ud83d\udcd0"
   },
   {
     "slug": "prime-checker",
     "title": "Prime Number Checker",
     "description": "Check if a number is prime, find its prime factors, or generate all primes up to any limit.",
     "category": "Math",
-    "tags": ["prime number", "prime factors", "sieve of eratosthenes", "factorization"],
+    "tags": [
+      "prime number",
+      "prime factors",
+      "sieve of eratosthenes",
+      "factorization"
+    ],
     "priority": 61,
     "status": "live",
-    "icon": "🔢"
+    "icon": "\ud83d\udd22"
   },
   {
     "slug": "scientific-calculator",
     "title": "Scientific Calculator",
-    "description": "Full scientific calculator with trig, log, powers, roots, factorial, π, e, and calculation history.",
+    "description": "Full scientific calculator with trig, log, powers, roots, factorial, \u03c0, e, and calculation history.",
     "category": "Math",
-    "tags": ["scientific calculator", "trigonometry", "logarithm", "sin cos tan", "calculator"],
+    "tags": [
+      "scientific calculator",
+      "trigonometry",
+      "logarithm",
+      "sin cos tan",
+      "calculator"
+    ],
     "priority": 62,
     "status": "live",
-    "icon": "🧮"
+    "icon": "\ud83e\uddee"
   },
   {
     "slug": "date-calculator",
     "title": "Date Calculator",
     "description": "Calculate days between dates, add or subtract time from a date, and find the day of the week.",
     "category": "Date & Time",
-    "tags": ["date calculator", "days between dates", "add days", "day of week", "date difference"],
+    "tags": [
+      "date calculator",
+      "days between dates",
+      "add days",
+      "day of week",
+      "date difference"
+    ],
     "priority": 63,
     "status": "live",
-    "icon": "📅"
+    "icon": "\ud83d\udcc5"
   },
   {
     "slug": "world-clock",
     "title": "World Clock",
     "description": "See the current time in major cities worldwide. Compare time zones at a glance. Auto-updates every second.",
     "category": "Date & Time",
-    "tags": ["world clock", "time zones", "international time", "current time"],
+    "tags": [
+      "world clock",
+      "time zones",
+      "international time",
+      "current time"
+    ],
     "priority": 64,
     "status": "live",
-    "icon": "🌍"
+    "icon": "\ud83c\udf0d"
   },
   {
     "slug": "timezone-converter",
     "title": "Time Zone Converter",
     "description": "Convert a specific time from one time zone to another. Handles daylight saving time automatically.",
     "category": "Date & Time",
-    "tags": ["timezone converter", "time zone", "daylight saving", "UTC", "EST PST CST"],
+    "tags": [
+      "timezone converter",
+      "time zone",
+      "daylight saving",
+      "UTC",
+      "EST PST CST"
+    ],
     "priority": 65,
     "status": "live",
-    "icon": "🕐"
+    "icon": "\ud83d\udd50"
   },
   {
     "slug": "workday-calculator",
     "title": "Business Day Calculator",
     "description": "Count business days between two dates or find a date that is N working days away. Excludes weekends.",
     "category": "Date & Time",
-    "tags": ["business days", "working days", "weekday calculator", "T+2 settlement"],
+    "tags": [
+      "business days",
+      "working days",
+      "weekday calculator",
+      "T+2 settlement"
+    ],
     "priority": 66,
     "status": "live",
-    "icon": "💼"
+    "icon": "\ud83d\udcbc"
   },
   {
     "slug": "markdown-preview",
     "title": "Markdown Preview",
     "description": "Write Markdown and see a live rendered preview. Supports headings, tables, code blocks, bold, italic, and links.",
     "category": "Developer",
-    "tags": ["markdown", "markdown preview", "markdown editor", "markdown to HTML"],
+    "tags": [
+      "markdown",
+      "markdown preview",
+      "markdown editor",
+      "markdown to HTML"
+    ],
     "priority": 67,
     "status": "live",
-    "icon": "📝"
+    "icon": "\ud83d\udcdd"
   },
   {
     "slug": "regex-tester",
     "title": "Regex Tester",
     "description": "Test regular expressions with live match highlighting, capture group details, and common pattern library.",
     "category": "Developer",
-    "tags": ["regex", "regular expression", "regex tester", "regex checker", "pattern matching"],
+    "tags": [
+      "regex",
+      "regular expression",
+      "regex tester",
+      "regex checker",
+      "pattern matching"
+    ],
     "priority": 68,
     "status": "live",
-    "icon": "🔍"
+    "icon": "\ud83d\udd0d"
   },
   {
     "slug": "binary-text-converter",
     "title": "Binary to Text Converter",
-    "description": "Convert text to binary, hex, octal, or decimal — and back. Supports ASCII and UTF-8 encoding.",
+    "description": "Convert text to binary, hex, octal, or decimal \u2014 and back. Supports ASCII and UTF-8 encoding.",
     "category": "Developer",
-    "tags": ["binary to text", "text to binary", "ASCII", "hex converter", "binary converter"],
+    "tags": [
+      "binary to text",
+      "text to binary",
+      "ASCII",
+      "hex converter",
+      "binary converter"
+    ],
     "priority": 69,
     "status": "live",
-    "icon": "💻"
+    "icon": "\ud83d\udcbb"
   },
   {
     "slug": "home-affordability-calculator",
     "title": "Home Affordability Calculator",
     "description": "Find out how much house you can afford based on your income, debts, and down payment using the 28/36 rule.",
     "category": "Real Estate",
-    "tags": ["home affordability", "how much house can I afford", "mortgage affordability", "28/36 rule"],
+    "tags": [
+      "home affordability",
+      "how much house can I afford",
+      "mortgage affordability",
+      "28/36 rule"
+    ],
     "priority": 70,
     "status": "live",
-    "icon": "🏠"
+    "icon": "\ud83c\udfe0"
   },
   {
     "slug": "rent-vs-buy-calculator",
     "title": "Rent vs Buy Calculator",
     "description": "Compare the true long-term cost of renting vs buying a home, including equity, appreciation, and opportunity cost.",
     "category": "Real Estate",
-    "tags": ["rent vs buy", "should I rent or buy", "rent or buy calculator", "home buying"],
+    "tags": [
+      "rent vs buy",
+      "should I rent or buy",
+      "rent or buy calculator",
+      "home buying"
+    ],
     "priority": 71,
     "status": "live",
-    "icon": "🏡"
+    "icon": "\ud83c\udfe1"
   },
   {
     "slug": "refinance-calculator",
     "title": "Mortgage Refinance Calculator",
     "description": "Calculate if refinancing saves money. See monthly savings, break-even point, and lifetime interest saved.",
     "category": "Real Estate",
-    "tags": ["refinance calculator", "mortgage refinance", "break-even refinance", "should I refinance"],
+    "tags": [
+      "refinance calculator",
+      "mortgage refinance",
+      "break-even refinance",
+      "should I refinance"
+    ],
     "priority": 72,
     "status": "live",
-    "icon": "🔄"
+    "icon": "\ud83d\udd04"
   },
   {
     "slug": "home-equity-calculator",
     "title": "Home Equity Calculator",
     "description": "Calculate your home equity, LTV ratio, and how much you can borrow with a HELOC or home equity loan.",
     "category": "Real Estate",
-    "tags": ["home equity", "LTV ratio", "HELOC calculator", "loan to value"],
+    "tags": [
+      "home equity",
+      "LTV ratio",
+      "HELOC calculator",
+      "loan to value"
+    ],
     "priority": 73,
     "status": "live",
-    "icon": "📊"
+    "icon": "\ud83d\udcca"
   },
   {
     "slug": "closing-cost-calculator",
     "title": "Closing Cost Calculator",
     "description": "Estimate home buying closing costs including lender fees, title insurance, appraisal, and prepaid items.",
     "category": "Real Estate",
-    "tags": ["closing costs", "closing cost calculator", "home buying costs", "title insurance"],
+    "tags": [
+      "closing costs",
+      "closing cost calculator",
+      "home buying costs",
+      "title insurance"
+    ],
     "priority": 74,
     "status": "live",
-    "icon": "📋"
+    "icon": "\ud83d\udccb"
   },
   {
     "slug": "down-payment-calculator",
     "title": "Down Payment Calculator",
     "description": "Calculate how much down payment you need and how long to save. Compare 3%, 5%, 10%, and 20% options.",
     "category": "Real Estate",
-    "tags": ["down payment calculator", "how much down payment", "save for house", "PMI"],
+    "tags": [
+      "down payment calculator",
+      "how much down payment",
+      "save for house",
+      "PMI"
+    ],
     "priority": 75,
     "status": "live",
-    "icon": "💰"
+    "icon": "\ud83d\udcb0"
   },
   {
     "slug": "property-tax-calculator",
     "title": "Property Tax Calculator",
     "description": "Estimate your annual and monthly property tax. Compare rates across all 50 US states.",
     "category": "Real Estate",
-    "tags": ["property tax calculator", "property tax rate", "annual property tax", "real estate tax"],
+    "tags": [
+      "property tax calculator",
+      "property tax rate",
+      "annual property tax",
+      "real estate tax"
+    ],
     "priority": 76,
     "status": "live",
-    "icon": "🏛️"
+    "icon": "\ud83c\udfdb\ufe0f"
   },
   {
     "slug": "rental-yield-calculator",
     "title": "Rental Yield Calculator",
     "description": "Calculate gross/net rental yield, cap rate, and cash-on-cash return for any investment property.",
     "category": "Real Estate",
-    "tags": ["rental yield", "cap rate", "cash on cash return", "rental property ROI", "investment property"],
+    "tags": [
+      "rental yield",
+      "cap rate",
+      "cash on cash return",
+      "rental property ROI",
+      "investment property"
+    ],
     "priority": 77,
     "status": "live",
-    "icon": "📈"
+    "icon": "\ud83d\udcc8"
   },
   {
     "slug": "square-footage-calculator",
     "title": "Square Footage Calculator",
     "description": "Calculate room square footage for rectangles, triangles, circles, and L-shapes. Add multiple rooms and estimate flooring costs.",
     "category": "Real Estate",
-    "tags": ["square footage calculator", "room size calculator", "flooring calculator", "area calculator"],
+    "tags": [
+      "square footage calculator",
+      "room size calculator",
+      "flooring calculator",
+      "area calculator"
+    ],
     "priority": 78,
     "status": "live",
-    "icon": "📐"
+    "icon": "\ud83d\udcd0"
   },
   {
     "slug": "mortgage-payoff-calculator",
     "title": "Mortgage Payoff Calculator",
     "description": "See how extra mortgage payments save interest and accelerate your payoff date by months or years.",
     "category": "Real Estate",
-    "tags": ["mortgage payoff", "extra mortgage payment", "pay off mortgage early", "mortgage interest savings"],
+    "tags": [
+      "mortgage payoff",
+      "extra mortgage payment",
+      "pay off mortgage early",
+      "mortgage interest savings"
+    ],
     "priority": 79,
     "status": "live",
-    "icon": "🏦"
+    "icon": "\ud83c\udfe6"
+  },
+  {
+    "slug": "meta-tag-generator",
+    "title": "Meta Tag Generator",
+    "description": "Generate SEO meta tags, Open Graph tags, and Twitter Card tags for any webpage. Preview how your page looks in search results and social media.",
+    "category": "SEO & Marketing",
+    "tags": [
+      "meta tags",
+      "SEO",
+      "open graph",
+      "twitter card",
+      "meta description"
+    ],
+    "priority": 80,
+    "status": "live",
+    "icon": "\ud83c\udff7\ufe0f"
+  },
+  {
+    "slug": "utm-builder",
+    "title": "UTM Link Builder",
+    "description": "Build UTM-tagged URLs for Google Analytics campaign tracking. Generate campaign, source, medium, term, and content parameters.",
+    "category": "SEO & Marketing",
+    "tags": [
+      "UTM",
+      "google analytics",
+      "campaign tracking",
+      "UTM parameters",
+      "marketing"
+    ],
+    "priority": 81,
+    "status": "live",
+    "icon": "\ud83d\udd17"
+  },
+  {
+    "slug": "reading-time-calculator",
+    "title": "Reading Time Calculator",
+    "description": "Calculate the estimated reading time for any article or text. Paste your content and get reading time for different audiences instantly.",
+    "category": "SEO & Marketing",
+    "tags": [
+      "reading time",
+      "word count",
+      "article length",
+      "blog post length",
+      "SEO"
+    ],
+    "priority": 82,
+    "status": "live",
+    "icon": "\u23f1\ufe0f"
+  },
+  {
+    "slug": "word-frequency-counter",
+    "title": "Word Frequency Counter",
+    "description": "Analyze the frequency of words in any text. Find the most common words, keyword density, and unique word count. Great for SEO and content analysis.",
+    "category": "SEO & Marketing",
+    "tags": [
+      "word frequency",
+      "keyword density",
+      "word count",
+      "content analysis",
+      "SEO"
+    ],
+    "priority": 83,
+    "status": "live",
+    "icon": "\ud83d\udcca"
+  },
+  {
+    "slug": "keyword-density-checker",
+    "title": "Keyword Density Checker",
+    "description": "Analyze keyword density in your content. Check how often specific keywords appear and whether you're in the optimal 1\u20132% SEO range.",
+    "category": "SEO & Marketing",
+    "tags": [
+      "keyword density",
+      "SEO",
+      "keyword stuffing",
+      "content optimization",
+      "keyword analysis"
+    ],
+    "priority": 84,
+    "status": "live",
+    "icon": "\ud83d\udd0d"
+  },
+  {
+    "slug": "robots-txt-generator",
+    "title": "Robots.txt Generator",
+    "description": "Generate a robots.txt file for your website. Control which search engine bots can crawl your pages, block directories, and set your sitemap URL.",
+    "category": "SEO & Marketing",
+    "tags": [
+      "robots.txt",
+      "SEO",
+      "crawl",
+      "search engines",
+      "website"
+    ],
+    "priority": 85,
+    "status": "live",
+    "icon": "\ud83e\udd16"
+  },
+  {
+    "slug": "sitemap-generator",
+    "title": "XML Sitemap Generator",
+    "description": "Generate an XML sitemap for your website. Enter your URLs with priority and change frequency settings to create a valid sitemap.xml file.",
+    "category": "SEO & Marketing",
+    "tags": [
+      "sitemap",
+      "XML sitemap",
+      "SEO",
+      "Google",
+      "sitemap.xml"
+    ],
+    "priority": 86,
+    "status": "live",
+    "icon": "\ud83d\uddfa\ufe0f"
+  },
+  {
+    "slug": "serp-preview",
+    "title": "SERP Preview Tool",
+    "description": "Preview how your page looks in Google search results. Test your title and meta description with live character count feedback before publishing.",
+    "category": "SEO & Marketing",
+    "tags": [
+      "SERP preview",
+      "Google preview",
+      "meta title",
+      "meta description",
+      "SEO"
+    ],
+    "priority": 87,
+    "status": "live",
+    "icon": "\ud83d\udd0e"
+  },
+  {
+    "slug": "open-graph-preview",
+    "title": "Open Graph Preview Tool",
+    "description": "Preview how your website looks when shared on Facebook, Twitter/X, LinkedIn, and WhatsApp. Test your OG tags and Twitter Card meta tags.",
+    "category": "SEO & Marketing",
+    "tags": [
+      "open graph",
+      "OG tags",
+      "social media preview",
+      "Twitter card",
+      "Facebook share"
+    ],
+    "priority": 88,
+    "status": "live",
+    "icon": "\ud83d\udcf1"
+  },
+  {
+    "slug": "schema-markup-generator",
+    "title": "Schema Markup Generator",
+    "description": "Generate JSON-LD structured data markup for your website. Create schema for articles, FAQs, products, local businesses, and breadcrumbs.",
+    "category": "SEO & Marketing",
+    "tags": [
+      "schema markup",
+      "JSON-LD",
+      "structured data",
+      "rich results",
+      "SEO"
+    ],
+    "priority": 89,
+    "status": "live",
+    "icon": "\ud83d\udccb"
   }
 ]
