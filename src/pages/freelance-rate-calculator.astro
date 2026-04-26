@@ -1,0 +1,133 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Freelance Rate Calculator"
+  description="Calculate the hourly rate you need to charge as a freelancer to hit your income goal. Accounts for taxes, expenses, vacation, and billable hours."
+  slug="freelance-rate-calculator"
+  category="Finance"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Freelance Rate Calculator</h1>
+  <p class="text-gray-500 mb-8">Find the minimum hourly rate you need to charge to meet your income goal as a freelancer.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+    <p class="text-sm font-semibold text-gray-700">Income Goal</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Desired Annual Take-Home ($)</label>
+        <input id="income-goal" type="number" placeholder="e.g. 80000" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Annual Business Expenses ($)</label>
+        <input id="expenses" type="number" value="3000" placeholder="e.g. 3000" class="input-field" />
+        <p class="text-xs text-gray-400 mt-1">Software, equipment, insurance, etc.</p>
+      </div>
+    </div>
+
+    <p class="text-sm font-semibold text-gray-700">Tax & Hours</p>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div>
+        <label class="label">Self-Employment Tax Rate (%)</label>
+        <input id="tax-rate" type="number" step="1" value="30" class="input-field" />
+        <p class="text-xs text-gray-400 mt-1">SE tax ≈ 15.3% + income tax. 25–35% is typical.</p>
+      </div>
+      <div>
+        <label class="label">Weeks Worked per Year</label>
+        <input id="weeks" type="number" value="48" min="1" max="52" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Billable Hours per Week</label>
+        <input id="hours" type="number" value="30" min="1" max="80" class="input-field" />
+        <p class="text-xs text-gray-400 mt-1">Not all working hours are billable (admin, sales, etc.)</p>
+      </div>
+    </div>
+
+    <button id="calc-btn" class="btn-primary w-full">Calculate My Rate</button>
+
+    <div id="result" class="hidden space-y-4">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+        <div class="result-box"><p id="r-hourly" class="text-3xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Min. Hourly Rate</p></div>
+        <div class="result-box"><p id="r-daily" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Day Rate (8hr)</p></div>
+        <div class="result-box"><p id="r-gross" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Annual Revenue Needed</p></div>
+        <div class="result-box"><p id="r-billable" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Total Billable Hours/yr</p></div>
+      </div>
+
+      <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
+        <p class="font-semibold mb-1">💡 Rate Recommendation</p>
+        <p id="rate-tip"></p>
+      </div>
+
+      <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden text-sm">
+        <div class="px-4 py-2 bg-gray-100 text-xs font-semibold text-gray-500 uppercase">Revenue Breakdown</div>
+        <table class="w-full">
+          <tbody id="breakdown-table" class="divide-y divide-gray-100"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "Why is my freelance rate higher than my employee equivalent?", a: "As a freelancer, you pay both halves of Social Security and Medicare (15.3% self-employment tax), plus you have no employer benefits. You also have unpaid admin time, gaps between projects, and business expenses. A freelancer charging $75/hr is roughly equivalent to a $50/hr employee." },
+        { q: "What is a billable hour?", a: "A billable hour is time you can charge a client for. In a typical 40-hour week, freelancers average 20–30 billable hours — the rest goes to finding clients, invoicing, emails, learning, and administration." },
+        { q: "How do I set my rate when starting out?", a: "Research what other freelancers in your field charge (use sites like Glassdoor, LinkedIn, and freelancer communities). Start at the low end of the market rate for your niche, but never below your minimum calculated rate — you'll lose money." },
+        { q: "Should I charge hourly or project-based?", a: "Experienced freelancers often prefer project-based pricing because it rewards efficiency. When you're starting out, hourly is easier to justify. Use this hourly rate as your baseline to price projects: estimate hours needed × your rate, then add a buffer." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const fmt = (n: number) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  document.getElementById('calc-btn')?.addEventListener('click', () => {
+    const goal = parseFloat((document.getElementById('income-goal') as HTMLInputElement).value);
+    const expenses = parseFloat((document.getElementById('expenses') as HTMLInputElement).value) || 0;
+    const taxRate = parseFloat((document.getElementById('tax-rate') as HTMLInputElement).value) || 30;
+    const weeks = parseFloat((document.getElementById('weeks') as HTMLInputElement).value) || 48;
+    const hoursPerWeek = parseFloat((document.getElementById('hours') as HTMLInputElement).value) || 30;
+    if (isNaN(goal)) return;
+
+    const totalBillable = weeks * hoursPerWeek;
+    const grossNeeded = (goal + expenses) / (1 - taxRate / 100);
+    const taxAmount = grossNeeded * (taxRate / 100);
+    const hourlyRate = grossNeeded / totalBillable;
+    const dailyRate = hourlyRate * 8;
+
+    document.getElementById('r-hourly')!.textContent = fmt(hourlyRate);
+    document.getElementById('r-daily')!.textContent = fmt(dailyRate);
+    document.getElementById('r-gross')!.textContent = fmt(grossNeeded);
+    document.getElementById('r-billable')!.textContent = totalBillable.toLocaleString() + ' hrs';
+
+    const suggestedRate = hourlyRate * 1.2;
+    document.getElementById('rate-tip')!.textContent =
+      `Your minimum viable rate is ${fmt(hourlyRate)}/hr. We recommend quoting ${fmt(suggestedRate)}/hr — 20% above minimum to account for scope creep, late payments, and client negotiations.`;
+
+    const rows = [
+      ['Desired take-home pay', goal],
+      ['Business expenses', expenses],
+      ['Taxes (~' + taxRate + '%)', taxAmount],
+      ['Total revenue needed', grossNeeded],
+      ['Total billable hours/year', null],
+      ['Minimum hourly rate', hourlyRate],
+    ];
+    document.getElementById('breakdown-table')!.innerHTML = rows.map(([label, val]) =>
+      `<tr class="bg-white hover:bg-gray-50 ${label === 'Total revenue needed' || label === 'Minimum hourly rate' ? 'font-semibold' : ''}">
+        <td class="px-4 py-2.5 text-gray-700">${label}</td>
+        <td class="px-4 py-2.5 text-right text-gray-800">${val === null ? totalBillable.toLocaleString() + ' hrs' : fmt(val as number)}</td>
+      </tr>`
+    ).join('');
+
+    document.getElementById('result')!.classList.remove('hidden');
+  });
+</script>

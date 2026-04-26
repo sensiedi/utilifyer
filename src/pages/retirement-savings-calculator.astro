@@ -1,0 +1,141 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Retirement Savings Calculator"
+  description="Project your retirement savings based on current balance, monthly contributions, annual return, and years to retirement. See if you're on track."
+  slug="retirement-savings-calculator"
+  category="Finance"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Retirement Savings Calculator</h1>
+  <p class="text-gray-500 mb-8">See if your retirement savings are on track and how much you'll have at retirement.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Current Age</label>
+        <input id="current-age" type="number" placeholder="e.g. 30" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Retirement Age</label>
+        <input id="retire-age" type="number" value="65" placeholder="e.g. 65" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Current Savings ($)</label>
+        <input id="current-savings" type="number" value="0" placeholder="e.g. 25000" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Monthly Contribution ($)</label>
+        <input id="monthly-contrib" type="number" placeholder="e.g. 500" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Expected Annual Return (%)</label>
+        <input id="annual-return" type="number" step="0.1" value="7" placeholder="e.g. 7" class="input-field" />
+      </div>
+      <div>
+        <label class="label">Inflation Rate (%)</label>
+        <input id="inflation" type="number" step="0.1" value="2.5" placeholder="e.g. 2.5" class="input-field" />
+      </div>
+    </div>
+
+    <button id="calc-btn" class="btn-primary w-full">Calculate</button>
+
+    <div id="result" class="hidden space-y-4">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+        <div class="result-box"><p id="r-balance" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Projected Balance</p></div>
+        <div class="result-box"><p id="r-real" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">In Today's Dollars</p></div>
+        <div class="result-box"><p id="r-contrib" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Total Contributed</p></div>
+        <div class="result-box"><p id="r-growth" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Investment Growth</p></div>
+      </div>
+
+      <div id="monthly-income-box" class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 text-sm">
+        <p class="font-semibold text-indigo-800 mb-1">Monthly Income in Retirement</p>
+        <p id="monthly-income-text" class="text-indigo-700"></p>
+        <p class="text-xs text-indigo-500 mt-1">Based on the 4% safe withdrawal rule</p>
+      </div>
+
+      <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden text-sm">
+        <div class="px-4 py-2 bg-gray-100 text-xs font-semibold text-gray-500 uppercase">Growth by Decade</div>
+        <table class="w-full">
+          <thead class="text-xs text-gray-500 uppercase bg-gray-100">
+            <tr>
+              <th class="px-4 py-2 text-left">Age</th>
+              <th class="px-4 py-2 text-right">Balance</th>
+              <th class="px-4 py-2 text-right">Contributions</th>
+              <th class="px-4 py-2 text-right">Growth</th>
+            </tr>
+          </thead>
+          <tbody id="decade-table" class="divide-y divide-gray-100"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What annual return should I use?", a: "The US stock market has historically returned about 10% annually before inflation (7% after inflation). A conservative estimate for a mixed portfolio is 5–6%. For a 100% stock portfolio, 7–8% is a common planning assumption." },
+        { q: "What is the 4% rule?", a: "The 4% rule (Bengen Rule) states that you can withdraw 4% of your portfolio in year one of retirement, then adjust for inflation each year, and have a very high probability of not running out of money over a 30-year retirement." },
+        { q: "How much do I need to retire?", a: "A common rule of thumb is 25× your annual retirement expenses (the inverse of the 4% rule). If you need $60,000/year, aim for $1.5 million. This assumes a 30-year retirement and a balanced portfolio." },
+        { q: "What counts as retirement savings?", a: "Include 401(k), 403(b), IRA, Roth IRA, and other retirement accounts. Don't include your home equity or Social Security in this calculator — those are separate income sources." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const fmt = (n: number) => '$' + n.toLocaleString('en-US', { maximumFractionDigits: 0 });
+
+  document.getElementById('calc-btn')?.addEventListener('click', () => {
+    const curAge = parseInt((document.getElementById('current-age') as HTMLInputElement).value);
+    const retAge = parseInt((document.getElementById('retire-age') as HTMLInputElement).value);
+    const curSavings = parseFloat((document.getElementById('current-savings') as HTMLInputElement).value) || 0;
+    const monthly = parseFloat((document.getElementById('monthly-contrib') as HTMLInputElement).value) || 0;
+    const annualReturn = parseFloat((document.getElementById('annual-return') as HTMLInputElement).value) || 7;
+    const inflation = parseFloat((document.getElementById('inflation') as HTMLInputElement).value) || 2.5;
+    if (isNaN(curAge) || isNaN(retAge) || retAge <= curAge) return;
+
+    const years = retAge - curAge;
+    const mr = annualReturn / 100 / 12;
+    const months = years * 12;
+    const balance = curSavings * Math.pow(1 + mr, months) + monthly * (Math.pow(1 + mr, months) - 1) / mr;
+    const totalContrib = curSavings + monthly * months;
+    const growth = balance - totalContrib;
+    const realBalance = balance / Math.pow(1 + inflation / 100, years);
+    const monthlyIncome = balance * 0.04 / 12;
+
+    document.getElementById('r-balance')!.textContent = fmt(balance);
+    document.getElementById('r-real')!.textContent = fmt(realBalance);
+    document.getElementById('r-contrib')!.textContent = fmt(totalContrib);
+    document.getElementById('r-growth')!.textContent = fmt(growth);
+    document.getElementById('monthly-income-text')!.textContent =
+      `At retirement your ${fmt(balance)} portfolio could provide approximately ${fmt(monthlyIncome)}/month in retirement income.`;
+
+    const checkpoints = [];
+    for (let age = curAge + 5; age <= retAge; age += 5) {
+      const y = age - curAge;
+      const m = y * 12;
+      const bal = curSavings * Math.pow(1 + mr, m) + monthly * (Math.pow(1 + mr, m) - 1) / mr;
+      checkpoints.push({ age, bal, contrib: curSavings + monthly * m });
+    }
+    document.getElementById('decade-table')!.innerHTML = checkpoints.map(c =>
+      `<tr class="bg-white hover:bg-gray-50">
+        <td class="px-4 py-2.5 text-gray-700">Age ${c.age}</td>
+        <td class="px-4 py-2.5 text-right font-medium text-gray-800">${fmt(c.bal)}</td>
+        <td class="px-4 py-2.5 text-right text-gray-600">${fmt(c.contrib)}</td>
+        <td class="px-4 py-2.5 text-right text-green-600">${fmt(c.bal - c.contrib)}</td>
+      </tr>`
+    ).join('');
+
+    document.getElementById('result')!.classList.remove('hidden');
+  });
+</script>

@@ -1,0 +1,117 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Break-Even Calculator"
+  description="Calculate your break-even point in units and revenue. Essential for pricing decisions, business planning, and profitability analysis."
+  slug="break-even-calculator"
+  category="Finance"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Break-Even Calculator</h1>
+  <p class="text-gray-500 mb-8">Find out how many units you need to sell to cover your costs and start making profit.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div>
+        <label class="label">Fixed Costs per Month ($)</label>
+        <input id="fixed" type="number" placeholder="e.g. 5000" class="input-field" />
+        <p class="text-xs text-gray-400 mt-1">Rent, salaries, insurance, etc.</p>
+      </div>
+      <div>
+        <label class="label">Variable Cost per Unit ($)</label>
+        <input id="variable" type="number" step="0.01" placeholder="e.g. 12.50" class="input-field" />
+        <p class="text-xs text-gray-400 mt-1">Materials, packaging, shipping, etc.</p>
+      </div>
+      <div>
+        <label class="label">Selling Price per Unit ($)</label>
+        <input id="price" type="number" step="0.01" placeholder="e.g. 30.00" class="input-field" />
+      </div>
+    </div>
+
+    <button id="calc-btn" class="btn-primary w-full">Calculate Break-Even</button>
+
+    <div id="result" class="hidden space-y-4">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+        <div class="result-box"><p id="r-units" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Units to Break Even</p></div>
+        <div class="result-box"><p id="r-revenue" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Break-Even Revenue</p></div>
+        <div class="result-box"><p id="r-margin" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Contribution Margin</p></div>
+        <div class="result-box"><p id="r-margin-pct" class="text-2xl font-bold text-indigo-900"></p><p class="text-xs text-indigo-600 mt-1">Margin Ratio</p></div>
+      </div>
+
+      <!-- Profit at different volumes -->
+      <div class="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden text-sm">
+        <div class="px-4 py-2 bg-gray-100 text-xs font-semibold text-gray-500 uppercase">Profit at Different Sales Volumes</div>
+        <table class="w-full">
+          <thead class="text-xs text-gray-500 uppercase bg-gray-100">
+            <tr>
+              <th class="px-4 py-2 text-left">Units Sold</th>
+              <th class="px-4 py-2 text-right">Revenue</th>
+              <th class="px-4 py-2 text-right">Total Costs</th>
+              <th class="px-4 py-2 text-right">Profit / Loss</th>
+            </tr>
+          </thead>
+          <tbody id="volume-table" class="divide-y divide-gray-100"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is the break-even point formula?", a: "Break-Even Units = Fixed Costs ÷ (Selling Price − Variable Cost per Unit). The denominator is the contribution margin per unit — how much each sale contributes toward covering fixed costs after variable costs are paid." },
+        { q: "What is contribution margin?", a: "Contribution margin = Selling price − Variable cost per unit. It represents how much revenue from each sale is available to cover fixed costs and generate profit. A higher contribution margin means you reach break-even faster." },
+        { q: "What are fixed costs vs. variable costs?", a: "Fixed costs stay the same regardless of how much you produce (rent, salaries, software subscriptions). Variable costs change with production volume (raw materials, packaging, shipping, sales commissions)." },
+        { q: "How can I lower my break-even point?", a: "Increase your selling price, reduce variable costs per unit, or reduce fixed costs. Even small changes compound: a 10% price increase can dramatically lower the number of units needed to break even." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const fmt = (n: number) => '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  document.getElementById('calc-btn')?.addEventListener('click', () => {
+    const fixed = parseFloat((document.getElementById('fixed') as HTMLInputElement).value);
+    const variable = parseFloat((document.getElementById('variable') as HTMLInputElement).value);
+    const price = parseFloat((document.getElementById('price') as HTMLInputElement).value);
+    if (isNaN(fixed) || isNaN(variable) || isNaN(price)) return;
+    if (price <= variable) { alert('Selling price must be greater than variable cost.'); return; }
+
+    const contributionMargin = price - variable;
+    const beUnits = Math.ceil(fixed / contributionMargin);
+    const beRevenue = beUnits * price;
+    const marginPct = (contributionMargin / price) * 100;
+
+    document.getElementById('r-units')!.textContent = beUnits.toLocaleString();
+    document.getElementById('r-revenue')!.textContent = fmt(beRevenue);
+    document.getElementById('r-margin')!.textContent = fmt(contributionMargin);
+    document.getElementById('r-margin-pct')!.textContent = marginPct.toFixed(1) + '%';
+
+    const multiples = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3];
+    document.getElementById('volume-table')!.innerHTML = multiples.map(m => {
+      const units = Math.round(beUnits * m);
+      const revenue = units * price;
+      const costs = fixed + units * variable;
+      const profit = revenue - costs;
+      const isBreakEven = m === 1;
+      return `<tr class="${isBreakEven ? 'bg-indigo-50 font-semibold' : 'bg-white hover:bg-gray-50'}">
+        <td class="px-4 py-2.5 text-gray-700">${units.toLocaleString()}${isBreakEven ? ' ← break-even' : ''}</td>
+        <td class="px-4 py-2.5 text-right text-gray-600">${fmt(revenue)}</td>
+        <td class="px-4 py-2.5 text-right text-gray-600">${fmt(costs)}</td>
+        <td class="px-4 py-2.5 text-right ${profit >= 0 ? 'text-green-600' : 'text-red-500'}">${profit >= 0 ? '+' : ''}${fmt(profit)}</td>
+      </tr>`;
+    }).join('');
+
+    document.getElementById('result')!.classList.remove('hidden');
+  });
+</script>
