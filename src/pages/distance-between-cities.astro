@@ -1,0 +1,217 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Distance Between Cities"
+  description="Calculate the distance between any two major world cities in kilometers and miles. Shows straight-line (great-circle) distance and driving distance estimate."
+  slug="distance-between-cities"
+  category="Travel & Geography"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Distance Between Cities</h1>
+  <p class="text-gray-500 mb-8">Find the straight-line and estimated driving distance between major cities worldwide.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">From City</label>
+        <select id="dc-from" class="input-field"></select>
+      </div>
+      <div>
+        <label class="label">To City</label>
+        <select id="dc-to" class="input-field"></select>
+      </div>
+    </div>
+
+    <div id="dc-result" class="hidden space-y-3">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-center">
+          <div class="text-xs text-indigo-500 mb-0.5">As the crow flies</div>
+          <div id="dc-km" class="text-2xl font-bold font-mono text-indigo-900">—</div>
+          <div class="text-xs text-indigo-400">kilometers</div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+          <div class="text-xs text-gray-400 mb-0.5">As the crow flies</div>
+          <div id="dc-mi" class="text-2xl font-bold font-mono text-gray-900">—</div>
+          <div class="text-xs text-gray-400">miles</div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+          <div class="text-xs text-gray-400 mb-0.5">Est. Drive (km)</div>
+          <div id="dc-drive-km" class="text-2xl font-bold font-mono text-gray-900">—</div>
+          <div class="text-xs text-gray-400">±25% estimate</div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+          <div class="text-xs text-gray-400 mb-0.5">Est. Drive Time</div>
+          <div id="dc-drive-time" class="text-2xl font-bold font-mono text-gray-900">—</div>
+          <div class="text-xs text-gray-400">at 90 km/h avg</div>
+        </div>
+      </div>
+      <div id="dc-context" class="text-sm text-gray-500 bg-gray-50 border border-gray-100 rounded-xl p-3"></div>
+    </div>
+
+    <!-- Closest cities finder -->
+    <div>
+      <p class="label mb-2">Cities closest to <span id="dc-closest-label">New York</span></p>
+      <div id="dc-closest" class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-sm"></div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is the difference between straight-line and driving distance?", a: "Straight-line distance (as the crow flies) is the shortest possible distance between two points on Earth's surface, ignoring terrain and roads. Driving distance follows actual roads and can be 20–50% longer depending on geography, especially for cities separated by mountains, rivers, or coastlines. The driving multiplier varies significantly — cities well connected by highways can be very close to straight-line distance." },
+        { q: "What is the farthest distance between two cities on Earth?", a: "The maximum straight-line distance between two points on Earth is approximately 20,004 km (the half-circumference). Cities that are nearly antipodal include Madrid and Wellington, New Zealand (~19,650 km) and Shanghai and Buenos Aires (~19,500 km). No commercial flight travels a true antipodal route." },
+        { q: "How does latitude affect distances?", a: "Distances between cities at the same latitude change with latitude. At the equator, one degree of longitude = ~111 km. At 45°N (e.g., New York, Rome), one degree of longitude = ~78 km. At 60°N (Oslo, Anchorage), one degree = ~55 km. Latitude degrees always = ~111 km regardless of location." },
+        { q: "What is the Earth's circumference?", a: "Earth's equatorial circumference is 40,075 km (24,901 mi). The polar circumference is slightly less at 40,008 km due to Earth's oblate spheroid shape (flattened at poles). The average radius is about 6,371 km. Flights between antipodal cities (on opposite sides of Earth) would travel ~20,000 km." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  interface City { name: string; lat: number; lng: number; country: string; }
+
+  const CITIES: Record<string, City> = {
+    NYC: { name: 'New York', lat: 40.7128, lng: -74.0060, country: 'USA' },
+    LAX: { name: 'Los Angeles', lat: 34.0522, lng: -118.2437, country: 'USA' },
+    CHI: { name: 'Chicago', lat: 41.8781, lng: -87.6298, country: 'USA' },
+    HOU: { name: 'Houston', lat: 29.7604, lng: -95.3698, country: 'USA' },
+    PHX: { name: 'Phoenix', lat: 33.4484, lng: -112.0740, country: 'USA' },
+    PHI: { name: 'Philadelphia', lat: 39.9526, lng: -75.1652, country: 'USA' },
+    SAN: { name: 'San Antonio', lat: 29.4241, lng: -98.4936, country: 'USA' },
+    SFO: { name: 'San Francisco', lat: 37.7749, lng: -122.4194, country: 'USA' },
+    SEA: { name: 'Seattle', lat: 47.6062, lng: -122.3321, country: 'USA' },
+    MIA: { name: 'Miami', lat: 25.7617, lng: -80.1918, country: 'USA' },
+    YYZ: { name: 'Toronto', lat: 43.6532, lng: -79.3832, country: 'Canada' },
+    MTL: { name: 'Montreal', lat: 45.5017, lng: -73.5673, country: 'Canada' },
+    YVR: { name: 'Vancouver', lat: 49.2827, lng: -123.1207, country: 'Canada' },
+    MEX: { name: 'Mexico City', lat: 19.4326, lng: -99.1332, country: 'Mexico' },
+    GRU: { name: 'São Paulo', lat: -23.5505, lng: -46.6333, country: 'Brazil' },
+    RIO: { name: 'Rio de Janeiro', lat: -22.9068, lng: -43.1729, country: 'Brazil' },
+    BOG: { name: 'Bogotá', lat: 4.7110, lng: -74.0721, country: 'Colombia' },
+    SCL: { name: 'Santiago', lat: -33.4489, lng: -70.6693, country: 'Chile' },
+    EZE: { name: 'Buenos Aires', lat: -34.6037, lng: -58.3816, country: 'Argentina' },
+    LHR: { name: 'London', lat: 51.5074, lng: -0.1278, country: 'UK' },
+    CDG: { name: 'Paris', lat: 48.8566, lng: 2.3522, country: 'France' },
+    AMS: { name: 'Amsterdam', lat: 52.3676, lng: 4.9041, country: 'Netherlands' },
+    BER: { name: 'Berlin', lat: 52.5200, lng: 13.4050, country: 'Germany' },
+    FRA: { name: 'Frankfurt', lat: 50.1109, lng: 8.6821, country: 'Germany' },
+    MAD: { name: 'Madrid', lat: 40.4168, lng: -3.7038, country: 'Spain' },
+    BCN: { name: 'Barcelona', lat: 41.3851, lng: 2.1734, country: 'Spain' },
+    FCO: { name: 'Rome', lat: 41.9028, lng: 12.4964, country: 'Italy' },
+    MIL: { name: 'Milan', lat: 45.4654, lng: 9.1859, country: 'Italy' },
+    ZRH: { name: 'Zurich', lat: 47.3769, lng: 8.5417, country: 'Switzerland' },
+    VIE: { name: 'Vienna', lat: 48.2082, lng: 16.3738, country: 'Austria' },
+    WAW: { name: 'Warsaw', lat: 52.2297, lng: 21.0122, country: 'Poland' },
+    STO: { name: 'Stockholm', lat: 59.3293, lng: 18.0686, country: 'Sweden' },
+    OSL: { name: 'Oslo', lat: 59.9139, lng: 10.7522, country: 'Norway' },
+    CPH: { name: 'Copenhagen', lat: 55.6761, lng: 12.5683, country: 'Denmark' },
+    HEL: { name: 'Helsinki', lat: 60.1699, lng: 24.9384, country: 'Finland' },
+    IST: { name: 'Istanbul', lat: 41.0082, lng: 28.9784, country: 'Turkey' },
+    MOS: { name: 'Moscow', lat: 55.7558, lng: 37.6173, country: 'Russia' },
+    ATH: { name: 'Athens', lat: 37.9838, lng: 23.7275, country: 'Greece' },
+    DXB: { name: 'Dubai', lat: 25.2048, lng: 55.2708, country: 'UAE' },
+    DOH: { name: 'Doha', lat: 25.2854, lng: 51.5310, country: 'Qatar' },
+    RUH: { name: 'Riyadh', lat: 24.7136, lng: 46.6753, country: 'Saudi Arabia' },
+    CAI: { name: 'Cairo', lat: 30.0444, lng: 31.2357, country: 'Egypt' },
+    JNB: { name: 'Johannesburg', lat: -26.2041, lng: 28.0473, country: 'South Africa' },
+    NBO: { name: 'Nairobi', lat: -1.2921, lng: 36.8219, country: 'Kenya' },
+    LOS: { name: 'Lagos', lat: 6.5244, lng: 3.3792, country: 'Nigeria' },
+    DEL: { name: 'New Delhi', lat: 28.6139, lng: 77.2090, country: 'India' },
+    BOM: { name: 'Mumbai', lat: 19.0760, lng: 72.8777, country: 'India' },
+    BLR: { name: 'Bangalore', lat: 12.9716, lng: 77.5946, country: 'India' },
+    KHI: { name: 'Karachi', lat: 24.8607, lng: 67.0011, country: 'Pakistan' },
+    DAC: { name: 'Dhaka', lat: 23.8103, lng: 90.4125, country: 'Bangladesh' },
+    KUL: { name: 'Kuala Lumpur', lat: 3.1390, lng: 101.6869, country: 'Malaysia' },
+    SIN: { name: 'Singapore', lat: 1.3521, lng: 103.8198, country: 'Singapore' },
+    BKK: { name: 'Bangkok', lat: 13.7563, lng: 100.5018, country: 'Thailand' },
+    HCM: { name: 'Ho Chi Minh City', lat: 10.8231, lng: 106.6297, country: 'Vietnam' },
+    HKG: { name: 'Hong Kong', lat: 22.3193, lng: 114.1694, country: 'China' },
+    PEK: { name: 'Beijing', lat: 39.9042, lng: 116.4074, country: 'China' },
+    PVG: { name: 'Shanghai', lat: 31.2304, lng: 121.4737, country: 'China' },
+    NRT: { name: 'Tokyo', lat: 35.6762, lng: 139.6503, country: 'Japan' },
+    OSK: { name: 'Osaka', lat: 34.6937, lng: 135.5023, country: 'Japan' },
+    ICN: { name: 'Seoul', lat: 37.5665, lng: 126.9780, country: 'South Korea' },
+    SYD: { name: 'Sydney', lat: -33.8688, lng: 151.2093, country: 'Australia' },
+    MEL: { name: 'Melbourne', lat: -37.8136, lng: 144.9631, country: 'Australia' },
+    AKL: { name: 'Auckland', lat: -36.8485, lng: 174.7633, country: 'New Zealand' },
+  };
+
+  function toRad(d: number) { return d * Math.PI / 180; }
+  function haversine(a: City, b: City): number {
+    const R = 6371;
+    const dLat = toRad(b.lat - a.lat);
+    const dLng = toRad(b.lng - a.lng);
+    const h = Math.sin(dLat/2)**2 + Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLng/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
+  }
+
+  const fromSel = document.getElementById('dc-from') as HTMLSelectElement;
+  const toSel = document.getElementById('dc-to') as HTMLSelectElement;
+  const sorted = Object.entries(CITIES).sort((a,b) => a[1].name.localeCompare(b[1].name));
+  const opts = sorted.map(([k,v]) => `<option value="${k}">${v.name}, ${v.country}</option>`).join('');
+  fromSel.innerHTML = toSel.innerHTML = opts;
+  fromSel.value = 'NYC';
+  toSel.value = 'LHR';
+
+  function fmtTime(h: number): string {
+    const hrs = Math.floor(h);
+    const min = Math.round((h - hrs) * 60);
+    return min === 0 ? `${hrs}h` : `${hrs}h ${min}m`;
+  }
+
+  function calculate() {
+    const from = CITIES[fromSel.value];
+    const to = CITIES[toSel.value];
+    if (!from || !to || fromSel.value === toSel.value) return;
+
+    const dist = haversine(from, to);
+    const mi = dist * 0.621371;
+    const driveFactor = dist < 500 ? 1.3 : dist < 2000 ? 1.25 : 1.2;
+    const driveKm = dist * driveFactor;
+    const driveHours = driveKm / 90;
+
+    document.getElementById('dc-km')!.textContent = Math.round(dist).toLocaleString() + ' km';
+    document.getElementById('dc-mi')!.textContent = Math.round(mi).toLocaleString() + ' mi';
+    document.getElementById('dc-drive-km')!.textContent = Math.round(driveKm).toLocaleString() + ' km';
+    document.getElementById('dc-drive-time')!.textContent = fmtTime(driveHours);
+
+    let context = '';
+    if (dist < 200) context = 'A short drive or quick train ride.';
+    else if (dist < 800) context = 'A day trip by car or a short domestic flight.';
+    else if (dist < 3000) context = 'A domestic or regional flight of a few hours.';
+    else if (dist < 8000) context = 'A long-haul international flight.';
+    else context = 'An ultra-long-haul flight — may require a stopover.';
+    document.getElementById('dc-context')!.textContent = `${from.name} → ${to.name}: ${context}`;
+    document.getElementById('dc-result')!.classList.remove('hidden');
+
+    renderClosest(fromSel.value, from);
+  }
+
+  function renderClosest(key: string, from: City) {
+    document.getElementById('dc-closest-label')!.textContent = from.name;
+    const sorted2 = Object.entries(CITIES)
+      .filter(([k]) => k !== key)
+      .map(([k, v]) => ({ k, v, d: haversine(from, v) }))
+      .sort((a,b) => a.d - b.d)
+      .slice(0, 6);
+    document.getElementById('dc-closest')!.innerHTML = sorted2.map(({ v, d }) =>
+      `<div class="flex justify-between items-center bg-gray-50 border border-gray-100 rounded-lg px-3 py-2">
+        <span class="font-medium text-gray-800">${v.name}</span>
+        <span class="font-mono text-xs text-gray-500">${Math.round(d).toLocaleString()} km</span>
+      </div>`
+    ).join('');
+  }
+
+  ['dc-from','dc-to'].forEach(id => document.getElementById(id)?.addEventListener('change', calculate));
+  calculate();
+</script>

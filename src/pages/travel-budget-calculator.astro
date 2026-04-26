@@ -1,0 +1,317 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Travel Budget Calculator"
+  description="Plan your travel budget by destination. Calculate daily costs for accommodation, food, transport, and activities. Get total trip cost estimates for 50+ countries."
+  slug="travel-budget-calculator"
+  category="Travel & Geography"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Travel Budget Calculator</h1>
+  <p class="text-gray-500 mb-8">Estimate daily and total travel costs based on destination, travel style, and trip length.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div>
+        <label class="label">Destination Region</label>
+        <select id="tb-region" class="input-field"></select>
+      </div>
+      <div>
+        <label class="label">Travel Style</label>
+        <select id="tb-style" class="input-field">
+          <option value="budget">Budget / Backpacker</option>
+          <option value="mid" selected>Mid-range</option>
+          <option value="luxury">Luxury / Comfort</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">Number of Travelers</label>
+        <input id="tb-travelers" type="number" value="2" min="1" max="20" class="input-field font-mono" />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Trip Duration (days)</label>
+        <input id="tb-days" type="number" value="14" min="1" max="365" class="input-field font-mono" />
+      </div>
+      <div>
+        <label class="label">Currency</label>
+        <select id="tb-currency" class="input-field">
+          <option value="USD" selected>USD ($)</option>
+          <option value="EUR">EUR (€)</option>
+          <option value="GBP">GBP (£)</option>
+          <option value="CAD">CAD (CA$)</option>
+          <option value="AUD">AUD (A$)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Daily cost breakdown -->
+    <div id="tb-result" class="hidden space-y-4">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3 text-center">
+          <div class="text-xs text-indigo-500 mb-0.5">Daily (per person)</div>
+          <div id="tb-daily" class="text-2xl font-bold font-mono text-indigo-900">—</div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+          <div class="text-xs text-gray-400 mb-0.5">Total Trip</div>
+          <div id="tb-total" class="text-2xl font-bold font-mono text-gray-900">—</div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+          <div class="text-xs text-gray-400 mb-0.5">Per Person</div>
+          <div id="tb-per-person" class="text-2xl font-bold font-mono text-gray-900">—</div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+          <div class="text-xs text-gray-400 mb-0.5">Daily All-In</div>
+          <div id="tb-daily-all" class="text-2xl font-bold font-mono text-gray-900">—</div>
+          <div class="text-xs text-gray-400">all travelers</div>
+        </div>
+      </div>
+
+      <div id="tb-breakdown" class="space-y-2">
+        <p class="text-sm font-semibold text-gray-700">Daily Cost Breakdown (per person)</p>
+        <div id="tb-bars" class="space-y-2 text-sm"></div>
+      </div>
+
+      <div id="tb-tip" class="text-sm bg-amber-50 border border-amber-200 rounded-xl p-3 text-amber-800"></div>
+    </div>
+
+    <!-- Cost of living comparison table -->
+    <div>
+      <p class="label mb-2">Daily Budget Reference (USD per person)</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead><tr class="bg-gray-50 text-left">
+            <th class="px-3 py-2 font-medium text-gray-600">Region / Destination</th>
+            <th class="px-3 py-2 font-medium text-gray-600">Budget</th>
+            <th class="px-3 py-2 font-medium text-gray-600">Mid-range</th>
+            <th class="px-3 py-2 font-medium text-gray-600">Luxury</th>
+          </tr></thead>
+          <tbody class="divide-y divide-gray-100" id="tb-ref-table"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What does 'mid-range' travel budget include?", a: "Mid-range travel typically means: 3-star hotel or guesthouse ($60–150/night), restaurant meals ($15–40/meal), public transport + occasional taxi, paid attractions and tours. Budget travel replaces this with hostels, street food, and free/cheap activities. Luxury adds 5-star hotels, business class flights, private tours, and fine dining." },
+        { q: "Should I include flights in my travel budget?", a: "This calculator covers in-destination costs — accommodation, food, local transport, and activities. Flights are separate and vary enormously based on origin, booking time, and season. As a rough guide: a round-trip economy ticket to Europe from the US costs $400–900; Southeast Asia $600–1,200; South America $400–800. Add 20–30% to your total budget to cover flights and travel insurance." },
+        { q: "How can I reduce travel costs?", a: "Key strategies: (1) Travel shoulder season (spring/fall) — 30–50% cheaper than peak. (2) Book accommodation with kitchen access to self-cater. (3) Use local markets and street food. (4) Use city transit cards over taxis. (5) Get city tourist passes for multiple attraction discounts. (6) Stay longer in fewer places — frequent moves increase transport costs." },
+        { q: "What is a realistic daily budget for Southeast Asia?", a: "Southeast Asia (Thailand, Vietnam, Bali, Cambodia) is affordable: Budget: $30–50/day (hostel, street food, local transport). Mid-range: $70–120/day (guesthouse, restaurants, occasional tours). Luxury: $200–400+/day (resort, private tours, fine dining). Cities like Singapore and Kuala Lumpur are 30–50% more expensive than other Southeast Asian destinations." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  interface Region {
+    name: string;
+    costs: {
+      budget: { accom: number; food: number; transport: number; activities: number };
+      mid: { accom: number; food: number; transport: number; activities: number };
+      luxury: { accom: number; food: number; transport: number; activities: number };
+    };
+    tip: string;
+  }
+
+  const REGIONS: Record<string, Region> = {
+    sea: {
+      name: 'Southeast Asia (Thailand, Vietnam, Bali)',
+      costs: {
+        budget:  { accom: 12,  food: 10,  transport: 5,  activities: 8  },
+        mid:     { accom: 45,  food: 25,  transport: 15, activities: 25 },
+        luxury:  { accom: 200, food: 80,  transport: 40, activities: 80 },
+      },
+      tip: 'Southeast Asia is very affordable. Bargain at markets; use ride-hailing apps (Grab) over taxis. Avoid tourist traps near major landmarks.',
+    },
+    japan: {
+      name: 'Japan',
+      costs: {
+        budget:  { accom: 25,  food: 20,  transport: 15, activities: 10 },
+        mid:     { accom: 90,  food: 50,  transport: 30, activities: 30 },
+        luxury:  { accom: 350, food: 150, transport: 60, activities: 80 },
+      },
+      tip: 'Get a JR Pass for multi-city travel. Convenience stores (7-Eleven, Lawson) offer excellent cheap food. Many museums are free.',
+    },
+    europe_west: {
+      name: 'Western Europe (France, Germany, Italy)',
+      costs: {
+        budget:  { accom: 30,  food: 25,  transport: 15, activities: 15 },
+        mid:     { accom: 110, food: 60,  transport: 30, activities: 40 },
+        luxury:  { accom: 350, food: 150, transport: 60, activities: 100 },
+      },
+      tip: 'Eurail passes save money on multi-country rail travel. Many museums free on first Sunday. Picnics from supermarkets cut food costs dramatically.',
+    },
+    europe_east: {
+      name: 'Eastern Europe (Poland, Czech Republic, Hungary)',
+      costs: {
+        budget:  { accom: 18,  food: 15,  transport: 8,  activities: 10 },
+        mid:     { accom: 65,  food: 30,  transport: 15, activities: 20 },
+        luxury:  { accom: 200, food: 80,  transport: 35, activities: 60 },
+      },
+      tip: 'Eastern Europe offers excellent value — comparable quality to Western Europe at 40–60% of the cost. Prague, Krakow, and Budapest are budget-friendly city break options.',
+    },
+    uk: {
+      name: 'United Kingdom',
+      costs: {
+        budget:  { accom: 35,  food: 30,  transport: 20, activities: 15 },
+        mid:     { accom: 120, food: 60,  transport: 35, activities: 40 },
+        luxury:  { accom: 400, food: 150, transport: 70, activities: 100 },
+      },
+      tip: 'London is significantly more expensive than the rest of the UK. Oyster Card for London transit. Many national museums are free.',
+    },
+    usa: {
+      name: 'United States',
+      costs: {
+        budget:  { accom: 35,  food: 30,  transport: 20, activities: 15 },
+        mid:     { accom: 120, food: 60,  transport: 30, activities: 40 },
+        luxury:  { accom: 400, food: 150, transport: 80, activities: 120 },
+      },
+      tip: 'Costs vary hugely by city. NYC, SF, and Honolulu are 50–80% more expensive than the Midwest. National Park passes ($80/year) cover over 400 parks.',
+    },
+    canada: {
+      name: 'Canada',
+      costs: {
+        budget:  { accom: 30,  food: 25,  transport: 15, activities: 15 },
+        mid:     { accom: 100, food: 55,  transport: 25, activities: 35 },
+        luxury:  { accom: 320, food: 120, transport: 60, activities: 100 },
+      },
+      tip: 'Canada is expensive for food and accommodation. Parks Canada Discovery Pass ($72 CAD) covers national parks and sites.',
+    },
+    australia: {
+      name: 'Australia / New Zealand',
+      costs: {
+        budget:  { accom: 30,  food: 25,  transport: 20, activities: 15 },
+        mid:     { accom: 110, food: 55,  transport: 35, activities: 50 },
+        luxury:  { accom: 350, food: 130, transport: 80, activities: 120 },
+      },
+      tip: 'Australia has a minimum wage of ~$23 AUD/hr, making it expensive. Working holiday visas allow budget travelers to fund extended trips.',
+    },
+    latin_am: {
+      name: 'Latin America (Mexico, Colombia, Peru)',
+      costs: {
+        budget:  { accom: 15,  food: 12,  transport: 8,  activities: 10 },
+        mid:     { accom: 55,  food: 30,  transport: 15, activities: 25 },
+        luxury:  { accom: 200, food: 80,  transport: 40, activities: 70 },
+      },
+      tip: 'Excellent value outside major tourist zones. Street food is safe, delicious, and very cheap. Avoid exchanging money at airports.',
+    },
+    africa: {
+      name: 'Sub-Saharan Africa',
+      costs: {
+        budget:  { accom: 20,  food: 15,  transport: 10, activities: 20 },
+        mid:     { accom: 80,  food: 35,  transport: 25, activities: 60 },
+        luxury:  { accom: 350, food: 100, transport: 80, activities: 200 },
+      },
+      tip: 'Safari costs dominate in East Africa. Budget for national park fees separately ($50–100+/day in Tanzania/Kenya). South Africa is cheaper for non-safari travel.',
+    },
+    middle_east: {
+      name: 'Middle East (UAE, Jordan, Egypt)',
+      costs: {
+        budget:  { accom: 25,  food: 15,  transport: 10, activities: 15 },
+        mid:     { accom: 100, food: 45,  transport: 25, activities: 40 },
+        luxury:  { accom: 400, food: 150, transport: 80, activities: 100 },
+      },
+      tip: 'Dubai and Doha are expensive city-states; Egypt and Jordan offer far better value. Ramadan affects opening hours but can reduce food costs significantly.',
+    },
+    india: {
+      name: 'India / South Asia',
+      costs: {
+        budget:  { accom: 10,  food: 8,   transport: 6,  activities: 8  },
+        mid:     { accom: 45,  food: 20,  transport: 15, activities: 20 },
+        luxury:  { accom: 200, food: 70,  transport: 40, activities: 60 },
+      },
+      tip: 'India is one of the world\'s most affordable destinations. Train travel is excellent value — book via IRCTC well in advance. Taj Mahal entrance: $15 USD for foreigners.',
+    },
+  };
+
+  const FX: Record<string, number> = { USD: 1, EUR: 0.92, GBP: 0.79, CAD: 1.36, AUD: 1.53 };
+  const SYMBOLS: Record<string, string> = { USD: '$', EUR: '€', GBP: '£', CAD: 'CA$', AUD: 'A$' };
+
+  const regionSel = document.getElementById('tb-region') as HTMLSelectElement;
+  regionSel.innerHTML = Object.entries(REGIONS)
+    .map(([k, v]) => `<option value="${k}">${v.name}</option>`).join('');
+  regionSel.value = 'europe_west';
+
+  // Populate reference table
+  const tbody = document.getElementById('tb-ref-table')!;
+  tbody.innerHTML = Object.values(REGIONS).map(r => {
+    const b = r.costs.budget, m = r.costs.mid, l = r.costs.luxury;
+    const bTotal = b.accom + b.food + b.transport + b.activities;
+    const mTotal = m.accom + m.food + m.transport + m.activities;
+    const lTotal = l.accom + l.food + l.transport + l.activities;
+    return `<tr class="hover:bg-gray-50">
+      <td class="px-3 py-2 font-medium text-gray-800">${r.name.split(' (')[0]}</td>
+      <td class="px-3 py-2 font-mono text-gray-600">$${bTotal}/day</td>
+      <td class="px-3 py-2 font-mono text-gray-600">$${mTotal}/day</td>
+      <td class="px-3 py-2 font-mono text-gray-600">$${lTotal}/day</td>
+    </tr>`;
+  }).join('');
+
+  function calculate() {
+    const regionKey = (document.getElementById('tb-region') as HTMLSelectElement).value;
+    const style = (document.getElementById('tb-style') as HTMLSelectElement).value as 'budget'|'mid'|'luxury';
+    const travelers = parseInt((document.getElementById('tb-travelers') as HTMLInputElement).value) || 1;
+    const days = parseInt((document.getElementById('tb-days') as HTMLInputElement).value) || 1;
+    const currency = (document.getElementById('tb-currency') as HTMLSelectElement).value;
+
+    const region = REGIONS[regionKey];
+    if (!region) return;
+
+    const c = region.costs[style];
+    const dailyUSD = c.accom + c.food + c.transport + c.activities;
+    const fx = FX[currency];
+    const sym = SYMBOLS[currency];
+    const daily = dailyUSD * fx;
+    const total = daily * travelers * days;
+    const perPerson = daily * days;
+    const dailyAll = daily * travelers;
+
+    const fmt = (n: number) => sym + Math.round(n).toLocaleString();
+    document.getElementById('tb-daily')!.textContent = fmt(daily);
+    document.getElementById('tb-total')!.textContent = fmt(total);
+    document.getElementById('tb-per-person')!.textContent = fmt(perPerson);
+    document.getElementById('tb-daily-all')!.textContent = fmt(dailyAll);
+
+    const maxCost = Math.max(c.accom, c.food, c.transport, c.activities);
+    const bars = [
+      { label: 'Accommodation', val: c.accom },
+      { label: 'Food & Drink', val: c.food },
+      { label: 'Local Transport', val: c.transport },
+      { label: 'Activities', val: c.activities },
+    ];
+    document.getElementById('tb-bars')!.innerHTML = bars.map(({ label, val }) => {
+      const pct = Math.round((val / maxCost) * 100);
+      const converted = val * fx;
+      return `<div>
+        <div class="flex justify-between text-xs text-gray-500 mb-0.5">
+          <span>${label}</span><span class="font-mono">${sym}${Math.round(converted)}/day</span>
+        </div>
+        <div class="h-2 bg-gray-100 rounded-full overflow-hidden">
+          <div class="h-full bg-indigo-400 rounded-full" style="width:${pct}%"></div>
+        </div>
+      </div>`;
+    }).join('');
+
+    document.getElementById('tb-tip')!.textContent = region.tip;
+    document.getElementById('tb-result')!.classList.remove('hidden');
+  }
+
+  ['tb-region','tb-style','tb-travelers','tb-days','tb-currency'].forEach(id =>
+    document.getElementById(id)?.addEventListener('input', calculate)
+  );
+  calculate();
+</script>

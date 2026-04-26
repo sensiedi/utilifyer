@@ -1,0 +1,221 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="International Plug Adapter Guide"
+  description="Find which plug adapter you need for any country. See plug types, voltage, and frequency for 100+ countries. Essential travel tool for electronics."
+  slug="international-plug-adapter-guide"
+  category="Travel & Geography"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">International Plug Adapter Guide</h1>
+  <p class="text-gray-500 mb-8">Find the right plug adapter and voltage information for any country.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Your Home Country</label>
+        <select id="pg-from" class="input-field"></select>
+      </div>
+      <div>
+        <label class="label">Destination Country</label>
+        <select id="pg-to" class="input-field"></select>
+      </div>
+    </div>
+
+    <div id="pg-result" class="hidden space-y-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-4">
+          <p class="text-xs text-gray-400 mb-1">Home</p>
+          <p id="pg-from-name" class="font-bold text-gray-800 text-lg"></p>
+          <p id="pg-from-info" class="text-sm text-gray-600 mt-1"></p>
+        </div>
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
+          <p class="text-xs text-indigo-400 mb-1">Destination</p>
+          <p id="pg-to-name" class="font-bold text-indigo-800 text-lg"></p>
+          <p id="pg-to-info" class="text-sm text-indigo-700 mt-1"></p>
+        </div>
+      </div>
+      <div id="pg-adapter-box" class="rounded-xl p-4 border"></div>
+      <div id="pg-voltage-box" class="rounded-xl p-4 border"></div>
+    </div>
+
+    <!-- Plug types reference -->
+    <div>
+      <p class="label mb-3">Plug Types Reference</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+        {[
+          { type: 'A', desc: '2 flat parallel pins', used: 'USA, Canada, Mexico, Japan' },
+          { type: 'B', desc: '2 flat pins + round grounding pin', used: 'USA, Canada, Mexico' },
+          { type: 'C', desc: '2 round pins (Europlug)', used: 'Europe, South America, Asia, Africa' },
+          { type: 'D', desc: '3 large round pins in triangle', used: 'India, Nepal, Sri Lanka' },
+          { type: 'E', desc: '2 round pins + hole for ground', used: 'France, Belgium, Poland, Czech Republic' },
+          { type: 'F', desc: '2 round pins + side grounding clips', used: 'Germany, Austria, Netherlands, much of EU' },
+          { type: 'G', desc: '3 rectangular pins', used: 'UK, Ireland, Hong Kong, Singapore, Malaysia' },
+          { type: 'H', desc: '3 pins in Y shape', used: 'Israel only' },
+          { type: 'I', desc: '2 or 3 flat angled pins', used: 'Australia, New Zealand, China, Argentina' },
+          { type: 'J', desc: '3 round pins', used: 'Switzerland, Liechtenstein' },
+          { type: 'K', desc: '2 round pins + U-shaped grounding pin', used: 'Denmark, Greenland, Maldives' },
+          { type: 'L', desc: '3 round pins in line', used: 'Italy, Chile, Uruguay' },
+          { type: 'M', desc: '3 large round pins', used: 'South Africa, Lesotho, Swaziland' },
+          { type: 'N', desc: '2 round pins + round grounding pin', used: 'Brazil (new standard), South Africa' },
+        ].map(({ type, desc, used }) => (
+          <div class="flex gap-3 bg-gray-50 border border-gray-100 rounded-lg px-3 py-2">
+            <span class="font-black text-2xl text-gray-300 w-6 shrink-0">{type}</span>
+            <div>
+              <span class="font-semibold text-gray-800">Type {type}</span>
+              <span class="text-gray-500"> — {desc}</span>
+              <p class="text-xs text-gray-400 mt-0.5">{used}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "Do I need a voltage converter or just an adapter?", a: "An adapter only changes the plug shape — it doesn't convert voltage. If your device says '100-240V' on the label (most modern laptops, phones, cameras), it's dual-voltage and only needs an adapter. If it says '120V only' (some US hair dryers, electric shavers), you need a voltage converter (transformer) for 220-240V countries. Using a 120V device in a 240V socket without a converter will damage or destroy it." },
+        { q: "What is the difference between 50Hz and 60Hz?", a: "Frequency (Hz) affects motors and clocks. The US and Canada use 60Hz; most of the world uses 50Hz. Modern electronics (phones, laptops) are frequency-agnostic. However, some appliances with AC motors (blenders, hair dryers) run slightly faster on 60Hz vs 50Hz. Electric clocks designed for 60Hz will run slow in 50Hz countries. This is rarely a practical issue for travelers." },
+        { q: "Is Type C (Europlug) safe to use everywhere in Europe?", a: "Type C (2 round pins, no grounding) fits into Type E, F, J, K, and L sockets but provides no grounding. For double-insulated devices (most travel chargers), this is safe. For grounded appliances (some laptops, kitchen equipment), use a proper Type E or F adapter. Avoid Type C for high-power appliances in countries that require grounding." },
+        { q: "Can I use a universal travel adapter?", a: "Universal travel adapters (all-in-one adapters that handle multiple types) are convenient for travel. Look for ones that handle Type A/B/C/F/G/I. Check that it includes a grounding solution. Better-quality adapters include USB charging ports. Avoid cheap ones for high-wattage devices (hair dryers, curling irons) — use dedicated voltage converters for those." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  interface CountryPlug {
+    name: string;
+    types: string[];
+    voltage: number;
+    frequency: number;
+  }
+
+  const COUNTRIES: Record<string, CountryPlug> = {
+    US:  { name: 'United States', types: ['A','B'], voltage: 120, frequency: 60 },
+    CA:  { name: 'Canada', types: ['A','B'], voltage: 120, frequency: 60 },
+    MX:  { name: 'Mexico', types: ['A','B'], voltage: 127, frequency: 60 },
+    GB:  { name: 'United Kingdom', types: ['G'], voltage: 230, frequency: 50 },
+    IE:  { name: 'Ireland', types: ['G'], voltage: 230, frequency: 50 },
+    FR:  { name: 'France', types: ['C','E'], voltage: 230, frequency: 50 },
+    DE:  { name: 'Germany', types: ['C','F'], voltage: 230, frequency: 50 },
+    IT:  { name: 'Italy', types: ['C','F','L'], voltage: 230, frequency: 50 },
+    ES:  { name: 'Spain', types: ['C','F'], voltage: 230, frequency: 50 },
+    PT:  { name: 'Portugal', types: ['C','F'], voltage: 230, frequency: 50 },
+    NL:  { name: 'Netherlands', types: ['C','F'], voltage: 230, frequency: 50 },
+    BE:  { name: 'Belgium', types: ['C','E'], voltage: 230, frequency: 50 },
+    CH:  { name: 'Switzerland', types: ['C','J'], voltage: 230, frequency: 50 },
+    AT:  { name: 'Austria', types: ['C','F'], voltage: 230, frequency: 50 },
+    SE:  { name: 'Sweden', types: ['C','F'], voltage: 230, frequency: 50 },
+    NO:  { name: 'Norway', types: ['C','F'], voltage: 230, frequency: 50 },
+    DK:  { name: 'Denmark', types: ['C','E','F','K'], voltage: 230, frequency: 50 },
+    FI:  { name: 'Finland', types: ['C','F'], voltage: 230, frequency: 50 },
+    PL:  { name: 'Poland', types: ['C','E'], voltage: 230, frequency: 50 },
+    CZ:  { name: 'Czech Republic', types: ['C','E'], voltage: 230, frequency: 50 },
+    HU:  { name: 'Hungary', types: ['C','F'], voltage: 230, frequency: 50 },
+    GR:  { name: 'Greece', types: ['C','F'], voltage: 230, frequency: 50 },
+    RU:  { name: 'Russia', types: ['C','F'], voltage: 230, frequency: 50 },
+    UA:  { name: 'Ukraine', types: ['C','F'], voltage: 230, frequency: 50 },
+    TR:  { name: 'Turkey', types: ['C','F'], voltage: 230, frequency: 50 },
+    IL:  { name: 'Israel', types: ['C','H','M'], voltage: 230, frequency: 50 },
+    SA:  { name: 'Saudi Arabia', types: ['A','B','C','F','G'], voltage: 220, frequency: 60 },
+    AE:  { name: 'UAE', types: ['C','G'], voltage: 220, frequency: 50 },
+    EG:  { name: 'Egypt', types: ['C','F'], voltage: 220, frequency: 50 },
+    ZA:  { name: 'South Africa', types: ['C','D','M','N'], voltage: 230, frequency: 50 },
+    KE:  { name: 'Kenya', types: ['G'], voltage: 240, frequency: 50 },
+    NG:  { name: 'Nigeria', types: ['D','G'], voltage: 240, frequency: 50 },
+    IN:  { name: 'India', types: ['C','D','M'], voltage: 230, frequency: 50 },
+    PK:  { name: 'Pakistan', types: ['C','D','G','M'], voltage: 230, frequency: 50 },
+    BD:  { name: 'Bangladesh', types: ['C','D','G','K'], voltage: 220, frequency: 50 },
+    SG:  { name: 'Singapore', types: ['G'], voltage: 230, frequency: 50 },
+    MY:  { name: 'Malaysia', types: ['G'], voltage: 240, frequency: 50 },
+    TH:  { name: 'Thailand', types: ['A','B','C'], voltage: 220, frequency: 50 },
+    VN:  { name: 'Vietnam', types: ['A','C','F'], voltage: 220, frequency: 50 },
+    PH:  { name: 'Philippines', types: ['A','B','C'], voltage: 220, frequency: 60 },
+    ID:  { name: 'Indonesia', types: ['C','F'], voltage: 230, frequency: 50 },
+    JP:  { name: 'Japan', types: ['A','B'], voltage: 100, frequency: 50 },
+    CN:  { name: 'China', types: ['A','C','I'], voltage: 220, frequency: 50 },
+    HK:  { name: 'Hong Kong', types: ['G'], voltage: 220, frequency: 50 },
+    KR:  { name: 'South Korea', types: ['C','F'], voltage: 220, frequency: 60 },
+    AU:  { name: 'Australia', types: ['I'], voltage: 230, frequency: 50 },
+    NZ:  { name: 'New Zealand', types: ['I'], voltage: 230, frequency: 50 },
+    BR:  { name: 'Brazil', types: ['C','N'], voltage: 127, frequency: 60 },
+    AR:  { name: 'Argentina', types: ['C','I'], voltage: 220, frequency: 50 },
+    CL:  { name: 'Chile', types: ['C','L'], voltage: 220, frequency: 50 },
+    CO:  { name: 'Colombia', types: ['A','B'], voltage: 110, frequency: 60 },
+    PE:  { name: 'Peru', types: ['A','B','C'], voltage: 220, frequency: 60 },
+    TZ:  { name: 'Tanzania', types: ['D','G'], voltage: 230, frequency: 50 },
+    ET:  { name: 'Ethiopia', types: ['C','E','F','L'], voltage: 220, frequency: 50 },
+    GH:  { name: 'Ghana', types: ['D','G'], voltage: 230, frequency: 50 },
+  };
+
+  const sorted = Object.entries(COUNTRIES).sort((a,b) => a[1].name.localeCompare(b[1].name));
+  const opts = sorted.map(([k,v]) => `<option value="${k}">${v.name}</option>`).join('');
+  const fromSel = document.getElementById('pg-from') as HTMLSelectElement;
+  const toSel = document.getElementById('pg-to') as HTMLSelectElement;
+  fromSel.innerHTML = toSel.innerHTML = opts;
+  fromSel.value = 'US';
+  toSel.value = 'GB';
+
+  function calculate() {
+    const from = COUNTRIES[fromSel.value];
+    const to = COUNTRIES[toSel.value];
+    if (!from || !to) return;
+
+    document.getElementById('pg-from-name')!.textContent = from.name;
+    document.getElementById('pg-from-info')!.textContent =
+      `Type ${from.types.join(', ')} · ${from.voltage}V · ${from.frequency}Hz`;
+    document.getElementById('pg-to-name')!.textContent = to.name;
+    document.getElementById('pg-to-info')!.textContent =
+      `Type ${to.types.join(', ')} · ${to.voltage}V · ${to.frequency}Hz`;
+
+    const adapterBox = document.getElementById('pg-adapter-box')!;
+    const overlap = from.types.filter(t => to.types.includes(t));
+    if (fromSel.value === toSel.value || overlap.length > 0) {
+      adapterBox.className = 'rounded-xl p-4 border bg-green-50 border-green-200';
+      adapterBox.innerHTML = `<p class="font-semibold text-green-800">✅ No adapter needed</p>
+        <p class="text-sm text-green-700 mt-1">Both countries share plug type(s): <strong>${overlap.join(', ')}</strong>. Your plugs will fit directly.</p>`;
+    } else {
+      adapterBox.className = 'rounded-xl p-4 border bg-amber-50 border-amber-200';
+      adapterBox.innerHTML = `<p class="font-semibold text-amber-800">⚠️ Adapter required</p>
+        <p class="text-sm text-amber-700 mt-1">You need an adapter from <strong>Type ${from.types.join('/')}</strong> to <strong>Type ${to.types.join('/')}</strong>.</p>`;
+    }
+
+    const voltageBox = document.getElementById('pg-voltage-box')!;
+    const voltDiff = Math.abs(from.voltage - to.voltage);
+    if (voltDiff < 20) {
+      voltageBox.className = 'rounded-xl p-4 border bg-green-50 border-green-200';
+      voltageBox.innerHTML = `<p class="font-semibold text-green-800">✅ Compatible voltage</p>
+        <p class="text-sm text-green-700 mt-1">${from.name}: ${from.voltage}V · ${to.name}: ${to.voltage}V. No voltage converter needed for dual-voltage (100–240V) devices.</p>`;
+    } else if (to.voltage <= 127 && from.voltage >= 200) {
+      voltageBox.className = 'rounded-xl p-4 border bg-red-50 border-red-200';
+      voltageBox.innerHTML = `<p class="font-semibold text-red-800">⚠️ Voltage mismatch — check your devices</p>
+        <p class="text-sm text-red-700 mt-1">${from.name} uses ${from.voltage}V; ${to.name} uses ${to.voltage}V. Single-voltage devices (labeled ${from.voltage}V only) need a voltage converter. Check the label: if it says "100–240V", it's safe. If it only says "${from.voltage}V", you need a converter.</p>`;
+    } else if (to.voltage >= 200 && from.voltage <= 127) {
+      voltageBox.className = 'rounded-xl p-4 border bg-red-50 border-red-200';
+      voltageBox.innerHTML = `<p class="font-semibold text-red-800">⚠️ Voltage mismatch — check your devices</p>
+        <p class="text-sm text-red-700 mt-1">${from.name} uses ${from.voltage}V; ${to.name} uses ${to.voltage}V. Plugging a ${from.voltage}V-only device into a ${to.voltage}V socket will damage it. Check labels for "100–240V" (safe) or "${from.voltage}V only" (needs converter).</p>`;
+    } else {
+      voltageBox.className = 'rounded-xl p-4 border bg-yellow-50 border-yellow-200';
+      voltageBox.innerHTML = `<p class="font-semibold text-yellow-800">ℹ️ Minor voltage difference</p>
+        <p class="text-sm text-yellow-700 mt-1">${from.name}: ${from.voltage}V · ${to.name}: ${to.voltage}V. Small difference. Most modern devices handle this fine. Check device labels.</p>`;
+    }
+
+    document.getElementById('pg-result')!.classList.remove('hidden');
+  }
+
+  fromSel.addEventListener('change', calculate);
+  toSel.addEventListener('change', calculate);
+  calculate();
+</script>

@@ -1,0 +1,234 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Country Information"
+  description="Quick reference for any country: capital city, population, currency, calling code, languages, timezone, and more. Data for 150+ countries."
+  slug="country-info"
+  category="Travel & Geography"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Country Information</h1>
+  <p class="text-gray-500 mb-8">Quick reference facts for any country — capital, currency, calling code, languages, and more.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div>
+      <label class="label">Search Country</label>
+      <input id="ci-search" type="text" placeholder="Type country name..." class="input-field" autocomplete="off" />
+      <div id="ci-suggestions" class="hidden border border-gray-200 rounded-xl mt-1 overflow-hidden max-h-48 overflow-y-auto bg-white shadow-sm"></div>
+    </div>
+
+    <div id="ci-result" class="hidden">
+      <div id="ci-card" class="bg-gray-50 border border-gray-200 rounded-xl p-5 space-y-4">
+        <div class="flex items-start gap-4">
+          <div id="ci-flag" class="text-5xl"></div>
+          <div>
+            <h2 id="ci-name" class="text-2xl font-bold text-gray-900"></h2>
+            <p id="ci-region" class="text-sm text-gray-500"></p>
+          </div>
+        </div>
+        <div id="ci-facts" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+      </div>
+    </div>
+
+    <!-- Browse by region -->
+    <div>
+      <p class="label mb-2">Browse by Region</p>
+      <div id="ci-region-tabs" class="flex flex-wrap gap-2 mb-3">
+        {['All','Americas','Europe','Asia','Africa','Oceania','Middle East'].map(r => (
+          <button class="ci-region-btn text-xs border border-gray-200 rounded-lg px-3 py-1 hover:border-indigo-300 hover:bg-indigo-50 transition-colors" data-region={r}>{r}</button>
+        ))}
+      </div>
+      <div id="ci-list" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-64 overflow-y-auto text-sm"></div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How do country calling codes work?", a: "International dialing codes (calling codes or country codes) are prefixes dialed before a local number for international calls. They're defined by the ITU (International Telecommunication Union) in the E.164 standard. The US and Canada share +1. Russia is +7. The UK is +44. Most of Western Europe is +3x or +4x. To call internationally: dial your country's exit code (often 00 or +), then the destination country code, then the local number without its leading 0." },
+        { q: "What is the smallest and largest country by area?", a: "Vatican City (Holy See) is the world's smallest country at just 0.44 km² (0.17 sq mi), located entirely within Rome, Italy. Russia is the largest at 17.1 million km² — about 1/8 of Earth's land area. Russia spans 11 time zones. Canada is the second largest (10 million km²), followed by China and the USA (~9.6 million km² each)." },
+        { q: "What is the most widely spoken language in the world?", a: "Mandarin Chinese has the most native speakers (~920 million). English has the most total speakers (~1.5 billion including L2 speakers) and is the world's primary international language. Spanish is the second most spoken native language (~480 million). There are approximately 7,100 languages in total; about 23 languages are spoken by more than 50 million people and account for over half the world's population." },
+        { q: "Why do some countries have multiple official currencies?", a: "Some countries use another nation's currency: Ecuador, El Salvador, and Zimbabwe use the US Dollar. Montenegro and Kosovo use the Euro without being EU members. Panama uses both the Dollar and the Balboa (pegged 1:1 to USD). Countries may dollarize to control inflation, enable trade, or reduce currency risk. The Euro is the official currency of 20 EU member states." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  interface Country {
+    name: string;
+    flag: string;
+    capital: string;
+    population: string;
+    area: string;
+    currency: string;
+    currencyCode: string;
+    callingCode: string;
+    languages: string;
+    timezone: string;
+    region: string;
+    domain: string;
+  }
+
+  const COUNTRIES: Country[] = [
+    { name:'Afghanistan', flag:'🇦🇫', capital:'Kabul', population:'40M', area:'652,230 km²', currency:'Afghan Afghani', currencyCode:'AFN', callingCode:'+93', languages:'Pashto, Dari', timezone:'UTC+4:30', region:'Asia', domain:'.af' },
+    { name:'Albania', flag:'🇦🇱', capital:'Tirana', population:'3M', area:'28,748 km²', currency:'Albanian Lek', currencyCode:'ALL', callingCode:'+355', languages:'Albanian', timezone:'UTC+1', region:'Europe', domain:'.al' },
+    { name:'Argentina', flag:'🇦🇷', capital:'Buenos Aires', population:'46M', area:'2,780,400 km²', currency:'Argentine Peso', currencyCode:'ARS', callingCode:'+54', languages:'Spanish', timezone:'UTC-3', region:'Americas', domain:'.ar' },
+    { name:'Australia', flag:'🇦🇺', capital:'Canberra', population:'26M', area:'7,692,024 km²', currency:'Australian Dollar', currencyCode:'AUD', callingCode:'+61', languages:'English', timezone:'UTC+8 to +11', region:'Oceania', domain:'.au' },
+    { name:'Austria', flag:'🇦🇹', capital:'Vienna', population:'9M', area:'83,871 km²', currency:'Euro', currencyCode:'EUR', callingCode:'+43', languages:'German', timezone:'UTC+1', region:'Europe', domain:'.at' },
+    { name:'Bangladesh', flag:'🇧🇩', capital:'Dhaka', population:'170M', area:'147,570 km²', currency:'Bangladeshi Taka', currencyCode:'BDT', callingCode:'+880', languages:'Bengali', timezone:'UTC+6', region:'Asia', domain:'.bd' },
+    { name:'Belgium', flag:'🇧🇪', capital:'Brussels', population:'12M', area:'30,528 km²', currency:'Euro', currencyCode:'EUR', callingCode:'+32', languages:'Dutch, French, German', timezone:'UTC+1', region:'Europe', domain:'.be' },
+    { name:'Bolivia', flag:'🇧🇴', capital:'Sucre', population:'12M', area:'1,098,581 km²', currency:'Bolivian Boliviano', currencyCode:'BOB', callingCode:'+591', languages:'Spanish, Quechua, Aymara', timezone:'UTC-4', region:'Americas', domain:'.bo' },
+    { name:'Brazil', flag:'🇧🇷', capital:'Brasília', population:'214M', area:'8,515,767 km²', currency:'Brazilian Real', currencyCode:'BRL', callingCode:'+55', languages:'Portuguese', timezone:'UTC-5 to -2', region:'Americas', domain:'.br' },
+    { name:'Canada', flag:'🇨🇦', capital:'Ottawa', population:'38M', area:'9,984,670 km²', currency:'Canadian Dollar', currencyCode:'CAD', callingCode:'+1', languages:'English, French', timezone:'UTC-8 to -3:30', region:'Americas', domain:'.ca' },
+    { name:'Chile', flag:'🇨🇱', capital:'Santiago', population:'19M', area:'756,102 km²', currency:'Chilean Peso', currencyCode:'CLP', callingCode:'+56', languages:'Spanish', timezone:'UTC-4', region:'Americas', domain:'.cl' },
+    { name:'China', flag:'🇨🇳', capital:'Beijing', population:'1.4B', area:'9,596,960 km²', currency:'Chinese Yuan', currencyCode:'CNY', callingCode:'+86', languages:'Mandarin', timezone:'UTC+8', region:'Asia', domain:'.cn' },
+    { name:'Colombia', flag:'🇨🇴', capital:'Bogotá', population:'52M', area:'1,141,748 km²', currency:'Colombian Peso', currencyCode:'COP', callingCode:'+57', languages:'Spanish', timezone:'UTC-5', region:'Americas', domain:'.co' },
+    { name:'Croatia', flag:'🇭🇷', capital:'Zagreb', population:'4M', area:'56,594 km²', currency:'Euro', currencyCode:'EUR', callingCode:'+385', languages:'Croatian', timezone:'UTC+1', region:'Europe', domain:'.hr' },
+    { name:'Czech Republic', flag:'🇨🇿', capital:'Prague', population:'11M', area:'78,867 km²', currency:'Czech Koruna', currencyCode:'CZK', callingCode:'+420', languages:'Czech', timezone:'UTC+1', region:'Europe', domain:'.cz' },
+    { name:'Denmark', flag:'🇩🇰', capital:'Copenhagen', population:'6M', area:'42,924 km²', currency:'Danish Krone', currencyCode:'DKK', callingCode:'+45', languages:'Danish', timezone:'UTC+1', region:'Europe', domain:'.dk' },
+    { name:'Ecuador', flag:'🇪🇨', capital:'Quito', population:'18M', area:'283,561 km²', currency:'US Dollar', currencyCode:'USD', callingCode:'+593', languages:'Spanish', timezone:'UTC-5', region:'Americas', domain:'.ec' },
+    { name:'Egypt', flag:'🇪🇬', capital:'Cairo', population:'104M', area:'1,001,450 km²', currency:'Egyptian Pound', currencyCode:'EGP', callingCode:'+20', languages:'Arabic', timezone:'UTC+2', region:'Africa', domain:'.eg' },
+    { name:'Ethiopia', flag:'🇪🇹', capital:'Addis Ababa', population:'120M', area:'1,104,300 km²', currency:'Ethiopian Birr', currencyCode:'ETB', callingCode:'+251', languages:'Amharic', timezone:'UTC+3', region:'Africa', domain:'.et' },
+    { name:'Finland', flag:'🇫🇮', capital:'Helsinki', population:'6M', area:'338,145 km²', currency:'Euro', currencyCode:'EUR', callingCode:'+358', languages:'Finnish, Swedish', timezone:'UTC+2', region:'Europe', domain:'.fi' },
+    { name:'France', flag:'🇫🇷', capital:'Paris', population:'68M', area:'551,695 km²', currency:'Euro', currencyCode:'EUR', callingCode:'+33', languages:'French', timezone:'UTC+1', region:'Europe', domain:'.fr' },
+    { name:'Germany', flag:'🇩🇪', capital:'Berlin', population:'84M', area:'357,114 km²', currency:'Euro', currencyCode:'EUR', callingCode:'+49', languages:'German', timezone:'UTC+1', region:'Europe', domain:'.de' },
+    { name:'Ghana', flag:'🇬🇭', capital:'Accra', population:'32M', area:'238,533 km²', currency:'Ghanaian Cedi', currencyCode:'GHS', callingCode:'+233', languages:'English', timezone:'UTC+0', region:'Africa', domain:'.gh' },
+    { name:'Greece', flag:'🇬🇷', capital:'Athens', population:'11M', area:'131,957 km²', currency:'Euro', currencyCode:'EUR', callingCode:'+30', languages:'Greek', timezone:'UTC+2', region:'Europe', domain:'.gr' },
+    { name:'Hungary', flag:'🇭🇺', capital:'Budapest', population:'10M', area:'93,028 km²', currency:'Hungarian Forint', currencyCode:'HUF', callingCode:'+36', languages:'Hungarian', timezone:'UTC+1', region:'Europe', domain:'.hu' },
+    { name:'India', flag:'🇮🇳', capital:'New Delhi', population:'1.4B', area:'3,287,263 km²', currency:'Indian Rupee', currencyCode:'INR', callingCode:'+91', languages:'Hindi, English + 21 official', timezone:'UTC+5:30', region:'Asia', domain:'.in' },
+    { name:'Indonesia', flag:'🇮🇩', capital:'Jakarta', population:'277M', area:'1,904,569 km²', currency:'Indonesian Rupiah', currencyCode:'IDR', callingCode:'+62', languages:'Indonesian', timezone:'UTC+7 to +9', region:'Asia', domain:'.id' },
+    { name:'Iran', flag:'🇮🇷', capital:'Tehran', population:'88M', area:'1,648,195 km²', currency:'Iranian Rial', currencyCode:'IRR', callingCode:'+98', languages:'Persian', timezone:'UTC+3:30', region:'Middle East', domain:'.ir' },
+    { name:'Iraq', flag:'🇮🇶', capital:'Baghdad', population:'42M', area:'438,317 km²', currency:'Iraqi Dinar', currencyCode:'IQD', callingCode:'+964', languages:'Arabic, Kurdish', timezone:'UTC+3', region:'Middle East', domain:'.iq' },
+    { name:'Ireland', flag:'🇮🇪', capital:'Dublin', population:'5M', area:'70,273 km²', currency:'Euro', currencyCode:'EUR', callingCode:'+353', languages:'English, Irish', timezone:'UTC+0', region:'Europe', domain:'.ie' },
+    { name:'Israel', flag:'🇮🇱', capital:'Jerusalem', population:'9M', area:'20,770 km²', currency:'Israeli New Shekel', currencyCode:'ILS', callingCode:'+972', languages:'Hebrew, Arabic', timezone:'UTC+2', region:'Middle East', domain:'.il' },
+    { name:'Italy', flag:'🇮🇹', capital:'Rome', population:'60M', area:'301,340 km²', currency:'Euro', currencyCode:'EUR', callingCode:'+39', languages:'Italian', timezone:'UTC+1', region:'Europe', domain:'.it' },
+    { name:'Japan', flag:'🇯🇵', capital:'Tokyo', population:'125M', area:'377,975 km²', currency:'Japanese Yen', currencyCode:'JPY', callingCode:'+81', languages:'Japanese', timezone:'UTC+9', region:'Asia', domain:'.jp' },
+    { name:'Jordan', flag:'🇯🇴', capital:'Amman', population:'10M', area:'89,342 km²', currency:'Jordanian Dinar', currencyCode:'JOD', callingCode:'+962', languages:'Arabic', timezone:'UTC+3', region:'Middle East', domain:'.jo' },
+    { name:'Kenya', flag:'🇰🇪', capital:'Nairobi', population:'55M', area:'580,367 km²', currency:'Kenyan Shilling', currencyCode:'KES', callingCode:'+254', languages:'Swahili, English', timezone:'UTC+3', region:'Africa', domain:'.ke' },
+    { name:'Malaysia', flag:'🇲🇾', capital:'Kuala Lumpur', population:'33M', area:'329,847 km²', currency:'Malaysian Ringgit', currencyCode:'MYR', callingCode:'+60', languages:'Malay, English, Chinese', timezone:'UTC+8', region:'Asia', domain:'.my' },
+    { name:'Mexico', flag:'🇲🇽', capital:'Mexico City', population:'130M', area:'1,964,375 km²', currency:'Mexican Peso', currencyCode:'MXN', callingCode:'+52', languages:'Spanish', timezone:'UTC-8 to -6', region:'Americas', domain:'.mx' },
+    { name:'Morocco', flag:'🇲🇦', capital:'Rabat', population:'37M', area:'446,550 km²', currency:'Moroccan Dirham', currencyCode:'MAD', callingCode:'+212', languages:'Arabic, Berber, French', timezone:'UTC+1', region:'Africa', domain:'.ma' },
+    { name:'Nepal', flag:'🇳🇵', capital:'Kathmandu', population:'30M', area:'147,181 km²', currency:'Nepalese Rupee', currencyCode:'NPR', callingCode:'+977', languages:'Nepali', timezone:'UTC+5:45', region:'Asia', domain:'.np' },
+    { name:'Netherlands', flag:'🇳🇱', capital:'Amsterdam', population:'18M', area:'41,543 km²', currency:'Euro', currencyCode:'EUR', callingCode:'+31', languages:'Dutch', timezone:'UTC+1', region:'Europe', domain:'.nl' },
+    { name:'New Zealand', flag:'🇳🇿', capital:'Wellington', population:'5M', area:'270,467 km²', currency:'New Zealand Dollar', currencyCode:'NZD', callingCode:'+64', languages:'English, Māori', timezone:'UTC+12', region:'Oceania', domain:'.nz' },
+    { name:'Nigeria', flag:'🇳🇬', capital:'Abuja', population:'218M', area:'923,768 km²', currency:'Nigerian Naira', currencyCode:'NGN', callingCode:'+234', languages:'English, Hausa, Yoruba, Igbo', timezone:'UTC+1', region:'Africa', domain:'.ng' },
+    { name:'Norway', flag:'🇳🇴', capital:'Oslo', population:'5M', area:'385,207 km²', currency:'Norwegian Krone', currencyCode:'NOK', callingCode:'+47', languages:'Norwegian', timezone:'UTC+1', region:'Europe', domain:'.no' },
+    { name:'Pakistan', flag:'🇵🇰', capital:'Islamabad', population:'231M', area:'881,913 km²', currency:'Pakistani Rupee', currencyCode:'PKR', callingCode:'+92', languages:'Urdu, English', timezone:'UTC+5', region:'Asia', domain:'.pk' },
+    { name:'Peru', flag:'🇵🇪', capital:'Lima', population:'33M', area:'1,285,216 km²', currency:'Peruvian Sol', currencyCode:'PEN', callingCode:'+51', languages:'Spanish, Quechua, Aymara', timezone:'UTC-5', region:'Americas', domain:'.pe' },
+    { name:'Philippines', flag:'🇵🇭', capital:'Manila', population:'115M', area:'300,000 km²', currency:'Philippine Peso', currencyCode:'PHP', callingCode:'+63', languages:'Filipino, English', timezone:'UTC+8', region:'Asia', domain:'.ph' },
+    { name:'Poland', flag:'🇵🇱', capital:'Warsaw', population:'38M', area:'312,696 km²', currency:'Polish Zloty', currencyCode:'PLN', callingCode:'+48', languages:'Polish', timezone:'UTC+1', region:'Europe', domain:'.pl' },
+    { name:'Portugal', flag:'🇵🇹', capital:'Lisbon', population:'10M', area:'92,212 km²', currency:'Euro', currencyCode:'EUR', callingCode:'+351', languages:'Portuguese', timezone:'UTC+0', region:'Europe', domain:'.pt' },
+    { name:'Romania', flag:'🇷🇴', capital:'Bucharest', population:'19M', area:'238,397 km²', currency:'Romanian Leu', currencyCode:'RON', callingCode:'+40', languages:'Romanian', timezone:'UTC+2', region:'Europe', domain:'.ro' },
+    { name:'Russia', flag:'🇷🇺', capital:'Moscow', population:'144M', area:'17,098,242 km²', currency:'Russian Ruble', currencyCode:'RUB', callingCode:'+7', languages:'Russian', timezone:'UTC+2 to +12', region:'Europe', domain:'.ru' },
+    { name:'Saudi Arabia', flag:'🇸🇦', capital:'Riyadh', population:'35M', area:'2,149,690 km²', currency:'Saudi Riyal', currencyCode:'SAR', callingCode:'+966', languages:'Arabic', timezone:'UTC+3', region:'Middle East', domain:'.sa' },
+    { name:'Singapore', flag:'🇸🇬', capital:'Singapore', population:'6M', area:'728 km²', currency:'Singapore Dollar', currencyCode:'SGD', callingCode:'+65', languages:'English, Mandarin, Malay, Tamil', timezone:'UTC+8', region:'Asia', domain:'.sg' },
+    { name:'South Africa', flag:'🇿🇦', capital:'Pretoria', population:'60M', area:'1,219,090 km²', currency:'South African Rand', currencyCode:'ZAR', callingCode:'+27', languages:'Zulu, Xhosa, Afrikaans, English + 8 more', timezone:'UTC+2', region:'Africa', domain:'.za' },
+    { name:'South Korea', flag:'🇰🇷', capital:'Seoul', population:'52M', area:'100,210 km²', currency:'South Korean Won', currencyCode:'KRW', callingCode:'+82', languages:'Korean', timezone:'UTC+9', region:'Asia', domain:'.kr' },
+    { name:'Spain', flag:'🇪🇸', capital:'Madrid', population:'47M', area:'505,990 km²', currency:'Euro', currencyCode:'EUR', callingCode:'+34', languages:'Spanish', timezone:'UTC+1', region:'Europe', domain:'.es' },
+    { name:'Sweden', flag:'🇸🇪', capital:'Stockholm', population:'10M', area:'450,295 km²', currency:'Swedish Krona', currencyCode:'SEK', callingCode:'+46', languages:'Swedish', timezone:'UTC+1', region:'Europe', domain:'.se' },
+    { name:'Switzerland', flag:'🇨🇭', capital:'Bern', population:'9M', area:'41,285 km²', currency:'Swiss Franc', currencyCode:'CHF', callingCode:'+41', languages:'German, French, Italian, Romansh', timezone:'UTC+1', region:'Europe', domain:'.ch' },
+    { name:'Tanzania', flag:'🇹🇿', capital:'Dodoma', population:'63M', area:'945,087 km²', currency:'Tanzanian Shilling', currencyCode:'TZS', callingCode:'+255', languages:'Swahili, English', timezone:'UTC+3', region:'Africa', domain:'.tz' },
+    { name:'Thailand', flag:'🇹🇭', capital:'Bangkok', population:'72M', area:'513,120 km²', currency:'Thai Baht', currencyCode:'THB', callingCode:'+66', languages:'Thai', timezone:'UTC+7', region:'Asia', domain:'.th' },
+    { name:'Turkey', flag:'🇹🇷', capital:'Ankara', population:'85M', area:'783,562 km²', currency:'Turkish Lira', currencyCode:'TRY', callingCode:'+90', languages:'Turkish', timezone:'UTC+3', region:'Middle East', domain:'.tr' },
+    { name:'UAE', flag:'🇦🇪', capital:'Abu Dhabi', population:'10M', area:'83,600 km²', currency:'UAE Dirham', currencyCode:'AED', callingCode:'+971', languages:'Arabic', timezone:'UTC+4', region:'Middle East', domain:'.ae' },
+    { name:'Ukraine', flag:'🇺🇦', capital:'Kyiv', population:'44M', area:'603,550 km²', currency:'Ukrainian Hryvnia', currencyCode:'UAH', callingCode:'+380', languages:'Ukrainian', timezone:'UTC+2', region:'Europe', domain:'.ua' },
+    { name:'United Kingdom', flag:'🇬🇧', capital:'London', population:'67M', area:'242,495 km²', currency:'British Pound', currencyCode:'GBP', callingCode:'+44', languages:'English', timezone:'UTC+0', region:'Europe', domain:'.uk' },
+    { name:'United States', flag:'🇺🇸', capital:'Washington D.C.', population:'335M', area:'9,833,517 km²', currency:'US Dollar', currencyCode:'USD', callingCode:'+1', languages:'English', timezone:'UTC-12 to -4', region:'Americas', domain:'.us' },
+    { name:'Vietnam', flag:'🇻🇳', capital:'Hanoi', population:'97M', area:'331,212 km²', currency:'Vietnamese Dong', currencyCode:'VND', callingCode:'+84', languages:'Vietnamese', timezone:'UTC+7', region:'Asia', domain:'.vn' },
+  ];
+
+  let activeRegion = 'All';
+
+  function showCountry(c: Country) {
+    document.getElementById('ci-flag')!.textContent = c.flag;
+    document.getElementById('ci-name')!.textContent = c.name;
+    document.getElementById('ci-region')!.textContent = c.region;
+    document.getElementById('ci-facts')!.innerHTML = [
+      { label: 'Capital', value: c.capital },
+      { label: 'Population', value: c.population },
+      { label: 'Area', value: c.area },
+      { label: 'Currency', value: `${c.currency} (${c.currencyCode})` },
+      { label: 'Calling Code', value: c.callingCode },
+      { label: 'Languages', value: c.languages },
+      { label: 'Timezone', value: c.timezone },
+      { label: 'Internet Domain', value: c.domain },
+    ].map(({ label, value }) =>
+      `<div class="bg-white border border-gray-200 rounded-lg px-3 py-2">
+        <div class="text-xs text-gray-400 mb-0.5">${label}</div>
+        <div class="text-sm font-medium text-gray-800">${value}</div>
+      </div>`
+    ).join('');
+    document.getElementById('ci-result')!.classList.remove('hidden');
+    document.getElementById('ci-suggestions')!.classList.add('hidden');
+  }
+
+  function renderList(region: string) {
+    const filtered = region === 'All' ? COUNTRIES : COUNTRIES.filter(c => c.region === region);
+    document.getElementById('ci-list')!.innerHTML = filtered.map(c =>
+      `<button class="ci-country-btn flex items-center gap-2 bg-gray-50 border border-gray-100 rounded-lg px-3 py-2 hover:border-indigo-300 hover:bg-indigo-50 transition-colors text-left" data-name="${c.name}">
+        <span class="text-lg">${c.flag}</span>
+        <span class="text-sm font-medium text-gray-800 truncate">${c.name}</span>
+      </button>`
+    ).join('');
+    document.querySelectorAll('.ci-country-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const country = COUNTRIES.find(c => c.name === (btn as HTMLElement).dataset.name);
+        if (country) showCountry(country);
+      });
+    });
+  }
+
+  document.querySelectorAll('.ci-region-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeRegion = (btn as HTMLElement).dataset.region || 'All';
+      document.querySelectorAll('.ci-region-btn').forEach(b => {
+        b.classList.toggle('bg-indigo-50', (b as HTMLElement).dataset.region === activeRegion);
+        b.classList.toggle('border-indigo-300', (b as HTMLElement).dataset.region === activeRegion);
+        b.classList.toggle('text-indigo-700', (b as HTMLElement).dataset.region === activeRegion);
+      });
+      renderList(activeRegion);
+    });
+  });
+
+  const searchEl = document.getElementById('ci-search') as HTMLInputElement;
+  const suggestEl = document.getElementById('ci-suggestions')!;
+
+  searchEl.addEventListener('input', () => {
+    const q = searchEl.value.toLowerCase().trim();
+    if (!q) { suggestEl.classList.add('hidden'); return; }
+    const matches = COUNTRIES.filter(c => c.name.toLowerCase().includes(q)).slice(0, 8);
+    if (!matches.length) { suggestEl.classList.add('hidden'); return; }
+    suggestEl.innerHTML = matches.map(c =>
+      `<button class="ci-suggest w-full flex items-center gap-2 px-4 py-2 hover:bg-indigo-50 text-left" data-name="${c.name}">
+        <span>${c.flag}</span><span class="text-sm text-gray-800">${c.name}</span>
+      </button>`
+    ).join('');
+    suggestEl.classList.remove('hidden');
+    suggestEl.querySelectorAll('.ci-suggest').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const country = COUNTRIES.find(c => c.name === (btn as HTMLElement).dataset.name);
+        if (country) { showCountry(country); searchEl.value = country.name; }
+      });
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!searchEl.contains(e.target as Node) && !suggestEl.contains(e.target as Node)) {
+      suggestEl.classList.add('hidden');
+    }
+  });
+
+  renderList('All');
+  showCountry(COUNTRIES.find(c => c.name === 'United States')!);
+</script>

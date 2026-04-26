@@ -1,0 +1,229 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Metric & US Conversion Cheat Sheet"
+  description="Quick reference for converting between metric and US/imperial measurements. Temperature, distance, weight, volume, and speed conversions for travel."
+  slug="metric-us-conversion-cheat-sheet"
+  category="Travel & Geography"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Metric & US Conversion Cheat Sheet</h1>
+  <p class="text-gray-500 mb-8">Quick-reference conversions for travelers — temperature, distance, weight, volume, and speed.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <!-- Quick converter -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+      <div>
+        <label class="label">Value</label>
+        <input id="mc-value" type="number" value="100" class="input-field font-mono text-xl" />
+      </div>
+      <div>
+        <label class="label">From Unit</label>
+        <select id="mc-from" class="input-field"></select>
+      </div>
+      <div>
+        <label class="label">To Unit</label>
+        <select id="mc-to" class="input-field"></select>
+      </div>
+    </div>
+    <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
+      <div class="text-xs text-indigo-500 mb-0.5">Result</div>
+      <div id="mc-result" class="text-2xl font-bold font-mono text-indigo-900">—</div>
+    </div>
+
+    <!-- Cheat sheets by category -->
+    {[
+      {
+        title: 'Temperature',
+        icon: '🌡️',
+        rows: [
+          ['0°C', '32°F', 'Freezing point of water'],
+          ['10°C', '50°F', 'Cold day'],
+          ['20°C', '68°F', 'Room temperature'],
+          ['25°C', '77°F', 'Warm day'],
+          ['30°C', '86°F', 'Hot day'],
+          ['37°C', '98.6°F', 'Body temperature'],
+          ['100°C', '212°F', 'Boiling point of water'],
+          ['-40°C', '-40°F', 'Scales intersect'],
+        ],
+        formula: '°F = °C × 9/5 + 32 | °C = (°F − 32) × 5/9',
+      },
+      {
+        title: 'Distance',
+        icon: '📏',
+        rows: [
+          ['1 km', '0.621 mi', '1,000 meters'],
+          ['5 km', '3.1 mi', 'Short road race'],
+          ['10 km', '6.2 mi', 'Common road race'],
+          ['42.2 km', '26.2 mi', 'Marathon'],
+          ['100 km', '62.1 mi', ''],
+          ['1 mi', '1.609 km', '5,280 feet'],
+          ['1 m', '3.281 ft', ''],
+          ['1 inch', '2.54 cm', ''],
+        ],
+        formula: 'km × 0.621 = miles | miles × 1.609 = km',
+      },
+      {
+        title: 'Weight',
+        icon: '⚖️',
+        rows: [
+          ['1 kg', '2.205 lb', '1,000 grams'],
+          ['5 kg', '11 lb', 'Carry-on weight limit (some airlines)'],
+          ['10 kg', '22 lb', ''],
+          ['20 kg', '44 lb', 'Checked bag limit (many airlines)'],
+          ['23 kg', '50.7 lb', 'Common checked bag limit'],
+          ['1 lb', '453.6 g', '16 oz'],
+          ['1 oz', '28.35 g', ''],
+          ['1 stone', '6.35 kg', '14 lb (UK)'],
+        ],
+        formula: 'kg × 2.205 = lb | lb × 0.4536 = kg',
+      },
+      {
+        title: 'Volume / Liquid',
+        icon: '💧',
+        rows: [
+          ['1 L', '33.8 fl oz', '1,000 ml'],
+          ['1 L', '4.23 cups', ''],
+          ['500 ml', '16.9 fl oz', 'Standard water bottle'],
+          ['1 fl oz', '29.57 ml', ''],
+          ['1 US cup', '236.6 ml', ''],
+          ['1 pint (US)', '473 ml', '16 fl oz'],
+          ['1 pint (UK)', '568 ml', '20 fl oz'],
+          ['1 gallon (US)', '3.785 L', '128 fl oz'],
+        ],
+        formula: 'Liters × 33.81 = fl oz | fl oz × 0.0296 = L',
+      },
+      {
+        title: 'Speed',
+        icon: '🚗',
+        rows: [
+          ['30 km/h', '18.6 mph', 'Urban street'],
+          ['50 km/h', '31 mph', 'City speed limit'],
+          ['80 km/h', '50 mph', 'Rural road'],
+          ['100 km/h', '62.1 mph', 'Motorway minimum'],
+          ['110 km/h', '68.4 mph', 'Common motorway limit'],
+          ['120 km/h', '74.6 mph', 'European motorway'],
+          ['130 km/h', '80.8 mph', 'Top motorway limit (EU)'],
+          ['1 knot', '1.852 km/h', 'Nautical / aviation'],
+        ],
+        formula: 'km/h × 0.621 = mph | mph × 1.609 = km/h',
+      },
+    ].map(({ title, icon, rows, formula }) => (
+      <div>
+        <p class="text-sm font-semibold text-gray-700 mb-2">{icon} {title}</p>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead><tr class="bg-gray-50 text-left">
+              <th class="px-3 py-2 font-medium text-gray-600">Metric</th>
+              <th class="px-3 py-2 font-medium text-gray-600">US / Imperial</th>
+              <th class="px-3 py-2 font-medium text-gray-600">Notes</th>
+            </tr></thead>
+            <tbody class="divide-y divide-gray-100">
+              {rows.map(([metric, us, notes]) => (
+                <tr class="hover:bg-gray-50">
+                  <td class="px-3 py-2 font-mono text-gray-700">{metric}</td>
+                  <td class="px-3 py-2 font-mono text-gray-700">{us}</td>
+                  <td class="px-3 py-2 text-gray-400 text-xs">{notes}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p class="text-xs text-gray-400 mt-1 px-1">{formula}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "Which countries still use imperial/US customary units?", a: "Only three countries officially use the imperial/US customary system as their primary measurement system: the United States, Liberia, and Myanmar. The UK uses a mix — metric officially, but miles for road signs, pints for beer, and stones for body weight remain culturally embedded. Canada uses metric but informally many Canadians still reference feet/inches and Fahrenheit due to proximity to the US." },
+        { q: "What is a quick mental trick for Celsius to Fahrenheit?", a: "Double the Celsius temperature, subtract 10%, then add 32. Example: 25°C → 25×2=50 → 50−5=45 → 45+32=77°F (actual: 77°F ✓). For Fahrenheit to Celsius: subtract 32, then halve and add 10%. These shortcuts work well for everyday temperatures. The exact formula is °F = (°C × 9/5) + 32." },
+        { q: "Why does the UK pint hold more than the US pint?", a: "The US customary system and the British imperial system diverged after American independence. A US pint = 473ml (16 fl oz). A British imperial pint = 568ml (20 fl oz). This affects ordering beer in pubs — a UK 'pint' is larger. Australia, Canada, and most Commonwealth countries use metric but some informally refer to the UK pint." },
+        { q: "What is the difference between mass (weight) and force?", a: "In everyday use, 'weight' means mass. Scientifically, mass is measured in kg/g and is constant regardless of gravity. Weight is a force (measured in Newtons) = mass × gravitational acceleration. On the Moon, your mass is the same but your weight (force) is 1/6 of Earth's. Scales on Earth measure mass in kg because the relationship between force and mass is constant at Earth's surface gravity (9.81 m/s²)." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  interface Unit { label: string; group: string; toBase: (v: number) => number; fromBase: (v: number) => number; }
+
+  const UNITS: Record<string, Unit> = {
+    // Temperature (base: Celsius)
+    celsius:    { label: '°C (Celsius)', group: 'Temperature', toBase: v => v, fromBase: v => v },
+    fahrenheit: { label: '°F (Fahrenheit)', group: 'Temperature', toBase: v => (v-32)*5/9, fromBase: v => v*9/5+32 },
+    kelvin:     { label: 'K (Kelvin)', group: 'Temperature', toBase: v => v-273.15, fromBase: v => v+273.15 },
+    // Distance (base: meters)
+    m:   { label: 'meters (m)', group: 'Distance', toBase: v => v, fromBase: v => v },
+    km:  { label: 'kilometers (km)', group: 'Distance', toBase: v => v*1000, fromBase: v => v/1000 },
+    cm:  { label: 'centimeters (cm)', group: 'Distance', toBase: v => v/100, fromBase: v => v*100 },
+    mi:  { label: 'miles (mi)', group: 'Distance', toBase: v => v*1609.344, fromBase: v => v/1609.344 },
+    ft:  { label: 'feet (ft)', group: 'Distance', toBase: v => v*0.3048, fromBase: v => v/0.3048 },
+    in_: { label: 'inches (in)', group: 'Distance', toBase: v => v*0.0254, fromBase: v => v/0.0254 },
+    yard:{ label: 'yards (yd)', group: 'Distance', toBase: v => v*0.9144, fromBase: v => v/0.9144 },
+    // Weight (base: grams)
+    g:   { label: 'grams (g)', group: 'Weight', toBase: v => v, fromBase: v => v },
+    kg:  { label: 'kilograms (kg)', group: 'Weight', toBase: v => v*1000, fromBase: v => v/1000 },
+    lb:  { label: 'pounds (lb)', group: 'Weight', toBase: v => v*453.592, fromBase: v => v/453.592 },
+    oz:  { label: 'ounces (oz)', group: 'Weight', toBase: v => v*28.3495, fromBase: v => v/28.3495 },
+    stone:{ label: 'stone (st)', group: 'Weight', toBase: v => v*6350.29, fromBase: v => v/6350.29 },
+    // Volume (base: ml)
+    ml:   { label: 'milliliters (ml)', group: 'Volume', toBase: v => v, fromBase: v => v },
+    l:    { label: 'liters (L)', group: 'Volume', toBase: v => v*1000, fromBase: v => v/1000 },
+    floz: { label: 'fl oz (US)', group: 'Volume', toBase: v => v*29.5735, fromBase: v => v/29.5735 },
+    cup:  { label: 'cups (US)', group: 'Volume', toBase: v => v*236.588, fromBase: v => v/236.588 },
+    pint_us: { label: 'pint US (16 fl oz)', group: 'Volume', toBase: v => v*473.176, fromBase: v => v/473.176 },
+    pint_uk: { label: 'pint UK (20 fl oz)', group: 'Volume', toBase: v => v*568.261, fromBase: v => v/568.261 },
+    gal_us: { label: 'gallon US', group: 'Volume', toBase: v => v*3785.41, fromBase: v => v/3785.41 },
+    // Speed (base: km/h)
+    kmh:  { label: 'km/h', group: 'Speed', toBase: v => v, fromBase: v => v },
+    mph:  { label: 'mph', group: 'Speed', toBase: v => v*1.60934, fromBase: v => v/1.60934 },
+    ms:   { label: 'm/s', group: 'Speed', toBase: v => v*3.6, fromBase: v => v/3.6 },
+    knot: { label: 'knots', group: 'Speed', toBase: v => v*1.852, fromBase: v => v/1.852 },
+  };
+
+  const fromSel = document.getElementById('mc-from') as HTMLSelectElement;
+  const toSel = document.getElementById('mc-to') as HTMLSelectElement;
+
+  const groups: Record<string, string[]> = {};
+  Object.entries(UNITS).forEach(([k, v]) => {
+    if (!groups[v.group]) groups[v.group] = [];
+    groups[v.group].push(k);
+  });
+
+  const opts = Object.entries(groups).map(([g, keys]) =>
+    `<optgroup label="${g}">${keys.map(k => `<option value="${k}">${UNITS[k].label}</option>`).join('')}</optgroup>`
+  ).join('');
+  fromSel.innerHTML = toSel.innerHTML = opts;
+  fromSel.value = 'celsius';
+  toSel.value = 'fahrenheit';
+
+  function convert() {
+    const val = parseFloat((document.getElementById('mc-value') as HTMLInputElement).value);
+    const from = UNITS[fromSel.value];
+    const to = UNITS[toSel.value];
+    if (!from || !to || isNaN(val)) { document.getElementById('mc-result')!.textContent = '—'; return; }
+    if (from.group !== to.group) {
+      document.getElementById('mc-result')!.textContent = 'Select units from the same category';
+      return;
+    }
+    const base = from.toBase(val);
+    const result = to.fromBase(base);
+    const disp = Math.abs(result) >= 1000 ? result.toFixed(1) : Math.abs(result) < 0.01 ? result.toExponential(3) : result.toFixed(4).replace(/\.?0+$/,'');
+    document.getElementById('mc-result')!.textContent = `${val} ${from.label} = ${disp} ${to.label}`;
+  }
+
+  ['mc-value','mc-from','mc-to'].forEach(id => document.getElementById(id)?.addEventListener('input', convert));
+  convert();
+</script>

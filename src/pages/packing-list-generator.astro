@@ -1,0 +1,211 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Packing List Generator"
+  description="Generate a customized travel packing list based on destination type, trip duration, season, and activities. Never forget essential travel items again."
+  slug="packing-list-generator"
+  category="Travel & Geography"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Packing List Generator</h1>
+  <p class="text-gray-500 mb-8">Generate a customized packing list for any trip type, duration, and climate.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Trip Type</label>
+        <select id="pl-type" class="input-field">
+          <option value="city">City Break / Business</option>
+          <option value="beach">Beach / Resort</option>
+          <option value="hiking">Hiking / Outdoors</option>
+          <option value="winter">Winter / Ski Trip</option>
+          <option value="backpacking">Backpacking</option>
+          <option value="cruise">Cruise</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">Trip Duration</label>
+        <select id="pl-duration" class="input-field">
+          <option value="weekend">Weekend (1–3 days)</option>
+          <option value="week">1 Week</option>
+          <option value="twoweeks" selected>2 Weeks</option>
+          <option value="month">1 Month+</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Climate</label>
+        <select id="pl-climate" class="input-field">
+          <option value="hot">Hot / Tropical (25°C+)</option>
+          <option value="warm" selected>Warm / Mediterranean</option>
+          <option value="mild">Mild / Temperate</option>
+          <option value="cold">Cold / Winter</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">Extras</label>
+        <div class="flex flex-wrap gap-2 mt-1">
+          {[
+            { id:'pl-baby', label:'Baby/Child' },
+            { id:'pl-business', label:'Business Meetings' },
+            { id:'pl-sports', label:'Water Sports' },
+            { id:'pl-photography', label:'Photography' },
+          ].map(({ id, label }) => (
+            <label class="flex items-center gap-1.5 text-sm border border-gray-200 rounded-lg px-3 py-1.5 cursor-pointer hover:border-indigo-300">
+              <input type="checkbox" id={id} class="rounded" />
+              <span class="text-gray-700">{label}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <button id="pl-generate" class="btn-primary">Generate Packing List</button>
+
+    <div id="pl-result" class="hidden space-y-4">
+      <div class="flex items-center justify-between">
+        <p class="font-semibold text-gray-800">Your Packing List</p>
+        <button id="pl-print" class="text-sm text-indigo-600 hover:underline">Print / Save</button>
+      </div>
+      <div id="pl-categories" class="space-y-4"></div>
+      <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-sm text-amber-800">
+        ⚠️ Check current visa requirements, travel advisories, and vaccination recommendations for your destination before departing.
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is the 3-1-1 rule for carry-on liquids?", a: "TSA's 3-1-1 rule: Liquids, gels, aerosols, creams, and pastes must be in containers of 3.4 oz (100ml) or less; all must fit in 1 clear, quart-sized zip-top bag; 1 bag per passenger in the screening bin. Items over 3.4oz must go in checked luggage. Exceptions: baby formula, breast milk, medications, and duty-free purchases in tamper-evident bags." },
+        { q: "How do I pack light for a 2-week trip?", a: "The capsule wardrobe approach: pack 5-6 tops, 2-3 bottoms, 1 dress/smart casual outfit, 1 layer, 2 pairs of shoes. Choose neutral colors that mix and match. Wear bulkiest items on the plane. Roll clothes instead of folding to save space. Use packing cubes to compress and organize. Many destinations have laundry services or laundromats — plan to wash mid-trip for longer stays." },
+        { q: "What items are commonly forgotten?", a: "Most forgotten: (1) Adapter/converter — forgot until you're in the hotel room. (2) Medications and prescriptions — always pack extras in different bags. (3) Copies of important documents. (4) Portable charger/power bank. (5) Earplugs and eye mask for flights. (6) Reusable water bottle. (7) Small first aid kit. (8) Cash in local currency for arrival." },
+        { q: "How do I prevent my checked luggage from being lost?", a: "Reduce risk by: (1) Use a bright or distinctive luggage tag. (2) Put your contact info inside the bag too. (3) Take a photo of your bag before checking in. (4) Use a Bluetooth tracker (AirTag, Tile) inside. (5) On connecting flights with tight layovers, carry on if possible. (6) Remove old airline tags that may confuse routing systems. (7) Report immediately at the baggage desk — the sooner you report, the better recovery chances." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  interface Category { name: string; items: string[] }
+
+  const BASE: Category[] = [
+    {
+      name: 'Documents & Money',
+      items: ['Passport (valid 6+ months)', 'Visa (if required)', 'Travel insurance documents', 'Flight/hotel confirmation printouts', 'Credit/debit cards', 'Local currency cash', 'Emergency contact list', 'Photocopies of key documents (keep separate)'],
+    },
+    {
+      name: 'Electronics',
+      items: ['Phone + charger', 'Power bank / portable charger', 'Headphones', 'Universal travel adapter', 'Camera + memory cards', 'Laptop/tablet + charger'],
+    },
+    {
+      name: 'Toiletries',
+      items: ['Toothbrush & toothpaste', 'Shampoo & conditioner', 'Body wash / soap', 'Deodorant', 'Face wash & moisturizer', 'Razor & shaving cream', 'Sunscreen SPF 30+', 'Lip balm'],
+    },
+    {
+      name: 'Health & First Aid',
+      items: ['Prescription medications (extra supply)', 'Paracetamol/Ibuprofen', 'Antihistamines', 'Bandages & plasters', 'Antiseptic wipes', 'Rehydration sachets', 'Insect repellent', 'Hand sanitizer'],
+    },
+    {
+      name: 'Clothing Basics',
+      items: ['Underwear', 'Socks', 'T-shirts / tops', 'Trousers / jeans', 'Comfortable walking shoes', 'Sleepwear'],
+    },
+  ];
+
+  const CITY: Category[] = [
+    { name: 'City / Business', items: ['Smart outfit for evenings', 'Dress shoes', 'Comfortable walking shoes', 'Lightweight jacket', 'Umbrella (compact)'] },
+  ];
+  const BEACH: Category[] = [
+    { name: 'Beach Essentials', items: ['Swimsuit / bikini (2+)', 'Flip flops / sandals', 'Beach towel', 'Sunscreen SPF 50+', 'After-sun lotion', 'Sunglasses', 'Sun hat', 'Beach bag', 'Snorkel & mask'] },
+  ];
+  const HIKING: Category[] = [
+    { name: 'Outdoor / Hiking', items: ['Hiking boots (broken in)', 'Moisture-wicking socks', 'Trekking poles', 'Daypack / backpack', 'Rain jacket / poncho', 'Headlamp + batteries', 'Water purification tablets', 'Trail maps / offline GPS', 'Emergency whistle', 'Blister pads'] },
+  ];
+  const WINTER: Category[] = [
+    { name: 'Winter / Cold Weather', items: ['Thermal base layers', 'Heavy wool sweaters', 'Waterproof insulated jacket', 'Snow boots', 'Warm hat', 'Gloves / mittens', 'Neck gaiter / scarf', 'Hand warmers', 'Ski goggles', 'Ski/snowboard gear (or rent)'] },
+  ];
+  const BACKPACKING: Category[] = [
+    { name: 'Backpacking Extras', items: ['Large backpack (50–70L) + day pack', 'Padlock for hostel lockers', 'Sleeping bag liner', 'Microfiber towel', 'Earplugs (for dorms)', 'Eye mask', 'Laundry detergent (travel sachets)', 'Clothes line', 'Reusable water bottle + filter'] },
+  ];
+  const CRUISE: Category[] = [
+    { name: 'Cruise Specific', items: ['Formal evening wear (check dress code)', 'Swimwear for pool', 'Deck shoes / slip-resistant shoes', 'Motion sickness medication', 'Sunscreen & sunglasses', 'Daypack for ports', 'Luggage tags for embarkation'] },
+  ];
+
+  const HOT: string[] = ['Light, breathable clothing (linen/cotton)', 'Extra sunscreen', 'Wide-brim sun hat', 'Insect repellent (DEET)', 'Electrolyte sachets / tablets'];
+  const COLD_ITEMS: string[] = ['Thermal layers', 'Warm jacket', 'Wool sweater', 'Warm hat & gloves', 'Waterproof boots'];
+  const MILD: string[] = ['Light jacket or cardigan', 'Layers for variable weather'];
+
+  const WEEK_ADD = ['Extra underwear and socks (5–7 sets)', 'Laundry bag'];
+  const MONTH_ADD = ['Travel laundry soap', 'Sewing kit', 'Extra medications (2x supply)', 'Digital nomad essentials'];
+
+  const BABY_ITEMS = ['Diapers + wipes (2–3 days extra)', 'Baby food / formula', 'Baby carrier', 'Stroller', 'Portable crib / travel bassinet', 'Baby sunscreen', 'Entertainment (books, small toys)'];
+  const BUSINESS_ITEMS = ['Formal suit / business attire', 'Presentation materials', 'Business cards', 'Laptop + cables', 'Portable projector'];
+  const WATER_SPORT_ITEMS = ['Wetsuit (if needed)', 'Water shoes', 'Underwater camera', 'Waterproof dry bag', 'Rash guard'];
+  const PHOTO_ITEMS = ['Extra camera batteries', 'Tripod (travel size)', 'Lens cleaning kit', 'Memory cards (multiple)', 'Camera rain cover', 'Hard drive for backup'];
+
+  function generate() {
+    const type = (document.getElementById('pl-type') as HTMLSelectElement).value;
+    const duration = (document.getElementById('pl-duration') as HTMLSelectElement).value;
+    const climate = (document.getElementById('pl-climate') as HTMLSelectElement).value;
+
+    let categories = [...BASE.map(c => ({ ...c, items: [...c.items] }))];
+
+    // Add type-specific
+    const typeMap: Record<string, Category[]> = { city: CITY, beach: BEACH, hiking: HIKING, winter: WINTER, backpacking: BACKPACKING, cruise: CRUISE };
+    if (typeMap[type]) categories.push(...typeMap[type].map(c => ({ ...c, items: [...c.items] })));
+
+    // Add climate items to clothing
+    const clothingIdx = categories.findIndex(c => c.name === 'Clothing Basics');
+    if (climate === 'hot') categories[clothingIdx].items.push(...HOT);
+    else if (climate === 'cold') categories[clothingIdx].items.push(...COLD_ITEMS);
+    else if (climate === 'mild') categories[clothingIdx].items.push(...MILD);
+
+    // Add duration-specific
+    if (duration === 'week' || duration === 'twoweeks') categories[clothingIdx].items.push(...WEEK_ADD);
+    if (duration === 'month') { categories[clothingIdx].items.push(...WEEK_ADD, ...MONTH_ADD); }
+
+    // Add extras
+    const extras: {id: string; items: string[]}[] = [
+      { id: 'pl-baby', items: BABY_ITEMS },
+      { id: 'pl-business', items: BUSINESS_ITEMS },
+      { id: 'pl-sports', items: WATER_SPORT_ITEMS },
+      { id: 'pl-photography', items: PHOTO_ITEMS },
+    ];
+    extras.forEach(({ id, items }) => {
+      if ((document.getElementById(id) as HTMLInputElement).checked) {
+        const name = id === 'pl-baby' ? 'Baby & Child' : id === 'pl-business' ? 'Business' : id === 'pl-sports' ? 'Water Sports' : 'Photography';
+        categories.push({ name, items: [...items] });
+      }
+    });
+
+    document.getElementById('pl-categories')!.innerHTML = categories.map(cat => `
+      <div class="border border-gray-200 rounded-xl overflow-hidden">
+        <div class="bg-gray-50 px-4 py-2 font-semibold text-gray-700 text-sm border-b border-gray-200">${cat.name} <span class="text-gray-400 font-normal">(${cat.items.length} items)</span></div>
+        <div class="p-3 grid grid-cols-1 sm:grid-cols-2 gap-1">
+          ${cat.items.map(item => `
+            <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer hover:bg-gray-50 px-2 py-1 rounded">
+              <input type="checkbox" class="rounded flex-shrink-0" />
+              <span>${item}</span>
+            </label>`).join('')}
+        </div>
+      </div>`).join('');
+
+    document.getElementById('pl-result')!.classList.remove('hidden');
+  }
+
+  document.getElementById('pl-generate')!.addEventListener('click', generate);
+  document.getElementById('pl-print')!.addEventListener('click', () => window.print());
+  generate();
+</script>

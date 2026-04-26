@@ -12,7 +12,7 @@
     ],
     "priority": 1,
     "status": "live",
-    "icon": "\ud83d\udcca"
+    "icon": "📊"
   },
   {
     "slug": "age-calculator",
@@ -27,7 +27,7 @@
     ],
     "priority": 2,
     "status": "live",
-    "icon": "\ud83c\udf82"
+    "icon": "🎂"
   },
   {
     "slug": "bmi-calculator",
@@ -42,7 +42,7 @@
     ],
     "priority": 3,
     "status": "live",
-    "icon": "\u2696\ufe0f"
+    "icon": "⚖️"
   },
   {
     "slug": "temperature-converter",
@@ -58,7 +58,7 @@
     ],
     "priority": 4,
     "status": "live",
-    "icon": "\ud83c\udf21\ufe0f"
+    "icon": "🌡️"
   },
   {
     "slug": "tip-calculator",
@@ -73,7 +73,7 @@
     ],
     "priority": 5,
     "status": "live",
-    "icon": "\ud83c\udf7d\ufe0f"
+    "icon": "🍽️"
   },
   {
     "slug": "days-between-dates",
@@ -88,7 +88,7 @@
     ],
     "priority": 6,
     "status": "live",
-    "icon": "\ud83d\udcc5"
+    "icon": "📅"
   },
   {
     "slug": "word-counter",
@@ -103,7 +103,7 @@
     ],
     "priority": 7,
     "status": "live",
-    "icon": "\ud83d\udcdd"
+    "icon": "📝"
   },
   {
     "slug": "random-number-generator",
@@ -118,7 +118,7 @@
     ],
     "priority": 8,
     "status": "live",
-    "icon": "\ud83c\udfb2"
+    "icon": "🎲"
   },
   {
     "slug": "mortgage-calculator",
@@ -134,7 +134,7 @@
     ],
     "priority": 9,
     "status": "live",
-    "icon": "\ud83c\udfe0"
+    "icon": "🏠"
   },
   {
     "slug": "discount-calculator",
@@ -150,7 +150,7 @@
     ],
     "priority": 10,
     "status": "live",
-    "icon": "\ud83c\udff7\ufe0f"
+    "icon": "🏷️"
   },
   {
     "slug": "compound-interest-calculator",
@@ -165,7 +165,7 @@
     ],
     "priority": 11,
     "status": "live",
-    "icon": "\ud83d\udcc8"
+    "icon": "📈"
   },
   {
     "slug": "case-converter",
@@ -181,7 +181,7 @@
     ],
     "priority": 12,
     "status": "live",
-    "icon": "\ud83d\udd24"
+    "icon": "🔤"
   },
   {
     "slug": "coin-flip",
@@ -197,7 +197,7 @@
     ],
     "priority": 13,
     "status": "live",
-    "icon": "\ud83e\ude99"
+    "icon": "🪙"
   },
   {
     "slug": "password-generator",
@@ -212,7 +212,7 @@
     ],
     "priority": 14,
     "status": "live",
-    "icon": "\ud83d\udd10"
+    "icon": "🔐"
   },
   {
     "slug": "countdown-timer",
@@ -227,7 +227,7 @@
     ],
     "priority": 15,
     "status": "live",
-    "icon": "\u23f3"
+    "icon": "⏳"
   },
   {
     "slug": "salary-to-hourly",
@@ -243,7 +243,7 @@
     ],
     "priority": 16,
     "status": "live",
-    "icon": "\ud83d\udcb0"
+    "icon": "💰"
   },
   {
     "slug": "qr-code-generator",
@@ -258,7 +258,7 @@
     ],
     "priority": 17,
     "status": "live",
-    "icon": "\ud83d\udcf1"
+    "icon": "📱"
   },
   {
     "slug": "color-picker",
@@ -275,7 +275,7 @@
     ],
     "priority": 18,
     "status": "live",
-    "icon": "\ud83c\udfa8"
+    "icon": "🎨"
   },
   {
     "slug": "character-count",
@@ -290,7 +290,7 @@
     ],
     "priority": 19,
     "status": "live",
-    "icon": "\u270f\ufe0f"
+    "icon": "✏️"
   },
   {
     "slug": "weight-converter",
@@ -307,7 +307,7 @@
     ],
     "priority": 20,
     "status": "live",
-    "icon": "\u2696\ufe0f"
+    "icon": "⚖️"
   },
   {
     "slug": "loan-payoff-calculator",
@@ -323,7 +323,7 @@
     ],
     "priority": 21,
     "status": "live",
-    "icon": "\ud83c\udfe6"
+    "icon": "🏦"
   },
   {
     "slug": "credit-card-payoff-calculator",
@@ -339,7 +339,7 @@
     ],
     "priority": 22,
     "status": "live",
-    "icon": "\ud83d\udcb3"
+    "icon": "💳"
   },
   {
     "slug": "vat-calculator",
@@ -355,7 +355,7 @@
     ],
     "priority": 23,
     "status": "live",
-    "icon": "\ud83e\uddfe"
+    "icon": "🧾"
   },
   {
     "slug": "savings-goal-calculator",
@@ -371,7 +371,7 @@
     ],
     "priority": 24,
     "status": "live",
-    "icon": "\ud83c\udfaf"
+    "icon": "🎯"
   },
   {
     "slug": "car-loan-calculator",
@@ -387,7 +387,7 @@
     ],
     "priority": 25,
     "status": "live",
-    "icon": "\ud83d\ude97"
+    "icon": "🚗"
   },
   {
     "slug": "retirement-savings-calculator",
@@ -403,7 +403,7 @@
     ],
     "priority": 26,
     "status": "live",
-    "icon": "\ud83c\udfd6\ufe0f"
+    "icon": "🏖️"
   },
   {
     "slug": "take-home-pay-calculator",
@@ -419,7 +419,7 @@
     ],
     "priority": 27,
     "status": "live",
-    "icon": "\ud83d\udcb5"
+    "icon": "💵"
   },
   {
     "slug": "freelance-rate-calculator",
@@ -435,7 +435,7 @@
     ],
     "priority": 28,
     "status": "live",
-    "icon": "\ud83d\udcbc"
+    "icon": "💼"
   },
   {
     "slug": "break-even-calculator",
@@ -451,7 +451,7 @@
     ],
     "priority": 29,
     "status": "live",
-    "icon": "\ud83d\udcc9"
+    "icon": "📉"
   },
   {
     "slug": "tdee-calculator",
@@ -467,7 +467,7 @@
     ],
     "priority": 30,
     "status": "live",
-    "icon": "\ud83d\udd25"
+    "icon": "🔥"
   },
   {
     "slug": "calorie-deficit-calculator",
@@ -483,7 +483,7 @@
     ],
     "priority": 31,
     "status": "live",
-    "icon": "\ud83e\udd57"
+    "icon": "🥗"
   },
   {
     "slug": "macro-calculator",
@@ -500,7 +500,7 @@
     ],
     "priority": 32,
     "status": "live",
-    "icon": "\ud83c\udf57"
+    "icon": "🍗"
   },
   {
     "slug": "running-pace-calculator",
@@ -517,7 +517,7 @@
     ],
     "priority": 33,
     "status": "live",
-    "icon": "\ud83c\udfc3"
+    "icon": "🏃"
   },
   {
     "slug": "sleep-cycle-calculator",
@@ -533,7 +533,7 @@
     ],
     "priority": 34,
     "status": "live",
-    "icon": "\ud83d\ude34"
+    "icon": "😴"
   },
   {
     "slug": "one-rep-max-calculator",
@@ -549,7 +549,7 @@
     ],
     "priority": 35,
     "status": "live",
-    "icon": "\ud83c\udfcb\ufe0f"
+    "icon": "🏋️"
   },
   {
     "slug": "water-intake-calculator",
@@ -564,7 +564,7 @@
     ],
     "priority": 36,
     "status": "live",
-    "icon": "\ud83d\udca7"
+    "icon": "💧"
   },
   {
     "slug": "heart-rate-zone-calculator",
@@ -580,7 +580,7 @@
     ],
     "priority": 37,
     "status": "live",
-    "icon": "\u2764\ufe0f"
+    "icon": "❤️"
   },
   {
     "slug": "json-formatter",
@@ -596,7 +596,7 @@
     ],
     "priority": 38,
     "status": "live",
-    "icon": "\ud83d\udccb"
+    "icon": "📋"
   },
   {
     "slug": "base64-encoder-decoder",
@@ -612,7 +612,7 @@
     ],
     "priority": 39,
     "status": "live",
-    "icon": "\ud83d\udd01"
+    "icon": "🔁"
   },
   {
     "slug": "url-encoder-decoder",
@@ -628,7 +628,7 @@
     ],
     "priority": 40,
     "status": "live",
-    "icon": "\ud83d\udd17"
+    "icon": "🔗"
   },
   {
     "slug": "uuid-generator",
@@ -644,7 +644,7 @@
     ],
     "priority": 41,
     "status": "live",
-    "icon": "\ud83c\udd94"
+    "icon": "🆔"
   },
   {
     "slug": "hash-generator",
@@ -661,7 +661,7 @@
     ],
     "priority": 42,
     "status": "live",
-    "icon": "#\ufe0f\u20e3"
+    "icon": "#️⃣"
   },
   {
     "slug": "lorem-ipsum-generator",
@@ -676,7 +676,7 @@
     ],
     "priority": 43,
     "status": "live",
-    "icon": "\ud83d\udcc4"
+    "icon": "📄"
   },
   {
     "slug": "slug-generator",
@@ -692,7 +692,7 @@
     ],
     "priority": 44,
     "status": "live",
-    "icon": "\ud83d\udc0c"
+    "icon": "🐌"
   },
   {
     "slug": "length-converter",
@@ -709,7 +709,7 @@
     ],
     "priority": 45,
     "status": "live",
-    "icon": "\ud83d\udccf"
+    "icon": "📏"
   },
   {
     "slug": "volume-converter",
@@ -725,7 +725,7 @@
     ],
     "priority": 46,
     "status": "live",
-    "icon": "\ud83e\uddea"
+    "icon": "🧪"
   },
   {
     "slug": "speed-converter",
@@ -741,7 +741,7 @@
     ],
     "priority": 47,
     "status": "live",
-    "icon": "\ud83d\udca8"
+    "icon": "💨"
   },
   {
     "slug": "data-storage-converter",
@@ -758,7 +758,7 @@
     ],
     "priority": 48,
     "status": "live",
-    "icon": "\ud83d\udcbe"
+    "icon": "💾"
   },
   {
     "slug": "unix-timestamp-converter",
@@ -774,7 +774,7 @@
     ],
     "priority": 49,
     "status": "live",
-    "icon": "\ud83d\udd50"
+    "icon": "🕐"
   },
   {
     "slug": "fraction-calculator",
@@ -790,7 +790,7 @@
     ],
     "priority": 50,
     "status": "live",
-    "icon": "\u00bd"
+    "icon": "½"
   },
   {
     "slug": "statistics-calculator",
@@ -807,7 +807,7 @@
     ],
     "priority": 51,
     "status": "live",
-    "icon": "\ud83d\udcc9"
+    "icon": "📉"
   },
   {
     "slug": "number-base-converter",
@@ -823,7 +823,7 @@
     ],
     "priority": 52,
     "status": "live",
-    "icon": "\ud83d\udd22"
+    "icon": "🔢"
   },
   {
     "slug": "roman-numeral-converter",
@@ -838,7 +838,7 @@
     ],
     "priority": 53,
     "status": "live",
-    "icon": "\ud83c\udfdb\ufe0f"
+    "icon": "🏛️"
   },
   {
     "slug": "area-converter",
@@ -854,7 +854,7 @@
     ],
     "priority": 54,
     "status": "live",
-    "icon": "\ud83d\uddfa\ufe0f"
+    "icon": "🗺️"
   },
   {
     "slug": "pressure-converter",
@@ -872,7 +872,7 @@
     ],
     "priority": 55,
     "status": "live",
-    "icon": "\ud83c\udf21\ufe0f"
+    "icon": "🌡️"
   },
   {
     "slug": "energy-converter",
@@ -889,7 +889,7 @@
     ],
     "priority": 56,
     "status": "live",
-    "icon": "\u26a1"
+    "icon": "⚡"
   },
   {
     "slug": "fuel-efficiency-converter",
@@ -906,7 +906,7 @@
     ],
     "priority": 57,
     "status": "live",
-    "icon": "\u26fd"
+    "icon": "⛽"
   },
   {
     "slug": "gcd-lcm-calculator",
@@ -922,12 +922,12 @@
     ],
     "priority": 58,
     "status": "live",
-    "icon": "\ud83d\udd22"
+    "icon": "🔢"
   },
   {
     "slug": "quadratic-equation-solver",
     "title": "Quadratic Equation Solver",
-    "description": "Solve ax\u00b2 + bx + c = 0. Shows real and complex roots, discriminant, vertex, and parabola properties.",
+    "description": "Solve ax² + bx + c = 0. Shows real and complex roots, discriminant, vertex, and parabola properties.",
     "category": "Math",
     "tags": [
       "quadratic",
@@ -939,12 +939,12 @@
     ],
     "priority": 59,
     "status": "live",
-    "icon": "\ud83d\udcd0"
+    "icon": "📐"
   },
   {
     "slug": "pythagorean-calculator",
     "title": "Pythagorean Theorem Calculator",
-    "description": "Find any side of a right triangle using a\u00b2 + b\u00b2 = c\u00b2. Shows angles, area, and perimeter.",
+    "description": "Find any side of a right triangle using a² + b² = c². Shows angles, area, and perimeter.",
     "category": "Math",
     "tags": [
       "pythagorean theorem",
@@ -955,7 +955,7 @@
     ],
     "priority": 60,
     "status": "live",
-    "icon": "\ud83d\udcd0"
+    "icon": "📐"
   },
   {
     "slug": "prime-checker",
@@ -970,12 +970,12 @@
     ],
     "priority": 61,
     "status": "live",
-    "icon": "\ud83d\udd22"
+    "icon": "🔢"
   },
   {
     "slug": "scientific-calculator",
     "title": "Scientific Calculator",
-    "description": "Full scientific calculator with trig, log, powers, roots, factorial, \u03c0, e, and calculation history.",
+    "description": "Full scientific calculator with trig, log, powers, roots, factorial, π, e, and calculation history.",
     "category": "Math",
     "tags": [
       "scientific calculator",
@@ -986,7 +986,7 @@
     ],
     "priority": 62,
     "status": "live",
-    "icon": "\ud83e\uddee"
+    "icon": "🧮"
   },
   {
     "slug": "date-calculator",
@@ -1002,7 +1002,7 @@
     ],
     "priority": 63,
     "status": "live",
-    "icon": "\ud83d\udcc5"
+    "icon": "📅"
   },
   {
     "slug": "world-clock",
@@ -1017,7 +1017,7 @@
     ],
     "priority": 64,
     "status": "live",
-    "icon": "\ud83c\udf0d"
+    "icon": "🌍"
   },
   {
     "slug": "timezone-converter",
@@ -1033,7 +1033,7 @@
     ],
     "priority": 65,
     "status": "live",
-    "icon": "\ud83d\udd50"
+    "icon": "🕐"
   },
   {
     "slug": "workday-calculator",
@@ -1048,7 +1048,7 @@
     ],
     "priority": 66,
     "status": "live",
-    "icon": "\ud83d\udcbc"
+    "icon": "💼"
   },
   {
     "slug": "markdown-preview",
@@ -1063,7 +1063,7 @@
     ],
     "priority": 67,
     "status": "live",
-    "icon": "\ud83d\udcdd"
+    "icon": "📝"
   },
   {
     "slug": "regex-tester",
@@ -1079,12 +1079,12 @@
     ],
     "priority": 68,
     "status": "live",
-    "icon": "\ud83d\udd0d"
+    "icon": "🔍"
   },
   {
     "slug": "binary-text-converter",
     "title": "Binary to Text Converter",
-    "description": "Convert text to binary, hex, octal, or decimal \u2014 and back. Supports ASCII and UTF-8 encoding.",
+    "description": "Convert text to binary, hex, octal, or decimal — and back. Supports ASCII and UTF-8 encoding.",
     "category": "Developer",
     "tags": [
       "binary to text",
@@ -1095,7 +1095,7 @@
     ],
     "priority": 69,
     "status": "live",
-    "icon": "\ud83d\udcbb"
+    "icon": "💻"
   },
   {
     "slug": "home-affordability-calculator",
@@ -1110,7 +1110,7 @@
     ],
     "priority": 70,
     "status": "live",
-    "icon": "\ud83c\udfe0"
+    "icon": "🏠"
   },
   {
     "slug": "rent-vs-buy-calculator",
@@ -1125,7 +1125,7 @@
     ],
     "priority": 71,
     "status": "live",
-    "icon": "\ud83c\udfe1"
+    "icon": "🏡"
   },
   {
     "slug": "refinance-calculator",
@@ -1140,7 +1140,7 @@
     ],
     "priority": 72,
     "status": "live",
-    "icon": "\ud83d\udd04"
+    "icon": "🔄"
   },
   {
     "slug": "home-equity-calculator",
@@ -1155,7 +1155,7 @@
     ],
     "priority": 73,
     "status": "live",
-    "icon": "\ud83d\udcca"
+    "icon": "📊"
   },
   {
     "slug": "closing-cost-calculator",
@@ -1170,7 +1170,7 @@
     ],
     "priority": 74,
     "status": "live",
-    "icon": "\ud83d\udccb"
+    "icon": "📋"
   },
   {
     "slug": "down-payment-calculator",
@@ -1185,7 +1185,7 @@
     ],
     "priority": 75,
     "status": "live",
-    "icon": "\ud83d\udcb0"
+    "icon": "💰"
   },
   {
     "slug": "property-tax-calculator",
@@ -1200,7 +1200,7 @@
     ],
     "priority": 76,
     "status": "live",
-    "icon": "\ud83c\udfdb\ufe0f"
+    "icon": "🏛️"
   },
   {
     "slug": "rental-yield-calculator",
@@ -1216,7 +1216,7 @@
     ],
     "priority": 77,
     "status": "live",
-    "icon": "\ud83d\udcc8"
+    "icon": "📈"
   },
   {
     "slug": "square-footage-calculator",
@@ -1231,7 +1231,7 @@
     ],
     "priority": 78,
     "status": "live",
-    "icon": "\ud83d\udcd0"
+    "icon": "📐"
   },
   {
     "slug": "mortgage-payoff-calculator",
@@ -1246,7 +1246,7 @@
     ],
     "priority": 79,
     "status": "live",
-    "icon": "\ud83c\udfe6"
+    "icon": "🏦"
   },
   {
     "slug": "meta-tag-generator",
@@ -1262,7 +1262,7 @@
     ],
     "priority": 80,
     "status": "live",
-    "icon": "\ud83c\udff7\ufe0f"
+    "icon": "🏷️"
   },
   {
     "slug": "utm-builder",
@@ -1278,7 +1278,7 @@
     ],
     "priority": 81,
     "status": "live",
-    "icon": "\ud83d\udd17"
+    "icon": "🔗"
   },
   {
     "slug": "reading-time-calculator",
@@ -1294,7 +1294,7 @@
     ],
     "priority": 82,
     "status": "live",
-    "icon": "\u23f1\ufe0f"
+    "icon": "⏱️"
   },
   {
     "slug": "word-frequency-counter",
@@ -1310,12 +1310,12 @@
     ],
     "priority": 83,
     "status": "live",
-    "icon": "\ud83d\udcca"
+    "icon": "📊"
   },
   {
     "slug": "keyword-density-checker",
     "title": "Keyword Density Checker",
-    "description": "Analyze keyword density in your content. Check how often specific keywords appear and whether you're in the optimal 1\u20132% SEO range.",
+    "description": "Analyze keyword density in your content. Check how often specific keywords appear and whether you're in the optimal 1–2% SEO range.",
     "category": "SEO & Marketing",
     "tags": [
       "keyword density",
@@ -1326,7 +1326,7 @@
     ],
     "priority": 84,
     "status": "live",
-    "icon": "\ud83d\udd0d"
+    "icon": "🔍"
   },
   {
     "slug": "robots-txt-generator",
@@ -1342,7 +1342,7 @@
     ],
     "priority": 85,
     "status": "live",
-    "icon": "\ud83e\udd16"
+    "icon": "🤖"
   },
   {
     "slug": "sitemap-generator",
@@ -1358,7 +1358,7 @@
     ],
     "priority": 86,
     "status": "live",
-    "icon": "\ud83d\uddfa\ufe0f"
+    "icon": "🗺️"
   },
   {
     "slug": "serp-preview",
@@ -1374,7 +1374,7 @@
     ],
     "priority": 87,
     "status": "live",
-    "icon": "\ud83d\udd0e"
+    "icon": "🔎"
   },
   {
     "slug": "open-graph-preview",
@@ -1390,7 +1390,7 @@
     ],
     "priority": 88,
     "status": "live",
-    "icon": "\ud83d\udcf1"
+    "icon": "📱"
   },
   {
     "slug": "schema-markup-generator",
@@ -1406,7 +1406,7 @@
     ],
     "priority": 89,
     "status": "live",
-    "icon": "\ud83d\udccb"
+    "icon": "📋"
   },
   {
     "slug": "color-converter",
@@ -1422,7 +1422,7 @@
     ],
     "priority": 90,
     "status": "live",
-    "icon": "\ud83c\udfa8"
+    "icon": "🎨"
   },
   {
     "slug": "color-palette-generator",
@@ -1438,7 +1438,7 @@
     ],
     "priority": 91,
     "status": "live",
-    "icon": "\ud83d\udd8c\ufe0f"
+    "icon": "🖌️"
   },
   {
     "slug": "contrast-checker",
@@ -1454,7 +1454,7 @@
     ],
     "priority": 92,
     "status": "live",
-    "icon": "\u267f"
+    "icon": "♿"
   },
   {
     "slug": "gradient-generator",
@@ -1470,7 +1470,7 @@
     ],
     "priority": 93,
     "status": "live",
-    "icon": "\ud83c\udf08"
+    "icon": "🌈"
   },
   {
     "slug": "image-color-picker",
@@ -1486,7 +1486,7 @@
     ],
     "priority": 94,
     "status": "live",
-    "icon": "\ud83d\udc89"
+    "icon": "💉"
   },
   {
     "slug": "box-shadow-generator",
@@ -1502,7 +1502,7 @@
     ],
     "priority": 95,
     "status": "live",
-    "icon": "\ud83d\udd32"
+    "icon": "🔲"
   },
   {
     "slug": "border-radius-generator",
@@ -1518,7 +1518,7 @@
     ],
     "priority": 96,
     "status": "live",
-    "icon": "\u2b1c"
+    "icon": "⬜"
   },
   {
     "slug": "css-triangle-generator",
@@ -1534,7 +1534,7 @@
     ],
     "priority": 97,
     "status": "live",
-    "icon": "\ud83d\udd3a"
+    "icon": "🔺"
   },
   {
     "slug": "typography-scale-generator",
@@ -1550,7 +1550,7 @@
     ],
     "priority": 98,
     "status": "live",
-    "icon": "\ud83d\udd24"
+    "icon": "🔤"
   },
   {
     "slug": "favicon-generator",
@@ -1566,7 +1566,7 @@
     ],
     "priority": 99,
     "status": "live",
-    "icon": "\u2b50"
+    "icon": "⭐"
   },
   {
     "slug": "aspect-ratio-calculator",
@@ -1582,7 +1582,7 @@
     ],
     "priority": 100,
     "status": "live",
-    "icon": "\ud83d\udcd0"
+    "icon": "📐"
   },
   {
     "slug": "screen-resolution-tester",
@@ -1598,7 +1598,7 @@
     ],
     "priority": 101,
     "status": "live",
-    "icon": "\ud83d\udda5\ufe0f"
+    "icon": "🖥️"
   },
   {
     "slug": "color-blindness-simulator",
@@ -1614,7 +1614,7 @@
     ],
     "priority": 102,
     "status": "live",
-    "icon": "\ud83d\udc41\ufe0f"
+    "icon": "👁️"
   },
   {
     "slug": "spacing-scale-generator",
@@ -1630,12 +1630,12 @@
     ],
     "priority": 103,
     "status": "live",
-    "icon": "\ud83d\udccf"
+    "icon": "📏"
   },
   {
     "slug": "image-resizer",
     "title": "Image Resizer",
-    "description": "Resize images online for free. Crop, scale, and convert images to JPG, PNG, or WebP format \u2014 all processed locally in your browser, no upload needed.",
+    "description": "Resize images online for free. Crop, scale, and convert images to JPG, PNG, or WebP format — all processed locally in your browser, no upload needed.",
     "category": "Color & Design",
     "tags": [
       "image resizer",
@@ -1646,7 +1646,7 @@
     ],
     "priority": 104,
     "status": "live",
-    "icon": "\ud83d\udd04"
+    "icon": "🔄"
   },
   {
     "slug": "recipe-converter",
@@ -1662,7 +1662,7 @@
     ],
     "priority": 105,
     "status": "live",
-    "icon": "\ud83d\udcd6"
+    "icon": "📖"
   },
   {
     "slug": "cooking-measurement-converter",
@@ -1678,7 +1678,7 @@
     ],
     "priority": 106,
     "status": "live",
-    "icon": "\ud83e\udd44"
+    "icon": "🥄"
   },
   {
     "slug": "calorie-calculator",
@@ -1694,7 +1694,7 @@
     ],
     "priority": 107,
     "status": "live",
-    "icon": "\ud83d\udd25"
+    "icon": "🔥"
   },
   {
     "slug": "oven-temperature-converter",
@@ -1710,7 +1710,7 @@
     ],
     "priority": 108,
     "status": "live",
-    "icon": "\ud83c\udf21\ufe0f"
+    "icon": "🌡️"
   },
   {
     "slug": "baking-substitution-guide",
@@ -1726,7 +1726,7 @@
     ],
     "priority": 109,
     "status": "live",
-    "icon": "\ud83d\udd01"
+    "icon": "🔁"
   },
   {
     "slug": "alcohol-unit-calculator",
@@ -1742,7 +1742,7 @@
     ],
     "priority": 110,
     "status": "live",
-    "icon": "\ud83c\udf7a"
+    "icon": "🍺"
   },
   {
     "slug": "coffee-ratio-calculator",
@@ -1758,7 +1758,7 @@
     ],
     "priority": 111,
     "status": "live",
-    "icon": "\u2615"
+    "icon": "☕"
   },
   {
     "slug": "meat-cooking-temperature-guide",
@@ -1774,7 +1774,7 @@
     ],
     "priority": 112,
     "status": "live",
-    "icon": "\ud83e\udd69"
+    "icon": "🥩"
   },
   {
     "slug": "nutrition-label-calculator",
@@ -1790,6 +1790,165 @@
     ],
     "priority": 113,
     "status": "live",
-    "icon": "\ud83c\udff7\ufe0f"
+    "icon": "🏷️"
+  },
+  {
+    "slug": "currency-converter",
+    "title": "Currency Converter",
+    "description": "Convert between 30+ major world currencies using approximate exchange rates. Quick reference for travel, shopping, and international transactions.",
+    "category": "Travel & Geography",
+    "tags": [
+      "currency",
+      "exchange rate",
+      "money",
+      "travel",
+      "forex"
+    ],
+    "priority": 114,
+    "status": "live",
+    "icon": "💱"
+  },
+  {
+    "slug": "flight-time-calculator",
+    "title": "Flight Time Calculator",
+    "description": "Estimate flight time between major world cities. Calculate approximate travel time based on great-circle distance and aircraft cruising speed.",
+    "category": "Travel & Geography",
+    "tags": [
+      "flight",
+      "travel time",
+      "distance",
+      "aviation",
+      "travel"
+    ],
+    "priority": 115,
+    "status": "live",
+    "icon": "✈️"
+  },
+  {
+    "slug": "distance-between-cities",
+    "title": "Distance Between Cities",
+    "description": "Calculate the distance between any two major world cities in kilometers and miles. Shows great-circle and estimated driving distance.",
+    "category": "Travel & Geography",
+    "tags": [
+      "distance",
+      "cities",
+      "travel",
+      "geography",
+      "kilometers",
+      "miles"
+    ],
+    "priority": 116,
+    "status": "live",
+    "icon": "🗺️"
+  },
+  {
+    "slug": "speed-limit-converter",
+    "title": "Speed Limit Converter",
+    "description": "Convert between mph and km/h for driving speeds. See speed limits for major countries. Essential for international driving.",
+    "category": "Travel & Geography",
+    "tags": [
+      "speed",
+      "mph",
+      "km/h",
+      "driving",
+      "travel"
+    ],
+    "priority": 117,
+    "status": "live",
+    "icon": "🚗"
+  },
+  {
+    "slug": "international-plug-adapter-guide",
+    "title": "International Plug Adapter Guide",
+    "description": "Find which plug adapter you need for any country. See plug types A–N, voltage, and frequency for 50+ countries.",
+    "category": "Travel & Geography",
+    "tags": [
+      "plug adapter",
+      "voltage",
+      "travel",
+      "electricity",
+      "power"
+    ],
+    "priority": 118,
+    "status": "live",
+    "icon": "🔌"
+  },
+  {
+    "slug": "travel-budget-calculator",
+    "title": "Travel Budget Calculator",
+    "description": "Plan your travel budget by destination. Calculate daily costs for accommodation, food, transport, and activities for 12 regions worldwide.",
+    "category": "Travel & Geography",
+    "tags": [
+      "travel budget",
+      "travel cost",
+      "backpacking",
+      "trip planning"
+    ],
+    "priority": 119,
+    "status": "live",
+    "icon": "💰"
+  },
+  {
+    "slug": "country-info",
+    "title": "Country Information",
+    "description": "Quick reference for any country: capital, population, currency, calling code, languages, timezone, and more for 65+ countries.",
+    "category": "Travel & Geography",
+    "tags": [
+      "country",
+      "capital",
+      "currency",
+      "calling code",
+      "geography"
+    ],
+    "priority": 120,
+    "status": "live",
+    "icon": "🌍"
+  },
+  {
+    "slug": "packing-list-generator",
+    "title": "Packing List Generator",
+    "description": "Generate a customized travel packing list based on trip type, duration, climate, and activities. Never forget essential travel items again.",
+    "category": "Travel & Geography",
+    "tags": [
+      "packing list",
+      "travel",
+      "luggage",
+      "trip planning"
+    ],
+    "priority": 121,
+    "status": "live",
+    "icon": "🧳"
+  },
+  {
+    "slug": "metric-us-conversion-cheat-sheet",
+    "title": "Metric & US Conversion Cheat Sheet",
+    "description": "Quick reference for converting between metric and US/imperial measurements. Temperature, distance, weight, volume, and speed conversions for travelers.",
+    "category": "Travel & Geography",
+    "tags": [
+      "metric",
+      "imperial",
+      "conversion",
+      "travel",
+      "units"
+    ],
+    "priority": 122,
+    "status": "live",
+    "icon": "📏"
+  },
+  {
+    "slug": "luggage-weight-calculator",
+    "title": "Luggage Weight Calculator",
+    "description": "Check if your luggage meets airline weight limits. Convert kg to lbs, compare against major airline allowances, and calculate overage implications.",
+    "category": "Travel & Geography",
+    "tags": [
+      "luggage",
+      "baggage",
+      "airline",
+      "weight",
+      "travel"
+    ],
+    "priority": 123,
+    "status": "live",
+    "icon": "⚖️"
   }
 ]

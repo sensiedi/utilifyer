@@ -1,0 +1,228 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Luggage Weight Calculator"
+  description="Check if your luggage meets airline weight limits. Convert between kg and lbs, compare against major airline allowances, and calculate overage fees."
+  slug="luggage-weight-calculator"
+  category="Travel & Geography"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Luggage Weight Calculator</h1>
+  <p class="text-gray-500 mb-8">Check if your bags meet airline weight limits and estimate overage fees.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <!-- Weight converter -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Bag Weight (kg)</label>
+        <input id="lw-kg" type="number" value="22" min="0" step="0.1" max="50" class="input-field font-mono text-xl" />
+      </div>
+      <div>
+        <label class="label">Bag Weight (lbs)</label>
+        <input id="lw-lbs" type="number" value="48.5" min="0" step="0.1" max="110" class="input-field font-mono text-xl" />
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div>
+        <label class="label">Bag Type</label>
+        <select id="lw-type" class="input-field">
+          <option value="carry_on">Carry-on</option>
+          <option value="checked" selected>Checked bag</option>
+          <option value="personal">Personal item</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">Airline</label>
+        <select id="lw-airline" class="input-field"></select>
+      </div>
+      <div>
+        <label class="label">Travel Class</label>
+        <select id="lw-class" class="input-field">
+          <option value="economy" selected>Economy</option>
+          <option value="business">Business / Premium</option>
+          <option value="first">First Class</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Result -->
+    <div id="lw-result" class="hidden space-y-3">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div id="lw-status-box" class="rounded-xl p-3 text-center border col-span-2 sm:col-span-1">
+          <div class="text-xs mb-0.5" id="lw-status-label">Status</div>
+          <div id="lw-status" class="text-xl font-bold font-mono"></div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+          <div class="text-xs text-gray-400 mb-0.5">Limit (kg)</div>
+          <div id="lw-limit-kg" class="text-2xl font-bold font-mono text-gray-900">—</div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+          <div class="text-xs text-gray-400 mb-0.5">Limit (lbs)</div>
+          <div id="lw-limit-lbs" class="text-2xl font-bold font-mono text-gray-900">—</div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-3 text-center">
+          <div class="text-xs text-gray-400 mb-0.5">Over/Under</div>
+          <div id="lw-diff" class="text-2xl font-bold font-mono text-gray-900">—</div>
+        </div>
+      </div>
+      <div id="lw-note" class="text-sm bg-gray-50 border border-gray-100 rounded-xl p-3 text-gray-600"></div>
+    </div>
+
+    <!-- Airline reference table -->
+    <div>
+      <p class="label mb-2">Airline Baggage Allowance Reference</p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead><tr class="bg-gray-50 text-left">
+            <th class="px-3 py-2 font-medium text-gray-600">Airline</th>
+            <th class="px-3 py-2 font-medium text-gray-600">Carry-on</th>
+            <th class="px-3 py-2 font-medium text-gray-600">Checked (Economy)</th>
+            <th class="px-3 py-2 font-medium text-gray-600">Overweight Fee</th>
+          </tr></thead>
+          <tbody class="divide-y divide-gray-100" id="lw-table"></tbody>
+        </table>
+        <p class="text-xs text-gray-400 mt-1 px-1">Limits vary by route and fare class. Always verify with the airline before flying.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What happens if my bag is overweight at the airport?", a: "Airlines charge overweight fees that can be significantly higher than pre-purchased allowances. US domestic overweight fees (23–32 kg / 51–70 lbs) typically run $100–200 per bag. Over 32 kg (70 lbs) is often rejected entirely or charged $200–400. At the gate, options are limited — you can redistribute weight between bags, discard items, or pay the fee. Weighing at home saves money." },
+        { q: "What is the standard international carry-on size?", a: "IATA recommends 55×35×25 cm (21.7×13.8×9.8 in) including handles and wheels, but airlines vary: US carriers typically allow 22×14×9 in; European low-cost carriers may restrict to 40×20×25 cm. Weight limits: US carriers often don't enforce carry-on weight; European and Asian carriers commonly limit to 7–10 kg. Always check your specific airline's current policy." },
+        { q: "Can I bring liquids in my checked baggage?", a: "Yes — the 100ml/3.4oz restriction applies only to carry-on baggage. In checked luggage, you can bring larger liquid containers. Exceptions: flammable liquids (paint, lighter fluid), gases, and certain chemicals are prohibited in both carry-on and checked bags regardless of size. Lithium batteries cannot go in checked luggage — laptops and power banks must be in carry-on." },
+        { q: "What are linear inches for luggage sizing?", a: "Linear inches = length + width + height of the bag. Most airlines allow checked bags up to 62 linear inches (157 cm). This lets you choose your own dimensions — a square 21×21×20 in bag = 62 in. Oversized bags (over 62 in) typically incur fees of $150–200 on top of checked bag fees. Sports equipment like golf bags, skis, and bikes are often measured differently." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  interface AirlineData {
+    name: string;
+    carryOn: { economy: number; business: number; first: number };
+    checked: { economy: number; business: number; first: number };
+    fee: string;
+    note: string;
+  }
+
+  const AIRLINES: Record<string, AirlineData> = {
+    united:    { name: 'United Airlines', carryOn: { economy: 9999, business: 9999, first: 9999 }, checked: { economy: 23, business: 32, first: 32 }, fee: '$100–200', note: 'No weight limit on carry-on; 50 lbs (23 kg) checked economy' },
+    delta:     { name: 'Delta Air Lines', carryOn: { economy: 9999, business: 9999, first: 9999 }, checked: { economy: 23, business: 32, first: 32 }, fee: '$100–200', note: 'Standard US carrier policy' },
+    american:  { name: 'American Airlines', carryOn: { economy: 9999, business: 9999, first: 9999 }, checked: { economy: 23, business: 32, first: 32 }, fee: '$100–200', note: 'Basic Economy may have carry-on restrictions on some routes' },
+    southwest: { name: 'Southwest Airlines', carryOn: { economy: 9999, business: 9999, first: 9999 }, checked: { economy: 23, business: 23, first: 23 }, fee: 'Flat $75', note: '2 free checked bags included in all fares' },
+    british:   { name: 'British Airways', carryOn: { economy: 23, business: 23, first: 23 }, checked: { economy: 23, business: 32, first: 32 }, fee: '£65+', note: 'Euro Traveller includes 1 checked bag on long-haul' },
+    lufthansa: { name: 'Lufthansa', carryOn: { economy: 8, business: 13, first: 13 }, checked: { economy: 23, business: 32, first: 32 }, fee: '€70+', note: '8 kg carry-on limit enforced in Economy' },
+    airfrance: { name: 'Air France', carryOn: { economy: 12, business: 18, first: 18 }, checked: { economy: 23, business: 32, first: 40 }, fee: '€70+', note: '12 kg carry-on limit' },
+    emirates:  { name: 'Emirates', carryOn: { economy: 7, business: 15, first: 15 }, checked: { economy: 25, business: 40, first: 50 }, fee: 'AED 100+/kg', note: 'Generous allowances especially in premium classes' },
+    singaporeair: { name: 'Singapore Airlines', carryOn: { economy: 7, business: 15, first: 15 }, checked: { economy: 30, business: 40, first: 50 }, fee: '$150+/bag', note: 'Economy allows 30 kg checked' },
+    cathay:    { name: 'Cathay Pacific', carryOn: { economy: 7, business: 15, first: 15 }, checked: { economy: 23, business: 30, first: 40 }, fee: 'HKD 500+', note: '' },
+    ryanair:   { name: 'Ryanair', carryOn: { economy: 10, business: 10, first: 10 }, checked: { economy: 20, business: 20, first: 20 }, fee: '€11–45/kg', note: 'Very strict; only 10 kg carry-on; personal item free' },
+    easyjet:   { name: 'easyJet', carryOn: { economy: 15, business: 15, first: 15 }, checked: { economy: 23, business: 23, first: 23 }, fee: '£12–57/kg', note: '15 kg cabin bag with FLEXI fares; free for Plus members' },
+    aircanada: { name: 'Air Canada', carryOn: { economy: 10, business: 15, first: 15 }, checked: { economy: 23, business: 32, first: 32 }, fee: '$100–200 CAD', note: 'Carry-on limit enforced more strictly than US carriers' },
+    qantas:    { name: 'Qantas', carryOn: { economy: 7, business: 14, first: 14 }, checked: { economy: 23, business: 32, first: 40 }, fee: 'A$60+', note: '7 kg carry-on Economy' },
+    ana:       { name: 'ANA (All Nippon)', carryOn: { economy: 10, business: 15, first: 20 }, checked: { economy: 23, business: 32, first: 40 }, fee: '¥1,000+/kg', note: 'Economy international: 23 kg' },
+  };
+
+  const airlineSel = document.getElementById('lw-airline') as HTMLSelectElement;
+  airlineSel.innerHTML = Object.entries(AIRLINES).map(([k, v]) => `<option value="${k}">${v.name}</option>`).join('');
+  airlineSel.value = 'united';
+
+  // Render reference table
+  document.getElementById('lw-table')!.innerHTML = Object.values(AIRLINES).map(a =>
+    `<tr class="hover:bg-gray-50">
+      <td class="px-3 py-2 font-medium text-gray-800">${a.name}</td>
+      <td class="px-3 py-2 text-gray-600">${a.carryOn.economy === 9999 ? 'No limit' : a.carryOn.economy + ' kg'}</td>
+      <td class="px-3 py-2 font-mono text-gray-600">${a.checked.economy} kg / ${Math.round(a.checked.economy * 2.20462)} lbs</td>
+      <td class="px-3 py-2 text-gray-500 text-xs">${a.fee}</td>
+    </tr>`
+  ).join('');
+
+  let updating = false;
+  const kgEl = document.getElementById('lw-kg') as HTMLInputElement;
+  const lbsEl = document.getElementById('lw-lbs') as HTMLInputElement;
+
+  kgEl.addEventListener('input', () => {
+    if (updating) return;
+    updating = true;
+    const kg = parseFloat(kgEl.value);
+    if (!isNaN(kg)) lbsEl.value = (kg * 2.20462).toFixed(1);
+    updating = false;
+    check();
+  });
+
+  lbsEl.addEventListener('input', () => {
+    if (updating) return;
+    updating = true;
+    const lbs = parseFloat(lbsEl.value);
+    if (!isNaN(lbs)) kgEl.value = (lbs / 2.20462).toFixed(1);
+    updating = false;
+    check();
+  });
+
+  function check() {
+    const kg = parseFloat(kgEl.value);
+    const airlineKey = airlineSel.value;
+    const type = (document.getElementById('lw-type') as HTMLSelectElement).value;
+    const cls = (document.getElementById('lw-class') as HTMLSelectElement).value as 'economy'|'business'|'first';
+    const airline = AIRLINES[airlineKey];
+    if (!airline || isNaN(kg)) return;
+
+    let limitKg: number;
+    if (type === 'carry_on') limitKg = airline.carryOn[cls];
+    else if (type === 'checked') limitKg = airline.checked[cls];
+    else limitKg = 7; // personal item typically 5-7 kg
+
+    const limitLbs = limitKg * 2.20462;
+    const diff = kg - limitKg;
+    const over = diff > 0;
+
+    const statusBox = document.getElementById('lw-status-box')!;
+    if (limitKg === 9999) {
+      statusBox.className = 'rounded-xl p-3 text-center border col-span-2 sm:col-span-1 bg-green-50 border-green-200';
+      document.getElementById('lw-status-label')!.className = 'text-xs mb-0.5 text-green-500';
+      document.getElementById('lw-status')!.textContent = 'No Limit';
+      document.getElementById('lw-status')!.className = 'text-xl font-bold font-mono text-green-700';
+      document.getElementById('lw-limit-kg')!.textContent = 'None';
+      document.getElementById('lw-limit-lbs')!.textContent = 'None';
+      document.getElementById('lw-diff')!.textContent = '—';
+    } else if (over) {
+      statusBox.className = 'rounded-xl p-3 text-center border col-span-2 sm:col-span-1 bg-red-50 border-red-200';
+      document.getElementById('lw-status-label')!.className = 'text-xs mb-0.5 text-red-500';
+      document.getElementById('lw-status')!.textContent = 'Over Limit';
+      document.getElementById('lw-status')!.className = 'text-xl font-bold font-mono text-red-700';
+      document.getElementById('lw-limit-kg')!.textContent = limitKg + ' kg';
+      document.getElementById('lw-limit-lbs')!.textContent = limitLbs.toFixed(1) + ' lbs';
+      document.getElementById('lw-diff')!.textContent = '+' + diff.toFixed(1) + ' kg';
+    } else {
+      statusBox.className = 'rounded-xl p-3 text-center border col-span-2 sm:col-span-1 bg-green-50 border-green-200';
+      document.getElementById('lw-status-label')!.className = 'text-xs mb-0.5 text-green-500';
+      document.getElementById('lw-status')!.textContent = 'Within Limit';
+      document.getElementById('lw-status')!.className = 'text-xl font-bold font-mono text-green-700';
+      document.getElementById('lw-limit-kg')!.textContent = limitKg + ' kg';
+      document.getElementById('lw-limit-lbs')!.textContent = limitLbs.toFixed(1) + ' lbs';
+      document.getElementById('lw-diff')!.textContent = diff.toFixed(1) + ' kg';
+    }
+
+    let note = airline.note || '';
+    if (over && limitKg !== 9999) note = `⚠️ ${diff.toFixed(1)} kg over limit. Overweight fee: ${airline.fee}. ${note}`;
+    else if (!over && limitKg !== 9999) note = `✅ ${Math.abs(diff).toFixed(1)} kg under limit. ${note}`;
+    document.getElementById('lw-note')!.textContent = note;
+    document.getElementById('lw-result')!.classList.remove('hidden');
+  }
+
+  ['lw-type','lw-airline','lw-class'].forEach(id => document.getElementById(id)?.addEventListener('change', check));
+  check();
+</script>
