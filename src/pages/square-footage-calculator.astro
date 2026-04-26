@@ -1,0 +1,221 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Square Footage Calculator"
+  description="Calculate square footage of rooms, floors, and irregular shapes. Add multiple rooms, convert to/from square meters, and estimate flooring costs."
+  slug="square-footage-calculator"
+  category="Real Estate"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Square Footage Calculator</h1>
+  <p class="text-gray-500 mb-8">Calculate room area, total floor space, and material costs.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <!-- Shape selector -->
+    <div>
+      <label class="label">Room Shape</label>
+      <div class="flex flex-wrap gap-2" id="shape-btns">
+        {['Rectangle','Triangle','Circle','L-Shape'].map((s, i) => (
+          <button data-shape={s.toLowerCase().replace('-','')} class={`shape-btn px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${i===0 ? 'border-indigo-400 bg-indigo-50 text-indigo-700' : 'border-gray-200 text-gray-600 hover:border-indigo-300'}`}>{s}</button>
+        ))}
+      </div>
+    </div>
+
+    <!-- Rectangle -->
+    <div id="shape-rectangle" class="grid grid-cols-2 gap-4">
+      <div><label class="label">Length (ft)</label><input id="rect-l" type="number" value="12" class="input-field" /></div>
+      <div><label class="label">Width (ft)</label><input id="rect-w" type="number" value="10" class="input-field" /></div>
+    </div>
+
+    <!-- Triangle -->
+    <div id="shape-triangle" class="grid grid-cols-2 gap-4 hidden">
+      <div><label class="label">Base (ft)</label><input id="tri-b" type="number" value="10" class="input-field" /></div>
+      <div><label class="label">Height (ft)</label><input id="tri-h" type="number" value="8" class="input-field" /></div>
+    </div>
+
+    <!-- Circle -->
+    <div id="shape-circle" class="hidden">
+      <label class="label">Radius (ft)</label><input id="cir-r" type="number" value="6" class="input-field w-40" />
+    </div>
+
+    <!-- L-Shape -->
+    <div id="shape-lshape" class="grid grid-cols-2 gap-4 hidden">
+      <div><label class="label">Total Length A (ft)</label><input id="ls-a" type="number" value="20" class="input-field" /></div>
+      <div><label class="label">Total Width B (ft)</label><input id="ls-b" type="number" value="15" class="input-field" /></div>
+      <div><label class="label">Cutout Length C (ft)</label><input id="ls-c" type="number" value="8" class="input-field" /></div>
+      <div><label class="label">Cutout Width D (ft)</label><input id="ls-d" type="number" value="6" class="input-field" /></div>
+    </div>
+
+    <div class="flex gap-2">
+      <button id="add-room" class="btn-secondary text-sm">+ Add Room</button>
+      <button id="clear-rooms" class="btn-secondary text-sm">Clear All</button>
+    </div>
+
+    <!-- Room list -->
+    <div id="room-list" class="space-y-2"></div>
+
+    <!-- Results -->
+    <div id="sqft-results" class="hidden space-y-4">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="bg-indigo-600 text-white rounded-xl p-4 text-center">
+          <div class="text-xs text-indigo-200 mb-1">Total Square Feet</div>
+          <div id="total-sqft" class="text-2xl font-bold font-mono"></div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
+          <div class="text-xs text-gray-500 mb-1">Square Meters</div>
+          <div id="total-sqm" class="text-2xl font-bold text-gray-900 font-mono"></div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
+          <div class="text-xs text-gray-500 mb-1">Square Yards</div>
+          <div id="total-sqyd" class="text-xl font-bold text-gray-900 font-mono"></div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
+          <div class="text-xs text-gray-500 mb-1">Rooms Added</div>
+          <div id="room-count" class="text-2xl font-bold text-gray-900 font-mono"></div>
+        </div>
+      </div>
+
+      <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+        <p class="text-sm font-semibold text-gray-700 mb-3">Material Cost Estimate</p>
+        <div class="flex gap-3 mb-3">
+          <div class="flex-1">
+            <label class="label text-xs">Cost per sq ft ($)</label>
+            <input id="cost-per-sqft" type="number" value="3.50" step="0.25" class="input-field" />
+          </div>
+          <div class="flex-1">
+            <label class="label text-xs">Waste factor (%)</label>
+            <input id="waste-pct" type="number" value="10" step="5" class="input-field" />
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-3 text-sm">
+          <div class="bg-white border border-gray-100 rounded-xl p-3 text-center">
+            <div class="text-xs text-gray-400 mb-0.5">Material needed</div>
+            <div id="material-sqft" class="font-mono font-bold text-gray-900"></div>
+          </div>
+          <div class="bg-white border border-gray-100 rounded-xl p-3 text-center">
+            <div class="text-xs text-gray-400 mb-0.5">Estimated cost</div>
+            <div id="material-cost" class="font-mono font-bold text-indigo-700"></div>
+          </div>
+          <div class="bg-white border border-gray-100 rounded-xl p-3 text-center">
+            <div class="text-xs text-gray-400 mb-0.5">With 10% waste</div>
+            <div id="material-with-waste" class="font-mono font-bold text-gray-900"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How do you calculate square footage?", a: "For a rectangle: Length × Width = square feet. For a triangle: (Base × Height) ÷ 2. For a circle: π × radius². For irregular shapes, break them into rectangles and add the results." },
+        { q: "How do you convert square feet to square meters?", a: "Multiply square feet by 0.0929 to get square meters. Or divide by 10.764. For example, 1,200 sq ft × 0.0929 = 111.5 m². The reverse: multiply square meters by 10.764." },
+        { q: "How much extra flooring should I buy for waste?", a: "Add 10% for standard rooms with straight walls. Add 15% for diagonal cuts or herringbone patterns. Add 15–20% for rooms with many angles or irregular shapes. Always buy extra — matching dye lots later can be difficult." },
+        { q: "How is square footage measured for real estate listings?", a: "In the US, finished livable area is measured from interior walls, typically excluding garages, unfinished basements, and exterior walls. Methods vary by region and realtor — always verify listing claims with your own measurements or an appraiser." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  let currentShape = 'rectangle';
+  let rooms: { name: string; sqft: number }[] = [];
+
+  document.querySelectorAll('.shape-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentShape = (btn as HTMLElement).dataset.shape!;
+      document.querySelectorAll('.shape-btn').forEach(b => b.className = 'shape-btn px-4 py-2 rounded-lg border text-sm font-medium transition-colors border-gray-200 text-gray-600 hover:border-indigo-300');
+      btn.className = 'shape-btn px-4 py-2 rounded-lg border text-sm font-medium transition-colors border-indigo-400 bg-indigo-50 text-indigo-700';
+      ['rectangle','triangle','circle','lshape'].forEach(s => {
+        const el = document.getElementById('shape-' + s);
+        if (el) el.classList.toggle('hidden', s !== currentShape);
+      });
+    });
+  });
+
+  function getCurrentArea(): number {
+    switch (currentShape) {
+      case 'rectangle': {
+        const l = parseFloat((document.getElementById('rect-l') as HTMLInputElement).value) || 0;
+        const w = parseFloat((document.getElementById('rect-w') as HTMLInputElement).value) || 0;
+        return l * w;
+      }
+      case 'triangle': {
+        const b = parseFloat((document.getElementById('tri-b') as HTMLInputElement).value) || 0;
+        const h = parseFloat((document.getElementById('tri-h') as HTMLInputElement).value) || 0;
+        return 0.5 * b * h;
+      }
+      case 'circle': {
+        const r = parseFloat((document.getElementById('cir-r') as HTMLInputElement).value) || 0;
+        return Math.PI * r * r;
+      }
+      case 'lshape': {
+        const a = parseFloat((document.getElementById('ls-a') as HTMLInputElement).value) || 0;
+        const b = parseFloat((document.getElementById('ls-b') as HTMLInputElement).value) || 0;
+        const c = parseFloat((document.getElementById('ls-c') as HTMLInputElement).value) || 0;
+        const d = parseFloat((document.getElementById('ls-d') as HTMLInputElement).value) || 0;
+        return a * b - c * d;
+      }
+      default: return 0;
+    }
+  }
+
+  function updateResults() {
+    const total = rooms.reduce((s, r) => s + r.sqft, 0);
+    if (rooms.length === 0) { document.getElementById('sqft-results')!.classList.add('hidden'); return; }
+
+    document.getElementById('total-sqft')!.textContent = total.toFixed(1) + ' ft²';
+    document.getElementById('total-sqm')!.textContent = (total * 0.0929).toFixed(1) + ' m²';
+    document.getElementById('total-sqyd')!.textContent = (total / 9).toFixed(1) + ' yd²';
+    document.getElementById('room-count')!.textContent = rooms.length.toString();
+
+    const costPerSqft = parseFloat((document.getElementById('cost-per-sqft') as HTMLInputElement).value) || 0;
+    const wastePct = parseFloat((document.getElementById('waste-pct') as HTMLInputElement).value) / 100;
+    const withWaste = total * (1 + wastePct);
+    document.getElementById('material-sqft')!.textContent = total.toFixed(1) + ' ft²';
+    document.getElementById('material-cost')!.textContent = '$' + (total * costPerSqft).toFixed(2);
+    document.getElementById('material-with-waste')!.textContent = '$' + (withWaste * costPerSqft).toFixed(2);
+
+    document.getElementById('room-list')!.innerHTML = rooms.map((r, i) =>
+      `<div class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5">
+        <span class="text-sm text-gray-700 font-medium">${r.name}</span>
+        <div class="flex items-center gap-3">
+          <span class="font-mono text-sm text-gray-900">${r.sqft.toFixed(1)} ft²</span>
+          <button onclick="removeRoom(${i})" class="text-gray-300 hover:text-red-500 text-xs">✕</button>
+        </div>
+      </div>`
+    ).join('');
+
+    document.getElementById('sqft-results')!.classList.remove('hidden');
+  }
+
+  (window as any).removeRoom = function(i: number) {
+    rooms.splice(i, 1);
+    updateResults();
+  };
+
+  document.getElementById('add-room')?.addEventListener('click', () => {
+    const area = getCurrentArea();
+    if (area <= 0) return;
+    const name = `Room ${rooms.length + 1} (${currentShape})`;
+    rooms.push({ name, sqft: area });
+    updateResults();
+  });
+
+  document.getElementById('clear-rooms')?.addEventListener('click', () => {
+    rooms = [];
+    updateResults();
+  });
+
+  ['cost-per-sqft','waste-pct'].forEach(id => document.getElementById(id)?.addEventListener('input', updateResults));
+</script>

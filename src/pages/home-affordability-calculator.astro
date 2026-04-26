@@ -1,0 +1,170 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Home Affordability Calculator"
+  description="Find out how much house you can afford based on your income, down payment, debts, and interest rate. Uses the 28/36 rule."
+  slug="home-affordability-calculator"
+  category="Real Estate"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Home Affordability Calculator</h1>
+  <p class="text-gray-500 mb-8">Find out how much house you can afford based on your income and debts.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Annual Gross Income</label>
+        <div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+        <input id="income" type="number" value="80000" class="input-field pl-7" /></div>
+      </div>
+      <div>
+        <label class="label">Monthly Debt Payments</label>
+        <div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+        <input id="debts" type="number" value="500" placeholder="Car, student loans, credit cards…" class="input-field pl-7" /></div>
+      </div>
+      <div>
+        <label class="label">Down Payment</label>
+        <div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+        <input id="down" type="number" value="40000" class="input-field pl-7" /></div>
+      </div>
+      <div>
+        <label class="label">Interest Rate (%)</label>
+        <div class="relative">
+        <input id="rate" type="number" value="6.5" step="0.1" class="input-field pr-7" />
+        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">%</span></div>
+      </div>
+      <div>
+        <label class="label">Loan Term</label>
+        <select id="term" class="input-field">
+          <option value="30">30 years</option>
+          <option value="20">20 years</option>
+          <option value="15">15 years</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">Monthly Property Tax + Insurance</label>
+        <div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+        <input id="extras" type="number" value="300" placeholder="Estimate" class="input-field pl-7" /></div>
+      </div>
+    </div>
+
+    <div id="results" class="hidden space-y-4">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-indigo-600 text-white rounded-2xl p-5 text-center sm:col-span-1">
+          <div class="text-xs uppercase tracking-wide text-indigo-200 mb-1">Max Home Price</div>
+          <div id="max-price" class="text-3xl font-bold font-mono"></div>
+          <div class="text-xs text-indigo-300 mt-1">28% rule</div>
+        </div>
+        <div class="bg-gray-50 border border-gray-200 rounded-2xl p-5 text-center">
+          <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Monthly Payment</div>
+          <div id="monthly-pmt" class="text-2xl font-bold text-gray-900 font-mono"></div>
+          <div class="text-xs text-gray-400 mt-1">P&I + tax + insurance</div>
+        </div>
+        <div class="bg-gray-50 border border-gray-200 rounded-2xl p-5 text-center">
+          <div class="text-xs text-gray-500 uppercase tracking-wide mb-1">Loan Amount</div>
+          <div id="loan-amount" class="text-2xl font-bold text-gray-900 font-mono"></div>
+          <div class="text-xs text-gray-400 mt-1">Price minus down payment</div>
+        </div>
+      </div>
+
+      <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-3">
+        <p class="text-sm font-semibold text-gray-700">Debt-to-Income Ratios</p>
+        <div class="space-y-2">
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-600">Front-end ratio (housing / income)</span>
+            <span id="front-ratio" class="font-mono font-semibold"></span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div id="front-bar" class="h-2 rounded-full transition-all"></div>
+          </div>
+          <div class="flex justify-between text-sm">
+            <span class="text-gray-600">Back-end ratio (all debts / income)</span>
+            <span id="back-ratio" class="font-mono font-semibold"></span>
+          </div>
+          <div class="w-full bg-gray-200 rounded-full h-2">
+            <div id="back-bar" class="h-2 rounded-full transition-all"></div>
+          </div>
+        </div>
+        <p class="text-xs text-gray-400">Lenders typically require front-end ≤28% and back-end ≤36%.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is the 28/36 rule?", a: "The 28/36 rule is a guideline used by lenders: your monthly housing costs (mortgage, tax, insurance) should not exceed 28% of gross monthly income, and total debt payments (housing + car + student loans + credit cards) should not exceed 36%. Exceeding these limits may affect loan approval." },
+        { q: "How much down payment do I need?", a: "Conventional loans typically require 5–20% down. FHA loans allow as little as 3.5% with a 580+ credit score. Putting less than 20% down usually requires private mortgage insurance (PMI), adding $50–200/month to your payment." },
+        { q: "Does this include PMI?", a: "This calculator focuses on principal, interest, taxes, and insurance (PITI). If your down payment is less than 20%, add roughly 0.5–1.5% of the loan amount annually for PMI. At $300,000 loan, that's $125–375/month more." },
+        { q: "What other costs should I budget for?", a: "Beyond the mortgage: closing costs (2–5% of purchase price), moving costs ($1,000–5,000), immediate repairs or renovations, ongoing maintenance (budget 1–2% of home value annually), HOA fees if applicable, and higher utility costs than renting." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const fmt = (n: number) => '$' + Math.round(n).toLocaleString();
+
+  function calculate() {
+    const income = parseFloat((document.getElementById('income') as HTMLInputElement).value) || 0;
+    const debts = parseFloat((document.getElementById('debts') as HTMLInputElement).value) || 0;
+    const down = parseFloat((document.getElementById('down') as HTMLInputElement).value) || 0;
+    const rate = parseFloat((document.getElementById('rate') as HTMLInputElement).value) / 100 / 12;
+    const term = parseInt((document.getElementById('term') as HTMLSelectElement).value) * 12;
+    const extras = parseFloat((document.getElementById('extras') as HTMLInputElement).value) || 0;
+
+    const monthlyIncome = income / 12;
+    const maxHousing = monthlyIncome * 0.28;
+    const maxPandI = maxHousing - extras;
+
+    let maxLoan = 0;
+    if (rate > 0 && maxPandI > 0) {
+      maxLoan = maxPandI * (Math.pow(1 + rate, term) - 1) / (rate * Math.pow(1 + rate, term));
+    }
+
+    const maxPrice = maxLoan + down;
+    const loanAmount = maxLoan;
+
+    const monthlyPI = rate > 0
+      ? loanAmount * (rate * Math.pow(1 + rate, term)) / (Math.pow(1 + rate, term) - 1)
+      : loanAmount / term;
+    const totalMonthly = monthlyPI + extras;
+
+    const frontRatio = (totalMonthly / monthlyIncome) * 100;
+    const backRatio = ((totalMonthly + debts) / monthlyIncome) * 100;
+
+    document.getElementById('max-price')!.textContent = fmt(maxPrice);
+    document.getElementById('monthly-pmt')!.textContent = fmt(totalMonthly) + '/mo';
+    document.getElementById('loan-amount')!.textContent = fmt(loanAmount);
+
+    const frontColor = frontRatio <= 28 ? 'bg-green-500' : frontRatio <= 35 ? 'bg-yellow-500' : 'bg-red-500';
+    const backColor = backRatio <= 36 ? 'bg-green-500' : backRatio <= 43 ? 'bg-yellow-500' : 'bg-red-500';
+
+    document.getElementById('front-ratio')!.textContent = frontRatio.toFixed(1) + '%';
+    document.getElementById('front-ratio')!.className = `font-mono font-semibold ${frontRatio <= 28 ? 'text-green-700' : 'text-red-600'}`;
+    document.getElementById('front-bar')!.className = `h-2 rounded-full transition-all ${frontColor}`;
+    (document.getElementById('front-bar') as HTMLElement).style.width = Math.min(frontRatio, 100) + '%';
+
+    document.getElementById('back-ratio')!.textContent = backRatio.toFixed(1) + '%';
+    document.getElementById('back-ratio')!.className = `font-mono font-semibold ${backRatio <= 36 ? 'text-green-700' : 'text-red-600'}`;
+    document.getElementById('back-bar')!.className = `h-2 rounded-full transition-all ${backColor}`;
+    (document.getElementById('back-bar') as HTMLElement).style.width = Math.min(backRatio, 100) + '%';
+
+    document.getElementById('results')!.classList.remove('hidden');
+  }
+
+  ['income','debts','down','rate','term','extras'].forEach(id =>
+    document.getElementById(id)?.addEventListener('input', calculate)
+  );
+  calculate();
+</script>

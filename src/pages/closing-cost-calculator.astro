@@ -1,0 +1,150 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Closing Cost Calculator"
+  description="Estimate home buying closing costs including lender fees, title insurance, appraisal, taxes, and prepaid items. Buyer and seller cost breakdown."
+  slug="closing-cost-calculator"
+  category="Real Estate"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Closing Cost Calculator</h1>
+  <p class="text-gray-500 mb-8">Estimate how much you'll pay in closing costs when buying a home.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Purchase Price</label>
+        <div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+        <input id="cc-price" type="number" value="350000" class="input-field pl-7" /></div>
+      </div>
+      <div>
+        <label class="label">Down Payment (%)</label>
+        <div class="relative">
+        <input id="cc-down" type="number" value="20" step="1" class="input-field pr-7" />
+        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">%</span></div>
+      </div>
+      <div>
+        <label class="label">Loan Type</label>
+        <select id="loan-type" class="input-field">
+          <option value="conventional">Conventional</option>
+          <option value="fha">FHA</option>
+          <option value="va">VA Loan</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">State</label>
+        <select id="cc-state" class="input-field">
+          <option value="avg">Average US</option>
+          <option value="high">High-cost state (NY, CA, FL)</option>
+          <option value="low">Low-cost state (MO, IN, WY)</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="cc-results" class="hidden space-y-4">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div class="bg-indigo-600 text-white rounded-2xl p-5 text-center sm:col-span-1">
+          <div class="text-xs text-indigo-200 mb-1">Total Estimated Closing Costs</div>
+          <div id="total-closing" class="text-3xl font-bold font-mono"></div>
+          <div id="total-pct" class="text-xs text-indigo-300 mt-0.5"></div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
+          <div class="text-xs text-gray-500 mb-1">Cash Needed to Close</div>
+          <div id="cash-needed" class="text-2xl font-bold text-gray-900 font-mono"></div>
+          <div class="text-xs text-gray-400">Down + closing costs</div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
+          <div class="text-xs text-gray-500 mb-1">Loan Amount</div>
+          <div id="cc-loan" class="text-2xl font-bold text-gray-900 font-mono"></div>
+        </div>
+      </div>
+
+      <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+        <p class="text-sm font-semibold text-gray-700 mb-3">Cost Breakdown</p>
+        <div id="cost-breakdown" class="space-y-2 text-sm"></div>
+      </div>
+
+      <p class="text-xs text-gray-400">These are estimates. Actual costs vary by lender, location, and transaction. Request a Loan Estimate from your lender within 3 days of application for exact figures.</p>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What are closing costs?", a: "Closing costs are fees paid at the end of a real estate transaction. They typically range from 2–5% of the purchase price for buyers. They include lender fees, title insurance, appraisal, attorney fees, prepaid taxes and insurance, and recording fees." },
+        { q: "Can closing costs be rolled into the mortgage?", a: "Some lenders allow you to roll closing costs into the loan (increasing your balance) or offer 'no-closing-cost' loans at a higher rate. This avoids upfront cash but increases your monthly payment and lifetime interest paid." },
+        { q: "What are prepaid items?", a: "Prepaid items are not fees but advance payments: homeowner's insurance (usually 12 months upfront), property tax escrow (2–6 months), and prepaid interest from closing date to end of month. They appear on your Closing Disclosure but go into an escrow account." },
+        { q: "Who pays closing costs — buyer or seller?", a: "Buyers pay the majority of closing costs (2–5%). Sellers typically pay 5–6% in real estate agent commissions plus transfer taxes. In some markets, sellers offer concessions to cover part of the buyer's closing costs to close the deal faster." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const fmt = (n: number) => '$' + Math.round(n).toLocaleString();
+
+  function calculate() {
+    const price = parseFloat((document.getElementById('cc-price') as HTMLInputElement).value) || 0;
+    const downPct = parseFloat((document.getElementById('cc-down') as HTMLInputElement).value) / 100;
+    const loanType = (document.getElementById('loan-type') as HTMLSelectElement).value;
+    const state = (document.getElementById('cc-state') as HTMLSelectElement).value;
+
+    const down = price * downPct;
+    const loan = price - down;
+    const stateMult = state === 'high' ? 1.4 : state === 'low' ? 0.7 : 1.0;
+
+    const items = [
+      { label: 'Loan origination fee (0.5–1%)', amt: loan * 0.008 * stateMult },
+      { label: 'Appraisal fee', amt: 550 * stateMult },
+      { label: 'Home inspection', amt: 400 },
+      { label: "Lender's title insurance", amt: loan * 0.005 * stateMult },
+      { label: "Owner's title insurance", amt: price * 0.003 * stateMult },
+      { label: 'Title search & settlement', amt: 900 * stateMult },
+      { label: 'Recording fees', amt: 200 * stateMult },
+      { label: 'Attorney / closing fee', amt: 700 * stateMult },
+      { label: 'Transfer tax', amt: price * (state === 'high' ? 0.015 : 0.005) },
+      { label: 'Prepaid homeowner\'s insurance (12 mo)', amt: price * 0.003 },
+      { label: 'Property tax escrow (3 mo)', amt: (price * 0.011 / 12) * 3 },
+      { label: 'Prepaid interest (15 days avg)', amt: loan * 0.065 / 365 * 15 },
+      ...(loanType === 'fha' ? [{ label: 'FHA upfront MIP (1.75%)', amt: loan * 0.0175 }] : []),
+      ...(loanType === 'va' ? [{ label: 'VA funding fee (2.15%)', amt: loan * 0.0215 }] : []),
+    ];
+
+    const total = items.reduce((s, i) => s + i.amt, 0);
+    const totalPct = (total / price * 100).toFixed(1);
+    const cashNeeded = down + total;
+
+    document.getElementById('total-closing')!.textContent = fmt(total);
+    document.getElementById('total-pct')!.textContent = `${totalPct}% of purchase price`;
+    document.getElementById('cash-needed')!.textContent = fmt(cashNeeded);
+    document.getElementById('cc-loan')!.textContent = fmt(loan);
+
+    document.getElementById('cost-breakdown')!.innerHTML = items.map(({ label, amt }) =>
+      `<div class="flex justify-between items-center py-1.5 border-b border-gray-100 last:border-0">
+        <span class="text-gray-600">${label}</span>
+        <span class="font-mono text-gray-900">${fmt(amt)}</span>
+      </div>`
+    ).join('') +
+    `<div class="flex justify-between items-center pt-2 font-bold">
+      <span class="text-gray-800">Total Closing Costs</span>
+      <span class="font-mono text-indigo-700">${fmt(total)}</span>
+    </div>`;
+
+    document.getElementById('cc-results')!.classList.remove('hidden');
+  }
+
+  ['cc-price','cc-down','loan-type','cc-state'].forEach(id =>
+    document.getElementById(id)?.addEventListener('input', calculate)
+  );
+  calculate();
+</script>

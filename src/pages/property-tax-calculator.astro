@@ -1,0 +1,131 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Property Tax Calculator"
+  description="Estimate your annual and monthly property tax based on home value and tax rate. Compare rates across US states."
+  slug="property-tax-calculator"
+  category="Real Estate"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Property Tax Calculator</h1>
+  <p class="text-gray-500 mb-8">Estimate your annual property tax and monthly escrow payment.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Home Value / Assessed Value</label>
+        <div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+        <input id="pt-value" type="number" value="350000" class="input-field pl-7" /></div>
+      </div>
+      <div>
+        <label class="label">Property Tax Rate (%)</label>
+        <div class="relative">
+        <input id="pt-rate" type="number" value="1.1" step="0.05" class="input-field pr-7" />
+        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">%</span></div>
+      </div>
+      <div class="sm:col-span-2">
+        <label class="label">Or select a US state for average rate</label>
+        <select id="pt-state" class="input-field">
+          <option value="">— Select state —</option>
+          {[
+            ['Hawaii','0.28'],['Alabama','0.41'],['Louisiana','0.55'],['Wyoming','0.57'],['Colorado','0.51'],
+            ['South Carolina','0.57'],['West Virginia','0.59'],['Nevada','0.60'],['Arizona','0.63'],['Utah','0.66'],
+            ['Idaho','0.69'],['Tennessee','0.71'],['Delaware','0.61'],['Arkansas','0.62'],['California','0.76'],
+            ['Mississippi','0.81'],['New Mexico','0.80'],['North Carolina','0.80'],['Virginia','0.87'],['Montana','0.84'],
+            ['Indiana','0.85'],['Kentucky','0.86'],['Florida','0.89'],['Georgia','0.92'],['Washington','0.98'],
+            ['Oregon','0.97'],['South Dakota','1.01'],['North Dakota','0.98'],['Missouri','0.97'],['Minnesota','1.12'],
+            ['Oklahoma','0.90'],['Texas','1.74'],['Kansas','1.41'],['Iowa','1.57'],['Maryland','1.09'],
+            ['Pennsylvania','1.58'],['Ohio','1.62'],['New York','1.54'],['Michigan','1.54'],['Massachusetts','1.23'],
+            ['Connecticut','2.15'],['New Jersey','2.49'],['Illinois','2.27'],['New Hampshire','2.18'],['Wisconsin','1.85'],
+          ].sort((a,b) => a[0].localeCompare(b[0])).map(([s, r]) => <option value={r}>{s} ({r}%)</option>)}
+        </select>
+      </div>
+    </div>
+
+    <div id="pt-results" class="hidden grid grid-cols-2 sm:grid-cols-4 gap-3">
+      <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 text-center">
+        <div class="text-xs text-indigo-500 mb-1">Annual Tax</div>
+        <div id="annual-tax" class="text-2xl font-bold text-indigo-800 font-mono"></div>
+      </div>
+      <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
+        <div class="text-xs text-gray-500 mb-1">Monthly Escrow</div>
+        <div id="monthly-tax" class="text-2xl font-bold text-gray-900 font-mono"></div>
+      </div>
+      <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
+        <div class="text-xs text-gray-500 mb-1">Weekly Cost</div>
+        <div id="weekly-tax" class="text-xl font-bold text-gray-900 font-mono"></div>
+      </div>
+      <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
+        <div class="text-xs text-gray-500 mb-1">Tax as % of Income</div>
+        <div id="income-pct" class="text-xl font-bold text-gray-900 font-mono"></div>
+        <div class="text-xs text-gray-400">on $80K income</div>
+      </div>
+    </div>
+
+    <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+      <p class="text-sm font-semibold text-gray-700 mb-2">Highest vs Lowest Property Tax States</p>
+      <div class="grid grid-cols-2 gap-4 text-xs">
+        <div>
+          <p class="text-red-600 font-semibold mb-1">Highest Rates</p>
+          {[['New Jersey','2.49%'],['Illinois','2.27%'],['Connecticut','2.15%'],['New Hampshire','2.18%'],['Wisconsin','1.85%']].map(([s,r]) => (
+            <div class="flex justify-between py-0.5 text-gray-600"><span>{s}</span><span class="font-mono">{r}</span></div>
+          ))}
+        </div>
+        <div>
+          <p class="text-green-600 font-semibold mb-1">Lowest Rates</p>
+          {[['Hawaii','0.28%'],['Alabama','0.41%'],['Colorado','0.51%'],['Louisiana','0.55%'],['Wyoming','0.57%']].map(([s,r]) => (
+            <div class="flex justify-between py-0.5 text-gray-600"><span>{s}</span><span class="font-mono">{r}</span></div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How is property tax calculated?", a: "Property tax = Assessed Value × Mill Rate (tax rate). The assessed value may differ from market value — many jurisdictions assess at 70–100% of market value. Mill rate is expressed as dollars per $1,000 of value, so a 1% rate = $10 per $1,000." },
+        { q: "What is an escrow account for property taxes?", a: "Lenders often require you to pay property taxes and insurance monthly into an escrow account. They hold the funds and pay the tax bill when due. Your monthly mortgage payment includes this escrow amount — usually 1/12 of the annual tax." },
+        { q: "Can I appeal my property tax assessment?", a: "Yes. If you believe your assessed value is higher than market value, you can file an appeal with your local assessor's office. You'll need evidence like recent comparable sales, an independent appraisal, or documentation of property issues. Many successful appeals result in significant savings." },
+        { q: "Are there property tax exemptions?", a: "Most states offer exemptions for: primary residences (homestead exemption), seniors (age 65+), disabled veterans, and low-income households. These can reduce assessed value by $25,000–100,000+. Check your county assessor's website for available exemptions." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const fmt = (n: number) => '$' + Math.round(n).toLocaleString();
+
+  function calculate() {
+    const value = parseFloat((document.getElementById('pt-value') as HTMLInputElement).value) || 0;
+    const rate = parseFloat((document.getElementById('pt-rate') as HTMLInputElement).value) / 100;
+    const annual = value * rate;
+
+    document.getElementById('annual-tax')!.textContent = fmt(annual);
+    document.getElementById('monthly-tax')!.textContent = fmt(annual / 12) + '/mo';
+    document.getElementById('weekly-tax')!.textContent = fmt(annual / 52) + '/wk';
+    document.getElementById('income-pct')!.textContent = ((annual / 80000) * 100).toFixed(1) + '%';
+    document.getElementById('pt-results')!.classList.remove('hidden');
+  }
+
+  document.getElementById('pt-value')?.addEventListener('input', calculate);
+  document.getElementById('pt-rate')?.addEventListener('input', calculate);
+  document.getElementById('pt-state')?.addEventListener('change', () => {
+    const val = (document.getElementById('pt-state') as HTMLSelectElement).value;
+    if (val) {
+      (document.getElementById('pt-rate') as HTMLInputElement).value = val;
+      calculate();
+    }
+  });
+  calculate();
+</script>

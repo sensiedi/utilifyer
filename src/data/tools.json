@@ -688,5 +688,105 @@
     "priority": 69,
     "status": "live",
     "icon": "💻"
+  },
+  {
+    "slug": "home-affordability-calculator",
+    "title": "Home Affordability Calculator",
+    "description": "Find out how much house you can afford based on your income, debts, and down payment using the 28/36 rule.",
+    "category": "Real Estate",
+    "tags": ["home affordability", "how much house can I afford", "mortgage affordability", "28/36 rule"],
+    "priority": 70,
+    "status": "live",
+    "icon": "🏠"
+  },
+  {
+    "slug": "rent-vs-buy-calculator",
+    "title": "Rent vs Buy Calculator",
+    "description": "Compare the true long-term cost of renting vs buying a home, including equity, appreciation, and opportunity cost.",
+    "category": "Real Estate",
+    "tags": ["rent vs buy", "should I rent or buy", "rent or buy calculator", "home buying"],
+    "priority": 71,
+    "status": "live",
+    "icon": "🏡"
+  },
+  {
+    "slug": "refinance-calculator",
+    "title": "Mortgage Refinance Calculator",
+    "description": "Calculate if refinancing saves money. See monthly savings, break-even point, and lifetime interest saved.",
+    "category": "Real Estate",
+    "tags": ["refinance calculator", "mortgage refinance", "break-even refinance", "should I refinance"],
+    "priority": 72,
+    "status": "live",
+    "icon": "🔄"
+  },
+  {
+    "slug": "home-equity-calculator",
+    "title": "Home Equity Calculator",
+    "description": "Calculate your home equity, LTV ratio, and how much you can borrow with a HELOC or home equity loan.",
+    "category": "Real Estate",
+    "tags": ["home equity", "LTV ratio", "HELOC calculator", "loan to value"],
+    "priority": 73,
+    "status": "live",
+    "icon": "📊"
+  },
+  {
+    "slug": "closing-cost-calculator",
+    "title": "Closing Cost Calculator",
+    "description": "Estimate home buying closing costs including lender fees, title insurance, appraisal, and prepaid items.",
+    "category": "Real Estate",
+    "tags": ["closing costs", "closing cost calculator", "home buying costs", "title insurance"],
+    "priority": 74,
+    "status": "live",
+    "icon": "📋"
+  },
+  {
+    "slug": "down-payment-calculator",
+    "title": "Down Payment Calculator",
+    "description": "Calculate how much down payment you need and how long to save. Compare 3%, 5%, 10%, and 20% options.",
+    "category": "Real Estate",
+    "tags": ["down payment calculator", "how much down payment", "save for house", "PMI"],
+    "priority": 75,
+    "status": "live",
+    "icon": "💰"
+  },
+  {
+    "slug": "property-tax-calculator",
+    "title": "Property Tax Calculator",
+    "description": "Estimate your annual and monthly property tax. Compare rates across all 50 US states.",
+    "category": "Real Estate",
+    "tags": ["property tax calculator", "property tax rate", "annual property tax", "real estate tax"],
+    "priority": 76,
+    "status": "live",
+    "icon": "🏛️"
+  },
+  {
+    "slug": "rental-yield-calculator",
+    "title": "Rental Yield Calculator",
+    "description": "Calculate gross/net rental yield, cap rate, and cash-on-cash return for any investment property.",
+    "category": "Real Estate",
+    "tags": ["rental yield", "cap rate", "cash on cash return", "rental property ROI", "investment property"],
+    "priority": 77,
+    "status": "live",
+    "icon": "📈"
+  },
+  {
+    "slug": "square-footage-calculator",
+    "title": "Square Footage Calculator",
+    "description": "Calculate room square footage for rectangles, triangles, circles, and L-shapes. Add multiple rooms and estimate flooring costs.",
+    "category": "Real Estate",
+    "tags": ["square footage calculator", "room size calculator", "flooring calculator", "area calculator"],
+    "priority": 78,
+    "status": "live",
+    "icon": "📐"
+  },
+  {
+    "slug": "mortgage-payoff-calculator",
+    "title": "Mortgage Payoff Calculator",
+    "description": "See how extra mortgage payments save interest and accelerate your payoff date by months or years.",
+    "category": "Real Estate",
+    "tags": ["mortgage payoff", "extra mortgage payment", "pay off mortgage early", "mortgage interest savings"],
+    "priority": 79,
+    "status": "live",
+    "icon": "🏦"
   }
 ]

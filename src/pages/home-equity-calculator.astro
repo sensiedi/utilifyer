@@ -1,0 +1,140 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Home Equity Calculator"
+  description="Calculate your home equity, loan-to-value ratio (LTV), and how much you can borrow with a HELOC or home equity loan."
+  slug="home-equity-calculator"
+  category="Real Estate"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Home Equity Calculator</h1>
+  <p class="text-gray-500 mb-8">Calculate your equity, LTV ratio, and borrowing power.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Current Home Value</label>
+        <div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+        <input id="home-value" type="number" value="400000" class="input-field pl-7" /></div>
+      </div>
+      <div>
+        <label class="label">Mortgage Balance Owed</label>
+        <div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+        <input id="mortgage-balance" type="number" value="250000" class="input-field pl-7" /></div>
+      </div>
+      <div>
+        <label class="label">Other Liens (2nd mortgage, etc.)</label>
+        <div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+        <input id="other-liens" type="number" value="0" class="input-field pl-7" /></div>
+      </div>
+      <div>
+        <label class="label">Max CLTV Lenders Allow (%)</label>
+        <div class="relative">
+        <input id="max-cltv" type="number" value="85" step="1" class="input-field pr-7" />
+        <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">%</span></div>
+        <p class="text-xs text-gray-400 mt-1">Most lenders allow 80–90% CLTV</p>
+      </div>
+    </div>
+
+    <div id="equity-results" class="hidden space-y-4">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="bg-indigo-600 text-white rounded-2xl p-4 text-center">
+          <div class="text-xs text-indigo-200 mb-1">Home Equity</div>
+          <div id="equity" class="text-2xl font-bold font-mono"></div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
+          <div class="text-xs text-gray-500 mb-1">LTV Ratio</div>
+          <div id="ltv" class="text-2xl font-bold text-gray-900 font-mono"></div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
+          <div class="text-xs text-gray-500 mb-1">Equity %</div>
+          <div id="equity-pct" class="text-2xl font-bold text-gray-900 font-mono"></div>
+        </div>
+        <div class="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+          <div class="text-xs text-green-600 mb-1">Available to Borrow</div>
+          <div id="available" class="text-2xl font-bold text-green-800 font-mono"></div>
+        </div>
+      </div>
+
+      <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+        <p class="text-sm font-semibold text-gray-700 mb-3">Equity Visualization</p>
+        <div class="relative h-8 bg-gray-200 rounded-full overflow-hidden">
+          <div id="equity-bar" class="h-full bg-indigo-500 rounded-full transition-all flex items-center justify-end pr-2">
+            <span id="equity-bar-label" class="text-xs text-white font-bold"></span>
+          </div>
+        </div>
+        <div class="flex justify-between text-xs text-gray-400 mt-1">
+          <span>Debt</span><span>Equity</span>
+        </div>
+      </div>
+
+      <div id="ltv-note" class="rounded-xl p-3 text-sm"></div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is home equity?", a: "Home equity is the difference between your home's current market value and the amount you still owe on your mortgage. Equity = Home Value − Mortgage Balance. It increases as you pay down your mortgage and as your home appreciates in value." },
+        { q: "What is LTV (loan-to-value ratio)?", a: "LTV is your mortgage balance divided by your home's value, expressed as a percentage. LTV = Loan Balance ÷ Home Value × 100. An LTV of 80% means you owe 80% of the home's value. Lower LTV means more equity and better loan terms." },
+        { q: "How much can I borrow against my equity?", a: "Most lenders allow a combined loan-to-value (CLTV) of 80–90%. CLTV = (all mortgages + new loan) ÷ home value. If your home is worth $400K and you owe $250K, at 85% CLTV you could borrow up to $90K ($400K × 85% = $340K − $250K = $90K)." },
+        { q: "What is the difference between a HELOC and a home equity loan?", a: "A home equity loan gives you a lump sum at a fixed rate. A HELOC (Home Equity Line of Credit) is a revolving line you draw from as needed, usually at a variable rate. HELOCs are flexible; home equity loans are predictable. Both use your home as collateral." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const fmt = (n: number) => '$' + Math.round(n).toLocaleString();
+
+  function calculate() {
+    const value = parseFloat((document.getElementById('home-value') as HTMLInputElement).value) || 0;
+    const balance = parseFloat((document.getElementById('mortgage-balance') as HTMLInputElement).value) || 0;
+    const liens = parseFloat((document.getElementById('other-liens') as HTMLInputElement).value) || 0;
+    const maxCltv = parseFloat((document.getElementById('max-cltv') as HTMLInputElement).value) / 100;
+
+    const totalDebt = balance + liens;
+    const equity = value - totalDebt;
+    const ltv = value > 0 ? (balance / value) * 100 : 0;
+    const equityPct = value > 0 ? (equity / value) * 100 : 0;
+    const maxBorrow = Math.max(0, value * maxCltv - totalDebt);
+
+    document.getElementById('equity')!.textContent = fmt(equity);
+    document.getElementById('ltv')!.textContent = ltv.toFixed(1) + '%';
+    document.getElementById('equity-pct')!.textContent = equityPct.toFixed(1) + '%';
+    document.getElementById('available')!.textContent = fmt(maxBorrow);
+
+    const barPct = Math.max(0, Math.min(equityPct, 100));
+    (document.getElementById('equity-bar') as HTMLElement).style.width = barPct + '%';
+    document.getElementById('equity-bar-label')!.textContent = equityPct.toFixed(0) + '%';
+
+    const note = document.getElementById('ltv-note')!;
+    if (ltv < 80) {
+      note.className = 'rounded-xl p-3 text-sm bg-green-50 border border-green-200 text-green-800';
+      note.textContent = `✓ Your LTV of ${ltv.toFixed(1)}% is below 80% — you likely qualify for the best rates and no PMI requirement.`;
+    } else if (ltv < 90) {
+      note.className = 'rounded-xl p-3 text-sm bg-yellow-50 border border-yellow-200 text-yellow-800';
+      note.textContent = `⚠ LTV of ${ltv.toFixed(1)}% means you may pay PMI and face higher rates. Building equity to 80% LTV will improve your options.`;
+    } else {
+      note.className = 'rounded-xl p-3 text-sm bg-red-50 border border-red-200 text-red-800';
+      note.textContent = `✗ LTV of ${ltv.toFixed(1)}% is high. Most lenders won't allow additional borrowing until LTV drops below 80–90%.`;
+    }
+
+    document.getElementById('equity-results')!.classList.remove('hidden');
+  }
+
+  ['home-value','mortgage-balance','other-liens','max-cltv'].forEach(id =>
+    document.getElementById(id)?.addEventListener('input', calculate)
+  );
+  calculate();
+</script>

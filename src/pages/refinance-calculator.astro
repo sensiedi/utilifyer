@@ -1,0 +1,177 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Mortgage Refinance Calculator"
+  description="Calculate if refinancing your mortgage makes sense. See monthly savings, break-even point, and lifetime interest saved."
+  slug="refinance-calculator"
+  category="Real Estate"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Mortgage Refinance Calculator</h1>
+  <p class="text-gray-500 mb-8">See if refinancing saves you money and when you break even on closing costs.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="space-y-3">
+        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">Current Loan</h2>
+        <div>
+          <label class="label">Remaining Balance</label>
+          <div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+          <input id="cur-balance" type="number" value="280000" class="input-field pl-7" /></div>
+        </div>
+        <div>
+          <label class="label">Current Interest Rate (%)</label>
+          <div class="relative">
+          <input id="cur-rate" type="number" value="7.5" step="0.1" class="input-field pr-7" />
+          <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">%</span></div>
+        </div>
+        <div>
+          <label class="label">Remaining Term</label>
+          <select id="cur-term" class="input-field">
+            {[30,25,20,15,10].map(y => <option value={y} selected={y===25}>{y} years</option>)}
+          </select>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide">New Loan</h2>
+        <div>
+          <label class="label">New Interest Rate (%)</label>
+          <div class="relative">
+          <input id="new-rate" type="number" value="6.0" step="0.1" class="input-field pr-7" />
+          <span class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">%</span></div>
+        </div>
+        <div>
+          <label class="label">New Loan Term</label>
+          <select id="new-term" class="input-field">
+            {[30,20,15,10].map(y => <option value={y} selected={y===30}>{y} years</option>)}
+          </select>
+        </div>
+        <div>
+          <label class="label">Closing Costs</label>
+          <div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+          <input id="closing" type="number" value="5000" class="input-field pl-7" /></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="refi-results" class="hidden space-y-4">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 text-center">
+          <div class="text-xs text-indigo-500 mb-1">Monthly Savings</div>
+          <div id="monthly-savings" class="text-2xl font-bold text-indigo-800 font-mono"></div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
+          <div class="text-xs text-gray-500 mb-1">Break-Even</div>
+          <div id="break-even" class="text-2xl font-bold text-gray-900 font-mono"></div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
+          <div class="text-xs text-gray-500 mb-1">Lifetime Interest Saved</div>
+          <div id="interest-saved" class="text-xl font-bold text-gray-900 font-mono"></div>
+        </div>
+        <div class="bg-gray-50 border border-gray-100 rounded-xl p-4 text-center">
+          <div class="text-xs text-gray-500 mb-1">New Monthly Payment</div>
+          <div id="new-payment" class="text-2xl font-bold text-gray-900 font-mono"></div>
+        </div>
+      </div>
+
+      <div id="refi-verdict" class="rounded-xl p-4 text-sm font-medium"></div>
+
+      <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+        <div class="grid grid-cols-2 gap-4 text-sm">
+          <div>
+            <p class="text-xs text-gray-400 mb-2">CURRENT LOAN</p>
+            <div class="space-y-1">
+              <div class="flex justify-between"><span class="text-gray-600">Monthly payment</span><span id="cur-pmt" class="font-mono"></span></div>
+              <div class="flex justify-between"><span class="text-gray-600">Total interest left</span><span id="cur-interest" class="font-mono"></span></div>
+            </div>
+          </div>
+          <div>
+            <p class="text-xs text-gray-400 mb-2">NEW LOAN</p>
+            <div class="space-y-1">
+              <div class="flex justify-between"><span class="text-gray-600">Monthly payment</span><span id="new-pmt" class="font-mono"></span></div>
+              <div class="flex justify-between"><span class="text-gray-600">Total interest</span><span id="new-interest" class="font-mono"></span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "When does refinancing make sense?", a: "Refinancing typically makes sense when you can lower your rate by at least 0.5–1%, you plan to stay in the home past the break-even point (usually 2–4 years), and your credit score qualifies you for the new rate. Also consider cash-out refinancing for home improvements." },
+        { q: "What is the break-even point?", a: "The break-even point is how many months it takes for your monthly savings to recover the closing costs. If closing costs are $5,000 and you save $200/month, break-even is 25 months. If you move before then, refinancing doesn't save money." },
+        { q: "Does refinancing to a longer term save money?", a: "Refinancing from 20 years remaining to a new 30-year loan lowers monthly payments but increases total interest paid. You may save monthly but pay more overall. Refinancing to the same remaining term (or shorter) maximizes lifetime savings." },
+        { q: "What are typical refinance closing costs?", a: "Expect 2–5% of the loan amount: origination fees, appraisal ($300–600), title insurance, attorney fees, and recording fees. Some lenders offer 'no-closing-cost' refinances that roll costs into the rate, which can be worth it if you plan to sell soon." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const fmt = (n: number) => '$' + Math.round(n).toLocaleString();
+
+  function monthlyPmt(principal: number, annualRate: number, years: number): number {
+    const r = annualRate / 100 / 12;
+    const n = years * 12;
+    if (r === 0) return principal / n;
+    return principal * (r * Math.pow(1 + r, n)) / (Math.pow(1 + r, n) - 1);
+  }
+
+  function calculate() {
+    const balance = parseFloat((document.getElementById('cur-balance') as HTMLInputElement).value) || 0;
+    const curRate = parseFloat((document.getElementById('cur-rate') as HTMLInputElement).value) || 0;
+    const curTerm = parseInt((document.getElementById('cur-term') as HTMLSelectElement).value);
+    const newRate = parseFloat((document.getElementById('new-rate') as HTMLInputElement).value) || 0;
+    const newTerm = parseInt((document.getElementById('new-term') as HTMLSelectElement).value);
+    const closing = parseFloat((document.getElementById('closing') as HTMLInputElement).value) || 0;
+
+    const curPmt = monthlyPmt(balance, curRate, curTerm);
+    const newPmt = monthlyPmt(balance, newRate, newTerm);
+    const curTotalInterest = curPmt * curTerm * 12 - balance;
+    const newTotalInterest = newPmt * newTerm * 12 - balance;
+    const monthlySavings = curPmt - newPmt;
+    const breakEvenMonths = monthlySavings > 0 ? Math.ceil(closing / monthlySavings) : Infinity;
+    const interestSaved = curTotalInterest - newTotalInterest - closing;
+
+    document.getElementById('monthly-savings')!.textContent = monthlySavings >= 0 ? fmt(monthlySavings) + '/mo' : '-' + fmt(-monthlySavings) + '/mo';
+    document.getElementById('break-even')!.textContent = isFinite(breakEvenMonths) ? breakEvenMonths + ' mo' : 'N/A';
+    document.getElementById('interest-saved')!.textContent = fmt(Math.abs(interestSaved));
+    document.getElementById('new-payment')!.textContent = fmt(newPmt) + '/mo';
+    document.getElementById('cur-pmt')!.textContent = fmt(curPmt) + '/mo';
+    document.getElementById('cur-interest')!.textContent = fmt(curTotalInterest);
+    document.getElementById('new-pmt')!.textContent = fmt(newPmt) + '/mo';
+    document.getElementById('new-interest')!.textContent = fmt(newTotalInterest);
+
+    const verdict = document.getElementById('refi-verdict')!;
+    if (monthlySavings > 0 && interestSaved > 0) {
+      verdict.className = 'rounded-xl p-4 text-sm font-medium bg-green-50 border border-green-200 text-green-800';
+      verdict.textContent = `✓ Refinancing looks beneficial — you save ${fmt(monthlySavings)}/month and break even in ${breakEvenMonths} months. Total lifetime savings: ${fmt(interestSaved)} (after closing costs).`;
+    } else if (monthlySavings > 0) {
+      verdict.className = 'rounded-xl p-4 text-sm font-medium bg-yellow-50 border border-yellow-200 text-yellow-800';
+      verdict.textContent = `⚠ Monthly payment is lower but the longer term increases total interest paid. Consider a shorter-term loan for true savings.`;
+    } else {
+      verdict.className = 'rounded-xl p-4 text-sm font-medium bg-red-50 border border-red-200 text-red-800';
+      verdict.textContent = `✗ Refinancing at this rate increases your monthly payment. This only makes sense if you are shortening the term to pay off faster.`;
+    }
+
+    document.getElementById('refi-results')!.classList.remove('hidden');
+  }
+
+  ['cur-balance','cur-rate','cur-term','new-rate','new-term','closing'].forEach(id =>
+    document.getElementById(id)?.addEventListener('input', calculate)
+  );
+  calculate();
+</script>
