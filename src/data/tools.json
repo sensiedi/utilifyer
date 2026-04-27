@@ -2301,5 +2301,101 @@
     "priority": 145,
     "status": "live",
     "icon": "🔍"
+  },
+  {
+    "slug": "text-diff-checker",
+    "title": "Text Diff Checker",
+    "description": "Compare two texts and highlight differences. Find added, removed, and changed words or lines instantly. Word-level and line-level diff modes.",
+    "category": "Text & Writing",
+    "tags": [
+      "text diff",
+      "compare text",
+      "find differences",
+      "text comparison",
+      "diff checker"
+    ],
+    "priority": 146,
+    "status": "live",
+    "icon": "🔀"
+  },
+  {
+    "slug": "readability-analyzer",
+    "title": "Readability Analyzer",
+    "description": "Check the readability of any text. Get Flesch-Kincaid grade level, reading ease score, average sentence length, and writing improvement suggestions.",
+    "category": "Text & Writing",
+    "tags": [
+      "readability",
+      "flesch kincaid",
+      "grade level",
+      "reading ease",
+      "writing"
+    ],
+    "priority": 147,
+    "status": "live",
+    "icon": "📖"
+  },
+  {
+    "slug": "fancy-text-generator",
+    "title": "Fancy Text Generator",
+    "description": "Convert text into fancy Unicode styles — bold, italic, cursive, Fraktur, bubble text, strikethrough, and more. Copy and paste anywhere.",
+    "category": "Text & Writing",
+    "tags": [
+      "fancy text",
+      "unicode text",
+      "text styles",
+      "instagram fonts",
+      "cool text"
+    ],
+    "priority": 148,
+    "status": "live",
+    "icon": "✨"
+  },
+  {
+    "slug": "duplicate-line-remover",
+    "title": "Duplicate Line Remover",
+    "description": "Remove duplicate lines from any list or text. Sort alphabetically, trim whitespace, ignore case, and count unique vs duplicate entries.",
+    "category": "Text & Writing",
+    "tags": [
+      "duplicate lines",
+      "remove duplicates",
+      "deduplicate",
+      "list cleaner",
+      "text tools"
+    ],
+    "priority": 149,
+    "status": "live",
+    "icon": "🧹"
+  },
+  {
+    "slug": "text-repeater",
+    "title": "Text Repeater",
+    "description": "Repeat any text a specific number of times with a custom separator. Great for generating test data, dummy content, and repeated patterns.",
+    "category": "Text & Writing",
+    "tags": [
+      "text repeater",
+      "repeat text",
+      "text generator",
+      "duplicate text",
+      "pattern"
+    ],
+    "priority": 150,
+    "status": "live",
+    "icon": "🔁"
+  },
+  {
+    "slug": "morse-code-translator",
+    "title": "Morse Code Translator",
+    "description": "Translate text to Morse code and decode Morse code back to text. Supports letters, numbers, punctuation, and audio playback.",
+    "category": "Text & Writing",
+    "tags": [
+      "morse code",
+      "morse translator",
+      "encode decode",
+      "morse audio",
+      "telegraph"
+    ],
+    "priority": 151,
+    "status": "live",
+    "icon": "📡"
   }
 ]

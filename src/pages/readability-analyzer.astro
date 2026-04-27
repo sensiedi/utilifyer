@@ -1,0 +1,189 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Readability Analyzer"
+  description="Check the readability of any text. Get Flesch-Kincaid grade level, reading ease score, average sentence length, and writing suggestions."
+  slug="readability-analyzer"
+  category="Text & Writing"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Readability Analyzer</h1>
+  <p class="text-gray-500 mb-8">Analyze how easy your text is to read — grade level, reading ease, and more.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div>
+      <label class="label">Your Text</label>
+      <textarea id="ra-input" class="input-field h-48 resize-y" placeholder="Paste your article, email, essay, or any text here…"></textarea>
+    </div>
+    <button id="ra-go" class="btn-primary">Analyze Readability</button>
+
+    <div id="ra-result" class="hidden space-y-5">
+
+      <!-- Score cards -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+        <div class="rounded-xl p-4 border" id="ra-ease-card">
+          <p class="text-3xl font-bold" id="ra-ease"></p>
+          <p class="text-xs text-gray-500 mt-1">Reading Ease</p>
+          <p class="text-xs font-medium mt-0.5" id="ra-ease-label"></p>
+        </div>
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
+          <p class="text-3xl font-bold text-indigo-700" id="ra-grade"></p>
+          <p class="text-xs text-gray-500 mt-1">Grade Level</p>
+          <p class="text-xs font-medium text-indigo-600 mt-0.5" id="ra-grade-label"></p>
+        </div>
+        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+          <p class="text-3xl font-bold text-gray-700" id="ra-asl"></p>
+          <p class="text-xs text-gray-500 mt-1">Avg Sentence Len</p>
+          <p class="text-xs font-medium text-gray-500 mt-0.5">words</p>
+        </div>
+        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+          <p class="text-3xl font-bold text-gray-700" id="ra-asw"></p>
+          <p class="text-xs text-gray-500 mt-1">Avg Word Length</p>
+          <p class="text-xs font-medium text-gray-500 mt-0.5">syllables</p>
+        </div>
+      </div>
+
+      <!-- Detailed stats -->
+      <div class="grid grid-cols-3 sm:grid-cols-6 gap-3 text-center">
+        {['ra-words','ra-sentences','ra-paragraphs','ra-chars','ra-syllables','ra-read-time'].map((id, i) => (
+          <div class="bg-gray-50 border border-gray-100 rounded-xl p-3">
+            <p class="text-lg font-bold text-gray-800" id={id}></p>
+            <p class="text-xs text-gray-500 mt-0.5">{['Words','Sentences','Paragraphs','Characters','Syllables','Read time'][i]}</p>
+          </div>
+        ))}
+      </div>
+
+      <!-- Suggestions -->
+      <div id="ra-suggestions" class="space-y-2"></div>
+    </div>
+  </div>
+
+  <!-- Grade level reference -->
+  <div class="mt-8 bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+    <p class="text-sm font-semibold text-gray-700 mb-3">Flesch Reading Ease Score Reference</p>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead><tr class="text-xs text-gray-500 border-b border-gray-100">
+          <th class="text-left py-2 pr-4">Score</th>
+          <th class="text-left py-2 pr-4">Difficulty</th>
+          <th class="text-left py-2">Equivalent / Audience</th>
+        </tr></thead>
+        <tbody class="divide-y divide-gray-50 text-gray-700">
+          {[
+            ['90–100', 'Very Easy', 'Grade 5 — simple, conversational'],
+            ['80–90', 'Easy', 'Grade 6 — plain English, most readers'],
+            ['70–80', 'Fairly Easy', 'Grade 7 — consumer-friendly'],
+            ['60–70', 'Standard', 'Grades 8–9 — most web content'],
+            ['50–60', 'Fairly Difficult', 'Grades 10–12 — educated adults'],
+            ['30–50', 'Difficult', 'College level — professional writing'],
+            ['0–30', 'Very Difficult', 'College graduate — academic/technical'],
+          ].map(([score, diff, eq]) => (
+            <tr><td class="py-2 pr-4 font-mono font-bold text-indigo-700">{score}</td><td class="py-2 pr-4">{diff}</td><td class="py-2 text-gray-500">{eq}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is the Flesch-Kincaid score?", a: "Developed by Rudolf Flesch in the 1940s and later revised with J. Peter Kincaid for the US Navy, the Flesch Reading Ease score (0–100) measures how easy a text is to read based on average sentence length and average syllables per word. Higher = easier. The Flesch-Kincaid Grade Level translates the same formula into a US school grade equivalent (e.g., 8.0 means a typical 8th grader can understand it)." },
+        { q: "What readability score should I aim for?", a: "It depends on your audience. General web content and blogs: aim for 60–70 (plain English). Marketing and landing pages: 70–80 (easy to scan). Technical documentation: 40–60 is acceptable. Academic papers: 20–40. The key insight: even expert audiences prefer clearer writing. Studies show that people read simpler text faster and remember it better, regardless of their education level. Plain language isn't dumbing down — it's respecting your reader's time." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  function countSyllables(word: string): number {
+    word = word.toLowerCase().replace(/[^a-z]/g, '');
+    if (!word) return 0;
+    if (word.length <= 3) return 1;
+    word = word.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, '').replace(/^y/, '');
+    const m = word.match(/[aeiouy]{1,2}/g);
+    return m ? m.length : 1;
+  }
+
+  function analyze(text: string) {
+    const words = text.match(/\b\w+\b/g) || [];
+    const sentences = text.split(/[.!?]+/).filter(s => s.trim().length > 2);
+    const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim());
+    const chars = text.replace(/\s/g, '').length;
+    const syllables = words.reduce((sum, w) => sum + countSyllables(w), 0);
+
+    const W = words.length || 1;
+    const S = sentences.length || 1;
+    const ASL = W / S;
+    const ASW = syllables / W;
+
+    const ease = 206.835 - 1.015 * ASL - 84.6 * ASW;
+    const grade = 0.39 * ASL + 11.8 * ASW - 15.59;
+
+    return { words: W, sentences: S, paragraphs: paragraphs.length || 1, chars, syllables, ease: Math.max(0, Math.min(100, ease)), grade: Math.max(1, grade), ASL, ASW, readTime: Math.ceil(W / 200) };
+  }
+
+  function easeLabel(ease: number): { label: string; cls: string } {
+    if (ease >= 90) return { label: 'Very Easy', cls: 'bg-green-100 border-green-300 text-green-800' };
+    if (ease >= 80) return { label: 'Easy', cls: 'bg-green-50 border-green-200 text-green-700' };
+    if (ease >= 70) return { label: 'Fairly Easy', cls: 'bg-lime-50 border-lime-200 text-lime-700' };
+    if (ease >= 60) return { label: 'Standard', cls: 'bg-yellow-50 border-yellow-200 text-yellow-700' };
+    if (ease >= 50) return { label: 'Fairly Difficult', cls: 'bg-orange-50 border-orange-200 text-orange-700' };
+    if (ease >= 30) return { label: 'Difficult', cls: 'bg-red-50 border-red-200 text-red-700' };
+    return { label: 'Very Difficult', cls: 'bg-red-100 border-red-300 text-red-800' };
+  }
+
+  function gradeLabel(g: number): string {
+    if (g <= 6) return 'Elementary';
+    if (g <= 8) return 'Middle School';
+    if (g <= 12) return 'High School';
+    if (g <= 16) return 'College';
+    return 'Graduate';
+  }
+
+  document.getElementById('ra-go')!.addEventListener('click', () => {
+    const text = (document.getElementById('ra-input') as HTMLTextAreaElement).value.trim();
+    if (!text) return;
+    const r = analyze(text);
+
+    const { label, cls } = easeLabel(r.ease);
+    const easeCard = document.getElementById('ra-ease-card')!;
+    easeCard.className = `rounded-xl p-4 border ${cls}`;
+    document.getElementById('ra-ease')!.textContent = r.ease.toFixed(1);
+    document.getElementById('ra-ease-label')!.textContent = label;
+    document.getElementById('ra-grade')!.textContent = r.grade.toFixed(1);
+    document.getElementById('ra-grade-label')!.textContent = gradeLabel(r.grade);
+    document.getElementById('ra-asl')!.textContent = r.ASL.toFixed(1);
+    document.getElementById('ra-asw')!.textContent = r.ASW.toFixed(2);
+    document.getElementById('ra-words')!.textContent = r.words.toLocaleString();
+    document.getElementById('ra-sentences')!.textContent = r.sentences.toLocaleString();
+    document.getElementById('ra-paragraphs')!.textContent = r.paragraphs.toLocaleString();
+    document.getElementById('ra-chars')!.textContent = r.chars.toLocaleString();
+    document.getElementById('ra-syllables')!.textContent = r.syllables.toLocaleString();
+    document.getElementById('ra-read-time')!.textContent = r.readTime + ' min';
+
+    const suggestions: string[] = [];
+    if (r.ASL > 25) suggestions.push('⚠️ Sentences are long (avg ' + r.ASL.toFixed(1) + ' words). Try breaking some into two shorter sentences.');
+    if (r.ASW > 2.0) suggestions.push('⚠️ Words are complex (avg ' + r.ASW.toFixed(2) + ' syllables). Replace technical terms with simpler alternatives where possible.');
+    if (r.ease < 50) suggestions.push('📝 Reading ease is low. Consider shorter sentences and simpler vocabulary for a wider audience.');
+    if (r.ease >= 70) suggestions.push('✅ Good readability! Your text is accessible to most readers.');
+    if (r.ASL <= 15 && r.ease >= 60) suggestions.push('✅ Sentence length is well-controlled.');
+
+    const sugEl = document.getElementById('ra-suggestions')!;
+    sugEl.innerHTML = suggestions.map(s => `<p class="text-sm bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5">${s}</p>`).join('');
+
+    document.getElementById('ra-result')!.classList.remove('hidden');
+  });
+
+  (document.getElementById('ra-input') as HTMLTextAreaElement).value = `The quick brown fox jumped over the lazy dog. This is a simple sentence. Writing clearly helps your readers understand your message faster and remember it better. Long, complex sentences with many subordinate clauses and technical vocabulary can reduce comprehension, particularly for readers who are not specialists in the field.`;
+</script>

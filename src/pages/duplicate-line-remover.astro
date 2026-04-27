@@ -1,0 +1,113 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Duplicate Line Remover"
+  description="Remove duplicate lines from any list or text. Sort alphabetically, trim whitespace, filter blank lines, and count unique vs duplicate entries."
+  slug="duplicate-line-remover"
+  category="Text & Writing"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Duplicate Line Remover</h1>
+  <p class="text-gray-500 mb-8">Paste a list, remove duplicates, sort, and clean up in one click.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <!-- Options -->
+    <div class="flex flex-wrap gap-4">
+      <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+        <input id="opt-sort" type="checkbox" class="rounded"> Sort alphabetically
+      </label>
+      <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+        <input id="opt-trim" type="checkbox" class="rounded" checked> Trim whitespace
+      </label>
+      <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+        <input id="opt-blanks" type="checkbox" class="rounded" checked> Remove blank lines
+      </label>
+      <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+        <input id="opt-case" type="checkbox" class="rounded"> Case-insensitive
+      </label>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Input</label>
+        <textarea id="dl-input" class="input-field h-56 font-mono text-sm resize-y" placeholder="Paste your lines here, one per line…"></textarea>
+      </div>
+      <div>
+        <label class="label">Output</label>
+        <textarea id="dl-output" class="input-field h-56 font-mono text-sm resize-y bg-gray-50" readonly placeholder="Result will appear here…"></textarea>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap items-center gap-3">
+      <button id="dl-go" class="btn-primary">Remove Duplicates</button>
+      <button id="dl-copy" class="text-sm border border-gray-200 rounded-xl px-4 py-2 hover:border-indigo-300 text-gray-600">Copy Output</button>
+      <button id="dl-clear" class="text-sm text-gray-400 hover:text-gray-600">Clear</button>
+      <span id="dl-stats" class="text-sm text-gray-500 ml-2"></span>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is this tool useful for?", a: "Common use cases: (1) Cleaning up exported spreadsheet data with duplicate rows. (2) Deduplicating email lists or contact lists. (3) Removing repeated entries from log files. (4) Cleaning up keyword lists for SEO research. (5) Deduplicating inventory or product lists. (6) Normalizing data before importing into a database." },
+        { q: "What does case-insensitive mode do?", a: "In case-insensitive mode, 'Apple', 'APPLE', and 'apple' are treated as the same line and only one copy is kept. The first occurrence is preserved. Without this option, case-sensitive mode keeps 'Apple' and 'apple' as separate distinct lines since they contain different characters." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  function process() {
+    const input = (document.getElementById('dl-input') as HTMLTextAreaElement).value;
+    const sort = (document.getElementById('opt-sort') as HTMLInputElement).checked;
+    const trim = (document.getElementById('opt-trim') as HTMLInputElement).checked;
+    const blanks = (document.getElementById('opt-blanks') as HTMLInputElement).checked;
+    const caseInsensitive = (document.getElementById('opt-case') as HTMLInputElement).checked;
+
+    let lines = input.split('\n');
+    const total = lines.length;
+
+    if (trim) lines = lines.map(l => l.trim());
+    if (blanks) lines = lines.filter(l => l.length > 0);
+
+    const seen = new Set<string>();
+    const deduped = lines.filter(l => {
+      const key = caseInsensitive ? l.toLowerCase() : l;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+
+    if (sort) deduped.sort((a, b) => caseInsensitive ? a.toLowerCase().localeCompare(b.toLowerCase()) : a.localeCompare(b));
+
+    const removed = total - deduped.length;
+    (document.getElementById('dl-output') as HTMLTextAreaElement).value = deduped.join('\n');
+    document.getElementById('dl-stats')!.textContent = `${deduped.length} unique · ${removed} duplicate${removed !== 1 ? 's' : ''} removed`;
+  }
+
+  document.getElementById('dl-go')!.addEventListener('click', process);
+
+  document.getElementById('dl-copy')!.addEventListener('click', () => {
+    const out = (document.getElementById('dl-output') as HTMLTextAreaElement).value;
+    if (out) navigator.clipboard.writeText(out);
+  });
+
+  document.getElementById('dl-clear')!.addEventListener('click', () => {
+    (document.getElementById('dl-input') as HTMLTextAreaElement).value = '';
+    (document.getElementById('dl-output') as HTMLTextAreaElement).value = '';
+    document.getElementById('dl-stats')!.textContent = '';
+  });
+
+  // Sample data
+  (document.getElementById('dl-input') as HTMLTextAreaElement).value = `apple\nbanana\nApple\norange\nbanana\ngrape\norange\nKiwi\nkiwi`;
+</script>

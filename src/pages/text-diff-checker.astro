@@ -1,0 +1,151 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Text Diff Checker"
+  description="Compare two texts side by side and highlight the differences. Find added, removed, and changed words or lines instantly."
+  slug="text-diff-checker"
+  category="Text & Writing"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Text Diff Checker</h1>
+  <p class="text-gray-500 mb-8">Paste two texts to highlight what changed — added, removed, or modified.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="flex gap-2">
+      <button class="diff-mode text-sm border rounded-xl px-4 py-2 transition-colors" data-mode="words">Word diff</button>
+      <button class="diff-mode text-sm border rounded-xl px-4 py-2 transition-colors" data-mode="lines">Line diff</button>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Original Text</label>
+        <textarea id="diff-a" class="input-field h-48 font-mono text-sm resize-y" placeholder="Paste original text here…"></textarea>
+      </div>
+      <div>
+        <label class="label">Changed Text</label>
+        <textarea id="diff-b" class="input-field h-48 font-mono text-sm resize-y" placeholder="Paste changed text here…"></textarea>
+      </div>
+    </div>
+
+    <button id="diff-go" class="btn-primary">Compare</button>
+
+    <div id="diff-stats" class="hidden flex flex-wrap gap-3 text-sm"></div>
+
+    <div id="diff-result" class="hidden space-y-3">
+      <p class="label">Diff Output</p>
+      <div id="diff-output" class="font-mono text-sm bg-gray-50 border border-gray-200 rounded-xl p-4 leading-relaxed whitespace-pre-wrap overflow-x-auto"></div>
+      <div class="flex gap-4 text-xs">
+        <span class="flex items-center gap-1.5"><span class="inline-block w-3 h-3 rounded bg-green-200 border border-green-400"></span> Added</span>
+        <span class="flex items-center gap-1.5"><span class="inline-block w-3 h-3 rounded bg-red-200 border border-red-400"></span> Removed</span>
+        <span class="flex items-center gap-1.5"><span class="inline-block w-3 h-3 rounded bg-gray-100 border border-gray-300"></span> Unchanged</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is a text diff?", a: "A 'diff' (short for difference) is a comparison between two versions of text that highlights what was added, removed, or changed. It's the same concept used in version control systems like Git to show changes between file versions. This tool uses a word-level or line-level diff algorithm to highlight exactly what changed between your two texts." },
+        { q: "When is a diff checker useful?", a: "Common uses: (1) Comparing two drafts of a document to see what was changed. (2) Checking if two pieces of text are identical. (3) Finding plagiarism or paraphrasing between texts. (4) Reviewing edits to contracts or legal documents. (5) Comparing API responses or config files. (6) Proofreading — seeing exactly what your editor changed." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  type Mode = 'words' | 'lines';
+  let mode: Mode = 'words';
+
+  document.querySelectorAll('.diff-mode').forEach(btn => {
+    btn.addEventListener('click', () => {
+      mode = (btn as HTMLElement).dataset.mode as Mode;
+      document.querySelectorAll('.diff-mode').forEach(b => {
+        const active = (b as HTMLElement).dataset.mode === mode;
+        b.classList.toggle('border-indigo-400', active);
+        b.classList.toggle('bg-indigo-50', active);
+        b.classList.toggle('text-indigo-700', active);
+        b.classList.toggle('border-gray-200', !active);
+        b.classList.toggle('text-gray-600', !active);
+      });
+    });
+  });
+  document.querySelectorAll('.diff-mode')[0].classList.add('border-indigo-400', 'bg-indigo-50', 'text-indigo-700');
+  document.querySelectorAll('.diff-mode')[1].classList.add('border-gray-200', 'text-gray-600');
+
+  // LCS-based diff
+  function lcs(a: string[], b: string[]): number[][] {
+    const m = a.length, n = b.length;
+    const dp: number[][] = Array.from({ length: m + 1 }, () => new Array(n + 1).fill(0));
+    for (let i = 1; i <= m; i++)
+      for (let j = 1; j <= n; j++)
+        dp[i][j] = a[i-1] === b[j-1] ? dp[i-1][j-1] + 1 : Math.max(dp[i-1][j], dp[i][j-1]);
+    return dp;
+  }
+
+  type Change = { type: 'equal' | 'add' | 'remove'; text: string };
+
+  function diff(a: string[], b: string[]): Change[] {
+    const dp = lcs(a, b);
+    const result: Change[] = [];
+    let i = a.length, j = b.length;
+    while (i > 0 || j > 0) {
+      if (i > 0 && j > 0 && a[i-1] === b[j-1]) {
+        result.unshift({ type: 'equal', text: a[i-1] });
+        i--; j--;
+      } else if (j > 0 && (i === 0 || dp[i][j-1] >= dp[i-1][j])) {
+        result.unshift({ type: 'add', text: b[j-1] });
+        j--;
+      } else {
+        result.unshift({ type: 'remove', text: a[i-1] });
+        i--;
+      }
+    }
+    return result;
+  }
+
+  document.getElementById('diff-go')!.addEventListener('click', () => {
+    const a = (document.getElementById('diff-a') as HTMLTextAreaElement).value;
+    const b = (document.getElementById('diff-b') as HTMLTextAreaElement).value;
+    if (!a && !b) return;
+
+    const tokensA = mode === 'lines' ? a.split('\n') : a.split(/(\s+)/);
+    const tokensB = mode === 'lines' ? b.split('\n') : b.split(/(\s+)/);
+    const changes = diff(tokensA, tokensB);
+
+    let added = 0, removed = 0;
+    const html = changes.map(c => {
+      if (c.type === 'add') { added++; return `<mark class="bg-green-200 text-green-900 rounded px-0.5">${escHtml(c.text)}</mark>`; }
+      if (c.type === 'remove') { removed++; return `<del class="bg-red-100 text-red-700 rounded px-0.5 line-through">${escHtml(c.text)}</del>`; }
+      return escHtml(c.text);
+    }).join(mode === 'lines' ? '\n' : '');
+
+    document.getElementById('diff-output')!.innerHTML = html;
+
+    const statsEl = document.getElementById('diff-stats')!;
+    statsEl.innerHTML = [
+      `<span class="bg-green-100 text-green-700 px-3 py-1 rounded-full">+${added} added</span>`,
+      `<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full">−${removed} removed</span>`,
+      `<span class="bg-gray-100 text-gray-600 px-3 py-1 rounded-full">${changes.filter(c => c.type === 'equal').length} unchanged</span>`,
+    ].join('');
+    statsEl.classList.remove('hidden');
+    document.getElementById('diff-result')!.classList.remove('hidden');
+  });
+
+  function escHtml(s: string): string {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
+
+  // Sample
+  (document.getElementById('diff-a') as HTMLTextAreaElement).value = 'The quick brown fox jumps over the lazy dog.';
+  (document.getElementById('diff-b') as HTMLTextAreaElement).value = 'The quick brown cat leaps over the lazy dog today.';
+</script>

@@ -1,0 +1,106 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Text Repeater"
+  description="Repeat any text or character a specific number of times. Choose separator, new line, or no separator. Copy the result instantly."
+  slug="text-repeater"
+  category="Text & Writing"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Text Repeater</h1>
+  <p class="text-gray-500 mb-8">Repeat any text a set number of times with a custom separator.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div>
+        <label class="label">Text to Repeat</label>
+        <textarea id="tr-input" class="input-field h-28 resize-y" placeholder="Enter text to repeat…">Hello!</textarea>
+      </div>
+      <div class="space-y-4">
+        <div>
+          <label class="label">Repeat</label>
+          <div class="flex items-center gap-2">
+            <input id="tr-count" type="number" class="input-field w-24" value="5" min="1" max="10000">
+            <span class="text-sm text-gray-500">times</span>
+          </div>
+        </div>
+        <div>
+          <label class="label">Separator</label>
+          <select id="tr-sep" class="input-field">
+            <option value="">No separator</option>
+            <option value="\n" selected>New line</option>
+            <option value=", ">Comma + space</option>
+            <option value=" ">Space</option>
+            <option value=" | ">Pipe ( | )</option>
+            <option value=" — ">Dash ( — )</option>
+            <option value="custom">Custom…</option>
+          </select>
+        </div>
+        <div id="tr-custom-wrap" class="hidden">
+          <label class="label">Custom Separator</label>
+          <input id="tr-custom" type="text" class="input-field font-mono" placeholder="e.g. , or ;">
+        </div>
+      </div>
+    </div>
+
+    <button id="tr-go" class="btn-primary">Repeat</button>
+
+    <div id="tr-result" class="hidden space-y-3">
+      <div class="flex items-center justify-between">
+        <p class="label">Result <span id="tr-info" class="text-gray-400 font-normal text-xs"></span></p>
+        <button id="tr-copy" class="text-xs text-indigo-600 hover:underline">Copy</button>
+      </div>
+      <textarea id="tr-output" class="input-field h-40 font-mono text-sm bg-gray-50 resize-y" readonly></textarea>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What can I use a text repeater for?", a: "Common uses: (1) Generating test data — repeat a template row to fill a spreadsheet. (2) Creating repeated patterns in creative writing or design. (3) Testing UI — fill a text box with many lines to test overflow behavior. (4) Generating dummy content for mockups. (5) Creating repeated decorative dividers (e.g., -=- repeated 40 times). (6) Filling form fields for testing character limits." },
+        { q: "Is there a limit to how many times I can repeat?", a: "The tool allows up to 10,000 repetitions. However, very high counts with long text can produce very large outputs that may be slow to render or copy. For most practical purposes, repeating up to a few hundred times with normal text is near-instant." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  document.getElementById('tr-sep')!.addEventListener('change', () => {
+    const val = (document.getElementById('tr-sep') as HTMLSelectElement).value;
+    document.getElementById('tr-custom-wrap')!.classList.toggle('hidden', val !== 'custom');
+  });
+
+  document.getElementById('tr-go')!.addEventListener('click', () => {
+    const text = (document.getElementById('tr-input') as HTMLTextAreaElement).value;
+    const count = Math.min(10000, Math.max(1, parseInt((document.getElementById('tr-count') as HTMLInputElement).value) || 1));
+    const sepSel = (document.getElementById('tr-sep') as HTMLSelectElement).value;
+    const sep = sepSel === 'custom'
+      ? (document.getElementById('tr-custom') as HTMLInputElement).value
+      : sepSel === '\\n' ? '\n' : sepSel;
+
+    const result = Array(count).fill(text).join(sep);
+    const charCount = result.length;
+    const lineCount = result.split('\n').length;
+
+    (document.getElementById('tr-output') as HTMLTextAreaElement).value = result;
+    document.getElementById('tr-info')!.textContent = `— ${charCount.toLocaleString()} chars, ${lineCount.toLocaleString()} lines`;
+    document.getElementById('tr-result')!.classList.remove('hidden');
+  });
+
+  document.getElementById('tr-copy')!.addEventListener('click', () => {
+    const out = (document.getElementById('tr-output') as HTMLTextAreaElement).value;
+    if (out) navigator.clipboard.writeText(out);
+  });
+
+  document.getElementById('tr-go')!.click();
+</script>

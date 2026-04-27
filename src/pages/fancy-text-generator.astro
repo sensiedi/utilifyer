@@ -1,0 +1,184 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Fancy Text Generator"
+  description="Convert your text into fancy Unicode styles — bold, italic, cursive, bubble, strikethrough, and more. Copy and paste into Instagram, Twitter, Discord, or anywhere."
+  slug="fancy-text-generator"
+  category="Text & Writing"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Fancy Text Generator</h1>
+  <p class="text-gray-500 mb-8">Convert text into stylish Unicode fonts — copy and paste anywhere.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div>
+      <label class="label">Your Text</label>
+      <input id="ft-input" type="text" class="input-field text-lg" placeholder="Type something…" value="Hello World">
+    </div>
+
+    <div id="ft-output" class="space-y-2"></div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "Why does fancy text work in Instagram bios and Twitter?", a: "These aren't custom fonts — they're actual Unicode characters that look like styled Latin letters. Unicode includes thousands of mathematical and symbolic alphabets (like 𝕬 or 𝓐) originally added for scientific notation. Since they're real characters (not images), they copy-paste anywhere Unicode text is supported. Not all platforms support every style, and screen readers may not read them correctly — so avoid them for important content." },
+        { q: "Can I use fancy text everywhere?", a: "Fancy text works on most social platforms (Instagram, Twitter/X, Facebook, Discord, TikTok bios), messaging apps, and anywhere plain text is accepted. It may not display correctly in some email clients, PDFs, or older apps. Screen readers interpret each symbol by its Unicode name rather than its visual appearance, so it's not accessible — use sparingly and never for critical information." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  // Unicode character maps — offset from basic Latin A=65, a=97, 0=48
+  const STYLES: { name: string; map: (c: string) => string }[] = [
+    {
+      name: '𝗕𝗼𝗹𝗱',
+      map: c => {
+        const u = c.codePointAt(0)!;
+        if (u >= 65 && u <= 90) return String.fromCodePoint(u - 65 + 0x1D400);
+        if (u >= 97 && u <= 122) return String.fromCodePoint(u - 97 + 0x1D41A);
+        if (u >= 48 && u <= 57) return String.fromCodePoint(u - 48 + 0x1D7CE);
+        return c;
+      }
+    },
+    {
+      name: '𝘐𝘵𝘢𝘭𝘪𝘤',
+      map: c => {
+        const u = c.codePointAt(0)!;
+        if (u >= 65 && u <= 90) return String.fromCodePoint(u - 65 + 0x1D434);
+        if (u >= 97 && u <= 122) return u === 104 ? 'ℎ' : String.fromCodePoint(u - 97 + 0x1D44E);
+        return c;
+      }
+    },
+    {
+      name: '𝑩𝒐𝒍𝒅 𝑰𝒕𝒂𝒍𝒊𝒄',
+      map: c => {
+        const u = c.codePointAt(0)!;
+        if (u >= 65 && u <= 90) return String.fromCodePoint(u - 65 + 0x1D468);
+        if (u >= 97 && u <= 122) return String.fromCodePoint(u - 97 + 0x1D482);
+        return c;
+      }
+    },
+    {
+      name: '𝓒𝓾𝓻𝓼𝓲𝓿𝓮',
+      map: c => {
+        const u = c.codePointAt(0)!;
+        if (u >= 65 && u <= 90) return String.fromCodePoint(u - 65 + 0x1D4D0);
+        if (u >= 97 && u <= 122) return String.fromCodePoint(u - 97 + 0x1D4EA);
+        return c;
+      }
+    },
+    {
+      name: '𝒞𝓊𝓇𝓈𝒾𝓋𝑒 𝐿𝑖𝑔𝒽𝓉',
+      map: c => {
+        const u = c.codePointAt(0)!;
+        const exceptions: Record<number, string> = { 66: 'ℬ', 69: 'ℰ', 70: 'ℱ', 72: 'ℋ', 73: 'ℐ', 76: 'ℒ', 77: 'ℳ', 82: 'ℛ' };
+        const exLower: Record<number, string> = { 101: 'ℯ', 103: 'ℊ', 111: 'ℴ' };
+        if (exceptions[u]) return exceptions[u];
+        if (exLower[u]) return exLower[u];
+        if (u >= 65 && u <= 90) return String.fromCodePoint(u - 65 + 0x1D49C);
+        if (u >= 97 && u <= 122) return String.fromCodePoint(u - 97 + 0x1D4B6);
+        return c;
+      }
+    },
+    {
+      name: '𝔉𝔯𝔞𝔨𝔱𝔲𝔯',
+      map: c => {
+        const u = c.codePointAt(0)!;
+        const exceptions: Record<number, string> = { 67: 'ℭ', 72: 'ℌ', 73: 'ℑ', 82: 'ℜ', 90: 'ℨ' };
+        if (exceptions[u]) return exceptions[u];
+        if (u >= 65 && u <= 90) return String.fromCodePoint(u - 65 + 0x1D504);
+        if (u >= 97 && u <= 122) return String.fromCodePoint(u - 97 + 0x1D51E);
+        return c;
+      }
+    },
+    {
+      name: '𝔻𝕠𝕦𝕓𝕝𝕖 𝕊𝕥𝕣𝕦𝕔𝕜',
+      map: c => {
+        const u = c.codePointAt(0)!;
+        const exceptions: Record<number, string> = { 67: 'ℂ', 72: 'ℍ', 78: 'ℕ', 80: 'ℙ', 81: 'ℚ', 82: 'ℝ', 90: 'ℤ' };
+        if (exceptions[u]) return exceptions[u];
+        if (u >= 65 && u <= 90) return String.fromCodePoint(u - 65 + 0x1D538);
+        if (u >= 97 && u <= 122) return String.fromCodePoint(u - 97 + 0x1D552);
+        if (u >= 48 && u <= 57) return String.fromCodePoint(u - 48 + 0x1D7D8);
+        return c;
+      }
+    },
+    {
+      name: 'Ｆｕｌｌｗｉｄｔｈ',
+      map: c => {
+        const u = c.codePointAt(0)!;
+        if (u >= 33 && u <= 126) return String.fromCodePoint(u - 33 + 0xFF01);
+        if (u === 32) return '　';
+        return c;
+      }
+    },
+    {
+      name: 'Ⓑⓤⓑⓑⓛⓔ',
+      map: c => {
+        const u = c.codePointAt(0)!;
+        if (u >= 65 && u <= 90) return String.fromCodePoint(u - 65 + 0x24B6);
+        if (u >= 97 && u <= 122) return String.fromCodePoint(u - 97 + 0x24D0);
+        if (u >= 49 && u <= 57) return String.fromCodePoint(u - 49 + 0x2460);
+        if (u === 48) return '⓪';
+        return c;
+      }
+    },
+    {
+      name: 'S̶t̶r̶i̶k̶e̶t̶h̶r̶o̶u̶g̶h̶',
+      map: c => c === ' ' ? ' ' : c + '̶'
+    },
+    {
+      name: 'U͟n͟d͟e͟r͟l͟i͟n͟e͟',
+      map: c => c === ' ' ? ' ' : c + '̲'
+    },
+    {
+      name: 'ᴸᴵᴷᴱ ᵀᴴᴵˢ',
+      map: c => {
+        const m: Record<string, string> = { A:'ᴬ',B:'ᴮ',C:'ᶜ',D:'ᴰ',E:'ᴱ',F:'ᶠ',G:'ᴳ',H:'ᴴ',I:'ᴵ',J:'ᴶ',K:'ᴷ',L:'ᴸ',M:'ᴹ',N:'ᴺ',O:'ᴼ',P:'ᴾ',Q:'Q',R:'ᴿ',S:'ˢ',T:'ᵀ',U:'ᵁ',V:'ⱽ',W:'ᵂ',X:'ˣ',Y:'ʸ',Z:'ᶻ',a:'ᵃ',b:'ᵇ',c:'ᶜ',d:'ᵈ',e:'ᵉ',f:'ᶠ',g:'ᵍ',h:'ʰ',i:'ⁱ',j:'ʲ',k:'ᵏ',l:'ˡ',m:'ᵐ',n:'ⁿ',o:'ᵒ',p:'ᵖ',q:'q',r:'ʳ',s:'ˢ',t:'ᵗ',u:'ᵘ',v:'ᵛ',w:'ʷ',x:'ˣ',y:'ʸ',z:'ᶻ' };
+        return m[c] ?? c;
+      }
+    },
+    {
+      name: 'uʍop ǝpısdn',
+      map: c => {
+        const m: Record<string, string> = { a:'ɐ',b:'q',c:'ɔ',d:'p',e:'ǝ',f:'ɟ',g:'ƃ',h:'ɥ',i:'ı',j:'ɾ',k:'ʞ',l:'l',m:'ɯ',n:'u',o:'o',p:'d',q:'b',r:'ɹ',s:'s',t:'ʇ',u:'n',v:'ʌ',w:'ʍ',x:'x',y:'ʎ',z:'z',A:'∀',B:'B',C:'Ɔ',D:'D',E:'Ǝ',F:'Ⅎ',G:'פ',H:'H',I:'I',J:'ɾ',K:'ʞ',L:'˥',M:'W',N:'N',O:'O',P:'Ԁ',Q:'Q',R:'ɹ',S:'S',T:'┴',U:'∩',V:'Λ',W:'M',X:'X',Y:'⅄',Z:'Z','1':'Ɩ','2':'ᄅ','3':'Ɛ','4':'ㄣ','5':'ϛ','6':'9','7':'ㄥ','8':'8','9':'6','0':'0','!':'¡','?':'¿','.':'˙',',':'\'','\'':', ' };
+        return m[c] ?? c;
+      }
+    },
+  ];
+
+  function transform(text: string, style: typeof STYLES[0]): string {
+    return [...text].map(c => style.map(c)).join('');
+  }
+
+  function render(input: string) {
+    const container = document.getElementById('ft-output')!;
+    if (!input.trim()) { container.innerHTML = ''; return; }
+    container.innerHTML = STYLES.map(style => {
+      const result = transform(input, style);
+      return `<div class="flex items-center justify-between gap-4 bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 hover:border-indigo-200 transition-colors">
+        <div>
+          <p class="text-xs text-gray-400 mb-1">${style.name.replace(/[^\x20-\x7E]/g, '').trim() || style.name}</p>
+          <p class="text-lg text-gray-800 break-all">${result}</p>
+        </div>
+        <button class="text-xs text-indigo-600 hover:underline shrink-0" onclick="navigator.clipboard.writeText(${JSON.stringify(result)})">Copy</button>
+      </div>`;
+    }).join('');
+  }
+
+  const input = document.getElementById('ft-input') as HTMLInputElement;
+  input.addEventListener('input', () => render(input.value));
+  render(input.value);
+</script>

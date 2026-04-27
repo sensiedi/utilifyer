@@ -1,0 +1,180 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Morse Code Translator"
+  description="Translate text to Morse code and Morse code back to text. Supports letters, numbers, and punctuation. Play Morse code audio in your browser."
+  slug="morse-code-translator"
+  category="Text & Writing"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Morse Code Translator</h1>
+  <p class="text-gray-500 mb-8">Convert text to Morse code and back — with audio playback.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <!-- Text → Morse -->
+    <div>
+      <p class="text-sm font-semibold text-gray-700 mb-3">Text → Morse Code</p>
+      <div class="space-y-3">
+        <textarea id="mc-text" class="input-field h-24 resize-y" placeholder="Type text to convert…">Hello World</textarea>
+        <button id="mc-encode" class="btn-primary">Convert to Morse</button>
+        <div id="mc-morse-out" class="hidden space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="label">Morse Code</label>
+            <div class="flex gap-2">
+              <button id="mc-play" class="text-xs border border-indigo-200 bg-indigo-50 text-indigo-700 rounded-xl px-3 py-1 hover:bg-indigo-100">▶ Play</button>
+              <button id="mc-copy-morse" class="text-xs text-indigo-600 hover:underline">Copy</button>
+            </div>
+          </div>
+          <textarea id="mc-morse" class="input-field h-20 font-mono text-sm bg-gray-50 resize-y" readonly></textarea>
+          <div id="mc-visual" class="flex flex-wrap gap-1 mt-1"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-t border-gray-100 pt-5">
+      <p class="text-sm font-semibold text-gray-700 mb-3">Morse Code → Text</p>
+      <div class="space-y-3">
+        <textarea id="mc-morse-in" class="input-field h-20 font-mono text-sm resize-y" placeholder="Enter Morse code (dots and dashes)… use / between words">.... . .-.. .-.. --- / .-- --- .-. .-.. -..</textarea>
+        <button id="mc-decode" class="btn-primary">Decode Morse</button>
+        <div id="mc-decoded-out" class="hidden">
+          <label class="label mb-1">Decoded Text</label>
+          <div class="flex items-center gap-3 bg-indigo-50 border border-indigo-200 rounded-xl px-4 py-3">
+            <p id="mc-decoded" class="flex-1 text-indigo-800 font-medium text-lg"></p>
+            <button id="mc-copy-decoded" class="text-xs text-indigo-600 hover:underline shrink-0">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reference table -->
+  <div class="mt-8 bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+    <p class="text-sm font-semibold text-gray-700 mb-3">Morse Code Reference</p>
+    <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 text-sm font-mono">
+      {[
+        ['A','.-'],['B','-...'],['C','-.-.'],['D','-..'],['E','.'],['F','..-.'],
+        ['G','--.'],['H','....'],['I','..'],['J','.---'],['K','-.-'],['L','.-..'],
+        ['M','--'],['N','-.'],['O','---'],['P','.--.'],['Q','--.-'],['R','.-.'],
+        ['S','...'],['T','-'],['U','..-'],['V','...-'],['W','.--'],['X','-..-'],
+        ['Y','-.--'],['Z','--..'],['0','-----'],['1','.----'],['2','..---'],['3','...--'],
+        ['4','....-'],['5','.....'],['6','-....'],['7','--...'],['8','---..'],['9','----.'],
+      ].map(([ch, code]) => (
+        <div class="flex items-center gap-2 bg-gray-50 border border-gray-100 rounded-lg px-2 py-1.5">
+          <span class="font-bold text-indigo-700 w-4">{ch}</span>
+          <span class="text-gray-600 text-xs">{code}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is Morse code?", a: "Morse code is a communication system developed by Samuel Morse and Alfred Vail in the 1830s–40s for use with the electric telegraph. It represents letters and numbers as sequences of short signals (dots) and long signals (dashes). A dash is 3× the duration of a dot. Spaces between letters and between words allow decoding. It was the dominant long-distance communication method from the 1840s until the late 20th century, and is still used in aviation and amateur radio." },
+        { q: "What does SOS look like in Morse code?", a: "SOS is '... --- ...' — three dots, three dashes, three dots. It was chosen as the international distress signal in 1906 specifically because it's easy to remember and easy to send, not because it stands for 'Save Our Ship' (that was a backronym added later). It can be sent by any means: sound, light flashes, taps, or radio." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const MORSE: Record<string, string> = {
+    A:'.-', B:'-...', C:'-.-.', D:'-..', E:'.', F:'..-.', G:'--.', H:'....', I:'..',
+    J:'.---', K:'-.-', L:'.-..', M:'--', N:'-.', O:'---', P:'.--.', Q:'--.-', R:'.-.',
+    S:'...', T:'-', U:'..-', V:'...-', W:'.--', X:'-..-', Y:'-.--', Z:'--..',
+    '0':'-----', '1':'.----', '2':'..---', '3':'...--', '4':'....-', '5':'.....',
+    '6':'-....', '7':'--...', '8':'---..', '9':'----.',
+    '.':'.-.-.-', ',':'--..--', '?':'..--..', "'":'.----.', '!':'-.-.--',
+    '/':'-..-.', '(':'-.--.', ')':'-.--.-', '&':'.-...', ':':'---...',
+    ';':'-.-.-.', '=':'-...-', '+':'.-.-.', '-':'-....-', '_':'..--.-',
+    '"':'.-..-.', '$':'...-..-', '@':'.--.-.', ' ': '/',
+  };
+
+  const REVERSE: Record<string, string> = Object.fromEntries(
+    Object.entries(MORSE).filter(([k]) => k !== ' ').map(([k, v]) => [v, k])
+  );
+
+  function encode(text: string): string {
+    return text.toUpperCase().split('').map(c => MORSE[c] ?? '').filter(Boolean).join(' ')
+      .replace(/ \/ /g, ' / ');
+  }
+
+  function decode(morse: string): string {
+    return morse.trim().split(/\s+\/\s+|\s*\/\s*/).map(word =>
+      word.trim().split(/\s+/).map(code => REVERSE[code] ?? '?').join('')
+    ).join(' ');
+  }
+
+  document.getElementById('mc-encode')!.addEventListener('click', () => {
+    const text = (document.getElementById('mc-text') as HTMLTextAreaElement).value;
+    const result = encode(text);
+    (document.getElementById('mc-morse') as HTMLTextAreaElement).value = result;
+
+    const visual = document.getElementById('mc-visual')!;
+    visual.innerHTML = text.toUpperCase().split('').map(c => {
+      if (c === ' ') return '<span class="text-gray-400 text-xs px-1">/</span>';
+      const code = MORSE[c];
+      if (!code) return '';
+      return `<span class="inline-flex flex-col items-center gap-0.5 bg-indigo-50 border border-indigo-100 rounded-lg px-2 py-1">
+        <span class="text-xs font-bold text-indigo-700">${c}</span>
+        <span class="text-xs font-mono text-indigo-500">${code}</span>
+      </span>`;
+    }).join('');
+
+    document.getElementById('mc-morse-out')!.classList.remove('hidden');
+  });
+
+  document.getElementById('mc-decode')!.addEventListener('click', () => {
+    const morse = (document.getElementById('mc-morse-in') as HTMLTextAreaElement).value;
+    document.getElementById('mc-decoded')!.textContent = decode(morse);
+    document.getElementById('mc-decoded-out')!.classList.remove('hidden');
+  });
+
+  document.getElementById('mc-copy-morse')!.addEventListener('click', () => {
+    navigator.clipboard.writeText((document.getElementById('mc-morse') as HTMLTextAreaElement).value);
+  });
+  document.getElementById('mc-copy-decoded')!.addEventListener('click', () => {
+    navigator.clipboard.writeText(document.getElementById('mc-decoded')!.textContent || '');
+  });
+
+  // Audio playback using Web Audio API
+  document.getElementById('mc-play')!.addEventListener('click', async () => {
+    const morse = (document.getElementById('mc-morse') as HTMLTextAreaElement).value;
+    if (!morse) return;
+
+    const ctx = new AudioContext();
+    const unit = 0.08; // seconds per dot
+    let time = ctx.currentTime + 0.1;
+
+    const beep = (duration: number) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.frequency.value = 600;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0.3, time);
+      gain.gain.setValueAtTime(0, time + duration);
+      osc.start(time); osc.stop(time + duration + 0.01);
+      time += duration + unit;
+    };
+
+    for (const char of morse.split('')) {
+      if (char === '.') { beep(unit); }
+      else if (char === '-') { beep(unit * 3); }
+      else if (char === ' ') { time += unit * 2; }
+      else if (char === '/') { time += unit * 4; }
+    }
+  });
+
+  document.getElementById('mc-encode')!.click();
+</script>
