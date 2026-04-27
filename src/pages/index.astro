@@ -48,6 +48,34 @@ const toolsByCategory = categories.map(cat => ({
 
   <body class="min-h-screen flex flex-col bg-gray-50">
 
+    <!-- Drawer backdrop -->
+    <div id="nav-backdrop" class="fixed inset-0 bg-black/40 z-[60] hidden" aria-hidden="true"></div>
+
+    <!-- Navigation drawer -->
+    <div id="nav-drawer" class="fixed top-0 left-0 h-full w-72 bg-white z-[70] shadow-2xl -translate-x-full transition-transform duration-300 flex flex-col" aria-label="Navigation menu">
+      <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+        <div class="flex items-center gap-2 font-bold text-lg text-indigo-600">
+          <span>🛠️</span> Utilifyer
+        </div>
+        <button id="nav-close" class="text-gray-400 hover:text-gray-700 text-2xl leading-none transition-colors" aria-label="Close menu">✕</button>
+      </div>
+      <nav class="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
+        <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">Categories</p>
+        {categories.map(cat => (
+          <a
+            href={`#cat-${cat.toLowerCase().replace(/ /g, '-').replace(/[^a-z0-9-]/g, '')}`}
+            class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors nav-cat-link"
+          >
+            {cat}
+          </a>
+        ))}
+      </nav>
+      <div class="px-3 py-4 border-t border-gray-100 space-y-0.5">
+        <a href="/about" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-gray-600 hover:bg-gray-50 hover:text-indigo-600 transition-colors">About</a>
+        <a href="/contact" class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-gray-600 hover:bg-gray-50 hover:text-indigo-600 transition-colors">Contact</a>
+      </div>
+    </div>
+
     <!-- Header -->
     <header class="bg-white border-b border-gray-200">
       <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
@@ -55,16 +83,12 @@ const toolsByCategory = categories.map(cat => ({
           <span class="text-2xl">🛠️</span>
           <span class="font-bold text-xl text-indigo-600">Utilifyer</span>
         </div>
-        <nav class="hidden md:flex items-center gap-1 text-sm">
-          {categories.map(cat => (
-            <a
-              href={`/category/${cat.toLowerCase().replace(/ /g, '-')}`}
-              class="px-3 py-1.5 rounded-lg text-gray-600 hover:bg-gray-100 transition-colors"
-            >
-              {cat}
-            </a>
-          ))}
-        </nav>
+        <button id="nav-open" class="flex items-center gap-2 text-sm border border-gray-200 rounded-xl px-3 py-1.5 text-gray-600 hover:border-indigo-300 hover:text-indigo-600 transition-colors" aria-label="Open navigation menu">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+          Categories
+        </button>
       </div>
     </header>
 
@@ -97,7 +121,7 @@ const toolsByCategory = categories.map(cat => ({
       <!-- Category Sections -->
       <div id="categories-section">
         {toolsByCategory.map(({ name, tools: catTools }) => (
-          <section class="mb-12">
+          <section class="mb-12" id={`cat-${name.toLowerCase().replace(/ /g, '-').replace(/[^a-z0-9-]/g, '')}`}>
             <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
               <span class="w-1 h-6 bg-indigo-500 rounded-full inline-block"></span>
               {name}
@@ -193,3 +217,31 @@ const toolsByCategory = categories.map(cat => ({
   category: t.category,
   icon: t.icon
 })))} />
+
+<script>
+  const drawer = document.getElementById('nav-drawer')!;
+  const backdrop = document.getElementById('nav-backdrop')!;
+  const openBtn = document.getElementById('nav-open')!;
+  const closeBtn = document.getElementById('nav-close')!;
+
+  function openDrawer() {
+    backdrop.classList.remove('hidden');
+    requestAnimationFrame(() => drawer.classList.remove('-translate-x-full'));
+    document.body.style.overflow = 'hidden';
+  }
+  function closeDrawer() {
+    drawer.classList.add('-translate-x-full');
+    setTimeout(() => backdrop.classList.add('hidden'), 300);
+    document.body.style.overflow = '';
+  }
+
+  openBtn.addEventListener('click', openDrawer);
+  closeBtn.addEventListener('click', closeDrawer);
+  backdrop.addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
+
+  // Close drawer and scroll to section when a category link is clicked
+  document.querySelectorAll('.nav-cat-link').forEach(link => {
+    link.addEventListener('click', () => closeDrawer());
+  });
+</script>
