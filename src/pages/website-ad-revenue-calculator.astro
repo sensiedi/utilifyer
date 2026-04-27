@@ -1,0 +1,224 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Website Ad Revenue Calculator"
+  description="Estimate monthly and annual ad revenue based on pageviews, RPM, and fill rate. Compare display, video, and native ad formats side by side."
+  slug="website-ad-revenue-calculator"
+  category="Finance"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Website Ad Revenue Calculator</h1>
+  <p class="text-gray-500 mb-8">Estimate how much your website can earn from display, video, and native ads.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-6">
+
+    <!-- Inputs -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+      <div>
+        <label class="label">Monthly Pageviews</label>
+        <input id="pageviews" type="number" class="input-field" value="50000" min="0" step="1000">
+        <p class="text-xs text-gray-400 mt-1">Total page views per month</p>
+      </div>
+      <div>
+        <label class="label">Ad Impressions per Page</label>
+        <input id="impressions-per-page" type="number" class="input-field" value="3" min="1" max="20" step="1">
+        <p class="text-xs text-gray-400 mt-1">Number of ad slots per page</p>
+      </div>
+      <div>
+        <label class="label">Fill Rate (%)</label>
+        <input id="fill-rate" type="number" class="input-field" value="80" min="1" max="100" step="1">
+        <p class="text-xs text-gray-400 mt-1">% of ad slots actually filled (typical: 70–90%)</p>
+      </div>
+      <div>
+        <label class="label">Ad Format</label>
+        <select id="ad-format" class="input-field">
+          <option value="display">Display Ads (banner)</option>
+          <option value="video">Video Ads (pre-roll / mid-roll)</option>
+          <option value="native">Native Ads (in-feed)</option>
+          <option value="custom">Custom RPM</option>
+        </select>
+      </div>
+      <div id="rpm-wrap" class="hidden sm:col-span-2">
+        <label class="label">Custom RPM ($)</label>
+        <input id="custom-rpm" type="number" class="input-field w-48" value="2.50" min="0" step="0.01">
+        <p class="text-xs text-gray-400 mt-1">Revenue per 1,000 impressions</p>
+      </div>
+    </div>
+
+    <button id="calc-btn" class="btn-primary">Calculate Revenue</button>
+
+    <!-- Results -->
+    <div id="results" class="hidden space-y-5">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 text-center">
+          <p class="text-xs text-indigo-500 mb-1">Monthly Revenue</p>
+          <p id="res-monthly" class="text-2xl font-bold text-indigo-700"></p>
+        </div>
+        <div class="bg-green-50 border border-green-200 rounded-xl p-4 text-center">
+          <p class="text-xs text-green-600 mb-1">Annual Revenue</p>
+          <p id="res-annual" class="text-2xl font-bold text-green-700"></p>
+        </div>
+        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 text-center">
+          <p class="text-xs text-gray-500 mb-1">Total Impressions / mo</p>
+          <p id="res-impressions" class="text-2xl font-bold text-gray-700"></p>
+        </div>
+        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 text-center">
+          <p class="text-xs text-gray-500 mb-1">Effective RPM</p>
+          <p id="res-rpm" class="text-2xl font-bold text-gray-700"></p>
+        </div>
+      </div>
+
+      <!-- Format comparison table -->
+      <div>
+        <p class="text-sm font-semibold text-gray-700 mb-2">Format Comparison (same traffic)</p>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm text-left border border-gray-200 rounded-xl overflow-hidden">
+            <thead class="bg-gray-50 text-gray-600 text-xs">
+              <tr>
+                <th class="px-4 py-2">Format</th>
+                <th class="px-4 py-2">Typical RPM</th>
+                <th class="px-4 py-2">Monthly Est.</th>
+                <th class="px-4 py-2">Annual Est.</th>
+              </tr>
+            </thead>
+            <tbody id="format-table" class="divide-y divide-gray-100 text-gray-700"></tbody>
+          </table>
+        </div>
+        <p class="text-xs text-gray-400 mt-2">RPM ranges are industry averages. Actual earnings vary by niche, audience geography, and seasonality.</p>
+      </div>
+
+      <!-- Traffic milestone projections -->
+      <div>
+        <p class="text-sm font-semibold text-gray-700 mb-2">Revenue at Traffic Milestones</p>
+        <div id="milestones" class="space-y-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RPM reference -->
+  <div class="mt-8 bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+    <p class="text-sm font-semibold text-gray-700 mb-3">Typical RPM by Niche</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+      {[
+        ['Finance / Insurance', '$10 – $30'],
+        ['Legal / Attorney', '$8 – $25'],
+        ['Health & Medical', '$6 – $20'],
+        ['Technology / Software', '$4 – $12'],
+        ['Home & Real Estate', '$4 – $10'],
+        ['Education / Tutorials', '$3 – $8'],
+        ['Food & Recipes', '$2 – $6'],
+        ['Entertainment / Lifestyle', '$1 – $4'],
+        ['News / General', '$1 – $3'],
+        ['Gaming', '$0.75 – $3'],
+      ].map(([niche, rpm]) => (
+        <div class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-lg px-3 py-2">
+          <span class="text-gray-700">{niche}</span>
+          <span class="font-mono font-semibold text-indigo-700">{rpm}</span>
+        </div>
+      ))}
+    </div>
+    <p class="text-xs text-gray-400 mt-3">RPM = Revenue per 1,000 impressions. Finance niches command premium rates due to high advertiser competition.</p>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is RPM and how is it different from CPM?", a: "RPM (Revenue per Mille) is your actual earnings per 1,000 page views after the ad network takes its cut. CPM (Cost per Mille) is what advertisers pay per 1,000 impressions — it's always higher than your RPM because the network keeps a percentage (typically 30–45% for Google AdSense). For example, if CPM is $5 and AdSense keeps 32%, your RPM is about $3.40. Always compare RPM when evaluating your own earnings." },
+        { q: "What fill rate should I expect?", a: "Fill rate is the percentage of ad slots that actually serve an ad. A 100% fill rate is rare — unsold inventory, ad blockers, and geographic filtering all reduce it. For AdSense and most programmatic networks, 70–90% is typical for English-language content with US/UK/CA/AU traffic. Tier-2 traffic (India, Southeast Asia, Latin America) often has lower fill rates and lower CPMs. Ad blockers affect an additional 25–40% of desktop users depending on your audience." },
+        { q: "How much traffic do I need to make $1,000/month?", a: "It depends heavily on your niche RPM. With a $3 RPM (typical lifestyle/general blog) and 3 ads per page: you need about 111,000 pageviews/month for $1,000. With a $10 RPM (finance or tech niche): only 33,000 pageviews. Growing your RPM through better ad placement, video ads, and high-value niches is often more effective than simply chasing traffic." },
+        { q: "Is this estimate accurate for AdSense?", a: "This calculator gives a reasonable estimate based on industry RPM benchmarks, but actual AdSense earnings vary significantly. Key factors: (1) Audience geography — US traffic pays 5–10× more than Indian traffic. (2) Seasonality — Q4 (Oct–Dec) typically pays 30–50% more due to holiday advertising spend. (3) Content niche and advertiser competition. (4) Ad placement and viewability. Use this as a planning tool and monitor your actual RPM in your ad network dashboard." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const FORMATS: { name: string; rpm: number; rpmRange: string }[] = [
+    { name: 'Display Ads (banner)',     rpm: 2.5,  rpmRange: '$1 – $5'   },
+    { name: 'Native Ads (in-feed)',     rpm: 4.0,  rpmRange: '$2 – $8'   },
+    { name: 'Video Ads (pre/mid-roll)', rpm: 8.0,  rpmRange: '$4 – $15'  },
+  ];
+
+  const FORMAT_RPM: Record<string, number> = {
+    display: 2.5,
+    video: 8.0,
+    native: 4.0,
+  };
+
+  const fmt = (n: number) =>
+    n >= 1000
+      ? '$' + (n / 1000).toFixed(1).replace(/\.0$/, '') + 'k'
+      : '$' + n.toFixed(2);
+
+  const fmtFull = (n: number) =>
+    '$' + n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  function calc() {
+    const pageviews = parseFloat((document.getElementById('pageviews') as HTMLInputElement).value) || 0;
+    const ipp       = parseFloat((document.getElementById('impressions-per-page') as HTMLInputElement).value) || 1;
+    const fillRate  = parseFloat((document.getElementById('fill-rate') as HTMLInputElement).value) / 100 || 0.8;
+    const format    = (document.getElementById('ad-format') as HTMLSelectElement).value;
+    const customRpm = parseFloat((document.getElementById('custom-rpm') as HTMLInputElement).value) || 0;
+
+    const rpm = format === 'custom' ? customRpm : FORMAT_RPM[format];
+
+    const totalImpressions = pageviews * ipp * fillRate;
+    const monthly = (totalImpressions / 1000) * rpm;
+    const annual  = monthly * 12;
+
+    document.getElementById('res-monthly')!.textContent     = fmtFull(monthly);
+    document.getElementById('res-annual')!.textContent      = fmtFull(annual);
+    document.getElementById('res-impressions')!.textContent = Math.round(totalImpressions).toLocaleString();
+    document.getElementById('res-rpm')!.textContent         = '$' + rpm.toFixed(2);
+
+    // Format comparison table
+    const tbody = document.getElementById('format-table')!;
+    tbody.innerHTML = FORMATS.map(f => {
+      const mo = (totalImpressions / 1000) * f.rpm;
+      const yr = mo * 12;
+      const active = (format !== 'custom' && FORMAT_RPM[format] === f.rpm) || (format === 'custom' && customRpm === f.rpm);
+      return `<tr class="${active ? 'bg-indigo-50 font-medium' : ''}">
+        <td class="px-4 py-2">${f.name}${active ? ' <span class="text-xs text-indigo-500 font-normal">(selected)</span>' : ''}</td>
+        <td class="px-4 py-2 font-mono">${f.rpmRange}</td>
+        <td class="px-4 py-2 font-mono">${fmtFull(mo)}</td>
+        <td class="px-4 py-2 font-mono">${fmtFull(yr)}</td>
+      </tr>`;
+    }).join('');
+
+    // Milestones
+    const milestones = [10_000, 50_000, 100_000, 250_000, 500_000, 1_000_000];
+    const milestonesDiv = document.getElementById('milestones')!;
+    milestonesDiv.innerHTML = milestones.map(pv => {
+      const impr = pv * ipp * fillRate;
+      const mo   = (impr / 1000) * rpm;
+      const pct  = pageviews > 0 ? Math.round((pv / pageviews) * 100) : 0;
+      const barW = Math.min(100, pct);
+      return `<div class="flex items-center gap-3 text-sm">
+        <span class="w-28 shrink-0 font-mono text-gray-600">${(pv/1000).toFixed(0)}k/mo</span>
+        <div class="flex-1 bg-gray-100 rounded-full h-2 overflow-hidden">
+          <div class="bg-indigo-400 h-2 rounded-full transition-all" style="width:${barW}%"></div>
+        </div>
+        <span class="w-24 shrink-0 text-right font-semibold text-gray-800">${fmtFull(mo)}/mo</span>
+      </div>`;
+    }).join('');
+
+    document.getElementById('results')!.classList.remove('hidden');
+  }
+
+  document.getElementById('ad-format')!.addEventListener('change', () => {
+    const format = (document.getElementById('ad-format') as HTMLSelectElement).value;
+    document.getElementById('rpm-wrap')!.classList.toggle('hidden', format !== 'custom');
+  });
+
+  document.getElementById('calc-btn')!.addEventListener('click', calc);
+  calc();
+</script>

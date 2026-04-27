@@ -2397,5 +2397,23 @@
     "priority": 151,
     "status": "live",
     "icon": "📡"
+  },
+  {
+    "slug": "website-ad-revenue-calculator",
+    "title": "Website Ad Revenue Calculator",
+    "description": "Estimate monthly and annual ad revenue for a website based on pageviews, RPM, and ad fill rate. Compare display, video, and native ad formats.",
+    "category": "Finance",
+    "tags": [
+      "ad revenue calculator",
+      "website revenue",
+      "RPM calculator",
+      "CPM calculator",
+      "display ads",
+      "AdSense revenue",
+      "monetization"
+    ],
+    "priority": 152,
+    "status": "live",
+    "icon": "📊"
   }
 ]
