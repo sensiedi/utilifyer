@@ -1,0 +1,180 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Engine Displacement Converter"
+  description="Convert engine displacement between cc, liters, and cubic inches. Understand what engine sizes mean and compare common engine displacements."
+  slug="engine-displacement-converter"
+  category="Automotive"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Engine Displacement Converter</h1>
+  <p class="text-gray-500 mb-8">Convert between cc, liters, and cubic inches — understand what engine size means.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div>
+        <label class="label">Cubic Centimeters (cc / cm³)</label>
+        <input id="ed-cc" type="number" class="input-field" placeholder="2000" min="0" step="1">
+      </div>
+      <div>
+        <label class="label">Liters (L)</label>
+        <input id="ed-l" type="number" class="input-field" placeholder="2.0" min="0" step="0.01">
+      </div>
+      <div>
+        <label class="label">Cubic Inches (ci / CID)</label>
+        <input id="ed-ci" type="number" class="input-field" placeholder="122" min="0" step="0.1">
+      </div>
+    </div>
+
+    <p class="text-xs text-gray-400">Type any value and the others update automatically.</p>
+
+    <!-- Quick presets -->
+    <div>
+      <p class="text-sm font-semibold text-gray-700 mb-2">Common Engine Sizes</p>
+      <div class="flex flex-wrap gap-2">
+        {[
+          { label: '600cc (motorcycle)', cc: 600 },
+          { label: '1.0L (city car)', cc: 1000 },
+          { label: '1.6L (economy)', cc: 1600 },
+          { label: '2.0L (standard)', cc: 2000 },
+          { label: '2.5L (midsize)', cc: 2500 },
+          { label: '3.5L (V6)', cc: 3500 },
+          { label: '5.0L (V8)', cc: 5000 },
+          { label: '6.2L (supercar)', cc: 6200 },
+        ].map(({ label, cc }) => (
+          <button class="ed-preset text-xs border border-gray-200 rounded-xl px-3 py-1.5 hover:border-indigo-300 hover:bg-indigo-50 text-gray-600 transition-colors" data-cc={cc}>{label}</button>
+        ))}
+      </div>
+    </div>
+
+    <!-- Context output -->
+    <div id="ed-context" class="hidden bg-indigo-50 border border-indigo-200 rounded-xl p-4 text-sm text-indigo-800"></div>
+  </div>
+
+  <!-- Reference table -->
+  <div class="mt-8 bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+    <p class="text-sm font-semibold text-gray-700 mb-3">Well-Known Engine Sizes</p>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-xs text-gray-500 border-b border-gray-100">
+            <th class="text-left py-2 pr-4">Engine / Vehicle</th>
+            <th class="text-right py-2 pr-4">cc</th>
+            <th class="text-right py-2 pr-4">Liters</th>
+            <th class="text-right py-2">Cu. In.</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50 text-gray-700">
+          {[
+            ['Honda Grom (motorcycle)', '125', '0.13', '7.6'],
+            ['Smart ForTwo', '898', '0.90', '54.8'],
+            ['Honda Civic 1.5T', '1497', '1.50', '91.3'],
+            ['Toyota Corolla 2.0', '1987', '1.99', '121.2'],
+            ['Ford Mustang 2.3 EcoBoost', '2261', '2.26', '137.9'],
+            ['Honda Accord 3.5 V6', '3471', '3.47', '211.8'],
+            ['Ford F-150 5.0 V8', '4951', '4.95', '302.1'],
+            ['Dodge Challenger 6.2 Hellcat', '6166', '6.17', '376.4'],
+            ['Bugatti Chiron 8.0 W16', '7993', '7.99', '487.9'],
+          ].map(([name, cc, l, ci]) => (
+            <tr>
+              <td class="py-2 pr-4">{name}</td>
+              <td class="py-2 pr-4 text-right font-mono">{cc}</td>
+              <td class="py-2 pr-4 text-right font-mono">{l}</td>
+              <td class="py-2 text-right font-mono">{ci}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is engine displacement?", a: "Engine displacement is the total volume swept by all pistons inside the engine cylinders — essentially how much air-fuel mixture the engine can process per revolution. It's a rough proxy for power potential: larger displacement generally means more power, though modern turbocharged small engines can outperform naturally-aspirated larger ones. A 2.0L engine has 2,000cc (2 liters) of total swept cylinder volume." },
+        { q: "Why are some engines described in liters and others in cubic inches?", a: "It's a regional convention. European and Japanese manufacturers (and most modern spec sheets) use liters. American muscle cars and classic US engines traditionally use cubic inches — that's why you'll see a 'small block 350' (350 cubic inches = 5.7L) or a '302' (302 ci = 5.0L). Motorcycles and small engines often specify in cc (cubic centimeters). 1 liter = 1000cc = 61.02 cubic inches." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const ccInput = document.getElementById('ed-cc') as HTMLInputElement;
+  const lInput = document.getElementById('ed-l') as HTMLInputElement;
+  const ciInput = document.getElementById('ed-ci') as HTMLInputElement;
+
+  const CC_PER_CI = 16.3871;
+
+  function getContext(cc: number): string {
+    if (cc < 50) return `${cc}cc — micro engine territory (model aircraft, chainsaw).`;
+    if (cc < 200) return `${cc}cc — small engine: mopeds, garden equipment, entry-level motorcycles.`;
+    if (cc < 400) return `${cc}cc — small motorcycle or scooter range.`;
+    if (cc < 700) return `${cc}cc — mid-displacement motorcycle or microcar engine.`;
+    if (cc < 1200) return `${cc}cc — small car engine (city car, economy hatchback).`;
+    if (cc < 2000) return `${cc}cc — efficient car engine. Typical for modern compact cars.`;
+    if (cc < 2500) return `${cc}cc — standard mid-size car engine range.`;
+    if (cc < 3500) return `${cc}cc — larger sedan or entry-level truck/SUV engine.`;
+    if (cc < 5000) return `${cc}cc — V6 or small V8 territory. Sports cars and full-size trucks.`;
+    if (cc < 7000) return `${cc}cc — large V8 or V10. Performance cars, heavy trucks.`;
+    return `${cc}cc — very large displacement. Supercars, heavy-duty trucks, or collector vehicles.`;
+  }
+
+  let updating = false;
+
+  function updateFrom(source: 'cc' | 'l' | 'ci') {
+    if (updating) return;
+    updating = true;
+    let cc: number;
+    if (source === 'cc') {
+      cc = parseFloat(ccInput.value);
+      if (!isNaN(cc)) {
+        lInput.value = (cc / 1000).toFixed(2);
+        ciInput.value = (cc / CC_PER_CI).toFixed(1);
+      }
+    } else if (source === 'l') {
+      const l = parseFloat(lInput.value);
+      cc = l * 1000;
+      if (!isNaN(l)) {
+        ccInput.value = Math.round(cc).toString();
+        ciInput.value = (cc / CC_PER_CI).toFixed(1);
+      }
+    } else {
+      const ci = parseFloat(ciInput.value);
+      cc = ci * CC_PER_CI;
+      if (!isNaN(ci)) {
+        ccInput.value = Math.round(cc).toString();
+        lInput.value = (cc / 1000).toFixed(2);
+      }
+    }
+    if (!isNaN(cc) && cc > 0) {
+      const ctx = document.getElementById('ed-context')!;
+      ctx.textContent = getContext(Math.round(cc));
+      ctx.classList.remove('hidden');
+    }
+    updating = false;
+  }
+
+  ccInput.addEventListener('input', () => updateFrom('cc'));
+  lInput.addEventListener('input', () => updateFrom('l'));
+  ciInput.addEventListener('input', () => updateFrom('ci'));
+
+  document.querySelectorAll('.ed-preset').forEach(btn => {
+    btn.addEventListener('click', () => {
+      ccInput.value = (btn as HTMLElement).dataset.cc || '';
+      updateFrom('cc');
+    });
+  });
+
+  ccInput.value = '2000';
+  updateFrom('cc');
+</script>

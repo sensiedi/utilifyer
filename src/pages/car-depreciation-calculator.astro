@@ -1,0 +1,229 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Car Depreciation Calculator"
+  description="Calculate how much your car loses in value over time. See year-by-year depreciation, total loss, and compare against average depreciation rates by vehicle type."
+  slug="car-depreciation-calculator"
+  category="Automotive"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Car Depreciation Calculator</h1>
+  <p class="text-gray-500 mb-8">Find out how much your vehicle loses in value each year — and what it'll be worth when you sell.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div>
+        <label class="label">Purchase Price ($)</label>
+        <input id="cd-price" type="number" class="input-field" placeholder="35000" value="35000" min="0">
+      </div>
+      <div>
+        <label class="label">Vehicle Age (years)</label>
+        <input id="cd-age" type="number" class="input-field" placeholder="0" value="0" min="0" max="30">
+        <p class="text-xs text-gray-400 mt-1">0 = brand new</p>
+      </div>
+      <div>
+        <label class="label">Vehicle Type</label>
+        <select id="cd-type" class="input-field">
+          <option value="sedan">Sedan / Compact</option>
+          <option value="suv">SUV / Crossover</option>
+          <option value="truck">Pickup Truck</option>
+          <option value="luxury">Luxury Car</option>
+          <option value="sports">Sports Car</option>
+          <option value="ev">Electric Vehicle</option>
+          <option value="minivan">Minivan</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">Years to Project</label>
+        <select id="cd-years" class="input-field">
+          <option value="3">3 years</option>
+          <option value="5" selected>5 years</option>
+          <option value="7">7 years</option>
+          <option value="10">10 years</option>
+        </select>
+      </div>
+    </div>
+
+    <button id="cd-calc" class="btn-primary">Calculate Depreciation</button>
+
+    <div id="cd-result" class="hidden space-y-5">
+
+      <!-- Summary cards -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
+          <p class="text-2xl font-bold text-indigo-700" id="cd-current-val"></p>
+          <p class="text-xs text-gray-500 mt-1">Current Value</p>
+        </div>
+        <div class="bg-red-50 border border-red-200 rounded-xl p-4">
+          <p class="text-2xl font-bold text-red-600" id="cd-end-val"></p>
+          <p class="text-xs text-gray-500 mt-1" id="cd-end-label">Value After X Years</p>
+        </div>
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+          <p class="text-2xl font-bold text-amber-700" id="cd-total-loss"></p>
+          <p class="text-xs text-gray-500 mt-1">Total Loss Projected</p>
+        </div>
+        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+          <p class="text-2xl font-bold text-gray-700" id="cd-pct-retained"></p>
+          <p class="text-xs text-gray-500 mt-1">% Value Retained</p>
+        </div>
+      </div>
+
+      <!-- Year-by-year table -->
+      <div>
+        <p class="text-sm font-semibold text-gray-700 mb-2">Year-by-Year Breakdown</p>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="text-xs text-gray-500 border-b border-gray-100">
+                <th class="text-left py-2 pr-4">Year</th>
+                <th class="text-right py-2 pr-4">Est. Value</th>
+                <th class="text-right py-2 pr-4">Depreciation</th>
+                <th class="text-right py-2">% of Original</th>
+              </tr>
+            </thead>
+            <tbody id="cd-table" class="divide-y divide-gray-50"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Visual bar -->
+      <div>
+        <p class="text-sm font-semibold text-gray-700 mb-2">Value Retained Over Time</p>
+        <div id="cd-bars" class="space-y-1.5"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Depreciation rates reference -->
+  <div class="mt-8 bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+    <p class="text-sm font-semibold text-gray-700 mb-3">Average Depreciation by Vehicle Type</p>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-xs text-gray-500 border-b border-gray-100">
+            <th class="text-left py-2 pr-4">Type</th>
+            <th class="text-right py-2 pr-4">Year 1</th>
+            <th class="text-right py-2 pr-4">Year 3</th>
+            <th class="text-right py-2">Year 5</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50 text-gray-700">
+          {[
+            ['Sedan / Compact', '15–20%', '40–45%', '55–60%'],
+            ['SUV / Crossover', '12–18%', '35–40%', '50–55%'],
+            ['Pickup Truck', '10–15%', '30–35%', '45–50%'],
+            ['Luxury Car', '20–25%', '45–55%', '65–70%'],
+            ['Sports Car', '15–25%', '40–50%', '55–65%'],
+            ['Electric Vehicle', '18–25%', '45–55%', '60–65%'],
+            ['Minivan', '15–20%', '40–45%', '55–60%'],
+          ].map(([type, y1, y3, y5]) => (
+            <tr>
+              <td class="py-2 pr-4">{type}</td>
+              <td class="py-2 pr-4 text-right text-red-600 font-mono">{y1}</td>
+              <td class="py-2 pr-4 text-right text-red-600 font-mono">{y3}</td>
+              <td class="py-2 text-right text-red-600 font-mono">{y5}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="text-xs text-gray-400 mt-2">Figures represent cumulative depreciation from original purchase price. Actual values vary by make, model, condition, mileage, and market.</p>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How much does a new car depreciate in the first year?", a: "A new car typically loses 15–25% of its value in the first year alone, with the steepest drop happening the moment you drive it off the lot (sometimes called 'drive-off depreciation'). By year 3, most cars have lost 40–50% of original value. By year 5, it's often 50–65% gone. This is why buying a 2–3 year old used car can be significantly better value — someone else absorbs the initial drop." },
+        { q: "Which vehicles hold their value best?", a: "Trucks (especially Toyota Tacoma, Ford F-150) historically depreciate slowest — 40–50% retained at 5 years. Japanese brands (Toyota, Honda) generally outperform German luxury in residual value. Luxury cars (BMW, Mercedes, Audi) depreciate fastest — sometimes 60–70% in 5 years. EVs have had high depreciation due to rapid battery tech improvements, though this varies by model. Rare/limited production cars can actually appreciate." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  // Year 1 drop, then annual rate for subsequent years
+  const DEPR: Record<string, { y1: number; annual: number }> = {
+    sedan:   { y1: 0.18, annual: 0.12 },
+    suv:     { y1: 0.15, annual: 0.10 },
+    truck:   { y1: 0.12, annual: 0.09 },
+    luxury:  { y1: 0.22, annual: 0.15 },
+    sports:  { y1: 0.20, annual: 0.13 },
+    ev:      { y1: 0.22, annual: 0.14 },
+    minivan: { y1: 0.18, annual: 0.12 },
+  };
+
+  function getValueAt(price: number, type: string, year: number): number {
+    const { y1, annual } = DEPR[type];
+    if (year === 0) return price;
+    let val = price * (1 - y1);
+    for (let y = 2; y <= year; y++) val *= (1 - annual);
+    return Math.max(val, price * 0.05);
+  }
+
+  document.getElementById('cd-calc')!.addEventListener('click', () => {
+    const price = parseFloat((document.getElementById('cd-price') as HTMLInputElement).value);
+    const age = parseInt((document.getElementById('cd-age') as HTMLInputElement).value) || 0;
+    const type = (document.getElementById('cd-type') as HTMLSelectElement).value;
+    const years = parseInt((document.getElementById('cd-years') as HTMLSelectElement).value);
+
+    if (isNaN(price) || price <= 0) return;
+
+    const currentVal = getValueAt(price, type, age);
+    const endVal = getValueAt(price, type, age + years);
+    const totalLoss = currentVal - endVal;
+    const pctRetained = (endVal / price) * 100;
+
+    document.getElementById('cd-current-val')!.textContent = `$${Math.round(currentVal).toLocaleString()}`;
+    document.getElementById('cd-end-val')!.textContent = `$${Math.round(endVal).toLocaleString()}`;
+    document.getElementById('cd-end-label')!.textContent = `Value After ${years} Year${years > 1 ? 's' : ''}`;
+    document.getElementById('cd-total-loss')!.textContent = `$${Math.round(totalLoss).toLocaleString()}`;
+    document.getElementById('cd-pct-retained')!.textContent = `${pctRetained.toFixed(1)}%`;
+
+    // Table
+    const rows: string[] = [];
+    for (let y = 1; y <= years; y++) {
+      const val = getValueAt(price, type, age + y);
+      const prevVal = getValueAt(price, type, age + y - 1);
+      const loss = prevVal - val;
+      const pct = (val / price) * 100;
+      rows.push(`<tr>
+        <td class="py-2 pr-4 text-gray-700">Year ${age + y}</td>
+        <td class="py-2 pr-4 text-right font-mono font-bold text-gray-800">$${Math.round(val).toLocaleString()}</td>
+        <td class="py-2 pr-4 text-right font-mono text-red-600">-$${Math.round(loss).toLocaleString()}</td>
+        <td class="py-2 text-right font-mono text-gray-500">${pct.toFixed(1)}%</td>
+      </tr>`);
+    }
+    document.getElementById('cd-table')!.innerHTML = rows.join('');
+
+    // Bars
+    const bars: string[] = [];
+    for (let y = 0; y <= years; y++) {
+      const val = getValueAt(price, type, age + y);
+      const pct = (val / price) * 100;
+      const barWidth = pct;
+      const color = pct > 70 ? 'bg-green-400' : pct > 50 ? 'bg-amber-400' : pct > 30 ? 'bg-orange-400' : 'bg-red-400';
+      bars.push(`<div class="flex items-center gap-2 text-xs">
+        <span class="w-16 text-gray-500 shrink-0">${y === 0 ? 'Now' : `+${y}yr`}</span>
+        <div class="flex-1 bg-gray-100 rounded-full h-4 overflow-hidden">
+          <div class="${color} h-4 rounded-full transition-all" style="width:${barWidth}%"></div>
+        </div>
+        <span class="w-20 text-right text-gray-600 font-mono shrink-0">$${Math.round(val).toLocaleString()} (${pct.toFixed(0)}%)</span>
+      </div>`);
+    }
+    document.getElementById('cd-bars')!.innerHTML = bars.join('');
+
+    document.getElementById('cd-result')!.classList.remove('hidden');
+  });
+
+  document.getElementById('cd-calc')!.click();
+</script>

@@ -2205,5 +2205,101 @@
     "priority": 139,
     "status": "live",
     "icon": "🧠"
+  },
+  {
+    "slug": "tire-size-calculator",
+    "title": "Tire Size Calculator",
+    "description": "Decode tire size codes, calculate diameter, sidewall height, and circumference. Compare two tire sizes and find out the speedometer difference.",
+    "category": "Automotive",
+    "tags": [
+      "tire size",
+      "tire calculator",
+      "wheel size",
+      "speedometer",
+      "automotive"
+    ],
+    "priority": 140,
+    "status": "live",
+    "icon": "🛞"
+  },
+  {
+    "slug": "gas-mileage-calculator",
+    "title": "Gas Mileage Calculator",
+    "description": "Calculate fuel efficiency in MPG, L/100km, and km/L. Track fill-ups, see your fuel costs, and compare against average vehicles.",
+    "category": "Automotive",
+    "tags": [
+      "gas mileage",
+      "mpg",
+      "fuel economy",
+      "l/100km",
+      "fuel cost"
+    ],
+    "priority": 141,
+    "status": "live",
+    "icon": "⛽"
+  },
+  {
+    "slug": "car-depreciation-calculator",
+    "title": "Car Depreciation Calculator",
+    "description": "Calculate how much your car loses in value over time. See year-by-year depreciation, total loss, and compare against average depreciation rates by vehicle type.",
+    "category": "Automotive",
+    "tags": [
+      "car depreciation",
+      "vehicle value",
+      "resale value",
+      "automotive",
+      "used car"
+    ],
+    "priority": 142,
+    "status": "live",
+    "icon": "📉"
+  },
+  {
+    "slug": "engine-displacement-converter",
+    "title": "Engine Displacement Converter",
+    "description": "Convert engine displacement between cc, liters, and cubic inches. Understand what engine sizes mean and compare common engine displacements.",
+    "category": "Automotive",
+    "tags": [
+      "engine displacement",
+      "cc to liters",
+      "cubic inches",
+      "engine size",
+      "automotive"
+    ],
+    "priority": 143,
+    "status": "live",
+    "icon": "🔧"
+  },
+  {
+    "slug": "road-trip-cost-calculator",
+    "title": "Road Trip Cost Calculator",
+    "description": "Calculate the total fuel cost for a road trip. Enter distance, fuel efficiency, and gas price to estimate total cost in MPG or L/100km.",
+    "category": "Automotive",
+    "tags": [
+      "road trip",
+      "fuel cost",
+      "trip calculator",
+      "gas cost",
+      "travel"
+    ],
+    "priority": 144,
+    "status": "live",
+    "icon": "🚗"
+  },
+  {
+    "slug": "vin-decoder",
+    "title": "VIN Decoder",
+    "description": "Decode any Vehicle Identification Number (VIN). Learn the manufacturer, country of origin, model year, plant, and what each position in a VIN means.",
+    "category": "Automotive",
+    "tags": [
+      "vin decoder",
+      "vehicle identification",
+      "vin number",
+      "car vin",
+      "automotive"
+    ],
+    "priority": 145,
+    "status": "live",
+    "icon": "🔍"
   }
 ]

@@ -1,0 +1,253 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Gas Mileage Calculator"
+  description="Calculate fuel efficiency in MPG, L/100km, and km/L. Track fill-ups, see your fuel costs, and compare against average vehicles."
+  slug="gas-mileage-calculator"
+  category="Automotive"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Gas Mileage Calculator</h1>
+  <p class="text-gray-500 mb-8">Calculate your fuel efficiency and see what it's costing you per mile or kilometer.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-6">
+
+    <!-- Units toggle -->
+    <div class="flex gap-2">
+      <button class="gm-unit text-sm border rounded-xl px-4 py-2 transition-colors" data-unit="imperial">Imperial (MPG)</button>
+      <button class="gm-unit text-sm border rounded-xl px-4 py-2 transition-colors" data-unit="metric">Metric (L/100km)</button>
+    </div>
+
+    <!-- Inputs -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div>
+        <label class="label" id="gm-dist-label">Distance Driven (miles)</label>
+        <input id="gm-dist" type="number" class="input-field" placeholder="300" min="0">
+      </div>
+      <div>
+        <label class="label" id="gm-fuel-label">Fuel Used (gallons)</label>
+        <input id="gm-fuel" type="number" class="input-field" placeholder="12" min="0" step="0.1">
+      </div>
+      <div>
+        <label class="label" id="gm-price-label">Fuel Price ($/gal)</label>
+        <input id="gm-price" type="number" class="input-field" placeholder="3.50" min="0" step="0.01">
+      </div>
+    </div>
+
+    <button id="gm-calc" class="btn-primary w-full sm:w-auto">Calculate</button>
+
+    <div id="gm-result" class="hidden space-y-4">
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+        <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4">
+          <p class="text-3xl font-bold text-indigo-700" id="gm-mpg"></p>
+          <p class="text-xs text-gray-500 mt-1" id="gm-mpg-label">MPG</p>
+        </div>
+        <div class="bg-green-50 border border-green-200 rounded-xl p-4">
+          <p class="text-3xl font-bold text-green-700" id="gm-l100"></p>
+          <p class="text-xs text-gray-500 mt-1" id="gm-l100-label">L/100km</p>
+        </div>
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+          <p class="text-3xl font-bold text-amber-700" id="gm-cpp"></p>
+          <p class="text-xs text-gray-500 mt-1" id="gm-cpp-label">Cost per Mile</p>
+        </div>
+        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+          <p class="text-3xl font-bold text-gray-700" id="gm-total"></p>
+          <p class="text-xs text-gray-500 mt-1">Total Fuel Cost</p>
+        </div>
+      </div>
+      <div id="gm-rating" class="rounded-xl p-4 text-sm font-medium"></div>
+    </div>
+
+    <!-- Annual cost estimator -->
+    <div class="border-t border-gray-100 pt-5">
+      <p class="text-sm font-semibold text-gray-700 mb-3">Annual Fuel Cost Estimator</p>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div>
+          <label class="label" id="gm-annual-dist-label">Miles Driven Per Year</label>
+          <input id="gm-annual-dist" type="number" class="input-field" value="12000" min="0">
+        </div>
+        <div>
+          <label class="label" id="gm-annual-price-label">Fuel Price ($/gal)</label>
+          <input id="gm-annual-price" type="number" class="input-field" value="3.50" min="0" step="0.01">
+        </div>
+        <div class="flex items-end">
+          <button id="gm-annual-calc" class="btn-primary w-full">Estimate Annual Cost</button>
+        </div>
+      </div>
+      <div id="gm-annual-result" class="hidden mt-4 bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-1 text-sm"></div>
+    </div>
+  </div>
+
+  <!-- Comparison table -->
+  <div class="mt-8 bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+    <p class="text-sm font-semibold text-gray-700 mb-3">Fuel Economy Benchmarks</p>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="text-xs text-gray-500 border-b border-gray-100">
+            <th class="text-left py-2 pr-4">Vehicle Type</th>
+            <th class="text-right py-2 pr-4">MPG</th>
+            <th class="text-right py-2">L/100km</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-50 text-gray-700">
+          {[
+            ['Large pickup truck', '18', '13.1'],
+            ['Large SUV', '20', '11.8'],
+            ['Average new car (2024)', '28', '8.4'],
+            ['Compact sedan', '33', '7.1'],
+            ['Hybrid car', '50', '4.7'],
+            ['Plug-in hybrid (gas only)', '40', '5.9'],
+            ['Toyota Prius', '57', '4.1'],
+          ].map(([type, mpg, l100]) => (
+            <tr>
+              <td class="py-2 pr-4">{type}</td>
+              <td class="py-2 pr-4 text-right font-mono">{mpg}</td>
+              <td class="py-2 text-right font-mono">{l100}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How is MPG calculated?", a: "MPG (miles per gallon) = Distance (miles) ÷ Fuel used (gallons). For example, if you drove 300 miles and used 12 gallons, your fuel economy is 300 ÷ 12 = 25 MPG. For the most accurate calculation, fill your tank to the brim at the start, drive normally, then fill again and record how much fuel you added and how far you drove." },
+        { q: "What is L/100km and how does it relate to MPG?", a: "L/100km (liters per 100 kilometers) is the metric equivalent, showing how many liters of fuel are consumed per 100km traveled. Unlike MPG, lower is better. Conversion: L/100km = 235.21 ÷ MPG. So 25 MPG ≈ 9.4 L/100km. Most of the world outside the US uses L/100km." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  type Unit = 'imperial' | 'metric';
+  let unit: Unit = 'imperial';
+
+  const LABELS = {
+    imperial: { dist: 'Distance Driven (miles)', fuel: 'Fuel Used (gallons)', price: 'Fuel Price ($/gal)', cpp: 'Cost per Mile', annualDist: 'Miles Driven Per Year', annualPrice: 'Fuel Price ($/gal)', mpg: 'MPG', l100: 'L/100km' },
+    metric: { dist: 'Distance Driven (km)', fuel: 'Fuel Used (liters)', price: 'Fuel Price ($/L)', cpp: 'Cost per km', annualDist: 'km Driven Per Year', annualPrice: 'Fuel Price ($/L)', mpg: 'MPG equivalent', l100: 'L/100km' },
+  };
+
+  function updateLabels() {
+    const l = LABELS[unit];
+    document.getElementById('gm-dist-label')!.textContent = l.dist;
+    document.getElementById('gm-fuel-label')!.textContent = l.fuel;
+    document.getElementById('gm-price-label')!.textContent = l.price;
+    document.getElementById('gm-cpp-label')!.textContent = l.cpp;
+    document.getElementById('gm-annual-dist-label')!.textContent = l.annualDist;
+    document.getElementById('gm-annual-price-label')!.textContent = l.annualPrice;
+    document.getElementById('gm-mpg-label')!.textContent = l.mpg;
+    document.getElementById('gm-l100-label')!.textContent = l.l100;
+    const annualDist = document.getElementById('gm-annual-dist') as HTMLInputElement;
+    annualDist.value = unit === 'imperial' ? '12000' : '20000';
+    const annualPrice = document.getElementById('gm-annual-price') as HTMLInputElement;
+    annualPrice.value = unit === 'imperial' ? '3.50' : '1.50';
+  }
+
+  document.querySelectorAll('.gm-unit').forEach(btn => {
+    btn.addEventListener('click', () => {
+      unit = (btn as HTMLElement).dataset.unit as Unit;
+      document.querySelectorAll('.gm-unit').forEach(b => {
+        const active = (b as HTMLElement).dataset.unit === unit;
+        b.classList.toggle('border-indigo-400', active);
+        b.classList.toggle('bg-indigo-50', active);
+        b.classList.toggle('text-indigo-700', active);
+        b.classList.toggle('border-gray-200', !active);
+        b.classList.toggle('text-gray-600', !active);
+      });
+      updateLabels();
+      document.getElementById('gm-result')!.classList.add('hidden');
+    });
+  });
+
+  document.querySelectorAll('.gm-unit')[0].classList.add('border-indigo-400', 'bg-indigo-50', 'text-indigo-700');
+  document.querySelectorAll('.gm-unit')[1].classList.add('border-gray-200', 'text-gray-600');
+
+  document.getElementById('gm-calc')!.addEventListener('click', () => {
+    const dist = parseFloat((document.getElementById('gm-dist') as HTMLInputElement).value);
+    const fuel = parseFloat((document.getElementById('gm-fuel') as HTMLInputElement).value);
+    const price = parseFloat((document.getElementById('gm-price') as HTMLInputElement).value);
+    if (isNaN(dist) || isNaN(fuel) || fuel <= 0) return;
+
+    let mpg: number, l100: number;
+    if (unit === 'imperial') {
+      mpg = dist / fuel;
+      l100 = 235.21 / mpg;
+    } else {
+      l100 = (fuel / dist) * 100;
+      mpg = 235.21 / l100;
+    }
+
+    const totalCost = isNaN(price) ? null : fuel * price;
+    const cpp = (totalCost !== null && dist > 0) ? totalCost / dist : null;
+
+    document.getElementById('gm-mpg')!.textContent = mpg.toFixed(1);
+    document.getElementById('gm-l100')!.textContent = l100.toFixed(1);
+    document.getElementById('gm-cpp')!.textContent = cpp !== null ? `$${cpp.toFixed(3)}` : '—';
+    document.getElementById('gm-total')!.textContent = totalCost !== null ? `$${totalCost.toFixed(2)}` : '—';
+
+    const ratingEl = document.getElementById('gm-rating')!;
+    let rating: string, cls: string;
+    if (mpg >= 50) { rating = '🌿 Excellent fuel economy — you\'re in hybrid/EV territory.'; cls = 'bg-green-50 border border-green-200 text-green-700'; }
+    else if (mpg >= 35) { rating = '👍 Good fuel economy — well above average.'; cls = 'bg-green-50 border border-green-200 text-green-700'; }
+    else if (mpg >= 25) { rating = '✅ Average fuel economy for a typical car.'; cls = 'bg-blue-50 border border-blue-200 text-blue-700'; }
+    else if (mpg >= 18) { rating = '⚠️ Below average — typical of larger SUVs or trucks.'; cls = 'bg-amber-50 border border-amber-200 text-amber-700'; }
+    else { rating = '🔴 Poor fuel economy — consider if driving habits or maintenance can improve this.'; cls = 'bg-red-50 border border-red-200 text-red-700'; }
+
+    ratingEl.textContent = rating;
+    ratingEl.className = `rounded-xl p-4 text-sm font-medium ${cls}`;
+    document.getElementById('gm-result')!.classList.remove('hidden');
+  });
+
+  document.getElementById('gm-annual-calc')!.addEventListener('click', () => {
+    const annualDist = parseFloat((document.getElementById('gm-annual-dist') as HTMLInputElement).value);
+    const annualPrice = parseFloat((document.getElementById('gm-annual-price') as HTMLInputElement).value);
+    const dist = parseFloat((document.getElementById('gm-dist') as HTMLInputElement).value);
+    const fuel = parseFloat((document.getElementById('gm-fuel') as HTMLInputElement).value);
+
+    if (isNaN(annualDist) || isNaN(annualPrice) || isNaN(dist) || isNaN(fuel) || fuel <= 0) {
+      const el = document.getElementById('gm-annual-result')!;
+      el.innerHTML = '<p class="text-red-600">Calculate your fuel economy first using the form above.</p>';
+      el.classList.remove('hidden');
+      return;
+    }
+
+    let mpg: number;
+    if (unit === 'imperial') {
+      mpg = dist / fuel;
+    } else {
+      const l100 = (fuel / dist) * 100;
+      mpg = 235.21 / l100;
+    }
+
+    let annualFuelUnits: number, annualCost: number;
+    if (unit === 'imperial') {
+      annualFuelUnits = annualDist / mpg;
+      annualCost = annualFuelUnits * annualPrice;
+    } else {
+      const l100 = 235.21 / mpg;
+      annualFuelUnits = (l100 / 100) * annualDist;
+      annualCost = annualFuelUnits * annualPrice;
+    }
+
+    const el = document.getElementById('gm-annual-result')!;
+    el.innerHTML = `
+      <div class="grid grid-cols-3 gap-4 text-center">
+        <div><p class="text-lg font-bold text-gray-800">${annualFuelUnits.toFixed(0)}</p><p class="text-xs text-gray-500">${unit === 'imperial' ? 'Gallons/Year' : 'Liters/Year'}</p></div>
+        <div><p class="text-lg font-bold text-gray-800">$${annualCost.toFixed(0)}</p><p class="text-xs text-gray-500">Annual Fuel Cost</p></div>
+        <div><p class="text-lg font-bold text-gray-800">$${(annualCost / 12).toFixed(0)}</p><p class="text-xs text-gray-500">Monthly Fuel Cost</p></div>
+      </div>`;
+    el.classList.remove('hidden');
+  });
+</script>

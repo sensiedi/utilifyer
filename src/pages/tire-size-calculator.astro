@@ -1,0 +1,210 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Tire Size Calculator"
+  description="Decode tire size codes, calculate diameter, sidewall height, and circumference. Compare two tire sizes and find out the speedometer difference."
+  slug="tire-size-calculator"
+  category="Automotive"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Tire Size Calculator</h1>
+  <p class="text-gray-500 mb-8">Decode tire sizes and compare alternatives — understand what 225/65R17 actually means.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-6">
+
+    <!-- Decoder -->
+    <div>
+      <p class="text-sm font-semibold text-gray-700 mb-3">Decode a Tire Size</p>
+      <div class="flex flex-wrap gap-3 items-end">
+        <div>
+          <label class="label">Width (mm)</label>
+          <input id="ts-width" type="number" class="input-field w-24" placeholder="225" value="225" min="100" max="400">
+        </div>
+        <div class="text-gray-400 text-lg pb-2">/</div>
+        <div>
+          <label class="label">Aspect Ratio (%)</label>
+          <input id="ts-aspect" type="number" class="input-field w-20" placeholder="65" value="65" min="20" max="100">
+        </div>
+        <div class="text-gray-400 text-lg pb-2">R</div>
+        <div>
+          <label class="label">Rim (in)</label>
+          <input id="ts-rim" type="number" class="input-field w-20" placeholder="17" value="17" min="10" max="30">
+        </div>
+        <button id="ts-decode" class="btn-primary">Decode</button>
+      </div>
+      <p class="text-xs text-gray-400 mt-2">Or enter a full size code like <span class="font-mono">225/65R17</span>:
+        <input id="ts-raw" type="text" class="input-field inline w-32 ml-2 text-sm" placeholder="225/65R17">
+        <button id="ts-parse" class="ml-2 text-xs text-indigo-600 hover:underline">Parse</button>
+      </p>
+    </div>
+
+    <div id="ts-result" class="hidden bg-indigo-50 border border-indigo-200 rounded-xl p-5">
+      <p class="text-sm font-bold text-indigo-800 mb-3">Tire Dimensions</p>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+        <div class="bg-white rounded-xl p-3 border border-indigo-100">
+          <p class="text-2xl font-bold text-indigo-700" id="ts-diameter"></p>
+          <p class="text-xs text-gray-500 mt-1">Total Diameter (in)</p>
+        </div>
+        <div class="bg-white rounded-xl p-3 border border-indigo-100">
+          <p class="text-2xl font-bold text-indigo-700" id="ts-sidewall"></p>
+          <p class="text-xs text-gray-500 mt-1">Sidewall Height (mm)</p>
+        </div>
+        <div class="bg-white rounded-xl p-3 border border-indigo-100">
+          <p class="text-2xl font-bold text-indigo-700" id="ts-circumference"></p>
+          <p class="text-xs text-gray-500 mt-1">Circumference (in)</p>
+        </div>
+        <div class="bg-white rounded-xl p-3 border border-indigo-100">
+          <p class="text-2xl font-bold text-indigo-700" id="ts-revs"></p>
+          <p class="text-xs text-gray-500 mt-1">Revs per Mile</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Compare two tires -->
+    <div class="border-t border-gray-100 pt-5">
+      <p class="text-sm font-semibold text-gray-700 mb-3">Compare Two Tire Sizes</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="label">Original Tire</label>
+          <input id="cmp-orig" type="text" class="input-field" placeholder="225/65R17" value="225/65R17">
+        </div>
+        <div>
+          <label class="label">New Tire</label>
+          <input id="cmp-new" type="text" class="input-field" placeholder="235/60R17" value="235/60R17">
+        </div>
+      </div>
+      <button id="cmp-go" class="mt-3 btn-primary">Compare</button>
+      <div id="cmp-result" class="hidden mt-4 space-y-2"></div>
+    </div>
+  </div>
+
+  <!-- Reference -->
+  <div class="mt-8 bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+    <p class="text-sm font-semibold text-gray-700 mb-3">How to Read a Tire Code</p>
+    <div class="font-mono text-2xl text-center tracking-widest text-indigo-700 mb-4 bg-indigo-50 rounded-xl py-4">
+      <span class="text-orange-500">225</span>/<span class="text-green-600">65</span>R<span class="text-blue-600">17</span>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+      <div class="bg-orange-50 rounded-xl p-3 border border-orange-100">
+        <p class="font-bold text-orange-700">225 — Width</p>
+        <p class="text-gray-600 mt-1">Section width in millimeters from sidewall to sidewall.</p>
+      </div>
+      <div class="bg-green-50 rounded-xl p-3 border border-green-100">
+        <p class="font-bold text-green-700">65 — Aspect Ratio</p>
+        <p class="text-gray-600 mt-1">Sidewall height as % of width. 65% of 225mm = 146mm sidewall.</p>
+      </div>
+      <div class="bg-blue-50 rounded-xl p-3 border border-blue-100">
+        <p class="font-bold text-blue-700">R17 — Rim Diameter</p>
+        <p class="text-gray-600 mt-1">Wheel diameter in inches that the tire fits on.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What happens if I use a different tire size?", a: "Changing tire diameter affects speedometer accuracy (because the odometer measures wheel rotations, not actual distance), gearing, and potentially clearance. A tire 3% larger in diameter makes your speedometer read 3% low — you'll actually be going faster than it shows. Width changes affect handling and can cause rubbing on fenders. The comparison tool above shows the exact speedometer difference." },
+        { q: "What is aspect ratio in tire sizes?", a: "The aspect ratio (the middle number, e.g., '65' in 225/65R17) is the sidewall height expressed as a percentage of the tire's width. A 225/65R17 has a sidewall of 225 × 0.65 = 146.25mm. Lower aspect ratios (40–50) mean a sportier, lower-profile look with stiffer handling. Higher ratios (65–80) give a taller sidewall with a more comfortable ride." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  function parseTireCode(code: string): [number, number, number] | null {
+    const m = code.trim().match(/^(\d{2,3})\s*\/\s*(\d{2,3})\s*[Rr]\s*(\d{1,2}(?:\.\d)?)$/);
+    if (!m) return null;
+    return [parseFloat(m[1]), parseFloat(m[2]), parseFloat(m[3])];
+  }
+
+  function calcTire(width: number, aspect: number, rim: number) {
+    const sidewallMm = width * (aspect / 100);
+    const sidewallIn = sidewallMm / 25.4;
+    const diameterIn = rim + 2 * sidewallIn;
+    const circumferenceIn = Math.PI * diameterIn;
+    const revsMile = 63360 / circumferenceIn;
+    return { sidewallMm, sidewallIn, diameterIn, circumferenceIn, revsMile };
+  }
+
+  function decode() {
+    const w = parseFloat((document.getElementById('ts-width') as HTMLInputElement).value);
+    const a = parseFloat((document.getElementById('ts-aspect') as HTMLInputElement).value);
+    const r = parseFloat((document.getElementById('ts-rim') as HTMLInputElement).value);
+    if (isNaN(w) || isNaN(a) || isNaN(r)) return;
+    const t = calcTire(w, a, r);
+    document.getElementById('ts-diameter')!.textContent = t.diameterIn.toFixed(2);
+    document.getElementById('ts-sidewall')!.textContent = t.sidewallMm.toFixed(1);
+    document.getElementById('ts-circumference')!.textContent = t.circumferenceIn.toFixed(2);
+    document.getElementById('ts-revs')!.textContent = Math.round(t.revsMile).toLocaleString();
+    document.getElementById('ts-result')!.classList.remove('hidden');
+  }
+
+  document.getElementById('ts-decode')!.addEventListener('click', decode);
+
+  document.getElementById('ts-parse')!.addEventListener('click', () => {
+    const raw = (document.getElementById('ts-raw') as HTMLInputElement).value;
+    const p = parseTireCode(raw);
+    if (!p) return;
+    (document.getElementById('ts-width') as HTMLInputElement).value = String(p[0]);
+    (document.getElementById('ts-aspect') as HTMLInputElement).value = String(p[1]);
+    (document.getElementById('ts-rim') as HTMLInputElement).value = String(p[2]);
+    decode();
+  });
+
+  document.getElementById('cmp-go')!.addEventListener('click', () => {
+    const origCode = (document.getElementById('cmp-orig') as HTMLInputElement).value;
+    const newCode = (document.getElementById('cmp-new') as HTMLInputElement).value;
+    const op = parseTireCode(origCode);
+    const np = parseTireCode(newCode);
+    const el = document.getElementById('cmp-result')!;
+    if (!op || !np) { el.innerHTML = '<p class="text-sm text-red-600">Invalid tire code. Use format like 225/65R17.</p>'; el.classList.remove('hidden'); return; }
+    const orig = calcTire(op[0], op[1], op[2]);
+    const newT = calcTire(np[0], np[1], np[2]);
+    const diamDiff = ((newT.diameterIn - orig.diameterIn) / orig.diameterIn) * 100;
+    const speedDiff = ((newT.circumferenceIn - orig.circumferenceIn) / orig.circumferenceIn) * 100;
+
+    const rows = [
+      ['Diameter', `${orig.diameterIn.toFixed(2)}"`, `${newT.diameterIn.toFixed(2)}"`, `${diamDiff > 0 ? '+' : ''}${diamDiff.toFixed(1)}%`],
+      ['Sidewall', `${orig.sidewallMm.toFixed(1)}mm`, `${newT.sidewallMm.toFixed(1)}mm`, `${(newT.sidewallMm - orig.sidewallMm).toFixed(1)}mm`],
+      ['Circumference', `${orig.circumferenceIn.toFixed(2)}"`, `${newT.circumferenceIn.toFixed(2)}"`, `${speedDiff > 0 ? '+' : ''}${speedDiff.toFixed(1)}%`],
+      ['Revs/Mile', `${Math.round(orig.revsMile).toLocaleString()}`, `${Math.round(newT.revsMile).toLocaleString()}`, `${(Math.round(newT.revsMile) - Math.round(orig.revsMile)) > 0 ? '+' : ''}${(Math.round(newT.revsMile) - Math.round(orig.revsMile)).toLocaleString()}`],
+    ];
+
+    const speedAlert = Math.abs(speedDiff) > 3
+      ? `<p class="text-sm ${speedDiff > 0 ? 'text-amber-700 bg-amber-50 border-amber-200' : 'text-amber-700 bg-amber-50 border-amber-200'} border rounded-xl p-3">
+          ⚠️ Speedometer reads ${Math.abs(speedDiff).toFixed(1)}% ${speedDiff > 0 ? 'low' : 'high'} — at 60 mph indicated, you're actually going ${(60 * (1 + speedDiff/100)).toFixed(1)} mph.
+         </p>`
+      : `<p class="text-sm text-green-700 bg-green-50 border border-green-200 rounded-xl p-3">✅ Speedometer difference is minimal (${Math.abs(speedDiff).toFixed(1)}%).</p>`;
+
+    el.innerHTML = `
+      <table class="w-full text-sm text-left">
+        <thead><tr class="text-xs text-gray-500 border-b border-gray-100">
+          <th class="py-2 pr-4">Measurement</th>
+          <th class="py-2 pr-4">Original</th>
+          <th class="py-2 pr-4">New</th>
+          <th class="py-2">Difference</th>
+        </tr></thead>
+        <tbody class="divide-y divide-gray-50">
+          ${rows.map(([m, o, n, d]) => `<tr>
+            <td class="py-2 pr-4 font-medium text-gray-700">${m}</td>
+            <td class="py-2 pr-4 font-mono text-gray-600">${o}</td>
+            <td class="py-2 pr-4 font-mono text-gray-600">${n}</td>
+            <td class="py-2 font-mono font-bold text-indigo-700">${d}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+      ${speedAlert}`;
+    el.classList.remove('hidden');
+  });
+
+  decode();
+</script>
