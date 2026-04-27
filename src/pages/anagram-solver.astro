@@ -1,0 +1,180 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Anagram Solver"
+  description="Find all anagrams of any word or phrase. Rearrange letters to discover hidden words. Includes word unscrambler and anagram generator for word games."
+  slug="anagram-solver"
+  category="Random & Fun"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Anagram Solver</h1>
+  <p class="text-gray-500 mb-8">Unscramble letters to find words — great for word games, puzzles, and brain teasers.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="flex gap-3">
+      <input id="ag-input" type="text" placeholder="Enter letters or a word..." maxlength="15" class="input-field flex-1 font-mono text-xl uppercase" />
+      <button id="ag-solve" class="btn-primary px-6">Solve</button>
+    </div>
+
+    <!-- Letter tiles -->
+    <div id="ag-tiles" class="flex flex-wrap gap-2"></div>
+
+    <!-- Results -->
+    <div id="ag-result" class="hidden space-y-3">
+      <div class="flex items-center justify-between">
+        <p id="ag-count" class="text-sm font-semibold text-gray-700"></p>
+        <div class="flex gap-2">
+          <button class="ag-sort text-xs border border-gray-200 rounded-lg px-3 py-1 hover:border-indigo-300" data-sort="length">By length</button>
+          <button class="ag-sort text-xs border border-gray-200 rounded-lg px-3 py-1 hover:border-indigo-300" data-sort="alpha">A–Z</button>
+        </div>
+      </div>
+      <div id="ag-groups" class="space-y-3"></div>
+    </div>
+
+    <!-- Fun facts panel -->
+    <div class="border-t border-gray-100 pt-4 space-y-2">
+      <p class="text-sm font-semibold text-gray-700">Famous Anagrams</p>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
+        {[
+          ['listen', 'silent / enlist / tinsel / inlets'],
+          ['astronomer', 'moon starer'],
+          ['the eyes', 'they see'],
+          ['funeral', 'real fun'],
+          ['school master', 'the classroom'],
+          ['conversation', 'voices rant on'],
+          ['desperation', 'a rope ends it'],
+          ['the morse code', 'here come dots'],
+          ['slot machines', 'cash lost in me'],
+          ['dormitory', 'dirty room'],
+        ].map(([word, anagram]) => (
+          <div class="flex items-center gap-2 bg-gray-50 border border-gray-100 rounded-lg px-3 py-2">
+            <span class="font-mono font-semibold text-indigo-700">{word}</span>
+            <span class="text-gray-400">→</span>
+            <span class="text-gray-600">{anagram}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is an anagram?", a: "An anagram is a word or phrase formed by rearranging the letters of another word or phrase, using each original letter exactly once. The word 'anagram' itself is an anagram of 'nagaram'. Famous literary anagrams: J.K. Rowling hid 'I am Lord Voldemort' as an anagram in 'Tom Marvolo Riddle'. Jim Morrison's band name 'The Doors' isn't an anagram but 'Mr. Mojo Risin' (his concert alias) is an anagram of 'Jim Morrison'." },
+        { q: "How many anagrams can a word have?", a: "The number of possible arrangements of n letters is n! (n factorial). For a 5-letter word with all different letters: 5! = 120 possible arrangements. But most arrangements aren't real words — the actual count of valid anagrams is much smaller. 'listen' has 6 well-known anagrams. Very long or complex words like 'astronomer' have surprising hidden anagrams." },
+        { q: "What are anagrams used for?", a: "Anagrams appear in: (1) Word games like Scrabble, Wordfeud, and anagram crossword puzzles. (2) Literature — authors hide meaning or character connections (Harry Potter's Tom Riddle). (3) Cryptography historically. (4) Internet usernames and pseudonyms. (5) Brain training — solving anagrams exercises working memory and pattern recognition. (6) Comedy and wordplay." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  // Common English words dictionary (curated list for anagram finding)
+  const WORD_LIST = "a,ab,ad,am,an,as,at,ax,be,bi,by,do,el,em,en,er,es,et,ex,go,ha,he,hi,ho,id,if,in,is,it,la,li,lo,ma,me,mi,mo,mu,my,na,no,nu,od,of,oh,om,on,op,or,os,ow,ox,oy,pa,pe,pi,re,sh,si,so,ta,ti,to,uh,um,un,up,us,ut,we,xi,xu,ya,ye,yo,ace,act,add,age,ago,aid,aim,air,ale,all,alt,amp,ant,any,ape,apt,arc,are,ark,arm,art,ash,ask,asp,ass,ate,atm,awe,axe,aye,baa,bad,bag,ban,bar,bat,bay,bed,beg,bet,bid,big,bin,bit,bog,bow,box,boy,bud,bug,bun,bus,but,buy,cab,cam,can,cap,car,cat,cob,cod,cog,cop,cow,cry,cub,cup,cur,cut,dab,dad,dam,day,den,dew,dig,dim,dip,doe,dog,dot,dry,dub,dud,dug,dun,dye,ear,eat,eel,egg,ego,elf,elk,elm,emu,end,era,eve,ewe,eye,fad,fan,far,fat,fax,fay,fed,fen,few,fey,fib,fig,fin,fit,fix,fly,foe,fog,fop,for,fox,fry,fug,fun,fur,gag,gap,gas,gem,gin,gnu,god,goo,got,gum,gun,gut,guy,gym,hag,ham,has,hat,hay,hem,hen,her,hew,him,his,hit,hob,hog,hop,hot,hug,hum,hut,ice,ill,imp,inn,ion,ire,irk,ivy,jab,jag,jam,jar,jaw,jay,jib,job,jot,joy,jug,jut,keg,kin,kit,lab,lad,lag,lap,law,lay,lea,led,leg,let,lid,lip,lit,log,lot,low,lug,mad,man,map,mat,maw,mix,mob,mop,mud,mug,nab,nag,nap,nit,nob,nod,nor,not,nun,oak,oar,oat,odd,oil,old,opt,orb,ore,our,out,owe,own,pad,pan,paw,pay,pea,peg,pen,pep,pet,pew,pig,pin,pit,ply,pod,pop,pot,pow,pro,pry,pub,pun,pup,pus,put,ram,ran,rant,rap,rat,raw,ray,red,ref,rep,rev,rib,rid,rim,rip,rob,rod,rot,row,rub,rug,rum,run,rut,sac,sad,sag,sap,sat,saw,say,sea,set,sew,she,shy,sin,sip,sir,sit,ski,sky,sly,sob,son,sow,sox,soy,spa,spy,sri,stab,sty,sub,sue,sum,sun,sup,tab,tan,tap,tar,tax,tea,ten,the,thy,tic,tie,tin,tip,toe,ton,too,top,tot,tow,toy,try,tub,tug,tun,two,urn,use,van,vat,via,vow,wag,war,was,wax,web,wed,wet,who,why,wig,win,wit,woe,won,woo,wok,wry,yak,yam,yap,yew,ace,acid,acne,acre,acts,aged,ages,aide,aids,aims,airs,also,alto,alum,amid,amok,amyl,ante,anti,arch,area,aria,arid,army,arts,ashy,atom,aunt,auto,avid,axle,babe,back,bail,bait,bald,bale,ball,balm,band,bane,bang,bank,bare,bark,barn,base,bass,bask,bath,bead,beak,beam,bean,bear,beat,been,beer,beet,bell,belt,bend,bent,best,bird,bite,blot,blow,blue,blur,bold,bolt,bone,book,boom,born,both,bout,brag,bran,brat,bred,brim,brow,buck,burn,burp,cafe,cage,cake,calf,call,calm,came,cane,cape,card,care,carp,cart,case,cash,cast,cave,cell,cent,chad,chap,char,chat,chef,chew,chin,chip,chop,cite,clam,clap,clay,clip,clog,club,clue,coal,coat,coil,coin,cold,come,cone,cook,cool,core,cork,corn,cost,cozy,cram,craw,crew,crop,cube,cuff,curl,damp,dare,dark,dart,dash,data,date,dawn,dead,deaf,deal,dear,debt,deck,deep,deed,deli,deny,desk,dial,dice,diet,dine,dip,dire,dirt,disk,dive,does,dome,done,doom,dorm,dose,dove,down,drag,draw,dray,drew,drip,drop,drum,dual,dull,dump,dune,dusk,dust,duty,each,earl,earn,ease,east,edge,egad,else,emit,envy,epic,even,evil,exam,face,fact,fade,fail,fair,fake,fall,fame,fang,farm,fast,fate,faze,feat,feel,felt,file,fill,film,find,fire,firm,fist,flag,flaw,flea,fled,flex,flop,flow,foam,fold,fond,foot,fore,fork,form,fort,foam,free,frog,from,fuel,full,fume,gale,game,gawk,gaze,gear,germ,gift,girl,give,glad,glib,glow,glue,glut,goal,goes,gold,good,gown,grab,grad,gram,gray,grew,grim,grip,grit,groan,grow,grub,gulp,gust,gust,hail,hair,half,halt,hand,hang,harm,harp,hash,hate,haul,head,heal,heap,heat,heel,heir,held,helm,help,herb,herd,here,hero,hewn,hike,hill,hire,hoax,hole,home,hood,hook,hoop,horn,hose,host,hour,hull,hump,hunt,ache,idle,inch,isle,item,jade,jail,jest,jibe,jilt,join,joke,jolt,junk,just,keen,kept,kick,kill,kind,king,knack,kneel,knee,knob,knop,knot,know,lace,lack,laid,lake,lamp,land,lane,lash,last,late,lava,lawn,lead,leaf,lean,leap,lend,lens,lent,less,lick,lien,lieu,like,lime,link,lisp,list,live,load,loan,loft,lone,long,look,loom,loop,lore,lose,loss,lost,love,lure,lurk,mace,made,mail,main,make,male,mane,mare,mark,mass,mast,mate,maze,meal,mean,meat,melt,memo,mild,milk,mill,milt,mine,miss,mist,moat,mold,mole,molt,monk,moon,moor,more,morn,most,moth,muck,name,near,neck,need,nest,news,next,nice,nine,node,none,noon,note,noun,nude,oath,oboe,okay,omen,once,onyx,open,oral,orca,over,oven,pace,pack,page,paid,pail,pain,pair,pale,palm,pang,part,pass,past,path,pave,peak,peal,peat,peel,peer,pest,pick,pine,pink,plod,plop,plot,plow,ploy,pluck,plug,plum,poem,poet,pole,poll,pond,pool,poor,pore,port,pose,post,pour,pray,prim,prod,prop,prow,puny,push,race,rack,raid,rail,rain,rake,ramp,rave,read,real,reap,reed,reef,reel,rein,rent,rest,rice,rich,ride,rift,ring,riot,rise,risk,road,roam,roar,robe,rock,role,roof,room,rope,rose,rove,rude,ruin,rule,rush,safe,sage,sail,sake,sale,salt,same,sand,sane,sang,sank,save,scan,scar,seal,seam,seat,seed,seep,seer,self,sell,shed,shim,shin,ship,shoe,shop,shot,show,shut,sift,sigh,silk,sill,sing,sink,site,size,skin,skip,slab,slam,slap,slat,sled,slim,slip,slob,slot,slow,slur,smug,snag,snap,snip,snow,soak,soap,sock,sofa,soil,sole,solid,some,song,sort,soul,soup,sour,span,spar,spit,spot,star,stem,step,stew,stir,stop,stub,suit,sulk,sunk,surf,swam,swan,swap,swat,sway,swim,swum,tail,tale,tame,tank,tape,task,taut,team,tear,tee,tell,temp,tend,term,tame,test,then,they,thin,thud,tick,tide,till,time,tiny,tire,toad,toga,toil,toll,tomb,tone,tong,tool,tore,torn,tofu,town,trek,trim,trio,trip,trod,true,tuck,tuft,twig,twin,type,ugly,ulna,unit,upon,vale,vary,vast,veil,vein,vent,very,vest,view,vine,visa,void,volt,wade,wail,wake,walk,wall,wand,wane,warm,warp,wart,wasp,wave,weak,weal,wean,weep,weld,well,went,were,west,wide,wife,wild,will,wimp,wine,wise,wish,woke,wolf,wood,wool,word,wore,work,worm,wren,yard,yarn,year,yell,yore,your,zero,zone,zoom,about,above,abuse,acute,admit,adopt,adult,after,again,agent,agile,agree,aimed,alike,alive,allay,allow,alone,along,aloud,alter,amaze,among,ample,angel,anger,angle,angry,anime,annex,apple,apply,ardor,argue,arise,arose,array,aside,asked,assay,attic,audio,avoid,awake,awash,awful,badly,barge,basic,basis,basis,beach,began,begin,being,below,bench,binary,binge,birth,blast,blaze,bless,blind,block,blood,bloom,blown,board,boast,bound,brain,brand,brave,break,brick,bride,brief,bring,brine,brisk,broke,brook,brown,brush,build,built,bunch,burst,buyer,cabin,carry,catch,cause,cease,chair,chant,chart,check,chest,chief,child,choir,chord,chose,claim,class,clean,clear,clerk,climb,clone,close,cloud,coast,cloth,coral,could,count,court,cover,crack,craft,crash,cream,creed,cross,crowd,crown,cruel,crush,daily,daily,dance,death,delay,depot,depth,devil,dirty,disco,doing,doubt,dough,draft,drain,drive,drove,drunk,eagle,early,earth,eight,elite,email,empty,enemy,enjoy,enter,entry,equal,error,essay,event,every,exact,exile,extra,fable,faint,fairy,faith,false,fancy,feast,field,fifth,fifth,fifty,fight,final,first,fixed,flame,flash,flesh,flick,flint,float,flock,floor,flung,focus,force,forge,forth,found,frame,frank,freak,fresh,front,froze,fruit,fully,funny,given,given,gleam,gleam,globe,gloom,glory,gloss,glove,going,grade,grand,grant,grape,grasp,grass,grave,great,greed,greet,grief,grime,grind,groan,gross,group,grove,growl,grown,grueling,guard,guess,guide,guild,guilt,guise,gulch,haunt,haven,heart,heavy,hence,herbs,heron,hinge,honor,horse,hotel,house,human,humor,hurry,hyena,image,imply,inbox,inner,input,inset,intel,intro,issue,ivory,judge,knave,knife,knock,label,labor,large,laser,later,laugh,layer,learn,lease,least,leave,legal,lemon,level,light,limit,liver,local,lodge,logic,looker,loose,lower,loyal,lucky,lunar,magic,major,maker,maple,march,marry,match,mayor,merit,messy,metal,model,moral,motor,motto,mount,mouth,movie,much,muddy,music,naive,naval,nerve,never,niche,night,noble,north,novel,often,onset,opera,order,other,outer,owner,paint,panic,paper,party,peace,pearl,penny,phase,phone,photo,piano,pilot,place,plain,plane,plant,plead,plume,point,polar,power,press,price,pride,prime,prince,print,prior,prism,probe,prone,proof,prose,proud,prowl,proxy,pulse,pupil,queen,quest,queue,quick,quiet,quite,quota,quote,raise,rally,range,rapid,ratio,reach,realm,rebel,refer,reign,relay,renew,repel,reuse,review,rider,risky,rival,river,roast,robot,rocky,royal,rugby,ruler,rural,saint,scald,scale,scamp,scene,scope,score,sense,serve,seven,shade,shake,shame,shape,share,sharp,shear,sheet,shelf,shiver,shoot,shore,short,shout,sight,single,sixth,sixty,sized,skate,skirt,skull,sky,slash,slate,slave,sleep,sleek,slide,slope,smart,smile,smoke,snare,sneak,solid,solve,south,space,speak,speed,spell,spend,spill,spite,split,spoke,spook,spray,squad,stake,stale,stamp,stand,stare,start,state,stave,stray,sting,stock,stone,stood,store,storm,story,stout,stove,strap,stray,style,sugar,suite,summon,super,surge,swear,swirl,sword,table,taint,taste,teach,theme,there,thick,tiger,tired,title,today,token,total,touch,tough,towel,tower,toxic,track,trade,trail,train,trait,tramp,trash,treat,tribe,tried,trust,truth,tulip,ultra,under,upper,upset,urban,usual,utter,valid,value,video,vigor,viral,visit,vital,vivid,vocal,voice,waist,water,weary,wedge,wheel,where,which,while,white,whole,whose,width,women,world,worth,would,wound,wrath,write,yield,young,yours,youth".split(',');
+
+  function sortLetters(s: string): string {
+    return s.toLowerCase().replace(/\s/g,'').split('').sort().join('');
+  }
+
+  function solve(input: string): string[] {
+    const letters = sortLetters(input);
+    if (letters.length < 2) return [];
+    const results: string[] = [];
+    const letterCount: Record<string, number> = {};
+    for (const c of letters) letterCount[c] = (letterCount[c] || 0) + 1;
+
+    for (const word of WORD_LIST) {
+      if (word.length < 2 || word.length > letters.length) continue;
+      const wCount: Record<string, number> = {};
+      for (const c of word) wCount[c] = (wCount[c] || 0) + 1;
+      const fits = Object.entries(wCount).every(([c, n]) => (letterCount[c] || 0) >= n);
+      if (fits) results.push(word);
+    }
+    return [...new Set(results)];
+  }
+
+  let currentResults: string[] = [];
+  let sortMode = 'length';
+
+  function renderResults(words: string[], mode: string) {
+    if (!words.length) {
+      document.getElementById('ag-count')!.textContent = 'No words found';
+      document.getElementById('ag-groups')!.innerHTML = '<p class="text-sm text-gray-500">Try different letters.</p>';
+      document.getElementById('ag-result')!.classList.remove('hidden');
+      return;
+    }
+    const sorted = [...words].sort(mode === 'length'
+      ? (a, b) => b.length - a.length || a.localeCompare(b)
+      : (a, b) => a.localeCompare(b)
+    );
+    document.getElementById('ag-count')!.textContent = `${words.length} word${words.length !== 1 ? 's' : ''} found`;
+
+    if (mode === 'length') {
+      const groups: Record<number, string[]> = {};
+      sorted.forEach(w => { if (!groups[w.length]) groups[w.length] = []; groups[w.length].push(w); });
+      document.getElementById('ag-groups')!.innerHTML = Object.entries(groups)
+        .sort(([a],[b]) => +b - +a)
+        .map(([len, ws]) =>
+          `<div>
+            <p class="text-xs text-gray-400 font-semibold uppercase tracking-wide mb-1.5">${len}-letter words (${ws.length})</p>
+            <div class="flex flex-wrap gap-1.5">${ws.map(w =>
+              `<span class="bg-gray-50 border border-gray-200 rounded-lg px-3 py-1 font-mono text-sm text-gray-700 hover:border-indigo-300 cursor-pointer">${w}</span>`
+            ).join('')}</div>
+          </div>`
+        ).join('');
+    } else {
+      document.getElementById('ag-groups')!.innerHTML =
+        `<div class="flex flex-wrap gap-1.5">${sorted.map(w =>
+          `<span class="bg-gray-50 border border-gray-200 rounded-lg px-3 py-1 font-mono text-sm text-gray-700 hover:border-indigo-300">${w}</span>`
+        ).join('')}</div>`;
+    }
+    document.getElementById('ag-result')!.classList.remove('hidden');
+  }
+
+  function doSolve() {
+    const input = (document.getElementById('ag-input') as HTMLInputElement).value.trim();
+    if (!input) return;
+
+    // Show letter tiles
+    const letters = input.toLowerCase().replace(/\s/g,'').split('');
+    document.getElementById('ag-tiles')!.innerHTML = letters.map(l =>
+      `<span class="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-indigo-100 border-2 border-indigo-200 font-mono font-bold text-indigo-800 text-lg uppercase">${l}</span>`
+    ).join('');
+
+    currentResults = solve(input);
+    renderResults(currentResults, sortMode);
+  }
+
+  document.getElementById('ag-solve')!.addEventListener('click', doSolve);
+  document.getElementById('ag-input')!.addEventListener('keydown', (e) => {
+    if ((e as KeyboardEvent).key === 'Enter') doSolve();
+  });
+  (document.getElementById('ag-input') as HTMLInputElement).addEventListener('input', (e) => {
+    (e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.toUpperCase();
+  });
+
+  document.querySelectorAll('.ag-sort').forEach(btn => {
+    btn.addEventListener('click', () => {
+      sortMode = (btn as HTMLElement).dataset.sort!;
+      document.querySelectorAll('.ag-sort').forEach(b => {
+        b.classList.toggle('border-indigo-400', (b as HTMLElement).dataset.sort === sortMode);
+        b.classList.toggle('bg-indigo-50', (b as HTMLElement).dataset.sort === sortMode);
+      });
+      renderResults(currentResults, sortMode);
+    });
+  });
+
+  // Pre-fill
+  (document.getElementById('ag-input') as HTMLInputElement).value = 'LISTEN';
+  doSolve();
+</script>

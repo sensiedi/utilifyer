@@ -1,0 +1,145 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Random Word Generator"
+  description="Generate random English words by category, length, and difficulty. Great for word games, creative writing prompts, vocabulary building, and password ideas."
+  slug="random-word-generator"
+  category="Random & Fun"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Random Word Generator</h1>
+  <p class="text-gray-500 mb-8">Generate random words for games, writing prompts, or vocabulary practice.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div>
+        <label class="label">Category</label>
+        <select id="rw-cat" class="input-field">
+          <option value="any" selected>Any</option>
+          <option value="nouns">Nouns</option>
+          <option value="verbs">Verbs</option>
+          <option value="adjectives">Adjectives</option>
+          <option value="animals">Animals</option>
+          <option value="nature">Nature</option>
+          <option value="abstract">Abstract</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">Length</label>
+        <select id="rw-length" class="input-field">
+          <option value="any" selected>Any</option>
+          <option value="short">Short (≤5 letters)</option>
+          <option value="medium">Medium (6–8)</option>
+          <option value="long">Long (9+)</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">Count</label>
+        <select id="rw-count" class="input-field">
+          <option value="1">1</option>
+          <option value="5">5</option>
+          <option value="10" selected>10</option>
+          <option value="20">20</option>
+        </select>
+      </div>
+      <div class="flex items-end">
+        <button id="rw-go" class="btn-primary w-full">Generate</button>
+      </div>
+    </div>
+
+    <div id="rw-output" class="hidden space-y-3">
+      <div class="flex items-center justify-between">
+        <p class="label">Words</p>
+        <button id="rw-copy" class="text-xs text-indigo-600 hover:underline">Copy All</button>
+      </div>
+      <div id="rw-words" class="flex flex-wrap gap-2"></div>
+    </div>
+
+    <!-- Writing prompts mode -->
+    <div class="border-t border-gray-100 pt-4">
+      <p class="text-sm font-semibold text-gray-700 mb-2">Story Prompt Builder</p>
+      <p class="text-xs text-gray-500 mb-3">Get a random noun + verb + adjective combination to spark a story idea.</p>
+      <button id="rw-prompt" class="text-sm border border-gray-200 rounded-xl px-4 py-2 hover:border-indigo-300 text-gray-600">Generate Story Prompt</button>
+      <div id="rw-prompt-result" class="hidden mt-3 bg-amber-50 border border-amber-200 rounded-xl p-4 text-amber-800 text-sm font-medium"></div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What are random words useful for?", a: "Random words serve many purposes: (1) Creative writing — random nouns or combinations break writer's block and spark unexpected ideas. (2) Games — Scrabble practice, word association games, pictionary. (3) Vocabulary building — encountering unfamiliar words builds vocabulary passively. (4) Memorable passwords — 3-4 random words chained together (correct horse battery staple) are more secure than complex random strings and easier to remember. (5) Brainstorming — random word association is a recognized creativity technique." },
+        { q: "How does random word association help creativity?", a: "Random input creativity (also called SCAMPER or random entry technique) works by forcing your brain to make connections it wouldn't otherwise make. When you apply a random word to a problem, your brain finds unexpected analogies. For example, if you're designing a chair and get the word 'ocean', you might think of flow, depth, waves — leading to an organically shaped design. Edward de Bono formalized this as 'lateral thinking'." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const WORDS: Record<string, string[]> = {
+    nouns: ['apple','bridge','candle','door','engine','forest','garden','harbor','island','jungle','kitchen','ladder','mirror','needle','ocean','palace','quarter','river','shadow','tower','umbrella','valley','window','yard','zenith','anchor','basket','castle','diamond','eagle','flame','guitar','hammer','ivory','jacket','lantern','marble','notebook','oyster','pillow','quilt','ribbon','silver','temple','umbrella','village','wallet','xylophone','yellow','zebra','mountain','canyon','thunder','harvest','meadow','lightning','whisper','diamond','crystal','phantom','ember','cobalt','fracture','cascade','mosaic'],
+    verbs: ['achieve','balance','capture','discover','emerge','flourish','gather','hover','illuminate','journey','kindle','linger','murmur','navigate','observe','pursue','quiver','resonate','shimmer','transform','unfold','venture','whisper','yearn','accelerate','bloom','cascade','drift','echo','flow','glimmer','harvest','inspire','leap','melt','nestle','overflow','perch','ripple','scatter','tremble','unveil','wander','absorb','build','collide','dance','expand','freeze','glow','hibernate','ignite','join','kneel','launch','meander','nourish'],
+    adjectives: ['ancient','brave','calm','daring','elegant','fierce','gentle','hollow','icy','jagged','keen','luminous','mysterious','noble','opaque','pristine','quiet','radiant','serene','timeless','unique','vibrant','wandering','exotic','youthful','zealous','amber','boundless','crystalline','delicate','ethereal','faded','graceful','hidden','immense','jovial','lofty','misty','nimble','obscure','peculiar','rugged','silent','tender','vast','wild','ancient','bold','crisp','deep','endless','fragile','gilded','hazy','infinite'],
+    animals: ['albatross','badger','capybara','dingo','elephant','flamingo','gorilla','hedgehog','iguana','jaguar','kangaroo','lemur','meerkat','narwhal','octopus','panda','quokka','raccoon','salamander','tapir','uakari','vulture','wolverine','xerus','yak','zebrafish','aardvark','bison','cheetah','dolphin','echidna','fox','gibbon','hippo','impala','jackal','koala','lynx','mongoose','numbat','ocelot','pangolin','quail','raven','sloth','toucan','urchin','viper','walrus','xenops'],
+    nature: ['aurora','blizzard','canyon','dusk','earthquake','fjord','glacier','hurricane','iceberg','jungle','karst','lagoon','monsoon','nebula','oasis','plateau','quicksand','ravine','savanna','tundra','undergrowth','volcano','waterfall','zenith','archipelago','bog','cliffside','delta','estuary','fjord','geyser','heath','inlet','jetstream','kelp','lichen','mangrove','nimbus','outcrop','prairie','quartz','reef','sediment','taiga','upwelling','vortex','wetland','xylem','yew'],
+    abstract: ['ambition','belief','chaos','destiny','echo','freedom','grace','hope','intuition','justice','knowledge','legacy','mystery','notion','opportunity','passion','quest','reality','serenity','truth','unity','vision','wisdom','yearning','zeal','balance','courage','doubt','eternity','faith','glory','harmony','identity','joy','karma','liberty','memory','nostalgia','order','peace','quiet','reason','silence','time','understanding','virtue','wonder','essence','flow','growth'],
+  };
+
+  const ALL = Object.values(WORDS).flat();
+  let lastWords: string[] = [];
+
+  function pickWords() {
+    const cat = (document.getElementById('rw-cat') as HTMLSelectElement).value;
+    const length = (document.getElementById('rw-length') as HTMLSelectElement).value;
+    const count = parseInt((document.getElementById('rw-count') as HTMLSelectElement).value);
+
+    let pool = cat === 'any' ? ALL : (WORDS[cat] || ALL);
+    if (length === 'short') pool = pool.filter(w => w.length <= 5);
+    else if (length === 'medium') pool = pool.filter(w => w.length >= 6 && w.length <= 8);
+    else if (length === 'long') pool = pool.filter(w => w.length >= 9);
+    if (!pool.length) pool = ALL;
+
+    const words: string[] = [];
+    const used = new Set<number>();
+    for (let i = 0; i < count && words.length < pool.length; i++) {
+      let idx: number;
+      do { idx = Math.floor(Math.random() * pool.length); } while (used.has(idx));
+      used.add(idx);
+      words.push(pool[idx]);
+    }
+    return words;
+  }
+
+  document.getElementById('rw-go')!.addEventListener('click', () => {
+    lastWords = pickWords();
+    document.getElementById('rw-words')!.innerHTML = lastWords.map(w =>
+      `<button class="bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 font-mono text-gray-800 hover:border-indigo-300 hover:bg-indigo-50 transition-colors"
+        onclick="navigator.clipboard.writeText('${w}')" title="Click to copy">${w}</button>`
+    ).join('');
+    document.getElementById('rw-output')!.classList.remove('hidden');
+  });
+
+  document.getElementById('rw-copy')!.addEventListener('click', () => {
+    navigator.clipboard.writeText(lastWords.join(', '));
+  });
+
+  document.getElementById('rw-prompt')!.addEventListener('click', () => {
+    const noun = WORDS.nouns[Math.floor(Math.random() * WORDS.nouns.length)];
+    const verb = WORDS.verbs[Math.floor(Math.random() * WORDS.verbs.length)];
+    const adj = WORDS.adjectives[Math.floor(Math.random() * WORDS.adjectives.length)];
+    document.getElementById('rw-prompt-result')!.textContent =
+      `A ${adj} ${noun} that must ${verb}... — use this as the seed for your story!`;
+    document.getElementById('rw-prompt-result')!.classList.remove('hidden');
+  });
+
+  document.getElementById('rw-go')!.click();
+</script>

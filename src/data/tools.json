@@ -1950,5 +1950,260 @@
     "priority": 123,
     "status": "live",
     "icon": "⚖️"
+  },
+  {
+    "slug": "list-randomizer",
+    "title": "List Randomizer",
+    "description": "Shuffle any list randomly. Paste names, items, or tasks and randomize the order instantly. Pick N winners or create a random sequence.",
+    "category": "Random & Fun",
+    "tags": [
+      "randomizer",
+      "shuffle",
+      "list",
+      "random order",
+      "picker"
+    ],
+    "priority": 124,
+    "status": "live",
+    "icon": "🔀"
+  },
+  {
+    "slug": "wheel-spinner",
+    "title": "Wheel Spinner",
+    "description": "Spin a customizable wheel to make random decisions. Add your own options, spin to get a winner. Great for games, classroom activities, and group decisions.",
+    "category": "Random & Fun",
+    "tags": [
+      "wheel",
+      "spinner",
+      "random",
+      "decision",
+      "picker"
+    ],
+    "priority": 125,
+    "status": "live",
+    "icon": "🎡"
+  },
+  {
+    "slug": "team-randomizer",
+    "title": "Team Randomizer",
+    "description": "Randomly split a list of names into balanced teams. Choose number of teams or team size. Perfect for sports, games, classrooms, and group activities.",
+    "category": "Random & Fun",
+    "tags": [
+      "teams",
+      "random",
+      "group",
+      "split",
+      "names"
+    ],
+    "priority": 126,
+    "status": "live",
+    "icon": "👥"
+  },
+  {
+    "slug": "decision-maker",
+    "title": "Decision Maker",
+    "description": "Can't decide? Let the decision maker choose for you. Yes/no questions, custom options, or priority ranking — make tough decisions easy.",
+    "category": "Random & Fun",
+    "tags": [
+      "decision",
+      "random",
+      "choice",
+      "picker",
+      "yes no"
+    ],
+    "priority": 127,
+    "status": "live",
+    "icon": "🎯"
+  },
+  {
+    "slug": "magic-8-ball",
+    "title": "Magic 8 Ball",
+    "description": "Ask the Magic 8 Ball your burning questions and get a mystical answer. The classic fortune-telling toy, now in your browser.",
+    "category": "Random & Fun",
+    "tags": [
+      "magic 8 ball",
+      "fortune",
+      "random",
+      "fun",
+      "prediction"
+    ],
+    "priority": 128,
+    "status": "live",
+    "icon": "🎱"
+  },
+  {
+    "slug": "rock-paper-scissors",
+    "title": "Rock Paper Scissors",
+    "description": "Play Rock Paper Scissors against the computer. Classic 3-choice or Rock Paper Scissors Lizard Spock variant. Track your win/loss record.",
+    "category": "Random & Fun",
+    "tags": [
+      "rock paper scissors",
+      "game",
+      "fun",
+      "lizard spock"
+    ],
+    "priority": 129,
+    "status": "live",
+    "icon": "✂️"
+  },
+  {
+    "slug": "random-name-generator",
+    "title": "Random Name Generator",
+    "description": "Generate random names by origin (English, Nordic, Fantasy, Japanese), gender, and count. Great for fiction writing, game characters, and baby name inspiration.",
+    "category": "Random & Fun",
+    "tags": [
+      "name generator",
+      "random names",
+      "fantasy names",
+      "baby names",
+      "fiction"
+    ],
+    "priority": 130,
+    "status": "live",
+    "icon": "📛"
+  },
+  {
+    "slug": "icebreaker-questions",
+    "title": "Icebreaker Questions",
+    "description": "Get random icebreaker questions for work meetings, parties, team building, and first dates. Fun, deep, and thought-provoking conversation starters.",
+    "category": "Random & Fun",
+    "tags": [
+      "icebreaker",
+      "questions",
+      "team building",
+      "conversation",
+      "fun"
+    ],
+    "priority": 131,
+    "status": "live",
+    "icon": "🧊"
+  },
+  {
+    "slug": "would-you-rather",
+    "title": "Would You Rather",
+    "description": "Play Would You Rather with hundreds of dilemmas — silly, philosophical, and thought-provoking. Great for parties, road trips, and getting to know people.",
+    "category": "Random & Fun",
+    "tags": [
+      "would you rather",
+      "dilemma",
+      "game",
+      "fun",
+      "party"
+    ],
+    "priority": 132,
+    "status": "live",
+    "icon": "🤔"
+  },
+  {
+    "slug": "fun-fact-generator",
+    "title": "Fun Fact Generator",
+    "description": "Discover random fun facts about science, history, animals, space, and more. Learn something surprising every day.",
+    "category": "Random & Fun",
+    "tags": [
+      "fun facts",
+      "trivia",
+      "science",
+      "history",
+      "random"
+    ],
+    "priority": 133,
+    "status": "live",
+    "icon": "💡"
+  },
+  {
+    "slug": "number-guessing-game",
+    "title": "Number Guessing Game",
+    "description": "Guess the secret number with hot/cold hints. Choose from Easy, Medium, Hard, or Extreme difficulty. Track your best scores.",
+    "category": "Random & Fun",
+    "tags": [
+      "guessing game",
+      "number game",
+      "fun",
+      "hot cold",
+      "puzzle"
+    ],
+    "priority": 134,
+    "status": "live",
+    "icon": "🔢"
+  },
+  {
+    "slug": "random-word-generator",
+    "title": "Random Word Generator",
+    "description": "Generate random English words by category, length, and difficulty. Great for word games, creative writing prompts, vocabulary building, and password ideas.",
+    "category": "Random & Fun",
+    "tags": [
+      "random words",
+      "word generator",
+      "vocabulary",
+      "writing prompts",
+      "word games"
+    ],
+    "priority": 135,
+    "status": "live",
+    "icon": "📝"
+  },
+  {
+    "slug": "anagram-solver",
+    "title": "Anagram Solver",
+    "description": "Find all words hidden in your letters. Solve anagrams, find sub-anagrams, and discover words you can make from any set of letters.",
+    "category": "Random & Fun",
+    "tags": [
+      "anagram",
+      "word puzzle",
+      "scramble",
+      "letters",
+      "word game"
+    ],
+    "priority": 136,
+    "status": "live",
+    "icon": "🔤"
+  },
+  {
+    "slug": "tongue-twisters",
+    "title": "Tongue Twisters",
+    "description": "Practice tongue twisters for fun, speech therapy, acting warm-ups, and language learning. Browse classic and modern tongue twisters by difficulty.",
+    "category": "Random & Fun",
+    "tags": [
+      "tongue twisters",
+      "speech",
+      "fun",
+      "language",
+      "pronunciation"
+    ],
+    "priority": 137,
+    "status": "live",
+    "icon": "👅"
+  },
+  {
+    "slug": "random-color-generator",
+    "title": "Random Color Generator",
+    "description": "Generate random colors with hex, RGB, and HSL values. Create random color palettes, filter by hue range, and copy colors instantly.",
+    "category": "Random & Fun",
+    "tags": [
+      "random color",
+      "color palette",
+      "hex color",
+      "design",
+      "color generator"
+    ],
+    "priority": 138,
+    "status": "live",
+    "icon": "🎨"
+  },
+  {
+    "slug": "random-trivia",
+    "title": "Random Trivia",
+    "description": "Test your knowledge with random trivia questions across science, history, geography, culture, and nature. Multiple choice with explanations.",
+    "category": "Random & Fun",
+    "tags": [
+      "trivia",
+      "quiz",
+      "knowledge",
+      "random",
+      "fun facts"
+    ],
+    "priority": 139,
+    "status": "live",
+    "icon": "🧠"
   }
 ]

@@ -1,0 +1,225 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Tongue Twisters"
+  description="Practice tongue twisters for fun, speech therapy, acting warm-ups, and language learning. Browse classic and modern tongue twisters by difficulty."
+  slug="tongue-twisters"
+  category="Random & Fun"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Tongue Twisters</h1>
+  <p class="text-gray-500 mb-8">Challenge your tongue — pick a difficulty and try to say it fast, three times!</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="flex flex-wrap gap-2">
+      {[
+        { id: 'all', label: 'All' },
+        { id: 'easy', label: 'Easy' },
+        { id: 'medium', label: 'Medium' },
+        { id: 'hard', label: 'Hard' },
+        { id: 'classic', label: 'Classics' },
+      ].map(({ id, label }) => (
+        <button class="tt-cat text-sm border border-gray-200 rounded-xl px-4 py-2 hover:border-indigo-300 transition-colors text-gray-600" data-cat={id}>{label}</button>
+      ))}
+    </div>
+
+    <button id="tt-next" class="btn-primary w-full text-lg py-3">Random Tongue Twister</button>
+
+    <div id="tt-card" class="bg-indigo-50 border-2 border-indigo-200 rounded-2xl p-6 space-y-3">
+      <div class="flex items-center gap-2">
+        <span id="tt-diff-badge" class="text-xs font-bold uppercase tracking-wide px-2 py-0.5 rounded-full"></span>
+        <span id="tt-tip" class="text-xs text-indigo-400"></span>
+      </div>
+      <p id="tt-text" class="text-xl font-bold text-indigo-900 leading-relaxed"></p>
+      <div class="flex gap-2 pt-2">
+        <button id="tt-timer" class="text-sm border border-indigo-300 bg-white text-indigo-700 rounded-xl px-4 py-1.5 hover:bg-indigo-100">⏱ Start timer</button>
+        <span id="tt-timer-display" class="text-sm font-mono text-indigo-600 flex items-center"></span>
+      </div>
+    </div>
+
+    <!-- Speed challenge -->
+    <div class="border border-gray-200 rounded-xl p-4 space-y-3">
+      <p class="text-sm font-semibold text-gray-700">Speed Challenge</p>
+      <p class="text-xs text-gray-500">Say the current tongue twister 3 times fast. Time yourself!</p>
+      <div class="flex items-center gap-3">
+        <button id="tt-start-challenge" class="text-sm border border-indigo-200 bg-indigo-50 text-indigo-700 rounded-xl px-4 py-2 hover:bg-indigo-100">Start 3× Challenge</button>
+        <span id="tt-challenge-time" class="font-mono text-gray-700 text-sm"></span>
+      </div>
+      <div id="tt-challenge-result" class="hidden text-sm font-medium"></div>
+    </div>
+
+    <!-- Browse all -->
+    <div>
+      <p class="label mb-2">Browse All Tongue Twisters</p>
+      <div id="tt-browse" class="space-y-2 max-h-72 overflow-y-auto"></div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "Why are tongue twisters hard to say?", a: "Tongue twisters exploit the brain's phonological loop — the system that rehearses sounds in working memory. When similar sounds appear in rapid succession, the brain must precisely plan muscle movements for adjacent sounds while still executing current ones. Slight timing errors cause 'tongue slips' — mispronunciations or sound swaps. Words starting with similar phonemes ('she sells seashells') create especially high motor-planning demand." },
+        { q: "Are tongue twisters useful for anything practical?", a: "Yes: (1) Speech therapy — improving articulation of specific phonemes, especially for children with speech disorders. (2) Acting/voice training — warming up the articulators before performance (tongue, lips, jaw). (3) Language learning — practicing foreign phonemes that don't exist in your native language. (4) Public speaking practice — building clarity and precision. The classic 'red lorry, yellow lorry' helps with the /r/-/l/ distinction that non-native English speakers often conflate." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  interface Twister { text: string; diff: 'easy'|'medium'|'hard'|'classic'; tip?: string }
+
+  const TWISTERS: Twister[] = [
+    // Easy
+    { text: 'She sells seashells by the seashore.', diff: 'easy', tip: 'Focus on the "sh" and "s" distinction.' },
+    { text: 'Red lorry, yellow lorry.', diff: 'easy', tip: 'Repeat rapidly 5 times.' },
+    { text: 'Toy boat. Toy boat. Toy boat.', diff: 'easy', tip: 'Simple but trips everyone up fast.' },
+    { text: 'The big black bug bit the big black bear.', diff: 'easy', tip: 'Stress the "b" sounds.' },
+    { text: 'Lesser leather never weathered wetter weather better.', diff: 'easy' },
+    { text: 'A proper copper coffee pot.', diff: 'easy' },
+    { text: 'Six slippery snails slid slowly seaward.', diff: 'easy' },
+    // Medium
+    { text: 'How much wood would a woodchuck chuck if a woodchuck could chuck wood?', diff: 'medium', tip: 'Classic — try it with rhythm.' },
+    { text: 'I saw Susie sitting in a shoeshine shop. Where she sits, she shines, and where she shines, she sits.', diff: 'medium' },
+    { text: 'Betty Botter bought some butter, but the butter Betty bought was bitter.', diff: 'medium', tip: 'Focus on the b-t transitions.' },
+    { text: 'A skunk sat on a stump and thunk the stump stunk, but the stump thunk the skunk stunk.', diff: 'medium' },
+    { text: 'Peter Piper picked a peck of pickled peppers. If Peter Piper picked a peck of pickled peppers, how many pickled peppers did Peter Piper pick?', diff: 'medium', tip: 'One of the most famous tongue twisters.' },
+    { text: 'Fuzzy Wuzzy was a bear. Fuzzy Wuzzy had no hair. Fuzzy Wuzzy wasn\'t very fuzzy, was he?', diff: 'medium' },
+    { text: 'If a black bug bleeds black blood, what color blood does a blue bug bleed?', diff: 'medium' },
+    { text: 'Can you can a can as a canner can can a can?', diff: 'medium' },
+    // Hard
+    { text: 'The sixth sick sheikh\'s sixth sheep\'s sick.', diff: 'hard', tip: 'Said to be one of the hardest tongue twisters in English.' },
+    { text: 'Pad kid poured curd pulled cod.', diff: 'hard', tip: 'MIT researchers found this harder to say than any classic twister.' },
+    { text: 'Which witch switched the Swiss wristwatches?', diff: 'hard', tip: 'Watch the "wh" and "sw" clusters.' },
+    { text: 'Irish wristwatch, Swiss wristwatch. Say it six times fast.', diff: 'hard' },
+    { text: 'She stood on the balcony, inexplicably mimicking him hiccupping and amicably welcoming him in.', diff: 'hard' },
+    { text: 'Rory\'s lawn rake rarely rakes really right.', diff: 'hard' },
+    { text: 'Specific Pacific. Specific Pacific. Specific Pacific.', diff: 'hard', tip: 'Simple words, deceptively difficult.' },
+    { text: 'A tweetle beetle battle in a puddle is a tweetle beetle puddle battle.', diff: 'hard' },
+    // Classic
+    { text: 'How much wood would a woodchuck chuck', diff: 'classic' },
+    { text: 'She sells seashells by the seashore', diff: 'classic' },
+    { text: 'Peter Piper picked a peck of pickled peppers', diff: 'classic' },
+    { text: 'Unique New York. Unique New York. You know you need unique New York.', diff: 'classic', tip: 'Popular actor warm-up.' },
+    { text: 'Round the rough and rugged rock the ragged rascal ran.', diff: 'classic' },
+    { text: 'Whether the weather is warm, whether the weather is hot, we have to put up with the weather whether we like it or not.', diff: 'classic' },
+    { text: 'Eleven benevolent elephants', diff: 'classic', tip: 'Three words, endlessly repeatable.' },
+    { text: 'Red blood, blue blood, blue blood, red blood.', diff: 'classic' },
+  ];
+
+  const DIFF_COLORS: Record<string, string> = {
+    easy: 'bg-green-100 text-green-700',
+    medium: 'bg-yellow-100 text-yellow-700',
+    hard: 'bg-red-100 text-red-700',
+    classic: 'bg-indigo-100 text-indigo-700',
+  };
+
+  let category = 'all';
+  let currentTwister: Twister | null = null;
+  let timerInterval: ReturnType<typeof setInterval> | null = null;
+  let timerStart = 0;
+  let challengeInterval: ReturnType<typeof setInterval> | null = null;
+  let challengeStart = 0;
+
+  function getPool(): Twister[] {
+    return category === 'all' ? TWISTERS : TWISTERS.filter(t => t.diff === category);
+  }
+
+  function show(t: Twister) {
+    currentTwister = t;
+    document.getElementById('tt-text')!.textContent = t.text;
+    const badge = document.getElementById('tt-diff-badge')!;
+    badge.textContent = t.diff.charAt(0).toUpperCase() + t.diff.slice(1);
+    badge.className = `text-xs font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${DIFF_COLORS[t.diff]}`;
+    document.getElementById('tt-tip')!.textContent = t.tip || '';
+    stopTimer();
+    document.getElementById('tt-timer-display')!.textContent = '';
+  }
+
+  function stopTimer() {
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+  }
+
+  document.getElementById('tt-timer')!.addEventListener('click', () => {
+    const btn = document.getElementById('tt-timer')!;
+    const display = document.getElementById('tt-timer-display')!;
+    if (timerInterval) {
+      stopTimer();
+      btn.textContent = '⏱ Start timer';
+    } else {
+      timerStart = Date.now();
+      btn.textContent = '⏹ Stop';
+      timerInterval = setInterval(() => {
+        const elapsed = ((Date.now() - timerStart) / 1000).toFixed(2);
+        display.textContent = elapsed + 's';
+      }, 50);
+    }
+  });
+
+  document.getElementById('tt-start-challenge')!.addEventListener('click', () => {
+    const btn = document.getElementById('tt-start-challenge')!;
+    const timeEl = document.getElementById('tt-challenge-time')!;
+    const resultEl = document.getElementById('tt-challenge-result')!;
+    if (challengeInterval) {
+      clearInterval(challengeInterval); challengeInterval = null;
+      const elapsed = (Date.now() - challengeStart) / 1000;
+      btn.textContent = 'Start 3× Challenge';
+      timeEl.textContent = '';
+      const rating = elapsed < 5 ? '🏆 Excellent!' : elapsed < 8 ? '✅ Good!' : elapsed < 12 ? '😅 Decent!' : '😅 Keep practicing!';
+      resultEl.textContent = `${elapsed.toFixed(2)}s — ${rating}`;
+      resultEl.className = elapsed < 5 ? 'text-sm font-medium text-green-700' : 'text-sm font-medium text-gray-700';
+      resultEl.classList.remove('hidden');
+    } else {
+      challengeStart = Date.now();
+      btn.textContent = '⏹ Done (3× complete)';
+      resultEl.classList.add('hidden');
+      challengeInterval = setInterval(() => {
+        timeEl.textContent = ((Date.now() - challengeStart) / 1000).toFixed(2) + 's';
+      }, 50);
+    }
+  });
+
+  document.getElementById('tt-next')!.addEventListener('click', () => {
+    const pool = getPool();
+    show(pool[Math.floor(Math.random() * pool.length)]);
+  });
+
+  document.querySelectorAll('.tt-cat').forEach(btn => {
+    btn.addEventListener('click', () => {
+      category = (btn as HTMLElement).dataset.cat || 'all';
+      document.querySelectorAll('.tt-cat').forEach(b => {
+        const active = (b as HTMLElement).dataset.cat === category;
+        b.classList.toggle('border-indigo-400', active);
+        b.classList.toggle('bg-indigo-50', active);
+        b.classList.toggle('text-indigo-700', active);
+      });
+      renderBrowse();
+    });
+  });
+
+  function renderBrowse() {
+    const pool = getPool();
+    document.getElementById('tt-browse')!.innerHTML = pool.map(t =>
+      `<div class="flex items-start gap-3 bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5 cursor-pointer hover:border-indigo-200 tt-browse-item">
+        <span class="text-xs font-bold px-2 py-0.5 rounded-full mt-0.5 shrink-0 ${DIFF_COLORS[t.diff]}">${t.diff.slice(0,1).toUpperCase()}</span>
+        <span class="text-sm text-gray-700">${t.text}</span>
+      </div>`
+    ).join('');
+    document.querySelectorAll('.tt-browse-item').forEach((el, i) => {
+      el.addEventListener('click', () => show(pool[i]));
+    });
+  }
+
+  document.querySelector('.tt-cat[data-cat="all"]')!.classList.add('border-indigo-400','bg-indigo-50','text-indigo-700');
+  renderBrowse();
+  show(TWISTERS[Math.floor(Math.random() * TWISTERS.length)]);
+</script>

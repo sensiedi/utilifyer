@@ -1,0 +1,157 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Decision Maker"
+  description="Can't decide? Let randomness help. Enter your options and get a random decision. Works for simple yes/no questions or choosing from a list of options."
+  slug="decision-maker"
+  category="Random & Fun"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Decision Maker</h1>
+  <p class="text-gray-500 mb-8">Stuck choosing? Enter your options and let randomness decide.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <!-- Mode selection -->
+    <div class="grid grid-cols-3 gap-2">
+      {[
+        { id: 'yes-no', label: 'Yes or No' },
+        { id: 'options', label: 'Custom Options' },
+        { id: 'priority', label: 'Prioritize List' },
+      ].map(({ id, label }) => (
+        <button class="dm-mode text-sm border border-gray-200 rounded-xl px-4 py-2.5 hover:border-indigo-300 transition-colors text-gray-600" data-mode={id}>{label}</button>
+      ))}
+    </div>
+
+    <!-- Yes/No mode -->
+    <div id="dm-yes-no" class="space-y-4">
+      <div>
+        <label class="label">Your question</label>
+        <input id="dm-question" type="text" class="input-field" placeholder="Should I go to the gym today?" />
+      </div>
+      <button id="dm-yn-go" class="btn-primary w-full text-lg py-3">Decide!</button>
+      <div id="dm-yn-result" class="hidden rounded-2xl p-8 text-center border-2">
+        <div id="dm-yn-answer" class="text-5xl font-black"></div>
+        <div id="dm-yn-sub" class="text-sm text-gray-500 mt-2"></div>
+      </div>
+    </div>
+
+    <!-- Options mode -->
+    <div id="dm-options" class="hidden space-y-4">
+      <div>
+        <label class="label">Options (one per line)</label>
+        <textarea id="dm-opts" rows="5" class="input-field font-mono text-sm resize-none" placeholder="Go to the gym&#10;Watch Netflix&#10;Read a book&#10;Go for a walk"></textarea>
+      </div>
+      <button id="dm-opt-go" class="btn-primary w-full text-lg py-3">Pick One!</button>
+      <div id="dm-opt-result" class="hidden bg-indigo-50 border-2 border-indigo-200 rounded-2xl p-8 text-center">
+        <p class="text-xs text-indigo-500 mb-2">The decision is:</p>
+        <div id="dm-opt-answer" class="text-3xl font-black text-indigo-900"></div>
+      </div>
+    </div>
+
+    <!-- Priority mode -->
+    <div id="dm-priority" class="hidden space-y-4">
+      <p class="text-sm text-gray-600">Enter a list of tasks or options. Get a randomly prioritized order to break through analysis paralysis.</p>
+      <textarea id="dm-prio-input" rows="6" class="input-field font-mono text-sm resize-none" placeholder="Respond to emails&#10;Finish the report&#10;Call the client&#10;Review the code&#10;Update documentation"></textarea>
+      <button id="dm-prio-go" class="btn-primary w-full">Randomize Priority</button>
+      <div id="dm-prio-result" class="hidden space-y-1.5">
+        <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Your priority order:</p>
+        <div id="dm-prio-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "Is using a random decision maker cheating?", a: "No — randomness is a legitimate decision tool, especially when choices are roughly equal in importance. The value of a random decision isn't the outcome itself, but your emotional reaction: if you feel relief or disappointment at the result, that reveals what you actually wanted. Barry Schwartz's 'Paradox of Choice' argues that too many similar options leads to paralysis and regret — randomness breaks the tie." },
+        { q: "When is random prioritization useful?", a: "Random prioritization is useful when all tasks feel equally important and you're stuck on where to start (decision paralysis), when you want to avoid subconscious bias toward easy tasks over important ones, or when doing a 'random shuffle' of your task list to shake up routine and ensure variety. For tasks with real deadlines or dependencies, prioritize by urgency first." },
+        { q: "Why does 'yes or no' sometimes give yes more often?", a: "This tool gives exactly 50% probability to each outcome. If you notice streaks of 'yes' or 'no', that's expected randomness — you can get 5 heads in a row from a fair coin. The law of large numbers says it converges to 50/50 over many flips, but individual runs will vary. A truly random sequence actually looks less regular than people expect random to look." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  function showMode(mode: string) {
+    ['yes-no','options','priority'].forEach(m => {
+      document.getElementById('dm-' + m)!.classList.toggle('hidden', m !== mode);
+      const btn = document.querySelector(`.dm-mode[data-mode="${m}"]`)!;
+      btn.classList.toggle('border-indigo-400', m === mode);
+      btn.classList.toggle('bg-indigo-50', m === mode);
+      btn.classList.toggle('text-indigo-700', m === mode);
+    });
+  }
+  document.querySelectorAll('.dm-mode').forEach(btn =>
+    btn.addEventListener('click', () => showMode((btn as HTMLElement).dataset.mode!))
+  );
+  showMode('yes-no');
+
+  // Yes/No
+  const YN_YES = ['Yes!', 'Absolutely!', 'Go for it!', 'Definitely!', 'Yes, do it!'];
+  const YN_NO = ['No.', 'Not this time.', 'Skip it.', 'Nope.', 'Maybe later.'];
+  const YN_COLORS_YES = ['bg-green-50 border-green-300', 'bg-emerald-50 border-emerald-300'];
+  const YN_COLORS_NO = ['bg-red-50 border-red-300', 'bg-rose-50 border-rose-300'];
+  const YN_TEXT_YES = 'text-green-700';
+  const YN_TEXT_NO = 'text-red-700';
+
+  document.getElementById('dm-yn-go')!.addEventListener('click', () => {
+    const isYes = Math.random() > 0.5;
+    const answers = isYes ? YN_YES : YN_NO;
+    const answer = answers[Math.floor(Math.random() * answers.length)];
+    const colorBox = isYes ? YN_COLORS_YES[Math.floor(Math.random() * 2)] : YN_COLORS_NO[Math.floor(Math.random() * 2)];
+    const textColor = isYes ? YN_TEXT_YES : YN_TEXT_NO;
+    const result = document.getElementById('dm-yn-result')!;
+    result.className = `rounded-2xl p-8 text-center border-2 ${colorBox}`;
+    document.getElementById('dm-yn-answer')!.className = `text-5xl font-black ${textColor}`;
+    document.getElementById('dm-yn-answer')!.textContent = answer;
+    const q = (document.getElementById('dm-question') as HTMLInputElement).value;
+    document.getElementById('dm-yn-sub')!.textContent = q ? `"${q}"` : '';
+    result.classList.remove('hidden');
+  });
+
+  // Options
+  function shuffle<T>(arr: T[]): T[] {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  document.getElementById('dm-opt-go')!.addEventListener('click', () => {
+    const items = (document.getElementById('dm-opts') as HTMLTextAreaElement).value
+      .split('\n').map(l => l.trim()).filter(Boolean);
+    if (!items.length) return;
+    const pick = items[Math.floor(Math.random() * items.length)];
+    document.getElementById('dm-opt-answer')!.textContent = pick;
+    document.getElementById('dm-opt-result')!.classList.remove('hidden');
+  });
+
+  // Priority
+  document.getElementById('dm-prio-go')!.addEventListener('click', () => {
+    const items = (document.getElementById('dm-prio-input') as HTMLTextAreaElement).value
+      .split('\n').map(l => l.trim()).filter(Boolean);
+    if (!items.length) return;
+    const shuffled = shuffle(items);
+    const priorities = ['🔴 Do first', '🟠 Do second', '🟡 Do third', '🟢 After that', '🔵 When possible'];
+    document.getElementById('dm-prio-list')!.innerHTML = shuffled.map((item, i) =>
+      `<div class="flex items-center gap-3 bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5">
+        <span class="text-sm font-bold text-gray-400 w-5">${i+1}.</span>
+        <span class="flex-1 text-sm font-medium text-gray-800">${item}</span>
+        <span class="text-xs text-gray-400">${priorities[Math.min(i, priorities.length-1)]}</span>
+      </div>`
+    ).join('');
+    document.getElementById('dm-prio-result')!.classList.remove('hidden');
+  });
+</script>

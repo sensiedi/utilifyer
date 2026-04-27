@@ -1,0 +1,159 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Random Color Generator"
+  description="Generate random colors with hex, RGB, and HSL values. Create random color palettes, filter by hue range, and copy colors instantly."
+  slug="random-color-generator"
+  category="Random & Fun"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Random Color Generator</h1>
+  <p class="text-gray-500 mb-8">Generate random colors and palettes — perfect for design inspiration.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div>
+        <label class="label">Color type</label>
+        <select id="rc-type" class="input-field">
+          <option value="any">Any color</option>
+          <option value="vibrant">Vibrant</option>
+          <option value="pastel">Pastel</option>
+          <option value="dark">Dark</option>
+          <option value="light">Light</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">Hue range</label>
+        <select id="rc-hue" class="input-field">
+          <option value="any">Any hue</option>
+          <option value="red">Red tones</option>
+          <option value="orange">Orange tones</option>
+          <option value="yellow">Yellow tones</option>
+          <option value="green">Green tones</option>
+          <option value="blue">Blue tones</option>
+          <option value="purple">Purple tones</option>
+          <option value="pink">Pink tones</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">Count</label>
+        <select id="rc-count" class="input-field">
+          <option value="1">1 color</option>
+          <option value="5" selected>5 colors</option>
+          <option value="10">10 colors</option>
+          <option value="20">20 colors</option>
+        </select>
+      </div>
+      <div class="flex items-end">
+        <button id="rc-go" class="btn-primary w-full">Generate</button>
+      </div>
+    </div>
+
+    <div id="rc-output" class="space-y-3">
+      <div id="rc-swatches" class="grid grid-cols-1 sm:grid-cols-5 gap-3"></div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is the difference between RGB, HEX, and HSL?", a: "All three represent the same colors, just differently. RGB (Red Green Blue): channels from 0–255. HEX: RGB expressed in base-16 (#RRGGBB). HSL (Hue Saturation Lightness): more intuitive — Hue 0–360° (color wheel), Saturation 0–100% (gray to full color), Lightness 0–100% (black to white). For design work, HSL is most intuitive because you can adjust saturation/lightness independently without affecting the color identity (hue)." },
+        { q: "How do I choose colors that work well together?", a: "Color harmony rules: Complementary (opposite on color wheel): maximum contrast, high impact. Analogous (adjacent, 30° apart): harmonious, natural feel. Triadic (120° apart): balanced, vibrant. Monochromatic (same hue, different saturation/lightness): elegant, minimal. The 60-30-10 rule: 60% dominant color, 30% secondary, 10% accent. Use our Color Palette Generator for scheme-based palettes." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const HUE_RANGES: Record<string, [number, number]> = {
+    red: [345, 15], orange: [15, 45], yellow: [45, 75],
+    green: [75, 165], blue: [165, 255], purple: [255, 315], pink: [315, 345],
+  };
+
+  function randInRange(min: number, max: number): number {
+    return Math.random() * (max - min) + min;
+  }
+
+  function hslToHex(h: number, s: number, l: number): string {
+    s /= 100; l /= 100;
+    const a = s * Math.min(l, 1 - l);
+    const f = (n: number) => {
+      const k = (n + h / 30) % 12;
+      const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+      return Math.round(255 * color).toString(16).padStart(2, '0');
+    };
+    return `#${f(0)}${f(8)}${f(4)}`;
+  }
+
+  function hexToRgb(hex: string): [number,number,number] {
+    const r = parseInt(hex.slice(1,3), 16);
+    const g = parseInt(hex.slice(3,5), 16);
+    const b = parseInt(hex.slice(5,7), 16);
+    return [r, g, b];
+  }
+
+  function luminance(r: number, g: number, b: number): number {
+    const lin = (c: number) => { const s = c/255; return s <= 0.03928 ? s/12.92 : Math.pow((s+0.055)/1.055, 2.4); };
+    return 0.2126*lin(r) + 0.7152*lin(g) + 0.0722*lin(b);
+  }
+
+  function generateColor(type: string, hue: string): string {
+    let h: number, s: number, l: number;
+
+    if (hue !== 'any') {
+      const [hMin, hMax] = HUE_RANGES[hue];
+      if (hMin > hMax) h = (Math.random() > 0.5) ? randInRange(hMin, 360) : randInRange(0, hMax);
+      else h = randInRange(hMin, hMax);
+    } else {
+      h = randInRange(0, 360);
+    }
+
+    switch (type) {
+      case 'vibrant': s = randInRange(70, 100); l = randInRange(40, 60); break;
+      case 'pastel':  s = randInRange(30, 60);  l = randInRange(70, 90); break;
+      case 'dark':    s = randInRange(40, 80);  l = randInRange(15, 35); break;
+      case 'light':   s = randInRange(20, 60);  l = randInRange(80, 95); break;
+      default:        s = randInRange(30, 100); l = randInRange(25, 85); break;
+    }
+
+    return hslToHex(h, s, l);
+  }
+
+  function renderSwatches(colors: string[]) {
+    document.getElementById('rc-swatches')!.innerHTML = colors.map(hex => {
+      const [r, g, b] = hexToRgb(hex);
+      const lum = luminance(r, g, b);
+      const textColor = lum > 0.35 ? '#1f2937' : '#ffffff';
+      return `<div class="rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+        <div class="h-32 cursor-pointer hover:opacity-90 transition-opacity" style="background:${hex}" onclick="navigator.clipboard.writeText('${hex}')"></div>
+        <div class="p-2 bg-white space-y-0.5">
+          <div class="flex items-center justify-between">
+            <span class="font-mono text-sm font-bold text-gray-800">${hex.toUpperCase()}</span>
+            <button class="text-xs text-indigo-500 hover:underline" onclick="navigator.clipboard.writeText('${hex}')">Copy</button>
+          </div>
+          <div class="text-xs text-gray-400 font-mono">rgb(${r},${g},${b})</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  document.getElementById('rc-go')!.addEventListener('click', () => {
+    const type = (document.getElementById('rc-type') as HTMLSelectElement).value;
+    const hue = (document.getElementById('rc-hue') as HTMLSelectElement).value;
+    const count = parseInt((document.getElementById('rc-count') as HTMLSelectElement).value);
+    const colors = Array.from({length: count}, () => generateColor(type, hue));
+    renderSwatches(colors);
+  });
+
+  document.getElementById('rc-go')!.click();
+</script>

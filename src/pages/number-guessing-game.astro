@@ -1,0 +1,193 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Number Guessing Game"
+  description="Guess the secret number in as few tries as possible. Choose your difficulty range and get hot/cold hints. Classic guessing game with statistics."
+  slug="number-guessing-game"
+  category="Random & Fun"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Number Guessing Game</h1>
+  <p class="text-gray-500 mb-8">Guess the secret number. Use the clues to close in!</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <!-- Difficulty -->
+    <div>
+      <label class="label">Difficulty</label>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        {[
+          { id: 'easy', label: 'Easy', range: '1–50', max: 50 },
+          { id: 'medium', label: 'Medium', range: '1–100', max: 100 },
+          { id: 'hard', label: 'Hard', range: '1–500', max: 500 },
+          { id: 'extreme', label: 'Extreme', range: '1–1000', max: 1000 },
+        ].map(({ id, label, range, max }) => (
+          <button class="ng-diff border-2 border-gray-200 rounded-xl p-3 hover:border-indigo-400 transition-all" data-max={max}>
+            <div class="font-semibold text-gray-700">{label}</div>
+            <div class="text-xs text-gray-400 mt-0.5">{range}</div>
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <!-- Game area -->
+    <div id="ng-game" class="space-y-4">
+      <div id="ng-status" class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 text-center">
+        <p id="ng-status-text" class="font-semibold text-indigo-800">Select a difficulty to start!</p>
+        <p id="ng-range-text" class="text-xs text-indigo-500 mt-1"></p>
+      </div>
+
+      <div id="ng-input-area" class="hidden flex gap-3">
+        <input id="ng-guess" type="number" placeholder="Your guess..." class="input-field font-mono flex-1" />
+        <button id="ng-submit" class="btn-primary px-6">Guess!</button>
+      </div>
+
+      <!-- Hint display -->
+      <div id="ng-hint" class="hidden rounded-xl p-4 text-center border-2 text-2xl font-bold"></div>
+
+      <!-- History -->
+      <div id="ng-history" class="hidden space-y-1">
+        <p class="text-xs text-gray-400 font-semibold uppercase tracking-wide">Guesses</p>
+        <div id="ng-history-list" class="flex flex-wrap gap-1.5"></div>
+      </div>
+
+      <!-- Win screen -->
+      <div id="ng-win" class="hidden bg-green-50 border-2 border-green-300 rounded-2xl p-6 text-center space-y-2">
+        <div class="text-4xl">🎉</div>
+        <p id="ng-win-text" class="text-xl font-bold text-green-800"></p>
+        <button id="ng-play-again" class="btn-primary mt-2">Play Again</button>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-3 gap-3 text-center">
+      <div class="bg-gray-50 border border-gray-100 rounded-xl p-3">
+        <div class="text-xs text-gray-400 mb-0.5">Games played</div>
+        <div id="ng-played" class="text-xl font-bold font-mono text-gray-900">0</div>
+      </div>
+      <div class="bg-green-50 border border-green-200 rounded-xl p-3">
+        <div class="text-xs text-green-500 mb-0.5">Best score</div>
+        <div id="ng-best" class="text-xl font-bold font-mono text-green-700">—</div>
+        <div class="text-xs text-green-400">guesses</div>
+      </div>
+      <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-3">
+        <div class="text-xs text-indigo-400 mb-0.5">Average</div>
+        <div id="ng-avg" class="text-xl font-bold font-mono text-indigo-700">—</div>
+        <div class="text-xs text-indigo-400">guesses</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is the optimal strategy for the number guessing game?", a: "Binary search is the mathematically optimal strategy: always guess the midpoint of the remaining possible range. For 1–100: guess 50 first. If too high, guess 25. If too low, guess 75. This guarantees finding any number in at most 7 guesses for 1–100 (log₂(100) ≈ 6.64). For 1–1000, binary search finds the answer in at most 10 guesses." },
+        { q: "What is binary search?", a: "Binary search is an algorithm for finding a target value in a sorted list by repeatedly halving the search space. It's one of the most efficient search algorithms — O(log n) time complexity. Compare: a linear search through 1,000 items takes up to 1,000 steps; binary search takes at most 10. Binary search underlies many real-world systems including database indexes, phone book lookups, and version control bisect tools." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  let secret = 0;
+  let maxNum = 100;
+  let guesses: number[] = [];
+  let gamesPlayed = 0;
+  let totalGuesses = 0;
+  let bestScore = Infinity;
+  let gameActive = false;
+
+  function startGame(max: number) {
+    maxNum = max;
+    secret = Math.floor(Math.random() * max) + 1;
+    guesses = [];
+    gameActive = true;
+    document.getElementById('ng-status-text')!.textContent = `Guess a number between 1 and ${max}`;
+    document.getElementById('ng-range-text')!.textContent = `${max} possible numbers`;
+    document.getElementById('ng-input-area')!.classList.remove('hidden');
+    document.getElementById('ng-hint')!.classList.add('hidden');
+    document.getElementById('ng-history')!.classList.add('hidden');
+    document.getElementById('ng-history-list')!.innerHTML = '';
+    document.getElementById('ng-win')!.classList.add('hidden');
+    (document.getElementById('ng-guess') as HTMLInputElement).value = '';
+    (document.getElementById('ng-guess') as HTMLInputElement).focus();
+  }
+
+  document.querySelectorAll('.ng-diff').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.ng-diff').forEach(b => {
+        b.classList.toggle('border-indigo-400', b === btn);
+        b.classList.toggle('bg-indigo-50', b === btn);
+      });
+      startGame(parseInt((btn as HTMLElement).dataset.max!));
+    });
+  });
+
+  function submitGuess() {
+    if (!gameActive) return;
+    const input = document.getElementById('ng-guess') as HTMLInputElement;
+    const guess = parseInt(input.value);
+    if (isNaN(guess) || guess < 1 || guess > maxNum) return;
+    guesses.push(guess);
+    input.value = '';
+    input.focus();
+
+    const hintEl = document.getElementById('ng-hint')!;
+    const diff = Math.abs(guess - secret);
+    const range = maxNum;
+
+    if (guess === secret) {
+      gameActive = false;
+      gamesPlayed++;
+      totalGuesses += guesses.length;
+      if (guesses.length < bestScore) bestScore = guesses.length;
+      document.getElementById('ng-played')!.textContent = String(gamesPlayed);
+      document.getElementById('ng-best')!.textContent = String(bestScore);
+      document.getElementById('ng-avg')!.textContent = (totalGuesses / gamesPlayed).toFixed(1);
+      document.getElementById('ng-win-text')!.textContent = `🎯 ${secret}! You got it in ${guesses.length} guess${guesses.length !== 1 ? 'es' : ''}!`;
+      document.getElementById('ng-win')!.classList.remove('hidden');
+      document.getElementById('ng-input-area')!.classList.add('hidden');
+      hintEl.classList.add('hidden');
+    } else {
+      const direction = guess < secret ? '⬆️ Too low!' : '⬇️ Too high!';
+      let temp = '';
+      const pct = diff / range;
+      if (pct < 0.02) temp = '🔥🔥🔥 Burning hot!';
+      else if (pct < 0.05) temp = '🔥🔥 Very hot!';
+      else if (pct < 0.1) temp = '🔥 Hot!';
+      else if (pct < 0.2) temp = '♨️ Warm';
+      else if (pct < 0.35) temp = '😐 Cool';
+      else temp = '🧊 Cold';
+
+      hintEl.className = `rounded-xl p-4 text-center border-2 text-xl font-bold ${pct < 0.05 ? 'bg-red-50 border-red-200 text-red-700' : pct < 0.2 ? 'bg-orange-50 border-orange-200 text-orange-700' : 'bg-blue-50 border-blue-200 text-blue-700'}`;
+      hintEl.textContent = `${direction} ${temp}`;
+      hintEl.classList.remove('hidden');
+    }
+
+    // Update history
+    document.getElementById('ng-history')!.classList.remove('hidden');
+    document.getElementById('ng-history-list')!.innerHTML = guesses.map((g, i) => {
+      const d = Math.abs(g - secret);
+      const color = g === secret ? 'bg-green-100 border-green-300 text-green-800' :
+                    d / maxNum < 0.05 ? 'bg-red-100 border-red-200 text-red-700' :
+                    d / maxNum < 0.2 ? 'bg-orange-100 border-orange-200 text-orange-700' :
+                    'bg-blue-100 border-blue-200 text-blue-700';
+      return `<span class="inline-flex items-center border rounded-lg px-2 py-0.5 text-xs font-mono font-bold ${color}">#${i+1}: ${g}</span>`;
+    }).join('');
+  }
+
+  document.getElementById('ng-submit')!.addEventListener('click', submitGuess);
+  document.getElementById('ng-guess')!.addEventListener('keydown', (e) => {
+    if ((e as KeyboardEvent).key === 'Enter') submitGuess();
+  });
+  document.getElementById('ng-play-again')!.addEventListener('click', () => startGame(maxNum));
+</script>

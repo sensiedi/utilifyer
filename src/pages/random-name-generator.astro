@@ -1,0 +1,164 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Random Name Generator"
+  description="Generate random first names, last names, and full names. Choose by gender, origin, and quantity. Great for fiction writing, game characters, and placeholders."
+  slug="random-name-generator"
+  category="Random & Fun"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Random Name Generator</h1>
+  <p class="text-gray-500 mb-8">Generate random names for characters, placeholder data, or creative projects.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div>
+        <label class="label">Gender</label>
+        <select id="rn-gender" class="input-field">
+          <option value="any" selected>Any</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+          <option value="neutral">Neutral</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">Origin</label>
+        <select id="rn-origin" class="input-field">
+          <option value="any" selected>Any</option>
+          <option value="english">English</option>
+          <option value="latin">Latin / Roman</option>
+          <option value="nordic">Nordic</option>
+          <option value="fantasy">Fantasy</option>
+          <option value="japanese">Japanese</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">Count</label>
+        <select id="rn-count" class="input-field">
+          <option value="1">1 name</option>
+          <option value="5">5 names</option>
+          <option value="10" selected>10 names</option>
+          <option value="20">20 names</option>
+          <option value="50">50 names</option>
+        </select>
+      </div>
+      <div>
+        <label class="label">Format</label>
+        <select id="rn-format" class="input-field">
+          <option value="full" selected>First + Last</option>
+          <option value="first">First only</option>
+          <option value="last">Last only</option>
+        </select>
+      </div>
+    </div>
+
+    <button id="rn-generate" class="btn-primary w-full">Generate Names</button>
+
+    <div id="rn-output" class="hidden space-y-3">
+      <div class="flex items-center justify-between">
+        <p class="label">Generated Names</p>
+        <button id="rn-copy" class="text-xs text-indigo-600 hover:underline">Copy All</button>
+      </div>
+      <div id="rn-list" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What are random name generators used for?", a: "Common uses include: fiction writing (characters, places), game development (NPCs, player characters), software testing (sample user data), placeholder content (mockups, wireframes), usernames and aliases, D&D or tabletop RPG characters, and screenwriting. Writers often use name generators to avoid name-blindness — when you've been staring at your manuscript so long all names look odd." },
+        { q: "How do I choose a good character name?", a: "Good character names: (1) Sound distinct from other characters in the story — avoid names that start with the same letter. (2) Match the character's culture and time period. (3) Reflect personality subtly (strong consonants feel powerful; soft vowels feel gentle — but avoid being too on-the-nose). (4) Be pronounceable. (5) Consider meaning — many authors use names with symbolic meanings. (6) Check it doesn't conflict with real famous people in your genre." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const NAMES: Record<string, { male: string[]; female: string[]; neutral: string[]; last: string[] }> = {
+    english: {
+      male:    ['James','William','Oliver','Henry','George','Arthur','Thomas','Edward','Frederick','Charles','Samuel','Benjamin','Theodore','Alexander','Nicholas','Sebastian','Nathaniel','Christopher','Jonathan','Matthew'],
+      female:  ['Emma','Charlotte','Eleanor','Alice','Grace','Florence','Violet','Beatrice','Catherine','Margaret','Victoria','Isabelle','Rosalind','Josephine','Arabella','Constance','Harriet','Matilda','Penelope','Cecilia'],
+      neutral: ['Avery','Riley','Morgan','Quinn','Jordan','Taylor','Casey','Reese','Blake','Parker','Robin','Sage','Rowan','Finley','Drew','Lane','Emery','River','Skylar','Hayden'],
+      last:    ['Smith','Johnson','Williams','Brown','Jones','Davis','Miller','Wilson','Moore','Taylor','Anderson','Thomas','Jackson','White','Harris','Martin','Thompson','Young','Walker','Hall','Allen','Wright','King','Scott','Baker','Carter','Mitchell','Nelson','Lee','Green'],
+    },
+    latin: {
+      male:    ['Marcus','Julius','Gaius','Lucius','Publius','Titus','Quintus','Brutus','Cassius','Flavius','Octavian','Hadrian','Trajan','Claudius','Severus','Maximus','Aurelius','Cornelius','Decimus','Valerius'],
+      female:  ['Livia','Claudia','Julia','Valeria','Flavia','Cornelia','Aurelia','Lucia','Sabina','Antonia','Octavia','Calpurnia','Fausta','Marcella','Livilla','Domitia','Aemilia','Vibia','Plautia','Tullia'],
+      neutral: ['Caelum','Lux','Pax','Rex','Nox','Aqua','Sol','Luna','Flos','Aer'],
+      last:    ['Maximus','Brutus','Cassius','Flavius','Aurelius','Severus','Claudius','Julius','Antonius','Fabius','Crassus','Hortensius','Marius','Sulla','Pompey','Caesar','Cicero','Cato','Scipio','Gracchus'],
+    },
+    nordic: {
+      male:    ['Erik','Bjorn','Leif','Sigurd','Gunnar','Ragnar','Ivar','Olaf','Harald','Halfdan','Ulf','Thorvald','Ragnvald','Eystein','Ketil','Asbjorn','Hakon','Orm','Snorri','Torsten'],
+      female:  ['Astrid','Ingrid','Sigrid','Freya','Helga','Ragnhild','Gunhild','Thyra','Alfhild','Estrid','Thora','Vigdis','Gudrid','Aasta','Sif','Randi','Brynhild','Unn','Hallveig','Aud'],
+      neutral: ['Saga','Rune','Birk','Storm','Vale','Blade','Sky','Frost','Dawn','Holt'],
+      last:    ['Eriksson','Bjornsson','Sigurdsson','Gunnarsson','Ragnarsson','Thorsson','Olavsson','Haraldsson','Ulfsson','Ketilsson','Halfdansson','Ragnvaldsson','Eysteinsson','Asbjornsson','Hakonsson','Ormsson','Torvalsson','Leifsson','Ivarsson','Snorrisson'],
+    },
+    fantasy: {
+      male:    ['Aldric','Zephyr','Caelan','Dorian','Evander','Fenris','Galen','Hadeon','Iorek','Jarek','Kaelen','Lycan','Malachar','Nether','Oberon','Pyrros','Quirin','Rhaegar','Sorin','Theron'],
+      female:  ['Arwen','Belladrix','Calixta','Delara','Elowen','Fyra','Galadriel','Hesper','Isolde','Juniper','Kestrel','Lyraen','Morrigan','Nimue','Ophelia','Phaedra','Quillan','Ravenna','Sylara','Thessaly'],
+      neutral: ['Ash','Echo','Ember','Fable','Glyph','Hex','Jinx','Kale','Lore','Myth','Nyx','Orion','Pixel','Quest','Rune','Shadow','Thorn','Vale','Wren','Zeal'],
+      last:    ['Blackwood','Grimshaw','Stormcrow','Dawnbringer','Nightfall','Ironforge','Moonwhisper','Darkhollow','Firesong','Coldwater','Ashenvale','Brightmoor','Shadowmere','Goldleaf','Stormblade','Ironwall','Silverbane','Thunderheart','Windrider','Frostborn'],
+    },
+    japanese: {
+      male:    ['Haruto','Sota','Yuto','Yamato','Hiroto','Daiki','Takumi','Ren','Ryusei','Kento','Yuki','Kaito','Shota','Ryota','Kosuke','Shun','Yua','Sora','Naoki','Kenji'],
+      female:  ['Yui','Hinata','Aoi','Hana','Rin','Sakura','Miu','Miyu','Riko','Momoka','Nana','Yuna','Koharu','Rena','Saki','Mei','Akari','Kokona','Ayane','Nanami'],
+      neutral: ['Haru','Natsu','Aki','Fuyu','Tsuki','Hoshi','Kaze','Umi','Mori','Yama'],
+      last:    ['Sato','Suzuki','Takahashi','Tanaka','Watanabe','Ito','Yamamoto','Nakamura','Kobayashi','Kato','Yoshida','Yamada','Sasaki','Yamaguchi','Matsumoto','Inoue','Kimura','Hayashi','Shimizu','Yamazaki'],
+    },
+  };
+
+  // Merge for "any" origin
+  function getPool(origin: string, type: 'male'|'female'|'neutral'|'last'): string[] {
+    if (origin === 'any') {
+      return Object.values(NAMES).flatMap(o => o[type]);
+    }
+    return NAMES[origin]?.[type] || [];
+  }
+
+  function pick<T>(arr: T[]): T { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  function generateName(gender: string, origin: string, format: string): string {
+    const g = gender === 'any' ? (['male','female','neutral'][Math.floor(Math.random()*3)] as 'male'|'female'|'neutral') :
+              gender as 'male'|'female'|'neutral';
+    const first = pick(getPool(origin, g));
+    const last = pick(getPool(origin, 'last'));
+    if (format === 'first') return first;
+    if (format === 'last') return last;
+    return `${first} ${last}`;
+  }
+
+  let lastGenerated: string[] = [];
+
+  document.getElementById('rn-generate')!.addEventListener('click', () => {
+    const gender = (document.getElementById('rn-gender') as HTMLSelectElement).value;
+    const origin = (document.getElementById('rn-origin') as HTMLSelectElement).value;
+    const count = parseInt((document.getElementById('rn-count') as HTMLSelectElement).value);
+    const format = (document.getElementById('rn-format') as HTMLSelectElement).value;
+
+    lastGenerated = Array.from({length: count}, () => generateName(gender, origin, format));
+
+    document.getElementById('rn-list')!.innerHTML = lastGenerated.map(name =>
+      `<div class="flex items-center justify-between bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5">
+        <span class="font-medium text-gray-800">${name}</span>
+        <button class="text-xs text-indigo-500 hover:underline" onclick="navigator.clipboard.writeText('${name}')">Copy</button>
+      </div>`
+    ).join('');
+    document.getElementById('rn-output')!.classList.remove('hidden');
+  });
+
+  document.getElementById('rn-copy')!.addEventListener('click', () => {
+    navigator.clipboard.writeText(lastGenerated.join('\n'));
+  });
+
+  document.getElementById('rn-generate')!.click();
+</script>

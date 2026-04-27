@@ -1,0 +1,186 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Icebreaker Questions Generator"
+  description="Generate random icebreaker questions for meetings, team building, classes, and parties. Choose from fun, professional, deep, or would-you-rather categories."
+  slug="icebreaker-questions"
+  category="Random & Fun"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Icebreaker Questions Generator</h1>
+  <p class="text-gray-500 mb-8">Spark conversations with random icebreaker questions for any occasion.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+      {[
+        { id: 'all', label: 'All' },
+        { id: 'work', label: 'Work / Team' },
+        { id: 'fun', label: 'Fun / Light' },
+        { id: 'deep', label: 'Deep / Thoughtful' },
+        { id: 'wyr', label: 'Would You Rather' },
+      ].map(({ id, label }) => (
+        <button class="ib-cat text-sm border border-gray-200 rounded-xl px-3 py-2 hover:border-indigo-300 transition-colors text-gray-600" data-cat={id}>{label}</button>
+      ))}
+    </div>
+
+    <div class="flex gap-3">
+      <button id="ib-next" class="btn-primary flex-1 text-lg py-3">Next Question</button>
+      <button id="ib-batch" class="text-sm border border-gray-200 rounded-xl px-4 hover:border-indigo-300 text-gray-600">Get 5</button>
+    </div>
+
+    <div id="ib-card" class="hidden bg-indigo-50 border-2 border-indigo-200 rounded-2xl p-8 text-center">
+      <div id="ib-tag" class="text-xs text-indigo-400 mb-3 uppercase tracking-wide"></div>
+      <p id="ib-question" class="text-2xl font-bold text-indigo-900 leading-snug"></p>
+    </div>
+
+    <div id="ib-batch-list" class="hidden space-y-2"></div>
+
+    <!-- Question history -->
+    <div id="ib-history" class="space-y-1.5"></div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "Why are icebreaker questions useful?", a: "Icebreakers reduce social anxiety, speed up team cohesion, and surface shared interests or experiences. Research in organizational psychology shows that brief personal sharing at the start of meetings increases psychological safety — people feel more comfortable contributing ideas. Effective icebreakers take under 5 minutes, involve everyone equally, and are light enough that no one feels put on the spot." },
+        { q: "What makes a good icebreaker for a work meeting?", a: "Good work icebreakers: (1) Are quick (2–3 min total). (2) Don't require personal disclosure that might embarrass anyone. (3) Have an easy, safe answer everyone can give. (4) Can optionally reveal personality (favorite travel, unexpected skills). Avoid icebreakers that put people on the spot about personal life, health, relationships, or politics. The goal is to warm up the room, not to gather personal information." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  interface Question { text: string; cat: string }
+
+  const QUESTIONS: Question[] = [
+    // Work
+    { text: "What's one skill you have that most people wouldn't guess from your job title?", cat: 'work' },
+    { text: "What's the best piece of career advice you've ever received?", cat: 'work' },
+    { text: "If you could switch jobs with anyone in this room for one day, who would it be and why?", cat: 'work' },
+    { text: "What tool or app could you absolutely not live without for work?", cat: 'work' },
+    { text: "What's something you learned in the last month that surprised you?", cat: 'work' },
+    { text: "What's your go-to way to get unstuck when you're blocked on a problem?", cat: 'work' },
+    { text: "If you could add one hour to your workday, what would you use it for?", cat: 'work' },
+    { text: "What's the most unusual job you had before this one?", cat: 'work' },
+    { text: "What's your secret productivity trick that you think others would benefit from?", cat: 'work' },
+    { text: "What meeting could have been an email, and what email could have been a meeting?", cat: 'work' },
+    { text: "What's one thing about remote/hybrid work you'd keep forever, even if offices came back fully?", cat: 'work' },
+    { text: "If you could redesign one part of how our team works, what would it be?", cat: 'work' },
+    // Fun
+    { text: "What's the strangest food you've ever tried and liked?", cat: 'fun' },
+    { text: "If you had to eat the same meal every day for a month, what would it be?", cat: 'fun' },
+    { text: "What movie or TV show could you quote endlessly?", cat: 'fun' },
+    { text: "What's a hobby you picked up and immediately abandoned?", cat: 'fun' },
+    { text: "What's the most adventurous thing you've ever done?", cat: 'fun' },
+    { text: "If you could have any superpower, but only for mundane tasks, what would it be?", cat: 'fun' },
+    { text: "What's the weirdest thing you believed as a child?", cat: 'fun' },
+    { text: "What's a show everyone seems to love that you just can't get into?", cat: 'fun' },
+    { text: "If your pet (or a pet you'd want) could talk, what would it probably say about you?", cat: 'fun' },
+    { text: "What's the most embarrassing song on your playlist that you actually love?", cat: 'fun' },
+    { text: "What's something on your bucket list that most people would find surprising?", cat: 'fun' },
+    { text: "What's the most useless talent you have?", cat: 'fun' },
+    { text: "If you could be a professional at any sport, which would you pick?", cat: 'fun' },
+    { text: "What's a weird fact you know that comes up surprisingly often?", cat: 'fun' },
+    // Deep
+    { text: "What's something you changed your mind about completely in the last 5 years?", cat: 'deep' },
+    { text: "If you could give your 15-year-old self one piece of advice, what would it be?", cat: 'deep' },
+    { text: "What's a book or article that genuinely changed how you think about something?", cat: 'deep' },
+    { text: "What's a failure or mistake that turned out to be a blessing in disguise?", cat: 'deep' },
+    { text: "What skill do you wish you had started learning earlier in life?", cat: 'deep' },
+    { text: "What's something you do every day that you're genuinely proud of?", cat: 'deep' },
+    { text: "If you could have dinner with any historical figure, who and why?", cat: 'deep' },
+    { text: "What's a common belief you disagree with — and what do you think instead?", cat: 'deep' },
+    { text: "What's something most people think is hard that you find surprisingly easy?", cat: 'deep' },
+    { text: "What's a value you hold that you think is underrated?", cat: 'deep' },
+    // Would You Rather
+    { text: "Would you rather have the ability to speak every language, or play every instrument?", cat: 'wyr' },
+    { text: "Would you rather know how you die, or when you die?", cat: 'wyr' },
+    { text: "Would you rather be able to teleport, or read minds — but only for work situations?", cat: 'wyr' },
+    { text: "Would you rather always feel slightly too hot or slightly too cold?", cat: 'wyr' },
+    { text: "Would you rather give up social media forever or give up your favorite food forever?", cat: 'wyr' },
+    { text: "Would you rather have a photographic memory or be able to forget anything on demand?", cat: 'wyr' },
+    { text: "Would you rather always have to speak in rhyme or never be able to use contractions?", cat: 'wyr' },
+    { text: "Would you rather have unlimited storage in your brain or unlimited battery on your phone?", cat: 'wyr' },
+    { text: "Would you rather live without music or without movies?", cat: 'wyr' },
+    { text: "Would you rather be the best in the world at something nobody cares about, or average at something everyone respects?", cat: 'wyr' },
+    { text: "Would you rather be able to pause time or rewind time (for 30 seconds max)?", cat: 'wyr' },
+    { text: "Would you rather always say what you're thinking or never be able to speak at all?", cat: 'wyr' },
+  ];
+
+  let category = 'all';
+  const history: Question[] = [];
+
+  function getPool(): Question[] {
+    return category === 'all' ? QUESTIONS : QUESTIONS.filter(q => q.cat === category);
+  }
+
+  const CAT_LABELS: Record<string, string> = { work: 'Work & Team', fun: 'Fun', deep: 'Deep & Thoughtful', wyr: 'Would You Rather' };
+
+  function showQuestion(q: Question) {
+    document.getElementById('ib-tag')!.textContent = CAT_LABELS[q.cat] || q.cat;
+    document.getElementById('ib-question')!.textContent = q.text;
+    document.getElementById('ib-card')!.classList.remove('hidden');
+    document.getElementById('ib-batch-list')!.classList.add('hidden');
+    history.unshift(q);
+    if (history.length > 6) history.pop();
+    renderHistory();
+  }
+
+  function renderHistory() {
+    document.getElementById('ib-history')!.innerHTML =
+      history.length > 1
+        ? `<p class="text-xs text-gray-400 font-semibold uppercase tracking-wide">Previous questions</p>` +
+          history.slice(1).map(q =>
+            `<div class="bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5 text-sm text-gray-600">${q.text}</div>`
+          ).join('')
+        : '';
+  }
+
+  document.getElementById('ib-next')!.addEventListener('click', () => {
+    const pool = getPool();
+    showQuestion(pool[Math.floor(Math.random() * pool.length)]);
+  });
+
+  document.getElementById('ib-batch')!.addEventListener('click', () => {
+    const pool = [...getPool()];
+    const picked: Question[] = [];
+    const used = new Set<number>();
+    while (picked.length < 5 && picked.length < pool.length) {
+      const idx = Math.floor(Math.random() * pool.length);
+      if (!used.has(idx)) { used.add(idx); picked.push(pool[idx]); }
+    }
+    document.getElementById('ib-card')!.classList.add('hidden');
+    document.getElementById('ib-batch-list')!.innerHTML = picked.map(q =>
+      `<div class="bg-indigo-50 border border-indigo-100 rounded-xl px-4 py-3">
+        <span class="text-xs text-indigo-400 block mb-0.5">${CAT_LABELS[q.cat]}</span>
+        <p class="text-sm font-medium text-indigo-900">${q.text}</p>
+      </div>`
+    ).join('');
+    document.getElementById('ib-batch-list')!.classList.remove('hidden');
+  });
+
+  document.querySelectorAll('.ib-cat').forEach(btn => {
+    btn.addEventListener('click', () => {
+      category = (btn as HTMLElement).dataset.cat || 'all';
+      document.querySelectorAll('.ib-cat').forEach(b => {
+        const active = (b as HTMLElement).dataset.cat === category;
+        b.classList.toggle('border-indigo-400', active);
+        b.classList.toggle('bg-indigo-50', active);
+        b.classList.toggle('text-indigo-700', active);
+      });
+    });
+  });
+
+  document.querySelector('.ib-cat[data-cat="all"]')!.classList.add('border-indigo-400','bg-indigo-50','text-indigo-700');
+  document.getElementById('ib-next')!.click();
+</script>

@@ -1,0 +1,132 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="List Randomizer"
+  description="Shuffle any list randomly. Paste names, items, or tasks to randomize the order. Great for assigning tasks, picking winners, and random ordering."
+  slug="list-randomizer"
+  category="Random & Fun"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">List Randomizer</h1>
+  <p class="text-gray-500 mb-8">Paste any list and shuffle it instantly. Perfect for picking order, assigning tasks, or choosing winners.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div class="space-y-3">
+        <label class="label">Your List (one item per line)</label>
+        <textarea id="lr-input" rows="10" class="input-field font-mono text-sm resize-none" placeholder="Alice&#10;Bob&#10;Carol&#10;David&#10;Eve"></textarea>
+        <div class="flex gap-2">
+          <button id="lr-shuffle" class="btn-primary flex-1">Shuffle</button>
+          <button id="lr-clear" class="text-sm border border-gray-200 rounded-xl px-4 py-2 hover:border-gray-300 text-gray-600">Clear</button>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <label class="flex items-center gap-1.5 text-sm text-gray-600 cursor-pointer border border-gray-200 rounded-lg px-3 py-1.5">
+            <input id="lr-number" type="checkbox" class="rounded" />
+            <span>Number items</span>
+          </label>
+          <label class="flex items-center gap-1.5 text-sm text-gray-600 cursor-pointer border border-gray-200 rounded-lg px-3 py-1.5">
+            <input id="lr-remove-blanks" type="checkbox" checked class="rounded" />
+            <span>Remove blank lines</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <label class="label">Shuffled Result</label>
+          <button id="lr-copy" class="text-xs text-indigo-600 hover:underline">Copy</button>
+        </div>
+        <div id="lr-output" class="bg-gray-50 border border-gray-100 rounded-xl p-4 min-h-48 font-mono text-sm text-gray-700 whitespace-pre-wrap"></div>
+        <div id="lr-count" class="text-xs text-gray-400"></div>
+      </div>
+    </div>
+
+    <!-- Pick N random items -->
+    <div class="border border-gray-200 rounded-xl p-4 space-y-3">
+      <p class="text-sm font-semibold text-gray-700">Pick Random Items</p>
+      <div class="flex items-center gap-3">
+        <label class="text-sm text-gray-600">Pick</label>
+        <input id="lr-pick-n" type="number" value="1" min="1" max="1000" class="border border-gray-200 rounded-lg px-3 py-1.5 w-16 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400" />
+        <label class="text-sm text-gray-600">items from your list</label>
+        <button id="lr-pick" class="text-sm border border-indigo-200 bg-indigo-50 text-indigo-700 rounded-lg px-4 py-1.5 hover:bg-indigo-100">Pick</button>
+      </div>
+      <div id="lr-picked" class="hidden bg-indigo-50 border border-indigo-200 rounded-xl p-3">
+        <p class="text-xs text-indigo-500 mb-2">Randomly selected:</p>
+        <div id="lr-picked-items" class="flex flex-wrap gap-2"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How is the list shuffled?", a: "The list uses the Fisher-Yates shuffle algorithm (also called Knuth shuffle), which produces an unbiased random permutation. It works by iterating from the last element to the first, swapping each element with a randomly chosen element at or before it. This guarantees every permutation has equal probability — unlike a naive sort-by-random approach which is statistically biased." },
+        { q: "What can I use this for?", a: "Common uses: (1) Randomly assign speaking order or presentation slots. (2) Pick a winner from a list of entrants. (3) Decide who goes first in a game. (4) Assign tasks or chores randomly. (5) Create random playlists or reading orders. (6) Randomize question order for tests. (7) Decide where to eat from a list of restaurants." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  function getItems(): string[] {
+    const removeBlanks = (document.getElementById('lr-remove-blanks') as HTMLInputElement).checked;
+    const raw = (document.getElementById('lr-input') as HTMLTextAreaElement).value;
+    const lines = raw.split('\n');
+    return removeBlanks ? lines.filter(l => l.trim()) : lines;
+  }
+
+  function shuffle<T>(arr: T[]): T[] {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function render(items: string[]) {
+    const numbered = (document.getElementById('lr-number') as HTMLInputElement).checked;
+    const text = items.map((item, i) => numbered ? `${i+1}. ${item}` : item).join('\n');
+    document.getElementById('lr-output')!.textContent = text;
+    document.getElementById('lr-count')!.textContent = `${items.length} item${items.length !== 1 ? 's' : ''}`;
+  }
+
+  document.getElementById('lr-shuffle')!.addEventListener('click', () => {
+    render(shuffle(getItems()));
+  });
+
+  document.getElementById('lr-clear')!.addEventListener('click', () => {
+    (document.getElementById('lr-input') as HTMLTextAreaElement).value = '';
+    document.getElementById('lr-output')!.textContent = '';
+    document.getElementById('lr-count')!.textContent = '';
+  });
+
+  document.getElementById('lr-copy')!.addEventListener('click', () => {
+    const text = document.getElementById('lr-output')!.textContent || '';
+    navigator.clipboard.writeText(text);
+  });
+
+  document.getElementById('lr-pick')!.addEventListener('click', () => {
+    const items = getItems();
+    const n = Math.min(parseInt((document.getElementById('lr-pick-n') as HTMLInputElement).value) || 1, items.length);
+    const picked = shuffle(items).slice(0, n);
+    document.getElementById('lr-picked-items')!.innerHTML = picked.map(item =>
+      `<span class="bg-indigo-600 text-white text-sm font-medium rounded-lg px-3 py-1">${item}</span>`
+    ).join('');
+    document.getElementById('lr-picked')!.classList.remove('hidden');
+  });
+
+  // Pre-populate
+  (document.getElementById('lr-input') as HTMLTextAreaElement).value = 'Alice\nBob\nCarol\nDavid\nEve\nFrank\nGrace';
+  render(getItems());
+</script>

@@ -1,0 +1,170 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Would You Rather"
+  description="Play Would You Rather with fun, weird, and thought-provoking dilemmas. Choose between two options and see which is more popular. Perfect for parties and groups."
+  slug="would-you-rather"
+  category="Random & Fun"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Would You Rather</h1>
+  <p class="text-gray-500 mb-8">Impossible choices, interesting conversations. Pick your dilemma category and vote!</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <!-- Category selector -->
+    <div class="flex flex-wrap gap-2">
+      {[
+        { id: 'all', label: 'All' },
+        { id: 'fun', label: 'Silly & Fun' },
+        { id: 'powers', label: 'Superpowers' },
+        { id: 'life', label: 'Life Choices' },
+        { id: 'food', label: 'Food' },
+        { id: 'tech', label: 'Tech & Future' },
+      ].map(({ id, label }) => (
+        <button class="wyr-cat text-sm border border-gray-200 rounded-xl px-3 py-1.5 hover:border-indigo-300 transition-colors text-gray-600" data-cat={id}>{label}</button>
+      ))}
+    </div>
+
+    <!-- Question card -->
+    <div id="wyr-card" class="space-y-3">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <button id="wyr-a" class="wyr-choice group border-2 border-gray-200 rounded-2xl p-6 text-left hover:border-indigo-400 hover:bg-indigo-50 transition-all">
+          <p class="text-xs text-indigo-400 mb-2 font-semibold uppercase tracking-wide">Option A</p>
+          <p id="wyr-a-text" class="text-lg font-bold text-gray-800 group-hover:text-indigo-900 leading-snug"></p>
+        </button>
+        <button id="wyr-b" class="wyr-choice group border-2 border-gray-200 rounded-2xl p-6 text-left hover:border-purple-400 hover:bg-purple-50 transition-all">
+          <p class="text-xs text-purple-400 mb-2 font-semibold uppercase tracking-wide">Option B</p>
+          <p id="wyr-b-text" class="text-lg font-bold text-gray-800 group-hover:text-purple-900 leading-snug"></p>
+        </button>
+      </div>
+    </div>
+
+    <!-- Result after voting -->
+    <div id="wyr-result" class="hidden space-y-2">
+      <div id="wyr-voted" class="bg-gray-50 border border-gray-200 rounded-xl p-4 text-sm text-gray-600"></div>
+      <button id="wyr-next" class="btn-primary w-full">Next Question</button>
+    </div>
+
+    <div id="wyr-no-result">
+      <button id="wyr-skip" class="w-full text-sm text-gray-400 hover:underline">Skip →</button>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How do you play Would You Rather in a group?", a: "Classic rules: The host reads a dilemma. Each player must choose one option — no 'neither' or 'both' allowed. After everyone chooses, each player explains their reasoning. Debates are encouraged. For larger groups: everyone votes simultaneously (hands up, or using cards), then discuss the minority choice. The fun is in the justification, not the choice itself." },
+        { q: "What makes a good Would You Rather question?", a: "Good dilemmas have these properties: (1) Both options must be genuinely appealing or unappealing — the best questions are real dilemmas where neither option is obviously better. (2) They reveal something about the person's values or priorities. (3) They're specific enough to spark discussion. Vague questions ('Would you rather be happy or rich?') are less interesting than concrete ones ('Would you rather have $10M but never travel again, or travel anywhere but earn only minimum wage?')." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  interface Dilemma { a: string; b: string; cat: string }
+
+  const DILEMMAS: Dilemma[] = [
+    // Silly & Fun
+    { a: 'Have fingers instead of toes', b: 'Have toes instead of fingers', cat: 'fun' },
+    { a: 'Only be able to whisper', b: 'Only be able to shout', cat: 'fun' },
+    { a: 'Have a laugh that sounds exactly like a seal bark', b: 'Sneeze glitter every time', cat: 'fun' },
+    { a: 'Always walk sideways like a crab', b: 'Always skip instead of walking', cat: 'fun' },
+    { a: 'Have a permanent clown nose you can\'t remove', b: 'Always have theme music playing wherever you go', cat: 'fun' },
+    { a: 'Every meal taste like cardboard', b: 'Every meal be incredibly spicy', cat: 'fun' },
+    { a: 'Sleep 22 hours a day but feel amazing when awake', b: 'Only need 2 hours of sleep but never feel well-rested', cat: 'fun' },
+    { a: 'Know every language but never be able to lie', b: 'Only speak one language but be a master of deception', cat: 'fun' },
+    // Superpowers
+    { a: 'Be able to fly but only at walking speed', b: 'Be able to teleport but only 5 feet at a time', cat: 'powers' },
+    { a: 'Be invisible but only when no one is looking', b: 'Read minds but only hear mundane thoughts', cat: 'powers' },
+    { a: 'Have super strength but be extremely clumsy', b: 'Be incredibly agile but have no strength at all', cat: 'powers' },
+    { a: 'Pause time but still age while time is paused', b: 'Rewind time 30 seconds but only once per day', cat: 'powers' },
+    { a: 'Never get sick but still feel pain', b: 'Never feel pain but get sick regularly', cat: 'powers' },
+    { a: 'Breathe underwater', b: 'Survive in outer space without a suit', cat: 'powers' },
+    { a: 'Be able to control fire', b: 'Be able to control water', cat: 'powers' },
+    // Life
+    { a: 'Know every answer on every test', b: 'Never need to study but forget everything after the test', cat: 'life' },
+    { a: 'Have unlimited money but no free time', b: 'Have unlimited free time but no money', cat: 'life' },
+    { a: 'Live in a city but never leave it', b: 'Travel the world constantly but never have a home', cat: 'life' },
+    { a: 'Have 10 close friends who drift away after 5 years', b: 'Have 1 lifelong best friend you only see twice a year', cat: 'life' },
+    { a: 'Work your dream job for half the pay', b: 'Work a boring job for triple the pay', cat: 'life' },
+    { a: 'Live to 150 but look 80 from age 50', b: 'Die at 80 but always look and feel 30', cat: 'life' },
+    { a: 'Always know when someone is lying to you', b: 'Always know your exact future 24 hours ahead', cat: 'life' },
+    // Food
+    { a: 'Only eat hot food for the rest of your life', b: 'Only eat cold food for the rest of your life', cat: 'food' },
+    { a: 'Give up coffee forever', b: 'Give up alcohol forever', cat: 'food' },
+    { a: 'Only eat sweet foods', b: 'Only eat savory foods', cat: 'food' },
+    { a: 'Cook every single meal yourself', b: 'Eat out for every single meal', cat: 'food' },
+    { a: 'Eat your favorite meal every day', b: 'Never eat your favorite meal again but have total variety', cat: 'food' },
+    { a: 'Only drink water for all beverages', b: 'Never drink water (only other drinks)', cat: 'food' },
+    // Tech & Future
+    { a: 'Live without your smartphone for a year', b: 'Live without the internet for a year', cat: 'tech' },
+    { a: 'Have your thoughts read by AI but get perfect recommendations', b: 'Have total privacy but ads are completely random and useless', cat: 'tech' },
+    { a: 'Be the first person to go to Mars (3-year mission)', b: 'Be the first person to go to the ocean floor (3-month mission)', cat: 'tech' },
+    { a: 'Have a perfect AI assistant that manages your life', b: 'Manage everything yourself but with superhuman organization skills', cat: 'tech' },
+    { a: 'Experience virtual reality so good you can\'t tell it from real life', b: 'Augmented reality overlaid on everything you see 24/7', cat: 'tech' },
+  ];
+
+  let category = 'all';
+  let currentDilemma: Dilemma | null = null;
+
+  function getPool(): Dilemma[] {
+    return category === 'all' ? DILEMMAS : DILEMMAS.filter(d => d.cat === category);
+  }
+
+  function nextQuestion() {
+    const pool = getPool();
+    currentDilemma = pool[Math.floor(Math.random() * pool.length)];
+    document.getElementById('wyr-a-text')!.textContent = currentDilemma.a;
+    document.getElementById('wyr-b-text')!.textContent = currentDilemma.b;
+    document.getElementById('wyr-result')!.classList.add('hidden');
+    document.getElementById('wyr-no-result')!.classList.remove('hidden');
+    // Reset button styles
+    document.getElementById('wyr-a')!.className = 'wyr-choice group border-2 border-gray-200 rounded-2xl p-6 text-left hover:border-indigo-400 hover:bg-indigo-50 transition-all';
+    document.getElementById('wyr-b')!.className = 'wyr-choice group border-2 border-gray-200 rounded-2xl p-6 text-left hover:border-purple-400 hover:bg-purple-50 transition-all';
+  }
+
+  function vote(choice: 'a' | 'b') {
+    if (!currentDilemma) return;
+    const chosen = choice === 'a' ? currentDilemma.a : currentDilemma.b;
+    const other = choice === 'a' ? currentDilemma.b : currentDilemma.a;
+    document.getElementById('wyr-voted')!.textContent = `You chose: "${chosen}" over "${other}"`;
+    document.getElementById('wyr-result')!.classList.remove('hidden');
+    document.getElementById('wyr-no-result')!.classList.add('hidden');
+    if (choice === 'a') {
+      document.getElementById('wyr-a')!.className = 'wyr-choice group border-2 border-indigo-400 rounded-2xl p-6 text-left bg-indigo-50 transition-all';
+    } else {
+      document.getElementById('wyr-b')!.className = 'wyr-choice group border-2 border-purple-400 rounded-2xl p-6 text-left bg-purple-50 transition-all';
+    }
+  }
+
+  document.getElementById('wyr-a')!.addEventListener('click', () => vote('a'));
+  document.getElementById('wyr-b')!.addEventListener('click', () => vote('b'));
+  document.getElementById('wyr-next')!.addEventListener('click', nextQuestion);
+  document.getElementById('wyr-skip')!.addEventListener('click', nextQuestion);
+
+  document.querySelectorAll('.wyr-cat').forEach(btn => {
+    btn.addEventListener('click', () => {
+      category = (btn as HTMLElement).dataset.cat || 'all';
+      document.querySelectorAll('.wyr-cat').forEach(b => {
+        const active = (b as HTMLElement).dataset.cat === category;
+        b.classList.toggle('border-indigo-400', active);
+        b.classList.toggle('bg-indigo-50', active);
+        b.classList.toggle('text-indigo-700', active);
+      });
+      nextQuestion();
+    });
+  });
+
+  document.querySelector('.wyr-cat[data-cat="all"]')!.classList.add('border-indigo-400','bg-indigo-50','text-indigo-700');
+  nextQuestion();
+</script>

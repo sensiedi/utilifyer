@@ -1,0 +1,119 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Team Randomizer"
+  description="Randomly split a group of people into teams. Enter names and choose the number of teams or team size. Perfect for sports, classroom, and work activities."
+  slug="team-randomizer"
+  category="Random & Fun"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Team Randomizer</h1>
+  <p class="text-gray-500 mb-8">Enter names and split them into random teams fairly and instantly.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <!-- Inputs -->
+      <div class="space-y-4">
+        <div>
+          <label class="label">Names (one per line)</label>
+          <textarea id="tr-names" rows="10" class="input-field font-mono text-sm resize-none" placeholder="Alice&#10;Bob&#10;Carol&#10;David&#10;Eve&#10;Frank"></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="label">Mode</label>
+            <select id="tr-mode" class="input-field">
+              <option value="teams">Number of teams</option>
+              <option value="size">Team size</option>
+            </select>
+          </div>
+          <div>
+            <label class="label" id="tr-num-label">Number of teams</label>
+            <input id="tr-num" type="number" value="2" min="1" max="100" class="input-field font-mono" />
+          </div>
+        </div>
+
+        <button id="tr-go" class="btn-primary w-full">Randomize Teams</button>
+      </div>
+
+      <!-- Output -->
+      <div>
+        <p class="label mb-2">Teams</p>
+        <div id="tr-output" class="space-y-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How are teams made fair?", a: "Names are shuffled using the Fisher-Yates algorithm (true random permutation), then distributed round-robin across teams. This ensures each team has an equal number of members (with at most 1 extra member for teams when the group doesn't divide evenly). Every assignment has equal probability — there's no bias toward any ordering." },
+        { q: "What is the difference between 'number of teams' and 'team size' mode?", a: "Number of teams: you specify how many teams to create. Team size varies based on total players. Example: 10 people into 3 teams = teams of 4, 3, 3. Team size: you specify how many people per team. Number of teams varies. Example: 10 people, size 3 = 3 full teams + 1 team of 1. Extra people are distributed to existing teams to keep things balanced." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  const TEAM_COLORS = ['bg-indigo-50 border-indigo-200', 'bg-green-50 border-green-200', 'bg-amber-50 border-amber-200', 'bg-pink-50 border-pink-200', 'bg-blue-50 border-blue-200', 'bg-purple-50 border-purple-200', 'bg-orange-50 border-orange-200', 'bg-teal-50 border-teal-200'];
+  const TEAM_HEADER = ['text-indigo-700', 'text-green-700', 'text-amber-700', 'text-pink-700', 'text-blue-700', 'text-purple-700', 'text-orange-700', 'text-teal-700'];
+
+  document.getElementById('tr-mode')!.addEventListener('change', (e) => {
+    const mode = (e.target as HTMLSelectElement).value;
+    document.getElementById('tr-num-label')!.textContent = mode === 'teams' ? 'Number of teams' : 'People per team';
+  });
+
+  function shuffle<T>(arr: T[]): T[] {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  document.getElementById('tr-go')!.addEventListener('click', () => {
+    const names = (document.getElementById('tr-names') as HTMLTextAreaElement).value
+      .split('\n').map(n => n.trim()).filter(Boolean);
+    if (!names.length) return;
+
+    const mode = (document.getElementById('tr-mode') as HTMLSelectElement).value;
+    const num = Math.max(1, parseInt((document.getElementById('tr-num') as HTMLInputElement).value) || 2);
+    const shuffled = shuffle(names);
+
+    let teams: string[][];
+    if (mode === 'teams') {
+      const count = Math.min(num, names.length);
+      teams = Array.from({length: count}, () => [] as string[]);
+      shuffled.forEach((name, i) => teams[i % count].push(name));
+    } else {
+      const size = Math.max(1, num);
+      teams = [];
+      for (let i = 0; i < shuffled.length; i += size) teams.push(shuffled.slice(i, i + size));
+    }
+
+    document.getElementById('tr-output')!.innerHTML = teams.map((team, i) => {
+      const colorClass = TEAM_COLORS[i % TEAM_COLORS.length];
+      const headerClass = TEAM_HEADER[i % TEAM_HEADER.length];
+      return `<div class="border rounded-xl p-3 ${colorClass}">
+        <p class="text-xs font-bold mb-2 ${headerClass}">Team ${i + 1} <span class="font-normal">(${team.length} member${team.length !== 1 ? 's' : ''})</span></p>
+        <div class="flex flex-wrap gap-1.5">
+          ${team.map(name => `<span class="bg-white rounded-lg px-2 py-0.5 text-sm border border-white/60 text-gray-700">${name}</span>`).join('')}
+        </div>
+      </div>`;
+    }).join('');
+  });
+
+  (document.getElementById('tr-names') as HTMLTextAreaElement).value =
+    'Alice\nBob\nCarol\nDavid\nEve\nFrank\nGrace\nHenry';
+</script>

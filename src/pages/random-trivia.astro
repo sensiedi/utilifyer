@@ -1,0 +1,206 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Random Trivia Questions"
+  description="Test your knowledge with random trivia questions across science, history, geography, pop culture, and more. Multiple choice with explanations."
+  slug="random-trivia"
+  category="Random & Fun"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Random Trivia Questions</h1>
+  <p class="text-gray-500 mb-8">Test your knowledge across science, history, geography, and pop culture.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <!-- Category -->
+    <div class="flex flex-wrap gap-2">
+      {[
+        { id: 'all', label: 'All' },
+        { id: 'science', label: 'Science' },
+        { id: 'history', label: 'History' },
+        { id: 'geography', label: 'Geography' },
+        { id: 'culture', label: 'Pop Culture' },
+        { id: 'nature', label: 'Nature' },
+      ].map(({ id, label }) => (
+        <button class="triv-cat text-sm border border-gray-200 rounded-xl px-3 py-1.5 hover:border-indigo-300 transition-colors text-gray-600" data-cat={id}>{label}</button>
+      ))}
+    </div>
+
+    <!-- Score bar -->
+    <div class="flex items-center gap-3 text-sm">
+      <span class="text-gray-500">Score:</span>
+      <span id="triv-score" class="font-bold text-gray-800">0 / 0</span>
+      <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+        <div id="triv-score-bar" class="h-full bg-indigo-400 rounded-full transition-all" style="width:0%"></div>
+      </div>
+      <button id="triv-reset" class="text-xs text-gray-400 hover:underline">Reset</button>
+    </div>
+
+    <!-- Question card -->
+    <div id="triv-card" class="space-y-4">
+      <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+        <div id="triv-cat-label" class="text-xs text-gray-400 mb-2 uppercase tracking-wide font-semibold"></div>
+        <p id="triv-question" class="text-lg font-semibold text-gray-800 leading-snug"></p>
+      </div>
+      <div id="triv-choices" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
+    </div>
+
+    <div id="triv-explanation" class="hidden rounded-xl p-4 border-2 space-y-2">
+      <p id="triv-result-text" class="font-bold text-lg"></p>
+      <p id="triv-explanation-text" class="text-sm text-gray-600"></p>
+      <button id="triv-next-q" class="btn-primary w-full mt-2">Next Question</button>
+    </div>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "How can I improve my trivia knowledge?", a: "Effective strategies: (1) Read widely — 30 minutes/day of varied reading (news, Wikipedia rabbit holes) builds broad knowledge. (2) Podcast habit — science, history, and culture podcasts passively build trivia knowledge. (3) Spaced repetition — use Anki to review facts you missed. (4) Teach others — explaining facts to others deepens retention. (5) Play regularly — the retrieval practice of answering questions is more effective than re-reading notes." },
+        { q: "What categories are most common in pub quizzes?", a: "Typical pub quiz categories: General knowledge (20–30%), History (15–20%), Science & Nature (10–15%), Entertainment/Pop Culture (15–20%), Geography (10–15%), Sports (10–15%), Music (10–15%). The most strategic preparation: history and geography tend to have objective right answers, making them worth focusing on. Pop culture and sports tend to be era- and region-specific, so they vary by quiz host." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  interface TriviaQ {
+    q: string;
+    choices: string[];
+    answer: number;
+    explanation: string;
+    cat: string;
+  }
+
+  const QUESTIONS: TriviaQ[] = [
+    // Science
+    { q: "What is the hardest natural substance on Earth?", choices: ["Quartz","Diamond","Titanium","Graphene"], answer: 1, explanation: "Diamond scores 10 on the Mohs hardness scale — the highest possible. It's formed from carbon atoms arranged in a crystal structure under extreme heat and pressure.", cat: "science" },
+    { q: "How many bones does an adult human body have?", choices: ["206","212","198","215"], answer: 0, explanation: "Adults have 206 bones. Babies are born with ~270–300 bones; many fuse together during growth. The femur (thigh bone) is the longest; the stapes in the ear is the smallest.", cat: "science" },
+    { q: "What is the speed of light in a vacuum?", choices: ["299,792 km/s","186,000 km/s","300,000 m/s","150,000 km/s"], answer: 0, explanation: "The speed of light is exactly 299,792,458 m/s (≈300,000 km/s). This is defined as a physical constant and is used to define the meter.", cat: "science" },
+    { q: "Which planet has the most moons?", choices: ["Jupiter","Saturn","Uranus","Neptune"], answer: 1, explanation: "As of 2024, Saturn leads with 146 confirmed moons — more than any other planet. Jupiter was previously considered the leader. New moons are regularly discovered.", cat: "science" },
+    { q: "What is the chemical symbol for gold?", choices: ["Go","Gd","Au","Ag"], answer: 2, explanation: "Au comes from the Latin word 'aurum'. Gold has been valued since antiquity. It's the 79th element and one of the least reactive metals.", cat: "science" },
+    { q: "What is the powerhouse of the cell?", choices: ["Nucleus","Mitochondria","Ribosome","Golgi apparatus"], answer: 1, explanation: "Mitochondria produce ATP (adenosine triphosphate) through cellular respiration — the main energy currency of cells. They have their own DNA, suggesting they were once independent bacteria.", cat: "science" },
+    { q: "Which element has the atomic number 1?", choices: ["Helium","Oxygen","Carbon","Hydrogen"], answer: 3, explanation: "Hydrogen (H) is the lightest and most abundant element in the universe — making up about 75% of all normal matter by mass.", cat: "science" },
+    // History
+    { q: "In what year did World War II end?", choices: ["1943","1944","1945","1946"], answer: 2, explanation: "WWII ended in 1945: Germany surrendered on May 8 (VE Day), Japan surrendered on September 2 (VJ Day) following the atomic bombings of Hiroshima and Nagasaki.", cat: "history" },
+    { q: "Who was the first President of the United States?", choices: ["John Adams","Thomas Jefferson","Benjamin Franklin","George Washington"], answer: 3, explanation: "George Washington served as the first President from 1789–1797. He was elected unanimously by the Electoral College and is the only US president to have received all electoral votes.", cat: "history" },
+    { q: "The Berlin Wall fell in which year?", choices: ["1987","1988","1989","1991"], answer: 2, explanation: "The Berlin Wall fell on November 9, 1989. East Germany had announced citizens could cross freely; crowds gathered and began dismantling it. German reunification followed in 1990.", cat: "history" },
+    { q: "Which civilization built Machu Picchu?", choices: ["Aztec","Mayan","Inca","Olmec"], answer: 2, explanation: "Machu Picchu was built by the Inca civilization around 1450 CE in what is now Peru. It was abandoned around the time of the Spanish conquest and remained largely unknown until 1911.", cat: "history" },
+    { q: "In what year did the Titanic sink?", choices: ["1910","1912","1914","1916"], answer: 1, explanation: "The RMS Titanic sank on April 15, 1912, after hitting an iceberg in the North Atlantic. About 1,500 people died. It was on its maiden voyage from Southampton to New York.", cat: "history" },
+    { q: "Who wrote the play Hamlet?", choices: ["Christopher Marlowe","Ben Jonson","William Shakespeare","John Milton"], answer: 2, explanation: "Shakespeare wrote Hamlet around 1600–1601. It remains the most performed play in the world and is the source of many English idioms and phrases still used today.", cat: "history" },
+    // Geography
+    { q: "What is the largest ocean on Earth?", choices: ["Atlantic","Indian","Arctic","Pacific"], answer: 3, explanation: "The Pacific Ocean covers about 165 million km² — more than all of Earth's land combined. It's bounded by Asia/Australia to the west and the Americas to the east.", cat: "geography" },
+    { q: "Which country has the most natural lakes?", choices: ["Russia","USA","Canada","Brazil"], answer: 2, explanation: "Canada has over 2 million lakes — more than any other country. They contain about 20% of the world's fresh surface water. The Great Lakes alone hold 21% of the world's freshwater.", cat: "geography" },
+    { q: "What is the capital of Australia?", choices: ["Sydney","Melbourne","Brisbane","Canberra"], answer: 3, explanation: "Canberra is the capital, not Sydney. Canberra was purpose-built as a compromise when Sydney and Melbourne couldn't agree on which should be the capital after federation in 1901.", cat: "geography" },
+    { q: "Mount Everest is located on the border of which two countries?", choices: ["India and China","Nepal and China","Nepal and Bhutan","India and Nepal"], answer: 1, explanation: "Everest sits on the Nepal–China (Tibet) border. At 8,848.86m (29,031.7ft), it's Earth's highest peak above sea level. It grows about 4mm/year as the Indian plate pushes against Asia.", cat: "geography" },
+    { q: "The Amazon River flows through which ocean?", choices: ["Pacific","Atlantic","Indian","Arctic"], answer: 1, explanation: "The Amazon discharges into the Atlantic Ocean near Macapá, Brazil. It carries roughly 20% of all river water that flows into the world's oceans.", cat: "geography" },
+    // Pop Culture
+    { q: "Which company created the iPhone?", choices: ["Samsung","Sony","Apple","Google"], answer: 2, explanation: "Apple launched the first iPhone in January 2007. Steve Jobs announced it as 'an iPod, a phone, and an internet communicator' — three devices in one, revolutionizing the mobile industry.", cat: "culture" },
+    { q: "Who played Iron Man in the Marvel Cinematic Universe?", choices: ["Chris Evans","Chris Hemsworth","Robert Downey Jr.","Benedict Cumberbatch"], answer: 2, explanation: "Robert Downey Jr. portrayed Tony Stark / Iron Man in 10 MCU films (2008–2019). His portrayal kicked off the MCU and is considered one of the most successful superhero castings in cinema history.", cat: "culture" },
+    { q: "What is the best-selling video game of all time?", choices: ["Tetris","Minecraft","GTA V","Wii Sports"], answer: 1, explanation: "Minecraft has sold over 238 million copies across all platforms as of 2023, making it the best-selling game of all time. It surpassed Tetris (when you include mobile) in 2020.", cat: "culture" },
+    { q: "Which streaming service released 'Stranger Things'?", choices: ["HBO","Disney+","Amazon Prime","Netflix"], answer: 3, explanation: "Stranger Things debuted on Netflix in July 2016. Created by the Duffer Brothers, it's set in the 1980s in Hawkins, Indiana and features themes from 80s sci-fi and horror films.", cat: "culture" },
+    // Nature
+    { q: "What is the largest land animal?", choices: ["African Elephant","Hippopotamus","White Rhinoceros","Giraffe"], answer: 0, explanation: "The African bush elephant is the world's largest land animal, weighing up to 7,000 kg (15,400 lbs) and standing up to 4 meters tall. Its brain is the largest of any land animal.", cat: "nature" },
+    { q: "How many hearts does an octopus have?", choices: ["1","2","3","4"], answer: 2, explanation: "Octopuses have 3 hearts: one main heart (systemic) that pumps blood to the body, and two branchial hearts that pump blood through the gills. Their blood is blue due to copper-based hemocyanin.", cat: "nature" },
+    { q: "What is the tallest tree species in the world?", choices: ["Giant Sequoia","Coast Redwood","Douglas Fir","Sitka Spruce"], answer: 1, explanation: "Coast Redwood (Sequoia sempervirens) is the world's tallest tree species. The tallest known living tree, Hyperion, stands at 115.92m (380.3ft) in California. Giant Sequoias are the largest by volume.", cat: "nature" },
+    { q: "Which animal has the longest gestation period?", choices: ["African Elephant","Blue Whale","Giraffe","Orca"], answer: 0, explanation: "African elephants have a gestation period of 22 months — the longest of any land mammal. Blue whales gestate for about 12 months. The frilled shark holds the record for all vertebrates at about 3.5 years.", cat: "nature" },
+  ];
+
+  let category = 'all';
+  let correct = 0, total = 0;
+  let currentQ: TriviaQ | null = null;
+  let answered = false;
+
+  function getPool(): TriviaQ[] {
+    return category === 'all' ? QUESTIONS : QUESTIONS.filter(q => q.cat === category);
+  }
+
+  const CAT_LABELS: Record<string, string> = {
+    science: '🔬 Science', history: '🏛️ History', geography: '🗺️ Geography',
+    culture: '🎬 Pop Culture', nature: '🌿 Nature'
+  };
+
+  function nextQuestion() {
+    const pool = getPool();
+    currentQ = pool[Math.floor(Math.random() * pool.length)];
+    answered = false;
+
+    document.getElementById('triv-cat-label')!.textContent = CAT_LABELS[currentQ.cat] || currentQ.cat;
+    document.getElementById('triv-question')!.textContent = currentQ.q;
+    document.getElementById('triv-explanation')!.classList.add('hidden');
+    document.getElementById('triv-card')!.classList.remove('hidden');
+
+    // Shuffle choices with correct answer tracking
+    const indices = [0,1,2,3];
+    for (let i = 3; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i+1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+    const shuffledChoices = indices.map(i => currentQ!.choices[i]);
+    const newCorrectIdx = indices.indexOf(currentQ.answer);
+
+    document.getElementById('triv-choices')!.innerHTML = shuffledChoices.map((c, i) =>
+      `<button class="triv-choice border-2 border-gray-200 rounded-xl px-4 py-3 text-left hover:border-indigo-400 hover:bg-indigo-50 transition-all text-sm font-medium text-gray-700" data-idx="${i}" data-correct="${i === newCorrectIdx}">${String.fromCharCode(65+i)}. ${c}</button>`
+    ).join('');
+
+    document.querySelectorAll('.triv-choice').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (answered) return;
+        answered = true;
+        const isCorrect = (btn as HTMLElement).dataset.correct === 'true';
+        total++;
+        if (isCorrect) correct++;
+        updateScore();
+
+        document.querySelectorAll('.triv-choice').forEach(b => {
+          const correct_ = (b as HTMLElement).dataset.correct === 'true';
+          b.className = `triv-choice border-2 rounded-xl px-4 py-3 text-left text-sm font-medium transition-all ${correct_ ? 'border-green-400 bg-green-50 text-green-800' : 'border-gray-200 bg-gray-50 text-gray-400'}`;
+        });
+
+        const expEl = document.getElementById('triv-explanation')!;
+        expEl.className = `rounded-xl p-4 border-2 space-y-2 ${isCorrect ? 'bg-green-50 border-green-300' : 'bg-red-50 border-red-300'}`;
+        document.getElementById('triv-result-text')!.className = `font-bold text-lg ${isCorrect ? 'text-green-700' : 'text-red-700'}`;
+        document.getElementById('triv-result-text')!.textContent = isCorrect ? '✅ Correct!' : '❌ Incorrect';
+        document.getElementById('triv-explanation-text')!.textContent = currentQ!.explanation;
+        expEl.classList.remove('hidden');
+      });
+    });
+  }
+
+  function updateScore() {
+    document.getElementById('triv-score')!.textContent = `${correct} / ${total}`;
+    const pct = total > 0 ? (correct / total) * 100 : 0;
+    document.getElementById('triv-score-bar')!.style.width = pct + '%';
+  }
+
+  document.getElementById('triv-next-q')!.addEventListener('click', nextQuestion);
+  document.getElementById('triv-reset')!.addEventListener('click', () => {
+    correct = total = 0;
+    updateScore();
+    nextQuestion();
+  });
+
+  document.querySelectorAll('.triv-cat').forEach(btn => {
+    btn.addEventListener('click', () => {
+      category = (btn as HTMLElement).dataset.cat || 'all';
+      document.querySelectorAll('.triv-cat').forEach(b => {
+        const active = (b as HTMLElement).dataset.cat === category;
+        b.classList.toggle('border-indigo-400', active);
+        b.classList.toggle('bg-indigo-50', active);
+        b.classList.toggle('text-indigo-700', active);
+      });
+      nextQuestion();
+    });
+  });
+
+  document.querySelector('.triv-cat[data-cat="all"]')!.classList.add('border-indigo-400','bg-indigo-50','text-indigo-700');
+  nextQuestion();
+</script>

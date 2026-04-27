@@ -1,0 +1,172 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Rock Paper Scissors"
+  description="Play Rock Paper Scissors against the computer. Track your win/loss/draw stats. Includes Rock Paper Scissors Lizard Spock variant."
+  slug="rock-paper-scissors"
+  category="Random & Fun"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Rock Paper Scissors</h1>
+  <p class="text-gray-500 mb-8">Play against the computer — classic or Lizard Spock variant.</p>
+
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 space-y-5">
+
+    <!-- Mode -->
+    <div class="flex gap-2">
+      <button class="rps-variant flex-1 text-sm border border-gray-200 rounded-xl px-4 py-2 hover:border-indigo-300 transition-colors" data-variant="classic">Classic (3)</button>
+      <button class="rps-variant flex-1 text-sm border border-gray-200 rounded-xl px-4 py-2 hover:border-indigo-300 transition-colors" data-variant="spock">Lizard Spock (5)</button>
+    </div>
+
+    <!-- Choices -->
+    <div id="rps-choices" class="flex justify-center gap-4 flex-wrap"></div>
+
+    <!-- Arena -->
+    <div id="rps-arena" class="hidden bg-gray-50 border border-gray-100 rounded-2xl p-6 text-center space-y-3">
+      <div class="grid grid-cols-3 gap-4 items-center">
+        <div class="text-center">
+          <div class="text-xs text-gray-400 mb-1">You</div>
+          <div id="rps-you" class="text-5xl"></div>
+        </div>
+        <div id="rps-vs" class="text-2xl font-black text-gray-300">VS</div>
+        <div class="text-center">
+          <div class="text-xs text-gray-400 mb-1">Computer</div>
+          <div id="rps-cpu" class="text-5xl"></div>
+        </div>
+      </div>
+      <div id="rps-outcome" class="text-2xl font-black"></div>
+      <div id="rps-reason" class="text-sm text-gray-500"></div>
+    </div>
+
+    <!-- Scoreboard -->
+    <div class="grid grid-cols-3 gap-3 text-center">
+      <div class="bg-green-50 border border-green-200 rounded-xl p-3">
+        <div class="text-xs text-green-500 mb-0.5">Wins</div>
+        <div id="rps-wins" class="text-2xl font-bold font-mono text-green-700">0</div>
+      </div>
+      <div class="bg-gray-50 border border-gray-100 rounded-xl p-3">
+        <div class="text-xs text-gray-400 mb-0.5">Draws</div>
+        <div id="rps-draws" class="text-2xl font-bold font-mono text-gray-700">0</div>
+      </div>
+      <div class="bg-red-50 border border-red-200 rounded-xl p-3">
+        <div class="text-xs text-red-400 mb-0.5">Losses</div>
+        <div id="rps-losses" class="text-2xl font-bold font-mono text-red-600">0</div>
+      </div>
+    </div>
+    <button id="rps-reset" class="text-xs text-gray-400 hover:underline w-full text-center">Reset score</button>
+  </div>
+
+  <div class="mt-10">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: "What is the optimal strategy for Rock Paper Scissors?", a: "Against a truly random opponent, no strategy wins more than 1/3 of the time. But humans aren't random: (1) Beginners often play Rock first. (2) After a loss, players often switch to the thing that just beat them. (3) After a win, players often repeat their winning move. (4) Players rarely play the same choice 3 times in a row. Advanced players read these patterns and counter them." },
+        { q: "What are the rules for Rock Paper Scissors Lizard Spock?", a: "Invented by Sam Kass, popularized by The Big Bang Theory. Rules: Scissors cuts Paper, Paper covers Rock, Rock crushes Lizard, Lizard poisons Spock, Spock smashes Scissors, Scissors decapitates Lizard, Lizard eats Paper, Paper disproves Spock, Spock vaporizes Rock, Rock crushes Scissors. Each choice beats two others and loses to two others, creating balanced 5-way symmetry." },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+  type Choice = 'Rock' | 'Paper' | 'Scissors' | 'Lizard' | 'Spock';
+
+  const CLASSIC: Choice[] = ['Rock', 'Paper', 'Scissors'];
+  const SPOCK: Choice[] = ['Rock', 'Paper', 'Scissors', 'Lizard', 'Spock'];
+  const EMOJI: Record<Choice, string> = { Rock: '🪨', Paper: '📄', Scissors: '✂️', Lizard: '🦎', Spock: '🖖' };
+
+  // Each choice beats: [what it beats]
+  const BEATS: Record<Choice, Choice[]> = {
+    Scissors: ['Paper', 'Lizard'],
+    Paper: ['Rock', 'Spock'],
+    Rock: ['Scissors', 'Lizard'],
+    Lizard: ['Spock', 'Paper'],
+    Spock: ['Scissors', 'Rock'],
+  };
+
+  const REASONS: Partial<Record<Choice, Partial<Record<Choice, string>>>> = {
+    Scissors: { Paper: 'Scissors cuts Paper', Lizard: 'Scissors decapitates Lizard' },
+    Paper: { Rock: 'Paper covers Rock', Spock: 'Paper disproves Spock' },
+    Rock: { Scissors: 'Rock crushes Scissors', Lizard: 'Rock crushes Lizard' },
+    Lizard: { Spock: 'Lizard poisons Spock', Paper: 'Lizard eats Paper' },
+    Spock: { Scissors: 'Spock smashes Scissors', Rock: 'Spock vaporizes Rock' },
+  };
+
+  let variant: 'classic' | 'spock' = 'classic';
+  let wins = 0, losses = 0, draws = 0;
+
+  function renderChoices() {
+    const choices = variant === 'classic' ? CLASSIC : SPOCK;
+    document.getElementById('rps-choices')!.innerHTML = choices.map(c =>
+      `<button class="rps-pick border-2 border-gray-200 rounded-2xl p-4 text-4xl hover:border-indigo-400 hover:bg-indigo-50 transition-all hover:scale-105 active:scale-95" data-choice="${c}" title="${c}">${EMOJI[c]}</button>`
+    ).join('');
+    document.querySelectorAll('.rps-pick').forEach(btn =>
+      btn.addEventListener('click', () => play((btn as HTMLElement).dataset.choice as Choice))
+    );
+  }
+
+  function play(playerChoice: Choice) {
+    const choices = variant === 'classic' ? CLASSIC : SPOCK;
+    const cpuChoice = choices[Math.floor(Math.random() * choices.length)];
+
+    document.getElementById('rps-you')!.textContent = EMOJI[playerChoice];
+    document.getElementById('rps-cpu')!.textContent = EMOJI[cpuChoice];
+
+    let outcome: string, reason: string;
+    if (playerChoice === cpuChoice) {
+      outcome = "It's a draw!";
+      reason = `Both chose ${playerChoice}`;
+      draws++;
+      document.getElementById('rps-outcome')!.className = 'text-2xl font-black text-gray-600';
+    } else if (BEATS[playerChoice].includes(cpuChoice)) {
+      outcome = 'You win! 🎉';
+      reason = REASONS[playerChoice]?.[cpuChoice] || `${playerChoice} beats ${cpuChoice}`;
+      wins++;
+      document.getElementById('rps-outcome')!.className = 'text-2xl font-black text-green-600';
+    } else {
+      outcome = 'You lose!';
+      reason = REASONS[cpuChoice]?.[playerChoice] || `${cpuChoice} beats ${playerChoice}`;
+      losses++;
+      document.getElementById('rps-outcome')!.className = 'text-2xl font-black text-red-600';
+    }
+
+    document.getElementById('rps-outcome')!.textContent = outcome;
+    document.getElementById('rps-reason')!.textContent = reason;
+    document.getElementById('rps-arena')!.classList.remove('hidden');
+    document.getElementById('rps-wins')!.textContent = String(wins);
+    document.getElementById('rps-draws')!.textContent = String(draws);
+    document.getElementById('rps-losses')!.textContent = String(losses);
+  }
+
+  document.querySelectorAll('.rps-variant').forEach(btn => {
+    btn.addEventListener('click', () => {
+      variant = (btn as HTMLElement).dataset.variant as 'classic' | 'spock';
+      document.querySelectorAll('.rps-variant').forEach(b => {
+        b.classList.toggle('border-indigo-400', (b as HTMLElement).dataset.variant === variant);
+        b.classList.toggle('bg-indigo-50', (b as HTMLElement).dataset.variant === variant);
+        b.classList.toggle('text-indigo-700', (b as HTMLElement).dataset.variant === variant);
+      });
+      document.getElementById('rps-arena')!.classList.add('hidden');
+      renderChoices();
+    });
+  });
+
+  document.getElementById('rps-reset')!.addEventListener('click', () => {
+    wins = losses = draws = 0;
+    document.getElementById('rps-wins')!.textContent = '0';
+    document.getElementById('rps-draws')!.textContent = '0';
+    document.getElementById('rps-losses')!.textContent = '0';
+    document.getElementById('rps-arena')!.classList.add('hidden');
+  });
+
+  // Init
+  document.querySelector('.rps-variant[data-variant="classic"]')!.classList.add('border-indigo-400','bg-indigo-50','text-indigo-700');
+  renderChoices();
+</script>
