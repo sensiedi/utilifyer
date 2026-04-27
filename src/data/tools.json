@@ -94,7 +94,7 @@
     "slug": "word-counter",
     "title": "Word Counter",
     "description": "Count words, characters, sentences, and paragraphs. Get reading time estimates.",
-    "category": "Text",
+    "category": "Text & Writing",
     "tags": [
       "word count",
       "characters",
@@ -109,7 +109,7 @@
     "slug": "random-number-generator",
     "title": "Random Number Generator",
     "description": "Generate random numbers within any range. Single or multiple numbers, no repeats option.",
-    "category": "Random",
+    "category": "Random & Fun",
     "tags": [
       "random",
       "number",
@@ -171,7 +171,7 @@
     "slug": "case-converter",
     "title": "Case Converter",
     "description": "Convert text to UPPERCASE, lowercase, Title Case, camelCase, snake_case and more.",
-    "category": "Text",
+    "category": "Text & Writing",
     "tags": [
       "case",
       "uppercase",
@@ -187,7 +187,7 @@
     "slug": "coin-flip",
     "title": "Coin Flip",
     "description": "Flip a virtual coin. Get heads or tails instantly. Flip multiple times and track statistics.",
-    "category": "Random",
+    "category": "Random & Fun",
     "tags": [
       "coin flip",
       "heads",
@@ -281,7 +281,7 @@
     "slug": "character-count",
     "title": "Character Count",
     "description": "Count characters for Twitter/X, LinkedIn, Instagram and other social media platforms.",
-    "category": "Text",
+    "category": "Text & Writing",
     "tags": [
       "character count",
       "twitter",

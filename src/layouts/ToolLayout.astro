@@ -41,7 +41,7 @@ const breadcrumbLd = JSON.stringify({
   "@type": "BreadcrumbList",
   "itemListElement": [
     { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://utilifyer.com" },
-    { "@type": "ListItem", "position": 2, "name": category, "item": `https://utilifyer.com/category/${category.toLowerCase().replace(/ /g, '-').replace(/&/g, 'and')}` },
+    { "@type": "ListItem", "position": 2, "name": category, "item": `https://utilifyer.com/category/${category.toLowerCase().replace(/ & /g, '-and-').replace(/ /g, '-')}` },
     { "@type": "ListItem", "position": 3, "name": title, "item": canonicalUrl }
   ]
 });
@@ -103,7 +103,7 @@ const breadcrumbLd = JSON.stringify({
         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">Categories</p>
         {categories.map(cat => (
           <a
-            href={`/category/${cat.toLowerCase().replace(/ /g, '-').replace(/&/g, 'and')}`}
+            href={`/category/${cat.toLowerCase().replace(/ & /g, '-and-').replace(/ /g, '-')}`}
             class={`flex items-center gap-2 px-3 py-2 rounded-xl text-sm transition-colors ${category === cat ? 'bg-indigo-50 text-indigo-700 font-medium' : 'text-gray-700 hover:bg-indigo-50 hover:text-indigo-700'}`}
           >
             {cat}
@@ -141,7 +141,7 @@ const breadcrumbLd = JSON.stringify({
       <div class="max-w-6xl mx-auto px-4 py-2 text-sm text-gray-500 flex items-center gap-2">
         <a href="/" class="hover:text-indigo-600 transition-colors">Home</a>
         <span>›</span>
-        <a href={`/category/${category.toLowerCase().replace(/ /g, '-').replace(/&/g, 'and')}`} class="hover:text-indigo-600 transition-colors">{category}</a>
+        <a href={`/category/${category.toLowerCase().replace(/ & /g, '-and-').replace(/ /g, '-')}`} class="hover:text-indigo-600 transition-colors">{category}</a>
         <span>›</span>
         <span class="text-gray-800 font-medium">{title}</span>
       </div>

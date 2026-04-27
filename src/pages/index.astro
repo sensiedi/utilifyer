@@ -63,7 +63,7 @@ const toolsByCategory = categories.map(cat => ({
         <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider px-3 mb-2">Categories</p>
         {categories.map(cat => (
           <a
-            href={`#cat-${cat.toLowerCase().replace(/ /g, '-').replace(/[^a-z0-9-]/g, '')}`}
+            href={`#cat-${cat.toLowerCase().replace(/ & /g, '-and-').replace(/ /g, '-')}`}
             class="flex items-center gap-2 px-3 py-2 rounded-xl text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-700 transition-colors nav-cat-link"
           >
             {cat}
@@ -121,7 +121,7 @@ const toolsByCategory = categories.map(cat => ({
       <!-- Category Sections -->
       <div id="categories-section">
         {toolsByCategory.map(({ name, tools: catTools }) => (
-          <section class="mb-12" id={`cat-${name.toLowerCase().replace(/ /g, '-').replace(/[^a-z0-9-]/g, '')}`}>
+          <section class="mb-12" id={`cat-${name.toLowerCase().replace(/ & /g, '-and-').replace(/ /g, '-')}`}>
             <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
               <span class="w-1 h-6 bg-indigo-500 rounded-full inline-block"></span>
               {name}
