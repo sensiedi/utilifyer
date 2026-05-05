@@ -2415,5 +2415,23 @@
     "priority": 152,
     "status": "live",
     "icon": "📊"
+  },
+  {
+    "slug": "cron-expression-generator",
+    "title": "Cron Expression Generator",
+    "description": "Build and decode cron expressions visually. Get a plain-English description of any schedule, see the next 5 run times, and pick from common presets like crontab.guru.",
+    "category": "Developer",
+    "tags": [
+      "cron expression",
+      "cron generator",
+      "crontab",
+      "cron schedule",
+      "crontab guru",
+      "cron builder",
+      "cron decoder"
+    ],
+    "priority": 153,
+    "status": "live",
+    "icon": "⏱️"
   }
 ]

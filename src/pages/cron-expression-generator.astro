@@ -1,0 +1,423 @@
+---
+import ToolLayout from '../layouts/ToolLayout.astro';
+---
+
+<ToolLayout
+  title="Cron Expression Generator"
+  description="Build and understand cron expressions visually. Get a human-readable description, see next run times, and use common presets. Free crontab helper tool."
+  slug="cron-expression-generator"
+  category="Developer"
+>
+  <h1 class="text-3xl font-bold text-gray-900 mb-2">Cron Expression Generator</h1>
+  <p class="text-gray-500 mb-8">Build cron expressions visually or paste one to decode it.</p>
+
+  <!-- Expression display -->
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mb-4">
+    <div class="flex flex-wrap gap-3 items-center mb-4">
+      <input
+        id="cron-input"
+        type="text"
+        value="* * * * *"
+        spellcheck="false"
+        class="flex-1 min-w-0 font-mono text-2xl text-indigo-700 border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-indigo-500 tracking-widest"
+      />
+      <button id="btn-copy" class="btn-secondary whitespace-nowrap">Copy</button>
+    </div>
+
+    <div id="description-box" class="text-base font-medium text-gray-800 mb-1"></div>
+    <div id="error-box" class="hidden text-sm text-red-600 mb-1"></div>
+  </div>
+
+  <!-- Field builder -->
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mb-4">
+    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4">Visual Builder</h2>
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-4" id="field-builder">
+      {[
+        { id: 'f-minute',  label: 'Minute',       hint: '0–59' },
+        { id: 'f-hour',    label: 'Hour',         hint: '0–23' },
+        { id: 'f-dom',     label: 'Day (month)',  hint: '1–31' },
+        { id: 'f-month',   label: 'Month',        hint: '1–12' },
+        { id: 'f-dow',     label: 'Day (week)',   hint: '0–7' },
+      ].map(({ id, label, hint }) => (
+        <div>
+          <label class="block text-xs font-medium text-gray-500 mb-1">{label} <span class="text-gray-400">({hint})</span></label>
+          <input
+            id={id}
+            type="text"
+            value="*"
+            spellcheck="false"
+            class="w-full font-mono border border-gray-300 rounded-xl px-3 py-2 text-sm text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          />
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <!-- Presets -->
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mb-4">
+    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Common Presets</h2>
+    <div class="flex flex-wrap gap-2" id="presets"></div>
+  </div>
+
+  <!-- Next runs -->
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mb-4">
+    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Next 5 Scheduled Runs</h2>
+    <ul id="next-runs" class="space-y-1 text-sm font-mono text-gray-700"></ul>
+  </div>
+
+  <!-- Reference -->
+  <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mb-10">
+    <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3">Cron Field Reference</h2>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm text-left">
+        <thead>
+          <tr class="border-b border-gray-200 text-gray-500 text-xs uppercase">
+            <th class="pb-2 pr-6">Field</th>
+            <th class="pb-2 pr-6">Allowed Values</th>
+            <th class="pb-2">Special Characters</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100 text-gray-700">
+          {[
+            ['Minute', '0–59', '* , - /'],
+            ['Hour', '0–23', '* , - /'],
+            ['Day of Month', '1–31', '* , - / ?'],
+            ['Month', '1–12 or JAN–DEC', '* , - /'],
+            ['Day of Week', '0–7 (0 & 7 = Sunday) or SUN–SAT', '* , - / ?'],
+          ].map(([field, vals, chars]) => (
+            <tr>
+              <td class="py-2 pr-6 font-medium">{field}</td>
+              <td class="py-2 pr-6 font-mono text-xs">{vals}</td>
+              <td class="py-2 font-mono text-xs">{chars}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs text-gray-600">
+      {[
+        { char: '*', desc: 'Every value' },
+        { char: '*/n', desc: 'Every n-th value' },
+        { char: 'a-b', desc: 'Range from a to b' },
+        { char: 'a,b,c', desc: 'List of values' },
+      ].map(({ char, desc }) => (
+        <div class="bg-gray-50 rounded-lg p-2">
+          <code class="text-indigo-700 font-mono font-bold">{char}</code>
+          <span class="ml-2 text-gray-500">{desc}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div class="mt-4">
+    <h2 class="text-xl font-bold text-gray-900 mb-4">Frequently Asked Questions</h2>
+    <div class="divide-y divide-gray-200 border border-gray-200 rounded-xl overflow-hidden">
+      {[
+        { q: 'What is a cron expression?', a: 'A cron expression is a string of 5 (or 6) fields separated by spaces that defines a schedule for running a task automatically. It is used by the Unix cron daemon and modern schedulers like GitHub Actions, AWS EventBridge, Kubernetes CronJobs, and many CI/CD tools.' },
+        { q: 'What does * * * * * mean?', a: '"* * * * *" means every minute of every hour of every day. Each asterisk represents "any value" for that field (minute, hour, day-of-month, month, day-of-week).' },
+        { q: 'How do I run something every 5 minutes?', a: 'Use "*/5 * * * *". The slash (/) denotes a step value — */5 in the minute field means "every 5 minutes starting from 0": 0, 5, 10, 15, ..., 55.' },
+        { q: 'What is the difference between day-of-month and day-of-week?', a: 'Day-of-month (field 3) targets a specific date number like the 15th. Day-of-week (field 5) targets a specific weekday like Monday. If both are set to non-wildcard values, most schedulers run the job when either condition is true.' },
+        { q: 'Are cron expressions the same everywhere?', a: 'Not exactly. The standard Unix cron has 5 fields. Some systems add a 6th field for seconds or year. AWS and some tools use a slightly different syntax. This generator covers the standard 5-field POSIX cron format used by crontab, most Linux schedulers, and GitHub Actions.' },
+      ].map(({ q, a }) => (
+        <details class="group bg-white">
+          <summary class="flex items-center justify-between px-5 py-4 cursor-pointer list-none font-medium text-gray-800 hover:bg-gray-50 transition-colors">
+            {q}<span class="text-gray-400 group-open:rotate-180 transition-transform">▼</span>
+          </summary>
+          <p class="px-5 pb-4 text-sm text-gray-600">{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+</ToolLayout>
+
+<script>
+// ── Presets ─────────────────────────────────────────────────────────────────
+const PRESETS: { label: string; expr: string }[] = [
+  { label: 'Every minute',        expr: '* * * * *' },
+  { label: 'Every 5 minutes',     expr: '*/5 * * * *' },
+  { label: 'Every 15 minutes',    expr: '*/15 * * * *' },
+  { label: 'Every 30 minutes',    expr: '*/30 * * * *' },
+  { label: 'Every hour',          expr: '0 * * * *' },
+  { label: 'Every 6 hours',       expr: '0 */6 * * *' },
+  { label: 'Every day at midnight', expr: '0 0 * * *' },
+  { label: 'Every day at noon',   expr: '0 12 * * *' },
+  { label: 'Every weekday 9am',   expr: '0 9 * * 1-5' },
+  { label: 'Every Monday 8am',    expr: '0 8 * * 1' },
+  { label: 'Every Sunday midnight', expr: '0 0 * * 0' },
+  { label: 'Weekly (Sun midnight)', expr: '0 0 * * 0' },
+  { label: 'Monthly (1st midnight)', expr: '0 0 1 * *' },
+  { label: 'Yearly (Jan 1 midnight)', expr: '0 0 1 1 *' },
+];
+
+// ── Field limits ─────────────────────────────────────────────────────────────
+const FIELDS = [
+  { id: 'f-minute', min: 0, max: 59, name: 'minute' },
+  { id: 'f-hour',   min: 0, max: 23, name: 'hour' },
+  { id: 'f-dom',    min: 1, max: 31, name: 'dom' },
+  { id: 'f-month',  min: 1, max: 12, name: 'month' },
+  { id: 'f-dow',    min: 0, max:  7, name: 'dow' },
+];
+
+const MONTHS = ['','January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS   = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+
+// ── Parse a single cron field into a sorted Set of matching integers ─────────
+function parseField(raw: string, min: number, max: number): number[] | null {
+  const result = new Set<number>();
+  const parts = raw.trim().split(',');
+  for (const part of parts) {
+    if (part === '*' || part === '?') {
+      for (let i = min; i <= max; i++) result.add(i);
+      continue;
+    }
+    const stepMatch = part.match(/^(\*|\d+(?:-\d+)?)\/(\d+)$/);
+    if (stepMatch) {
+      const step = parseInt(stepMatch[2]);
+      if (step <= 0) return null;
+      let start = min, end = max;
+      if (stepMatch[1] !== '*') {
+        const rangeParts = stepMatch[1].split('-');
+        start = parseInt(rangeParts[0]);
+        end = rangeParts[1] ? parseInt(rangeParts[1]) : max;
+      }
+      if (isNaN(start) || isNaN(end) || start < min || end > max) return null;
+      for (let i = start; i <= end; i += step) result.add(i);
+      continue;
+    }
+    const rangeMatch = part.match(/^(\d+)-(\d+)$/);
+    if (rangeMatch) {
+      const a = parseInt(rangeMatch[1]), b = parseInt(rangeMatch[2]);
+      if (a < min || b > max || a > b) return null;
+      for (let i = a; i <= b; i++) result.add(i);
+      continue;
+    }
+    if (/^\d+$/.test(part)) {
+      const n = parseInt(part);
+      // day-of-week: treat 7 as 0
+      const actual = (max === 7 && n === 7) ? 0 : n;
+      if (actual < min || actual > (max === 7 ? 6 : max)) return null;
+      result.add(actual);
+      continue;
+    }
+    // month name
+    const mIdx = MONTHS.findIndex(m => m.toLowerCase() === part.toLowerCase());
+    if (mIdx > 0 && min === 1 && max === 12) { result.add(mIdx); continue; }
+    // day name
+    const dIdx = DAYS.findIndex(d => d.toLowerCase() === part.toLowerCase().slice(0,3) || d.toLowerCase() === part.toLowerCase());
+    if (dIdx >= 0 && min === 0 && max === 7) { result.add(dIdx === 7 ? 0 : dIdx); continue; }
+    return null;
+  }
+  return [...result].sort((a, b) => a - b);
+}
+
+// ── Validate full 5-field expression ─────────────────────────────────────────
+function parseCron(expr: string): { mins: number[]; hrs: number[]; doms: number[]; months: number[]; dows: number[] } | null {
+  const parts = expr.trim().split(/\s+/);
+  if (parts.length !== 5) return null;
+  const [rawMin, rawHr, rawDom, rawMonth, rawDow] = parts;
+  const mins   = parseField(rawMin,   0, 59);
+  const hrs    = parseField(rawHr,    0, 23);
+  const doms   = parseField(rawDom,   1, 31);
+  const months = parseField(rawMonth, 1, 12);
+  const dows   = parseField(rawDow,   0,  7);
+  if (!mins || !hrs || !doms || !months || !dows) return null;
+  return { mins, hrs, doms, months, dows };
+}
+
+// ── Human-readable description ────────────────────────────────────────────────
+function describeField(raw: string, min: number, max: number, singular: string, plural: string, names?: string[]): string {
+  raw = raw.trim();
+  if (raw === '*' || raw === '?') return `every ${singular}`;
+  if (raw.startsWith('*/')) {
+    const step = parseInt(raw.slice(2));
+    if (step === 1) return `every ${singular}`;
+    return `every ${step} ${plural}`;
+  }
+  if (/^\d+$/.test(raw)) {
+    const n = parseInt(raw);
+    if (names) return names[n] ?? String(n);
+    return String(n);
+  }
+  if (/^\d+-\d+$/.test(raw)) {
+    const [a, b] = raw.split('-').map(Number);
+    if (names) return `${names[a] ?? a} through ${names[b] ?? b}`;
+    return `${a} through ${b}`;
+  }
+  if (raw.includes(',')) {
+    const parts = raw.split(',').map(p => {
+      const n = parseInt(p);
+      return names ? (names[n] ?? p) : p;
+    });
+    if (parts.length === 2) return `${parts[0]} and ${parts[1]}`;
+    return parts.slice(0, -1).join(', ') + ', and ' + parts[parts.length - 1];
+  }
+  return raw;
+}
+
+function describeMinute(raw: string): string {
+  raw = raw.trim();
+  if (raw === '*') return '';
+  if (/^\d+$/.test(raw)) return `:${raw.padStart(2, '0')}`;
+  if (raw.startsWith('*/')) return `every ${raw.slice(2)} minutes`;
+  return `at minute ${raw}`;
+}
+
+function buildDescription(expr: string): string {
+  const parts = expr.trim().split(/\s+/);
+  if (parts.length !== 5) return '';
+  const [rawMin, rawHr, rawDom, rawMonth, rawDow] = parts;
+
+  // Check wildcard status
+  const minWild   = rawMin === '*';
+  const hrWild    = rawHr === '*';
+  const domWild   = rawDom === '*' || rawDom === '?';
+  const monthWild = rawMonth === '*';
+  const dowWild   = rawDow === '*' || rawDow === '?';
+
+  let time = '';
+
+  // Time part
+  if (minWild && hrWild) {
+    time = 'every minute';
+  } else if (!hrWild && !minWild && /^\d+$/.test(rawHr) && /^\d+$/.test(rawMin)) {
+    const h = parseInt(rawHr), m = parseInt(rawMin);
+    const ampm = h < 12 ? 'AM' : 'PM';
+    const h12 = h % 12 === 0 ? 12 : h % 12;
+    time = `at ${h12}:${String(m).padStart(2,'0')} ${ampm}`;
+  } else if (hrWild && !minWild) {
+    time = `at ${describeMinute(rawMin)} past every hour`;
+  } else if (!hrWild && minWild) {
+    time = `every minute of hour ${rawHr}`;
+  } else {
+    const minStr = rawMin.startsWith('*/') ? `every ${rawMin.slice(2)} minutes` : `minute ${rawMin}`;
+    const hrStr  = rawHr.startsWith('*/') ? `every ${rawHr.slice(2)} hours` : `hour ${rawHr}`;
+    time = `${minStr} past ${hrStr}`;
+  }
+
+  // Day part
+  let day = '';
+  if (!domWild && !dowWild) {
+    day = `on day ${rawDom} and on ${describeField(rawDow, 0, 6, 'day', 'days', DAYS)}`;
+  } else if (!domWild) {
+    day = `on day ${rawDom} of the month`;
+  } else if (!dowWild) {
+    day = `on ${describeField(rawDow, 0, 6, 'day', 'days', DAYS)}`;
+  } else {
+    day = 'every day';
+  }
+
+  // Month part
+  let month = '';
+  if (!monthWild) {
+    month = `in ${describeField(rawMonth, 1, 12, 'month', 'months', MONTHS)}`;
+  }
+
+  const pieces = [time, day, month].filter(Boolean);
+  const desc = pieces.join(', ');
+  return desc.charAt(0).toUpperCase() + desc.slice(1);
+}
+
+// ── Next run times ────────────────────────────────────────────────────────────
+function nextRuns(parsed: ReturnType<typeof parseCron>, count = 5): Date[] {
+  if (!parsed) return [];
+  const { mins, hrs, doms, months, dows } = parsed;
+  const results: Date[] = [];
+  const now = new Date();
+  // start from next minute
+  const cur = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(), now.getMinutes() + 1, 0, 0);
+
+  let iters = 0;
+  while (results.length < count && iters < 527040) { // max 1 year of minutes
+    iters++;
+    const m  = cur.getMinutes();
+    const h  = cur.getHours();
+    const d  = cur.getDate();
+    const mo = cur.getMonth() + 1;
+    const dw = cur.getDay();
+
+    if (
+      months.includes(mo) &&
+      doms.includes(d) &&
+      dows.includes(dw) &&
+      hrs.includes(h) &&
+      mins.includes(m)
+    ) {
+      results.push(new Date(cur));
+    }
+    cur.setMinutes(cur.getMinutes() + 1);
+  }
+  return results;
+}
+
+// ── DOM helpers ───────────────────────────────────────────────────────────────
+const cronInput = document.getElementById('cron-input') as HTMLInputElement;
+const descBox   = document.getElementById('description-box')!;
+const errBox    = document.getElementById('error-box')!;
+const runsUl    = document.getElementById('next-runs')!;
+
+function getField(id: string) { return (document.getElementById(id) as HTMLInputElement); }
+
+function updateFromExpression(expr: string, syncFields = true) {
+  const parsed = parseCron(expr);
+  if (!parsed) {
+    errBox.textContent = 'Invalid expression — check each field.';
+    errBox.classList.remove('hidden');
+    descBox.textContent = '';
+    runsUl.innerHTML = '';
+    return;
+  }
+  errBox.classList.add('hidden');
+
+  const desc = buildDescription(expr);
+  descBox.textContent = desc || expr;
+
+  const runs = nextRuns(parsed);
+  runsUl.innerHTML = runs.length
+    ? runs.map(d => `<li>${d.toLocaleString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</li>`).join('')
+    : '<li class="text-gray-400">No upcoming runs in the next year.</li>';
+
+  if (syncFields) {
+    const parts = expr.trim().split(/\s+/);
+    const ids = ['f-minute','f-hour','f-dom','f-month','f-dow'];
+    ids.forEach((id, i) => { getField(id).value = parts[i] ?? '*'; });
+  }
+}
+
+function syncExpressionFromFields() {
+  const parts = ['f-minute','f-hour','f-dom','f-month','f-dow'].map(id => getField(id).value.trim() || '*');
+  const expr = parts.join(' ');
+  cronInput.value = expr;
+  updateFromExpression(expr, false);
+}
+
+// ── Wire up events ────────────────────────────────────────────────────────────
+cronInput.addEventListener('input', () => updateFromExpression(cronInput.value));
+
+['f-minute','f-hour','f-dom','f-month','f-dow'].forEach(id => {
+  getField(id).addEventListener('input', syncExpressionFromFields);
+});
+
+document.getElementById('btn-copy')?.addEventListener('click', () => {
+  navigator.clipboard.writeText(cronInput.value).then(() => {
+    const btn = document.getElementById('btn-copy')!;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy', 1500);
+  });
+});
+
+// ── Render presets ────────────────────────────────────────────────────────────
+const presetsEl = document.getElementById('presets')!;
+PRESETS.forEach(({ label, expr }) => {
+  const btn = document.createElement('button');
+  btn.textContent = label;
+  btn.className = 'btn-secondary text-sm py-1.5';
+  btn.addEventListener('click', () => {
+    cronInput.value = expr;
+    updateFromExpression(expr, true);
+  });
+  presetsEl.appendChild(btn);
+});
+
+// ── Initial render ────────────────────────────────────────────────────────────
+updateFromExpression('* * * * *', true);
+</script>
