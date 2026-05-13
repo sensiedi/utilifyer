@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://utilifyer.com/sitemap-index.xml

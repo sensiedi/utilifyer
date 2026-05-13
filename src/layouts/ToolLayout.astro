@@ -12,7 +12,7 @@ interface Props {
 
 const { title, description, slug, category, relatedSlugs = [] } = Astro.props;
 
-const canonicalUrl = `https://utilifyer.com/${slug}`;
+const canonicalUrl = `https://utilifyer.com/${slug}/`;
 const ogImage = `https://utilifyer.com/og-default.png`;
 
 const categories = [...new Set(tools.map(t => t.category))].sort();
@@ -150,12 +150,7 @@ const breadcrumbLd = JSON.stringify({
     <main class="flex-1 max-w-6xl mx-auto w-full px-4 py-8">
 
       <!-- AdSense Top Slot -->
-      <div class="mb-6 flex justify-center">
-        <!-- ADSENSE UNIT: leaderboard (728x90 / responsive) -->
-        <div class="bg-gray-100 border border-dashed border-gray-300 rounded-lg h-24 w-full max-w-3xl flex items-center justify-center text-gray-400 text-sm">
-          Ad Unit — Top
-        </div>
-      </div>
+      <!-- ADSENSE UNIT: leaderboard (728x90 / responsive) -->
 
       <!-- Tool Content -->
       <div class="max-w-3xl mx-auto">
@@ -163,12 +158,7 @@ const breadcrumbLd = JSON.stringify({
       </div>
 
       <!-- AdSense Middle Slot -->
-      <div class="mt-10 mb-6 flex justify-center">
-        <!-- ADSENSE UNIT: rectangle (300x250) -->
-        <div class="bg-gray-100 border border-dashed border-gray-300 rounded-lg h-32 w-full max-w-3xl flex items-center justify-center text-gray-400 text-sm">
-          Ad Unit — Middle
-        </div>
-      </div>
+      <!-- ADSENSE UNIT: rectangle (300x250) -->
 
       <!-- Related Tools -->
       {relatedTools.length > 0 && (
@@ -193,11 +183,7 @@ const breadcrumbLd = JSON.stringify({
     <footer class="bg-white border-t border-gray-200 mt-12">
       <div class="max-w-6xl mx-auto px-4 py-8">
         <!-- AdSense Footer Slot -->
-        <div class="mb-6 flex justify-center">
-          <div class="bg-gray-100 border border-dashed border-gray-300 rounded-lg h-24 w-full max-w-3xl flex items-center justify-center text-gray-400 text-sm">
-            Ad Unit — Footer
-          </div>
-        </div>
+        <!-- ADSENSE UNIT: footer -->
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-500">
           <div class="flex items-center gap-2 font-semibold text-gray-700">
             <span>🛠️</span> Utilifyer

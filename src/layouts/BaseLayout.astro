@@ -9,7 +9,8 @@ interface Props {
 
 const { title, description } = Astro.props;
 const categories = [...new Set(tools.map(t => t.category))].sort();
-const canonicalUrl = `https://utilifyer.com${Astro.url.pathname}`;
+const rawPath = Astro.url.pathname;
+const canonicalUrl = `https://utilifyer.com${rawPath.endsWith('/') ? rawPath : rawPath + '/'}`;
 ---
 
 <!doctype html>
